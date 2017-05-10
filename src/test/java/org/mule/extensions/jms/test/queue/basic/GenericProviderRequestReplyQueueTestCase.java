@@ -6,7 +6,7 @@
  */
 package org.mule.extensions.jms.test.queue.basic;
 
-import static org.mule.test.allure.AllureConstants.JmsFeature.JMS_EXTENSION;
+import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
 import static java.util.Arrays.asList;
 import org.mule.test.runner.RunnerDelegateTo;
 

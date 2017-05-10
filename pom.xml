@@ -5,22 +5,29 @@
 
     <parent>
         <groupId>org.mule.extensions</groupId>
-        <artifactId>mule-extensions</artifactId>
+        <artifactId>mule-core-modules-parent</artifactId>
         <version>4.0.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.mule.modules</groupId>
-    <artifactId>mule-module-jms</artifactId>
+    <groupId>org.mule.connectors</groupId>
+    <artifactId>mule-jms-connector</artifactId>
     <packaging>mule-extension</packaging>
+    <version>1.0.0-SNAPSHOT</version>
 
-    <name>Mule JMS Extension</name>
-    <description>A Mule extension that provides functionality for performing validations</description>
+    <name>Mule JMS Connector</name>
+    <description>Mule connector lets you easily send and receive messages to queues and topics for any message service which implements the JMS specification</description>
 
     <properties>
-        <formatterConfigPath>../../formatter.xml</formatterConfigPath>
-        <springVersion>4.1.6.RELEASE</springVersion>
         <activemq.version>5.14.1</activemq.version>
+        <artemisVersion>1.5.1</artemisVersion>
+        <javaxJmsApiVersion>2.0.1</javaxJmsApiVersion>
+        <commonsIoVersion>2.4</commonsIoVersion>
+        <commonsLangVersion>2.4</commonsLangVersion>
+        <guavaVersion>18.0</guavaVersion>
+        <springVersion>4.1.6.RELEASE</springVersion>
+
+        <formatterConfigPath>formatter.xml</formatterConfigPath>
     </properties>
 
     <dependencies>
@@ -28,7 +35,7 @@
         <dependency>
             <groupId>javax.jms</groupId>
             <artifactId>javax.jms-api</artifactId>
-            <version>2.0.1</version>
+            <version>${javaxJmsApiVersion}</version>
         </dependency>
 
         <dependency>
@@ -85,48 +92,69 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
+            <version>${commonsIoVersion}</version>
         </dependency>
 
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
+            <version>${commonsLangVersion}</version>
         </dependency>
 
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
+            <version>${guavaVersion}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>artemis-server</artifactId>
-            <version>1.5.1</version>
+            <version>${artemisVersion}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>artemis-jms-client</artifactId>
-            <version>1.5.1</version>
+            <version>${artemisVersion}</version>
             <scope>test</scope>
         </dependency>
-
-        <!--TODO: MULE-11030 remove dependency-->
-        <dependency>
-            <groupId>org.mule.services</groupId>
-            <artifactId>mule-service-weave</artifactId>
-            <classifier>mule-service</classifier>
-            <scope>provided</scope>
-        </dependency>
-
-        <!--TODO: MULE-10837 remove dependency-->
-        <dependency>
-            <groupId>org.mule.services</groupId>
-            <artifactId>mule-service-scheduler</artifactId>
-            <version>${project.version}</version>
-            <classifier>mule-service</classifier>
-            <scope>provided</scope>
-        </dependency>
-
     </dependencies>
+
+    <distributionManagement>
+        <downloadUrl>http://www.mulesoft.org/display/MULE/Download</downloadUrl>
+        <repository>
+            <id>mule-releases</id>
+            <name>Mule Release Repository</name>
+            <url>https://repository-master.mulesoft.org/nexus/content/repositories/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>mule-snapshots</id>
+            <name>Mule Snapshot Repository</name>
+            <url>https://repository-master.mulesoft.org/nexus/content/repositories/snapshots</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <repositories>
+        <repository>
+            <id>mule</id>
+            <name>Mule Repository</name>
+            <url>https://repository.mulesoft.org/nexus/content/repositories/public/</url>
+        </repository>
+        <repository>
+            <id>spring-snapshot</id>
+            <name>Spring Snapshot Repository</name>
+            <url>http://repo.spring.io/snapshot/</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>mule-plugin</id>
+            <name>Mule Repository</name>
+            <url>https://repository.mulesoft.org/nexus/content/repositories/public/</url>
+        </pluginRepository>
+    </pluginRepositories>
 </project>

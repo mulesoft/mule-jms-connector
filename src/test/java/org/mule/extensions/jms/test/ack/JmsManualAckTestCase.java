@@ -11,7 +11,7 @@ import static org.mule.extensions.jms.test.JmsMessageStorage.pollMessage;
 import static org.mule.extensions.jms.test.ack.JmsAbstractAckTestCase.Actions.ACK;
 import static org.mule.extensions.jms.test.ack.JmsAbstractAckTestCase.Actions.NOTHING;
 import static org.mule.extensions.jms.test.ack.JmsAbstractAckTestCase.Actions.RECOVER;
-import static org.mule.test.allure.AllureConstants.JmsFeature.JMS_EXTENSION;
+import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
 
 import org.mule.extensions.jms.api.config.AckMode;
 import org.mule.extensions.jms.test.JmsMessageStorage;

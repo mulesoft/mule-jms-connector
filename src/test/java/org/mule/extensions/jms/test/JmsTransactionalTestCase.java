@@ -11,7 +11,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mule.extensions.jms.api.exception.JmsErrors.TIMEOUT;
 import static org.mule.tck.junit4.matcher.ErrorTypeMatcher.errorType;
-import static org.mule.test.allure.AllureConstants.JmsFeature.JMS_EXTENSION;
+import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
 import org.mule.runtime.api.message.Error;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.core.api.Event;

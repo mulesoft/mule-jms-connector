@@ -14,8 +14,8 @@ import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
+import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
 import static org.mule.extensions.jms.test.JmsMessageStorage.cleanUpQueue;
-import static org.mule.test.allure.AllureConstants.JmsFeature.JMS_EXTENSION;
 import static org.slf4j.LoggerFactory.getLogger;
 import org.mule.extensions.jms.api.destination.JmsDestination;
 import org.mule.extensions.jms.api.message.JmsAttributes;
@@ -26,12 +26,12 @@ import org.mule.runtime.api.message.Message;
 import org.mule.tck.junit4.rule.SystemProperty;
 import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 
-import java.util.Map;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.slf4j.Logger;
 import ru.yandex.qatools.allure.annotations.Features;
+
+import java.util.Map;
 
 @Features(JMS_EXTENSION)
 @ArtifactClassLoaderRunnerConfig(testInclusions = {"org.apache.activemq:artemis-jms-client"})

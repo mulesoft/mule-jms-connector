@@ -6,17 +6,17 @@
  */
 package org.mule.extensions.jms.test.queue.integration;
 
-import static org.mule.test.allure.AllureConstants.JmsFeature.JMS_EXTENSION;
 import static java.util.Arrays.asList;
-import static org.junit.runners.Parameterized.*;
+import static org.junit.runners.Parameterized.Parameter;
+import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
 import org.mule.test.runner.RunnerDelegateTo;
-
-import java.util.Collection;
 
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import ru.yandex.qatools.allure.annotations.Features;
 import ru.yandex.qatools.allure.annotations.Stories;
+
+import java.util.Collection;
 
 
 @RunnerDelegateTo(Parameterized.class)

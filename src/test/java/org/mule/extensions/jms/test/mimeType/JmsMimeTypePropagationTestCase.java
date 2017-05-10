@@ -8,7 +8,7 @@ package org.mule.extensions.jms.test.mimeType;
 
 import static org.mule.functional.junit4.matchers.MessageMatchers.hasMediaType;
 import static org.mule.functional.junit4.matchers.MessageMatchers.hasPayload;
-import static org.mule.test.allure.AllureConstants.JmsFeature.JMS_EXTENSION;
+import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
