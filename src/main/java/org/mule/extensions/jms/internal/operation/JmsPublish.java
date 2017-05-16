@@ -7,6 +7,8 @@
 package org.mule.extensions.jms.internal.operation;
 
 import static java.lang.String.format;
+import static org.mule.extensions.jms.internal.common.JmsCommons.QUEUE;
+import static org.mule.extensions.jms.internal.common.JmsCommons.TOPIC;
 import static org.mule.extensions.jms.internal.common.JmsCommons.createJmsSession;
 import static org.mule.extensions.jms.internal.config.InternalAckMode.AUTO;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -69,7 +71,7 @@ public final class JmsPublish {
   public void publish(@Config JmsConfig config, @Connection JmsTransactionalConnection connection,
                       @XmlHints(
                           allowReferences = false) @Summary("The name of the Destination where the Message should be sent") String destination,
-                      @Optional(defaultValue = "QUEUE") @Summary("The type of the Destination") DestinationType destinationType,
+                      @Optional(defaultValue = QUEUE) @Summary("The type of the Destination") DestinationType destinationType,
                       @Summary("A builder for the message that will be published") @ParameterGroup(name = "Message",
                           showInDsl = true) JmsMessageBuilder messageBuilder,
                       @ParameterGroup(name = "Publish Configuration") JmsPublishParameters overrides)
@@ -79,7 +81,7 @@ public final class JmsPublish {
     try {
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug("Begin [publish] on destination [" + destination + "] of type ["
-            + (destinationType.isTopic() ? "TOPIC" : "QUEUE") + "]");
+            + (destinationType.isTopic() ? TOPIC : QUEUE) + "]");
       }
 
       JmsSession session = createJmsSession(connection, AUTO, destinationType.isTopic(), jmsSessionManager);
@@ -88,7 +90,7 @@ public final class JmsPublish {
 
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug(format("Message built, sending message to destination [%s] of type [%s] using session [%s]",
-                            destination, destinationType.isTopic() ? "TOPIC" : "QUEUE", session.get()));
+                            destination, destinationType.isTopic() ? TOPIC : QUEUE, session.get()));
       }
 
       Destination jmsDestination = connection.getJmsSupport()
@@ -99,11 +101,11 @@ public final class JmsPublish {
 
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug(format("Finished [publish] to destination [%s] of type [%s] using session [%s]",
-                            destination, destinationType.isTopic() ? "TOPIC" : "QUEUE", session.get()));
+                            destination, destinationType.isTopic() ? TOPIC : QUEUE, session.get()));
       }
     } catch (Exception e) {
       String msg = format("An error occurred while sending a message to destination [%s] of type [%s]: %s",
-                          destination, destinationType.isTopic() ? "TOPIC" : "QUEUE", e.getMessage());
+                          destination, destinationType.isTopic() ? TOPIC : QUEUE, e.getMessage());
       LOGGER.error(msg, e);
       throw new JmsPublishException(msg, e);
     }

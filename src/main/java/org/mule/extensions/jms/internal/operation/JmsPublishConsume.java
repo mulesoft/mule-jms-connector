@@ -7,6 +7,8 @@
 package org.mule.extensions.jms.internal.operation;
 
 import static java.lang.String.format;
+import static org.mule.extensions.jms.internal.common.JmsCommons.QUEUE;
+import static org.mule.extensions.jms.internal.common.JmsCommons.TOPIC;
 import static org.mule.extensions.jms.internal.common.JmsCommons.evaluateMessageAck;
 import static org.mule.extensions.jms.internal.common.JmsCommons.resolveMessageContentType;
 import static org.mule.extensions.jms.internal.common.JmsCommons.resolveMessageEncoding;
@@ -128,7 +130,7 @@ public class JmsPublishConsume {
         LOGGER.debug(format("Finished [publish] of [publishConsume] to destination [%s] of type [QUEUE] using session [%s]",
                             destination, session.get()));
         LOGGER.debug(format("Preparing for consuming the response from destination [%s] of type [%s].",
-                            destination, replyConsumerType.topic() ? "TOPIC" : "QUEUE"));
+                            destination, replyConsumerType.topic() ? TOPIC : QUEUE));
       }
     } catch (Exception e) {
       String msg = format("An error occurred while sending a message to destination [%s] of type QUEUE: ", destination);
@@ -142,7 +144,7 @@ public class JmsPublishConsume {
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug(format("Waiting for incoming message in destination [%s] of type [%s].",
                             getReplyDestinationName(message.getJMSReplyTo(), replyConsumerType),
-                            replyConsumerType.topic() ? "TOPIC" : "QUEUE"));
+                            replyConsumerType.topic() ? TOPIC : QUEUE));
       }
 
       Message received = consumer.consume(consumeParameters.getMaximumWaitUnit().toMillis(consumeParameters.getMaximumWait()));
@@ -163,7 +165,7 @@ public class JmsPublishConsume {
                                         session.getAckId());
     } catch (Exception e) {
       String msg = format("An error occurred while listening for the reply from destination [%s] of type [%s]: %s",
-                          destination, replyConsumerType.topic() ? "TOPIC" : "QUEUE", e.getMessage());
+                          destination, replyConsumerType.topic() ? TOPIC : QUEUE, e.getMessage());
       LOGGER.error(msg, e);
       throw new JmsConsumeException(msg, e);
     }

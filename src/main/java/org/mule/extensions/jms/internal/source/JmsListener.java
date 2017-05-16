@@ -10,6 +10,8 @@ import static java.lang.String.format;
 import static org.mule.extensions.jms.api.connection.JmsSpecification.JMS_2_0;
 import static org.mule.extensions.jms.internal.common.JmsCommons.EXAMPLE_CONTENT_TYPE;
 import static org.mule.extensions.jms.internal.common.JmsCommons.EXAMPLE_ENCODING;
+import static org.mule.extensions.jms.internal.common.JmsCommons.QUEUE;
+import static org.mule.extensions.jms.internal.common.JmsCommons.TOPIC;
 import static org.mule.extensions.jms.internal.common.JmsCommons.resolveOverride;
 import static org.mule.extensions.jms.internal.common.JmsCommons.toInternalAckMode;
 import static org.mule.extensions.jms.internal.config.InternalAckMode.AUTO;
@@ -79,8 +81,6 @@ import org.slf4j.Logger;
 public class JmsListener extends Source<Object, JmsAttributes> {
 
   private static final Logger LOGGER = getLogger(JmsListener.class);
-  private static final String TOPIC = "TOPIC";
-  private static final String QUEUE = "QUEUE";
   static final String REPLY_TO_DESTINATION_VAR = "REPLY_TO_DESTINATION";
   static final String JMS_LOCK_VAR = "JMS_LOCK";
   static final String JMS_SESSION_VAR = "JMS_SESSION";

@@ -9,6 +9,8 @@ package org.mule.extensions.jms.internal.operation;
 import static java.lang.String.format;
 import static org.mule.extensions.jms.internal.common.JmsCommons.EXAMPLE_CONTENT_TYPE;
 import static org.mule.extensions.jms.internal.common.JmsCommons.EXAMPLE_ENCODING;
+import static org.mule.extensions.jms.internal.common.JmsCommons.QUEUE;
+import static org.mule.extensions.jms.internal.common.JmsCommons.TOPIC;
 import static org.mule.extensions.jms.internal.common.JmsCommons.createJmsSession;
 import static org.mule.extensions.jms.internal.common.JmsCommons.evaluateMessageAck;
 import static org.mule.extensions.jms.internal.common.JmsCommons.resolveMessageContentType;
@@ -108,7 +110,7 @@ public final class JmsConsume {
     try {
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug("Begin [consume] on destination [" + destination + "] of type ["
-            + (consumerType.topic() ? "TOPIC" : "QUEUE") + "]");
+            + (consumerType.topic() ? TOPIC : QUEUE) + "]");
       }
 
       JmsSupport jmsSupport = connection.getJmsSupport();
@@ -120,7 +122,7 @@ public final class JmsConsume {
 
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug("Consuming Message on destination [" + destination + "] of type ["
-            + (consumerType.topic() ? "TOPIC" : "QUEUE") + "]");
+            + (consumerType.topic() ? TOPIC : QUEUE) + "]");
       }
 
       Message received = consumer.consume(maximumWaitUnit.toMillis(maximumWait));
@@ -139,7 +141,7 @@ public final class JmsConsume {
                                         session.getAckId());
     } catch (Exception e) {
       String msg = format("An error occurred while consuming a message from destination [%s] of type [%s]: %s",
-                          destination, consumerType.topic() ? "TOPIC" : "QUEUE", e.getMessage());
+                          destination, consumerType.topic() ? TOPIC : QUEUE, e.getMessage());
       LOGGER.error(msg, e);
       throw new JmsConsumeException(msg, e);
     }

@@ -6,6 +6,7 @@
  */
 package org.mule.extensions.jms.api.destination;
 
+import static org.mule.extensions.jms.internal.common.JmsCommons.QUEUE;
 import org.mule.runtime.extension.api.annotation.dsl.xml.XmlHints;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
@@ -35,7 +36,7 @@ public final class JmsDestination {
    * the type of this destination
    */
   @Parameter
-  @Optional(defaultValue = "QUEUE")
+  @Optional(defaultValue = QUEUE)
   private DestinationType destinationType;
 
 

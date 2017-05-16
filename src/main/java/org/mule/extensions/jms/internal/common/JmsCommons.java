@@ -38,6 +38,8 @@ public final class JmsCommons {
 
   private static final Logger LOGGER = getLogger(JmsCommons.class);
 
+  public static final String TOPIC = "TOPIC";
+  public static final String QUEUE = "QUEUE";
   public static final String EXAMPLE_ENCODING = "UTF-8";
   public static final String EXAMPLE_CONTENT_TYPE = "application/json";
 
