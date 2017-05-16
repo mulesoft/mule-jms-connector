@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 /**
  * Utility class to reuse logic for JMS Extension
  *
- * @since 4.0
+ * @since 1.0
  */
 public final class JmsCommons {
 

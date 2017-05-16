@@ -11,7 +11,7 @@ import org.mule.extensions.jms.internal.JmsExtension;
 /**
  * Versions of the JMS Spec supported by the {@link JmsExtension}
  *
- * @since 4.0
+ * @since 1.0
  */
 public enum JmsSpecification {
   JMS_1_0_2b("1.0.2b"), JMS_1_1("1.1"), JMS_2_0("2.0");

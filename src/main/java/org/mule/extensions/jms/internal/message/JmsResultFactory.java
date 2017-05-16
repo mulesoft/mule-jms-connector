@@ -38,7 +38,7 @@ import java.util.Optional;
 /**
  * Factory class for creating an Operation {@link Result} based on a JMS {@link Message}
  *
- * @since 4.0
+ * @since 1.0
  */
 public class JmsResultFactory {
 

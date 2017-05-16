@@ -11,7 +11,7 @@ import org.mule.extensions.jms.internal.connection.JmsCachingConnectionFactory;
 /**
  * Provides the configuration elements required to configure a {@link JmsCachingConnectionFactory}
  *
- * @since 4.0
+ * @since 1.0
  */
 public interface CachingConfiguration {
 

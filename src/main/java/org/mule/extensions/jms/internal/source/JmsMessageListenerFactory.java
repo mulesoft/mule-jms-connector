@@ -19,7 +19,7 @@ import javax.jms.Message;
 /**
  * Factory pattern implementation in charge of creating instances of {@link JmsMessageListener}
  *
- * @since 4.0
+ * @since 1.0
  */
 final class JmsMessageListenerFactory {
 

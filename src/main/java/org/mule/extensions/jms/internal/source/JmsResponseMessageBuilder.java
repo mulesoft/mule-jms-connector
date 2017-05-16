@@ -8,7 +8,7 @@ package org.mule.extensions.jms.internal.source;
 
 import org.mule.extensions.jms.api.message.JmsMessageBuilder;
 import org.mule.extensions.jms.internal.publish.PublisherParameters;
-import org.mule.runtime.extension.api.annotation.param.Optional;
+import org.mule.runtime.extension.api.annotation.param.ConfigOverride;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
@@ -20,52 +20,52 @@ import javax.jms.Message;
  * Enables the creation of an outgoing {@link Message} along with the response configuration.
  * Users must use this builder to create a message response instance.
  *
- * @since 4.0
+ * @since 1.0
  */
 public class JmsResponseMessageBuilder extends JmsMessageBuilder implements PublisherParameters {
 
   @Parameter
-  @Optional
+  @ConfigOverride
   @Summary("Whether or not the delivery should be done with a persistent configuration")
-  private Boolean persistentDelivery;
+  private boolean persistentDelivery;
 
   @Parameter
-  @Optional
+  @ConfigOverride
   @Summary("The default JMSPriority value to be used when sending the message")
   private Integer priority;
 
   @Parameter
-  @Optional
+  @ConfigOverride
   @Summary("Defines the default time the message will be in the broker before it expires and is discarded")
   private Long timeToLive;
 
   @Parameter
-  @Optional
+  @ConfigOverride
   @Summary("Time unit to be used in the timeToLive configurations")
   private TimeUnit timeToLiveUnit;
 
   @Parameter
-  @Optional
+  @ConfigOverride
   @Summary("If true; the Message will be flagged to avoid generating its MessageID")
-  private Boolean disableMessageId;
+  private boolean disableMessageId;
 
   @Parameter
-  @Optional
+  @ConfigOverride
   @Summary("If true; the Message will be flagged to avoid generating its sent Timestamp")
-  private Boolean disableMessageTimestamp;
+  private boolean disableMessageTimestamp;
 
   // JMS 2.0
   @Parameter
-  @Optional
+  @ConfigOverride
   @Summary("Only used by JMS 2.0. Sets the delivery delay to be applied in order to postpone the Message delivery")
   private Long deliveryDelay;
 
   @Parameter
-  @Optional
+  @ConfigOverride
   @Summary("Time unit to be used in the deliveryDelay configurations")
   private TimeUnit deliveryDelayUnit;
 
-  public Boolean isPersistentDelivery() {
+  public boolean isPersistentDelivery() {
     return persistentDelivery;
   }
 
@@ -81,11 +81,11 @@ public class JmsResponseMessageBuilder extends JmsMessageBuilder implements Publ
     return timeToLiveUnit;
   }
 
-  public Boolean isDisableMessageId() {
+  public boolean isDisableMessageId() {
     return disableMessageId;
   }
 
-  public Boolean isDisableMessageTimestamp() {
+  public boolean isDisableMessageTimestamp() {
     return disableMessageTimestamp;
   }
 

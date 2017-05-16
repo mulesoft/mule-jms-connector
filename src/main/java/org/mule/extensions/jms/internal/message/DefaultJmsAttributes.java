@@ -15,7 +15,7 @@ import org.mule.extensions.jms.api.message.JmsMessageProperties;
 /**
  * Default implementation of {@link JmsAttributes}
  *
- * @since 4.0
+ * @since 1.0
  */
 class DefaultJmsAttributes implements JmsAttributes {
 
@@ -55,7 +55,7 @@ class DefaultJmsAttributes implements JmsAttributes {
 
   /**
    * Builder implementation for creating a {@link JmsAttributes} instance
-   * @since 4.0
+   * @since 1.0
    */
   public static class Builder {
 

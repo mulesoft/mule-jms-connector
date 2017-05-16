@@ -95,7 +95,7 @@ final class DefaultJmsHeaders implements JmsHeaders {
    *
    * {@code true} if the message may have been delivered in the past
    */
-  private Boolean redelivered;
+  private boolean redelivered;
 
   /**
    * Present only in JMS 2.0 Messages
@@ -163,7 +163,7 @@ final class DefaultJmsHeaders implements JmsHeaders {
    * {@inheritDoc}
    */
   @Override
-  public Boolean getJMSRedelivered() {
+  public boolean getJMSRedelivered() {
     return redelivered;
   }
 

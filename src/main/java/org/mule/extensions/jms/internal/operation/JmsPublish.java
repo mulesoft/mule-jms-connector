@@ -40,7 +40,7 @@ import org.slf4j.Logger;
 /**
  * Operation that allows the user to send a message to a JMS {@link Destination}
  *
- * @since 4.0
+ * @since 1.0
  */
 public final class JmsPublish {
 
@@ -76,10 +76,10 @@ public final class JmsPublish {
 
       throws JmsExtensionException {
 
-    JmsProducerConfig producerConfig = config.getProducerConfig();
     try {
       if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Begin publish");
+        LOGGER.debug("Begin [publish] on destination [" + destination + "] of type ["
+            + (destinationType.isTopic() ? "TOPIC" : "QUEUE") + "]");
       }
 
       JmsSession session = createJmsSession(connection, AUTO, destinationType.isTopic(), jmsSessionManager);
@@ -87,21 +87,25 @@ public final class JmsPublish {
       Message message = messageBuilder.build(connection.getJmsSupport(), session.get(), config);
 
       if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug(format("Message built, sending message to [%s] using session [%s]", destination, session.get()));
+        LOGGER.debug(format("Message built, sending message to destination [%s] of type [%s] using session [%s]",
+                            destination, destinationType.isTopic() ? "TOPIC" : "QUEUE", session.get()));
       }
 
       Destination jmsDestination = connection.getJmsSupport()
           .createDestination(session.get(), destination, destinationType.isTopic());
 
       connection.createProducer(session.get(), jmsDestination, destinationType.isTopic())
-          .publish(message, producerConfig, overrides);
+          .publish(message, overrides);
 
       if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Finished publish");
+        LOGGER.debug(format("Finished [publish] to destination [%s] of type [%s] using session [%s]",
+                            destination, destinationType.isTopic() ? "TOPIC" : "QUEUE", session.get()));
       }
     } catch (Exception e) {
-      LOGGER.error(format("An error occurred while sending a message to [%s]: ", destination), e);
-      throw new JmsPublishException(format("An error occurred while sending a message to [%s]: ", destination), e);
+      String msg = format("An error occurred while sending a message to destination [%s] of type [%s]: %s",
+                          destination, destinationType.isTopic() ? "TOPIC" : "QUEUE", e.getMessage());
+      LOGGER.error(msg, e);
+      throw new JmsPublishException(msg, e);
     }
   }
 }

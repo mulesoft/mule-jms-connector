@@ -21,7 +21,7 @@ import javax.jms.Session;
  * Wrapper element for a JMS {@link Session} that relates the
  * session with its AckID
  *
- * @since 4.0
+ * @since 1.0
  */
 public final class JmsSession implements AutoCloseable {
 

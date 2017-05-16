@@ -15,7 +15,7 @@ import javax.naming.NamingException;
 /**
  * Defines a strategy for lookup objects by name using JNDI.
  *
- * @since 4.0
+ * @since 1.0
  */
 public interface JndiNameResolver extends Lifecycle {
 

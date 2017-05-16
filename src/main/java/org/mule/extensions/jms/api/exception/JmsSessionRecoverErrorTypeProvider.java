@@ -17,7 +17,7 @@ import java.util.Set;
 /**
  * Errors that can be thrown in the {@link JmsAcknowledge#recoverSession(String)} operation.
  *
- * @since 4.0
+ * @since 1.0
  */
 public class JmsSessionRecoverErrorTypeProvider implements ErrorTypeProvider {
 

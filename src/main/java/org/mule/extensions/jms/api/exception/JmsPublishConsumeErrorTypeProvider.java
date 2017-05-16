@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
  * {@link JmsPublishConsume#publishConsume(JmsConfig, JmsConnection, String, JmsMessageBuilder, AckMode, long, TimeUnit, JmsPublishParameters, String, String)}
  * operation operation.
  *
- * @since 4.0
+ * @since 1.0
  */
 public class JmsPublishConsumeErrorTypeProvider implements ErrorTypeProvider {
 

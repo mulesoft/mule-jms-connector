@@ -13,11 +13,11 @@ import javax.jms.Message;
 /**
  * Declares the parameters that can override the default values for publishing a {@link Message}
  *
- * @since 4.0
+ * @since 1.0
  */
 public interface PublisherParameters {
 
-  Boolean isPersistentDelivery();
+  boolean isPersistentDelivery();
 
   Integer getPriority();
 
@@ -25,9 +25,9 @@ public interface PublisherParameters {
 
   TimeUnit getTimeToLiveUnit();
 
-  Boolean isDisableMessageId();
+  boolean isDisableMessageId();
 
-  Boolean isDisableMessageTimestamp();
+  boolean isDisableMessageTimestamp();
 
   Long getDeliveryDelay();
 

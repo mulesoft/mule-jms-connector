@@ -15,7 +15,7 @@ import org.mule.runtime.api.metadata.resolving.OutputTypeResolver;
 /**
  * An {@link OutputTypeResolver} for JMS operations
  *
- * @since 4.0
+ * @since 1.0
  */
 public class JmsOutputResolver implements OutputTypeResolver {
 

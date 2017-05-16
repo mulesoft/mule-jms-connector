@@ -20,7 +20,7 @@ import javax.jms.ConnectionFactory;
 /**
  * Common connection parameters for the {@link BaseConnectionProvider}
  *
- * @since 4.0
+ * @since 1.0
  */
 public class GenericConnectionParameters {
 

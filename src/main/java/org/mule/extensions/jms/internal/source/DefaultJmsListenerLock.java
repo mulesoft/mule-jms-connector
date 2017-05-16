@@ -16,7 +16,7 @@ import java.util.concurrent.Semaphore;
  * Default implementation of {@link JmsListenerLock} based in the usage of {@link Semaphore} to support
  * the capability of locking and unlocking the listener from different {@link Thread threads}
  *
- * @since 4.0
+ * @since 1.0
  * @see JmsListenerLock
  * @see JmsListener
  */

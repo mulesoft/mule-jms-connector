@@ -15,7 +15,7 @@ import javax.jms.Queue;
  * Implementation of {@link ConsumerType} that marks the consumed {@link Destination}
  * as a {@link Queue}.
  *
- * @since 4.0
+ * @since 1.0
  */
 @Alias("queue-consumer")
 public final class QueueConsumer implements ConsumerType {

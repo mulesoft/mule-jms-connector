@@ -29,7 +29,7 @@ import org.springframework.jms.connection.CachingConnectionFactory;
  * Applies only if the supplied connection factory isn't already an instance of {@link CachingConnectionFactory}
  * NOTE: Currently only Non-XA JMS {@link javax.jms.ConnectionFactory}'s will be decorated to provide caching.
  *
- * @since 4.0
+ * @since 1.0
  */
 public class JmsCachingConnectionFactory extends CachingConnectionFactory implements Stoppable, Disposable {
 

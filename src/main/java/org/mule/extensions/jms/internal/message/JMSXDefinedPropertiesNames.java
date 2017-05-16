@@ -14,7 +14,7 @@ import java.util.List;
  * Declaration of the predefined names for JMSX properties,
  * according to JMS spec.
  *
- * @since 4.0
+ * @since 1.0
  */
 public class JMSXDefinedPropertiesNames {
 

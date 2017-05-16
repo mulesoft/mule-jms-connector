@@ -17,7 +17,7 @@ import org.mule.runtime.api.lifecycle.InitialisationException;
  * instance opened all the time and always relies on the context to do the look
  * ups.
  *
- * @since 4.0
+ * @since 1.0
  */
 public final class SimpleJndiNameResolver extends AbstractJndiNameResolver {
 

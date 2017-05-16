@@ -13,7 +13,7 @@ import javax.jms.Topic;
 /**
  * Type identifier for a {@link Destination}.
  *
- * @since 4.0
+ * @since 1.0
  */
 public enum DestinationType {
 

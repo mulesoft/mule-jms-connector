@@ -13,7 +13,7 @@ import javax.jms.Destination;
 /**
  * Custom Exception thrown when the extension was not able to create a given {@link Destination}
  *
- * @since 4.0
+ * @since 1.0
  */
 public final class DestinationNotFoundException extends JmsExtensionException {
 

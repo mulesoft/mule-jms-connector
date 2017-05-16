@@ -16,7 +16,7 @@ import javax.jms.Message;
  * the Properties and the required ID for performing an ACK on the Message.
  * <p>
  *
- * @since 4.0
+ * @since 1.0
  */
 public interface JmsAttributes extends Attributes {
 

@@ -22,7 +22,7 @@ import javax.jms.Session;
  *     <li><b>NONE</b>: Mule automatically ACKs the message upon reception. </li>
  * </ul>
  *
- *  @since 4.0
+ *  @since 1.0
  */
 public enum AckMode implements JmsAckMode {
 

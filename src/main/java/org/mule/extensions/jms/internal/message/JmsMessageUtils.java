@@ -47,7 +47,7 @@ import javax.jms.TextMessage;
  * <code>JmsMessageUtils</code> contains helper method for dealing with JMS
  * messages in Mule.
  *
- * @since 4.0
+ * @since 1.0
  */
 public class JmsMessageUtils {
 

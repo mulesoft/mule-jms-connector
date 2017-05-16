@@ -19,7 +19,7 @@ import javax.jms.Message;
  * those that are used by the JMS broker or provider (known as plain JMS properties),
  * and finally the ones provided by the User who created the {@link Message}.
  *
- * @since 4.0
+ * @since 1.0
  */
 public interface JmsMessageProperties {
 

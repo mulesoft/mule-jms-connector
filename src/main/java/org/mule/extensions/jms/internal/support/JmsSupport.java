@@ -32,7 +32,7 @@ import javax.jms.TopicSession;
  * the JMS 1.0.2b, 1.1 and 2.0 API specifications. this interface is not intended for
  * general purpose use and should only be used with the Mule JMS connector.
  *
- * @since 4.0
+ * @since 1.0
  */
 public interface JmsSupport {
 

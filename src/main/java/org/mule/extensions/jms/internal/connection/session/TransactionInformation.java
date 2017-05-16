@@ -11,7 +11,7 @@ import org.mule.extensions.jms.internal.connection.JmsSession;
 /**
  * Object to save the information about the current transaction.
  *
- * @since 4.0
+ * @since 1.0
  */
 final class TransactionInformation {
 

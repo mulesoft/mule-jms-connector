@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * <code>Jms102bSupport</code> is a template class to provide an abstraction
  * to to the Jms 1.0.2b api specification.
  *
- * @since 4.0
+ * @since 1.0
  */
 public class Jms102bSupport extends Jms11Support {
 

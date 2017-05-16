@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * a default {@link ActiveMQConnectionFactory} and how to configure it using the given
  * {@link ActiveMQConnectionFactoryConfiguration}
  *
- * @since 4.0
+ * @since 1.0
  */
 @ExclusiveOptionals
 public class ActiveMQConnectionFactoryProvider {

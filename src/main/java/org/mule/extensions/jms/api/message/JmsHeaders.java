@@ -14,7 +14,7 @@ import javax.jms.DeliveryMode;
  * JMS header fields contain values used by both clients and providers to identify and route messages.
  * A message's complete header is transmitted to all JMS clients that receive the message.
  *
- * @since 4.0
+ * @since 1.0
  */
 public interface JmsHeaders {
 
@@ -111,6 +111,6 @@ public interface JmsHeaders {
    *
    * @return {@code true} if the message may have been delivered in the past
    */
-  Boolean getJMSRedelivered();
+  boolean getJMSRedelivered();
 
 }

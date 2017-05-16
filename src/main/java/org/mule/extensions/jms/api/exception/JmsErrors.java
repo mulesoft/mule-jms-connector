@@ -14,7 +14,7 @@ import java.util.Optional;
 /**
  * Errors for the JMS extension
  * 
- * @since 4.0
+ * @since 1.0
  */
 public enum JmsErrors implements ErrorTypeDefinition<JmsErrors> {
 

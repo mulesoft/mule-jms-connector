@@ -18,7 +18,7 @@ import javax.jms.Destination;
  * Representation of a {@link Destination} that contains it's identifier name
  * and kind of Destination
  *
- * @since 4.0
+ * @since 1.0
  */
 public final class JmsDestination {
 

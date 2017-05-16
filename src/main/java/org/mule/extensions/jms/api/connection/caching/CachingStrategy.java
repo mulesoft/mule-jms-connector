@@ -15,7 +15,7 @@ import javax.jms.Session;
 /**
  * Defines the strategy to be used for caching of {@link Session}s and {@link Connection}s
  *
- * @since 4.0
+ * @since 1.0
  */
 public interface CachingStrategy {
 

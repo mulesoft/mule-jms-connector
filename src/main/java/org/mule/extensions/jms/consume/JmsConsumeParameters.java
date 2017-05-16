@@ -9,7 +9,6 @@ package org.mule.extensions.jms.consume;
 import static org.mule.extensions.jms.internal.common.JmsCommons.EXAMPLE_CONTENT_TYPE;
 import static org.mule.extensions.jms.internal.common.JmsCommons.EXAMPLE_ENCODING;
 import org.mule.extensions.jms.api.config.ConsumerAckMode;
-import org.mule.runtime.extension.api.annotation.dsl.xml.XmlHints;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
@@ -24,9 +23,8 @@ import javax.jms.Message;
  * Contains the parameters that can override the default values for
  * publishing a {@link Message}
  *
- * @since 4.0
+ * @since 1.0
  */
-@XmlHints(allowTopLevelDefinition = true)
 public class JmsConsumeParameters {
 
   @Parameter

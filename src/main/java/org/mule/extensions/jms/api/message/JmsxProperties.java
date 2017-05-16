@@ -34,7 +34,7 @@ import javax.jms.Message;
  * like any other absent property.
  *
  *
- * @since 4.0
+ * @since 1.0
  */
 public final class JmsxProperties {
 

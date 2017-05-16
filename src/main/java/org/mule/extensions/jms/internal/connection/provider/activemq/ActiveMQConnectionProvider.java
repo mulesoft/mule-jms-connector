@@ -29,7 +29,7 @@ import org.slf4j.Logger;
 /**
  * A {@link ConnectionProvider} that contains custom logic to handle ActiveMQ connections in particular
  *
- * @since 4.0
+ * @since 1.0
  */
 @Alias("active-mq")
 public class ActiveMQConnectionProvider extends BaseConnectionProvider {

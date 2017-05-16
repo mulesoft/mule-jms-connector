@@ -35,7 +35,7 @@ import org.slf4j.Logger;
  * {@link MessageListener} for the {@link JmsListener} to subscribe to a TOPIC or QUEUE receives {@link Message} and
  * dispatch those messages through the flow.
  *
- * @since 4.0
+ * @since 1.0
  */
 public final class JmsMessageListener implements MessageListener {
 

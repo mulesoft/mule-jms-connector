@@ -24,6 +24,7 @@ import org.mule.extensions.jms.internal.support.JmsSupport;
 import org.mule.runtime.api.metadata.DataType;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.extension.api.annotation.dsl.xml.XmlHints;
+import org.mule.runtime.extension.api.annotation.param.ConfigOverride;
 import org.mule.runtime.extension.api.annotation.param.Content;
 import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
@@ -46,7 +47,7 @@ import org.slf4j.Logger;
  * Enables the creation of an outgoing {@link Message}.
  * Users must use this builder to create a message instance.
  *
- * @since 4.0
+ * @since 1.0
  */
 public class JmsMessageBuilder {
 
@@ -67,7 +68,7 @@ public class JmsMessageBuilder {
    * The JMSType header of the {@link Message}
    */
   @Parameter
-  @Optional
+  @ConfigOverride
   @Summary("The JMSType identifier header of the Message")
   private String jmsType;
 
@@ -159,7 +160,7 @@ public class JmsMessageBuilder {
     Message message = toMessage(body.getValue(), session);
 
     setJmsCorrelationIdHeader(message);
-    setJmsTypeHeader(config.getProducerConfig(), message);
+    setJmsTypeHeader(message);
     setJmsReplyToHeader(jmsSupport, session, message, replyTo);
 
     setJmsxProperties(message);
@@ -236,11 +237,10 @@ public class JmsMessageBuilder {
     }
   }
 
-  private void setJmsTypeHeader(JmsProducerConfig config, Message message) {
+  private void setJmsTypeHeader(Message message) {
     try {
-      String type = resolveOverride(config.getJmsType(), jmsType);
-      if (!isBlank(type)) {
-        message.setJMSType(type);
+      if (!isBlank(jmsType)) {
+        message.setJMSType(jmsType);
       }
     } catch (JMSException e) {
       LOGGER.error("An error occurred while setting the JMSType property: %s", e);
