@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
  * Provides a {@link JndiNameResolver} or the set of properties required to
  * create one, represented by {@link JndiNameResolverProperties}
  *
- * @since 4.0
+ * @since 1.0
  */
 @ExclusiveOptionals(isOneRequired = true)
 public final class JndiNameResolverProvider {

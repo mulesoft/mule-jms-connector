@@ -15,7 +15,7 @@ import org.apache.activemq.ActiveMQConnectionFactory;
  * Generic {@link JmsExtensionException} thrown by the {@link ActiveMQConnectionProvider}
  * when an error occurs related to an {@link ActiveMQConnectionFactory}
  *
- * @since 4.0
+ * @since 1.0
  */
 public class ActiveMQException extends JmsExtensionException {
 

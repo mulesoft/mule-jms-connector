@@ -13,8 +13,6 @@ import org.mule.extensions.jms.internal.connection.JmsSession;
 import org.mule.extensions.jms.internal.source.JmsListener;
 import org.mule.extensions.jms.internal.source.JmsListenerLock;
 
-import org.slf4j.Logger;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -23,12 +21,14 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
 
+import org.slf4j.Logger;
+
 /**
  * Manager that takes the responsibility of register the session information to be able to execute a manual
  * acknowledgement or a recover over a {@link Session}.
  * This is used when the {@link InternalAckMode} is configured in {@link InternalAckMode#MANUAL}
  *
- * @since 4.0
+ * @since 1.0
  */
 final public class JmsSessionManager {
 

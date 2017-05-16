@@ -7,6 +7,8 @@
 package org.mule.extensions.jms.internal.operation;
 
 import static java.lang.String.format;
+import static org.mule.extensions.jms.internal.common.JmsCommons.QUEUE;
+import static org.mule.extensions.jms.internal.common.JmsCommons.TOPIC;
 import static org.mule.extensions.jms.internal.common.JmsCommons.createJmsSession;
 import static org.mule.extensions.jms.internal.config.InternalAckMode.AUTO;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -40,7 +42,7 @@ import org.slf4j.Logger;
 /**
  * Operation that allows the user to send a message to a JMS {@link Destination}
  *
- * @since 4.0
+ * @since 1.0
  */
 public final class JmsPublish {
 
@@ -69,17 +71,17 @@ public final class JmsPublish {
   public void publish(@Config JmsConfig config, @Connection JmsTransactionalConnection connection,
                       @XmlHints(
                           allowReferences = false) @Summary("The name of the Destination where the Message should be sent") String destination,
-                      @Optional(defaultValue = "QUEUE") @Summary("The type of the Destination") DestinationType destinationType,
+                      @Optional(defaultValue = QUEUE) @Summary("The type of the Destination") DestinationType destinationType,
                       @Summary("A builder for the message that will be published") @ParameterGroup(name = "Message",
                           showInDsl = true) JmsMessageBuilder messageBuilder,
                       @ParameterGroup(name = "Publish Configuration") JmsPublishParameters overrides)
 
       throws JmsExtensionException {
 
-    JmsProducerConfig producerConfig = config.getProducerConfig();
     try {
       if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Begin publish");
+        LOGGER.debug("Begin [publish] on destination [" + destination + "] of type ["
+            + (destinationType.isTopic() ? TOPIC : QUEUE) + "]");
       }
 
       JmsSession session = createJmsSession(connection, AUTO, destinationType.isTopic(), jmsSessionManager);
@@ -87,21 +89,25 @@ public final class JmsPublish {
       Message message = messageBuilder.build(connection.getJmsSupport(), session.get(), config);
 
       if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug(format("Message built, sending message to [%s] using session [%s]", destination, session.get()));
+        LOGGER.debug(format("Message built, sending message to destination [%s] of type [%s] using session [%s]",
+                            destination, destinationType.isTopic() ? TOPIC : QUEUE, session.get()));
       }
 
       Destination jmsDestination = connection.getJmsSupport()
           .createDestination(session.get(), destination, destinationType.isTopic());
 
       connection.createProducer(session.get(), jmsDestination, destinationType.isTopic())
-          .publish(message, producerConfig, overrides);
+          .publish(message, overrides);
 
       if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Finished publish");
+        LOGGER.debug(format("Finished [publish] to destination [%s] of type [%s] using session [%s]",
+                            destination, destinationType.isTopic() ? TOPIC : QUEUE, session.get()));
       }
     } catch (Exception e) {
-      LOGGER.error(format("An error occurred while sending a message to [%s]: ", destination), e);
-      throw new JmsPublishException(format("An error occurred while sending a message to [%s]: ", destination), e);
+      String msg = format("An error occurred while sending a message to destination [%s] of type [%s]: %s",
+                          destination, destinationType.isTopic() ? TOPIC : QUEUE, e.getMessage());
+      LOGGER.error(msg, e);
+      throw new JmsPublishException(msg, e);
     }
   }
 }

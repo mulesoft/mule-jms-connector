@@ -10,10 +10,8 @@ import static java.lang.String.format;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.mule.extensions.jms.api.connection.JmsSpecification.JMS_2_0;
-import static org.mule.extensions.jms.internal.common.JmsCommons.resolveOverride;
 import static org.mule.runtime.api.util.Preconditions.checkArgument;
 import static org.slf4j.LoggerFactory.getLogger;
-import org.mule.extensions.jms.api.config.JmsProducerConfig;
 import org.mule.extensions.jms.internal.support.JmsSupport;
 
 import java.util.Optional;
@@ -28,7 +26,7 @@ import org.slf4j.Logger;
 /**
  * Wrapper implementation of a JMS {@link MessageProducer}
  *
- * @since 4.0
+ * @since 1.0
  */
 public final class JmsMessageProducer implements AutoCloseable {
 
@@ -47,21 +45,15 @@ public final class JmsMessageProducer implements AutoCloseable {
     this.isTopic = isTopic;
   }
 
-  public void publish(Message message, JmsProducerConfig config, PublisherParameters overrides)
+  public void publish(Message message, PublisherParameters overrides)
       throws JMSException {
 
-    java.util.Optional<Long> delay = resolveDeliveryDelay(config, overrides.getDeliveryDelay(), overrides.getDeliveryDelayUnit());
-    Boolean disableMessageId = resolveOverride(config.isDisableMessageId(), overrides.isDisableMessageId());
-    Boolean disableMessageTimestamp =
-        resolveOverride(config.isDisableMessageTimestamp(), overrides.isDisableMessageTimestamp());
-    Boolean persistentDelivery = resolveOverride(config.isPersistentDelivery(), overrides.isPersistentDelivery());
-    Integer priority = resolveOverride(config.getPriority(), overrides.getPriority());
-    long timeToLive = resolveOverride(config.getTimeToLiveUnit(), overrides.getTimeToLiveUnit())
-        .toMillis(resolveOverride(config.getTimeToLive(), overrides.getTimeToLive()));
+    java.util.Optional<Long> delay = resolveDeliveryDelay(overrides.getDeliveryDelay(), overrides.getDeliveryDelayUnit());
+    long timeToLive = overrides.getTimeToLiveUnit().toMillis(overrides.getTimeToLive());
 
-    configureProducer(delay, disableMessageId, disableMessageTimestamp);
+    configureProducer(delay, overrides.isDisableMessageId(), overrides.isDisableMessageTimestamp());
 
-    jmsSupport.send(producer, message, persistentDelivery, priority, timeToLive, isTopic);
+    jmsSupport.send(producer, message, overrides.isPersistentDelivery(), overrides.getPriority(), timeToLive, isTopic);
   }
 
   @Override
@@ -72,17 +64,11 @@ public final class JmsMessageProducer implements AutoCloseable {
     producer.close();
   }
 
-  private java.util.Optional<Long> resolveDeliveryDelay(JmsProducerConfig config, Long deliveryDelay, TimeUnit unit) {
-    Long delay = resolveOverride(config.getDeliveryDelay(), deliveryDelay);
-    TimeUnit delayUnit = resolveOverride(config.getDeliveryDelayUnit(), unit);
-
+  private java.util.Optional<Long> resolveDeliveryDelay(Long delay, TimeUnit delayUnit) {
     checkArgument(jmsSupport.getSpecification().equals(JMS_2_0) || delay == null,
-                  format("[deliveryDelay] is only supported on JMS 2.0 specification,"
-                      + " but current configuration is set to JMS %s", jmsSupport.getSpecification().getName()));
-    if (delay != null) {
-      return of(delayUnit.toMillis(delay));
-    }
-    return empty();
+                  format("[deliveryDelay] is only supported on [JMS 2.0] specification,"
+                      + " but current configuration is set to [JMS %s]", jmsSupport.getSpecification().getName()));
+    return delay != null ? of(delayUnit.toMillis(delay)) : empty();
   }
 
   private void configureProducer(Optional<Long> deliveryDelay, boolean dissableId, boolean dissableTimeStamp)
@@ -97,7 +83,7 @@ public final class JmsMessageProducer implements AutoCloseable {
     try {
       producer.setDeliveryDelay(value);
     } catch (JMSException e) {
-      LOGGER.error("Failed to configure [setDeliveryDelay] in MessageProducer: ", e);
+      LOGGER.error("Failed to configure [setDeliveryDelay] in MessageProducer: " + e.getMessage(), e);
     }
   }
 
@@ -105,7 +91,7 @@ public final class JmsMessageProducer implements AutoCloseable {
     try {
       producer.setDisableMessageID(value);
     } catch (JMSException e) {
-      LOGGER.error("Failed to configure [setDisableMessageID] in MessageProducer: ", e);
+      LOGGER.error("Failed to configure [setDisableMessageID] in MessageProducer: " + e.getMessage(), e);
     }
   }
 
@@ -113,7 +99,7 @@ public final class JmsMessageProducer implements AutoCloseable {
     try {
       producer.setDisableMessageTimestamp(value);
     } catch (JMSException e) {
-      LOGGER.error("Failed to configure [setDisableMessageTimestamp] in MessageProducer: ", e);
+      LOGGER.error("Failed to configure [setDisableMessageTimestamp] in MessageProducer: " + e.getMessage(), e);
     }
   }
 

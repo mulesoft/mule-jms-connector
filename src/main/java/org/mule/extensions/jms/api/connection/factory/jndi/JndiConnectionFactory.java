@@ -34,7 +34,7 @@ import org.springframework.jms.connection.DelegatingConnectionFactory;
  * A {@link ConnectionFactory} that wraps a {@link ConnectionFactory delegate}
  * that is discovered using a {@link JndiNameResolver}
  *
- * @since 4.0
+ * @since 1.0
  */
 public final class JndiConnectionFactory extends DelegatingConnectionFactory implements Lifecycle {
 

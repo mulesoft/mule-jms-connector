@@ -10,7 +10,7 @@ package org.mule.extensions.jms.internal.config;
  * Interface to be implemented in enums representing Acknowledgement modes and give their representation in
  * the {@link InternalAckMode}
  *
- * @since 4.0
+ * @since 1.0
  */
 public interface JmsAckMode {
 

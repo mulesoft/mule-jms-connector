@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
  * <code>Jms11Support</code> is a template class to provide an abstraction to to
  * the JMS 1.1 API specification.
  *
- * @since 4.0
+ * @since 1.0
  */
 public class Jms11Support extends Jms20Support {
 

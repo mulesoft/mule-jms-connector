@@ -9,6 +9,8 @@ package org.mule.extensions.jms.internal.operation;
 import static java.lang.String.format;
 import static org.mule.extensions.jms.internal.common.JmsCommons.EXAMPLE_CONTENT_TYPE;
 import static org.mule.extensions.jms.internal.common.JmsCommons.EXAMPLE_ENCODING;
+import static org.mule.extensions.jms.internal.common.JmsCommons.QUEUE;
+import static org.mule.extensions.jms.internal.common.JmsCommons.TOPIC;
 import static org.mule.extensions.jms.internal.common.JmsCommons.createJmsSession;
 import static org.mule.extensions.jms.internal.common.JmsCommons.evaluateMessageAck;
 import static org.mule.extensions.jms.internal.common.JmsCommons.resolveMessageContentType;
@@ -37,6 +39,7 @@ import org.mule.runtime.extension.api.annotation.dsl.xml.XmlHints;
 import org.mule.runtime.extension.api.annotation.error.Throws;
 import org.mule.runtime.extension.api.annotation.metadata.OutputResolver;
 import org.mule.runtime.extension.api.annotation.param.Config;
+import org.mule.runtime.extension.api.annotation.param.ConfigOverride;
 import org.mule.runtime.extension.api.annotation.param.Connection;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
@@ -55,7 +58,7 @@ import org.slf4j.Logger;
 /**
  * Operation that allows the user to consume a single {@link Message} from a given {@link Destination}
  *
- * @since 4.0
+ * @since 1.0
  */
 public final class JmsConsume {
 
@@ -86,29 +89,28 @@ public final class JmsConsume {
    */
   @OutputResolver(output = JmsOutputResolver.class)
   @Throws(JmsConsumeErrorTypeProvider.class)
-  public Result<Object, JmsAttributes> consume(@Connection JmsTransactionalConnection connection, @Config JmsConfig config,
+  public Result<Object, JmsAttributes> consume(@Config JmsConfig config,
+                                               @Connection JmsTransactionalConnection connection,
                                                @XmlHints(
                                                    allowReferences = false) @Summary("The name of the Destination from where the Message should be consumed") String destination,
-                                               @Optional @Summary("The Type of the Consumer that should be used for the provided destination") ConsumerType consumerType,
+                                               @ConfigOverride @Summary("The Type of the Consumer that should be used for the provided destination") ConsumerType consumerType,
                                                @Optional @Summary("The Session ACK mode to use when consuming a message") ConsumerAckMode ackMode,
-                                               @Optional @Summary("JMS selector to be used for filtering incoming messages") String selector,
+                                               @ConfigOverride @Summary("The JMS selector to be used for filtering incoming messages") String selector,
                                                @Optional @Summary("The content type of the message body") @Example(EXAMPLE_CONTENT_TYPE) String contentType,
                                                @Optional @Summary("The encoding of the message body") @Example(EXAMPLE_ENCODING) String encoding,
                                                @Optional(
                                                    defaultValue = "10000") @Summary("Maximum time to wait for a message to arrive before timeout") Long maximumWait,
                                                @Optional(
-                                                   defaultValue = "MILLISECONDS") @Summary("Time unit to be used in the maximumWaitTime configuration") TimeUnit maximumWaitUnit)
+                                                   defaultValue = "MILLISECONDS") @Example("MILLISECONDS") @Summary("Time unit to be used in the maximumWaitTime configuration") TimeUnit maximumWaitUnit)
       throws JmsExtensionException {
 
-    JmsConsumerConfig consumerConfig = config.getConsumerConfig();
-
-    InternalAckMode resolvedAckMode = resolveOverride(toInternalAckMode(consumerConfig.getAckMode()), toInternalAckMode(ackMode));
-    consumerType = resolveOverride(consumerConfig.getConsumerType(), consumerType);
-    selector = resolveOverride(consumerConfig.getSelector(), selector);
+    InternalAckMode resolvedAckMode = resolveOverride(toInternalAckMode(config.getConsumerConfig().getAckMode()),
+                                                      toInternalAckMode(ackMode));
 
     try {
       if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Begin Consume");
+        LOGGER.debug("Begin [consume] on destination [" + destination + "] of type ["
+            + (consumerType.topic() ? TOPIC : QUEUE) + "]");
       }
 
       JmsSupport jmsSupport = connection.getJmsSupport();
@@ -119,7 +121,8 @@ public final class JmsConsume {
       JmsMessageConsumer consumer = connection.createConsumer(session.get(), jmsDestination, selector, consumerType);
 
       if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Consuming Message");
+        LOGGER.debug("Consuming Message on destination [" + destination + "] of type ["
+            + (consumerType.topic() ? TOPIC : QUEUE) + "]");
       }
 
       Message received = consumer.consume(maximumWaitUnit.toMillis(maximumWait));
@@ -137,8 +140,8 @@ public final class JmsConsume {
                                         contentType, encoding,
                                         session.getAckId());
     } catch (Exception e) {
-      String msg = format("An error occurred while consuming a message from destination [%s] of type [%s]: ",
-                          destination, consumerType.topic() ? "TOPIC" : "QUEUE");
+      String msg = format("An error occurred while consuming a message from destination [%s] of type [%s]: %s",
+                          destination, consumerType.topic() ? TOPIC : QUEUE, e.getMessage());
       LOGGER.error(msg, e);
       throw new JmsConsumeException(msg, e);
     }

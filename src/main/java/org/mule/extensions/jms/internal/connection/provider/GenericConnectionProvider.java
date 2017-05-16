@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * Generic implementation of a JMS {@link ConnectionProvider}.
  * This provider uses any {@link ConnectionFactory} that the user configures in order to create a {@link JmsConnection}.
  *
- * @since 4.0
+ * @since 1.0
  */
 @Alias("generic")
 public class GenericConnectionProvider extends BaseConnectionProvider {

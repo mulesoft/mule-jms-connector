@@ -24,7 +24,7 @@ import org.springframework.jms.connection.CachingConnectionFactory;
  * Default implementation of {@link CachingConfiguration} that not only enables caching
  * but also provides default values for all the configurable parameters
  *
- * @since 4.0
+ * @since 1.0
  */
 @Alias("default-caching")
 public final class DefaultCachingStrategy implements CachingStrategy, CachingConfiguration {

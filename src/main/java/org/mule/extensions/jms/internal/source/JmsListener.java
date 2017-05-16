@@ -10,6 +10,8 @@ import static java.lang.String.format;
 import static org.mule.extensions.jms.api.connection.JmsSpecification.JMS_2_0;
 import static org.mule.extensions.jms.internal.common.JmsCommons.EXAMPLE_CONTENT_TYPE;
 import static org.mule.extensions.jms.internal.common.JmsCommons.EXAMPLE_ENCODING;
+import static org.mule.extensions.jms.internal.common.JmsCommons.QUEUE;
+import static org.mule.extensions.jms.internal.common.JmsCommons.TOPIC;
 import static org.mule.extensions.jms.internal.common.JmsCommons.resolveOverride;
 import static org.mule.extensions.jms.internal.common.JmsCommons.toInternalAckMode;
 import static org.mule.extensions.jms.internal.config.InternalAckMode.AUTO;
@@ -43,6 +45,7 @@ import org.mule.runtime.extension.api.annotation.execution.OnError;
 import org.mule.runtime.extension.api.annotation.execution.OnSuccess;
 import org.mule.runtime.extension.api.annotation.metadata.MetadataScope;
 import org.mule.runtime.extension.api.annotation.param.Config;
+import org.mule.runtime.extension.api.annotation.param.ConfigOverride;
 import org.mule.runtime.extension.api.annotation.param.Connection;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
@@ -70,7 +73,7 @@ import org.slf4j.Logger;
  * JMS Subscriber for {@link Destination}s, allows to listen
  * for incoming {@link Message}s
  *
- * @since 4.0
+ * @since 1.0
  */
 @Alias("listener")
 @EmitsResponse
@@ -78,8 +81,6 @@ import org.slf4j.Logger;
 public class JmsListener extends Source<Object, JmsAttributes> {
 
   private static final Logger LOGGER = getLogger(JmsListener.class);
-  private static final String TOPIC = "TOPIC";
-  private static final String QUEUE = "QUEUE";
   static final String REPLY_TO_DESTINATION_VAR = "REPLY_TO_DESTINATION";
   static final String JMS_LOCK_VAR = "JMS_LOCK";
   static final String JMS_SESSION_VAR = "JMS_SESSION";
@@ -115,7 +116,7 @@ public class JmsListener extends Source<Object, JmsAttributes> {
    * The Type of the Consumer that should be used for the provided destination
    */
   @Parameter
-  @Optional
+  @ConfigOverride
   private ConsumerType consumerType;
 
   /**
@@ -129,7 +130,7 @@ public class JmsListener extends Source<Object, JmsAttributes> {
    * JMS selector to be used for filtering incoming messages
    */
   @Parameter
-  @Optional
+  @ConfigOverride
   private String selector;
 
   /**
@@ -177,8 +178,6 @@ public class JmsListener extends Source<Object, JmsAttributes> {
         ? TRANSACTED
         : resolveOverride(toInternalAckMode(consumerConfig.getAckMode()), toInternalAckMode(ackMode));
 
-    selector = resolveOverride(consumerConfig.getSelector(), selector);
-    consumerType = resolveOverride(config.getConsumerConfig().getConsumerType(), consumerType);
     jmsSupport = connection.getJmsSupport();
 
     JmsMessageListenerFactory messageListenerFactory =
@@ -276,7 +275,7 @@ public class JmsListener extends Source<Object, JmsAttributes> {
 
       JmsSession replySession = connection.createSession(AUTO, replyToTopic);
       connection.createProducer(replySession.get(), replyTo, replyToTopic)
-          .publish(message, config.getProducerConfig(), messageBuilder);
+          .publish(message, messageBuilder);
 
     } catch (Exception e) {
       LOGGER.error("An error occurred during reply: ", e);

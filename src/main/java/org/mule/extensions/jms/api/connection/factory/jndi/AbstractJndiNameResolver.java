@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 /**
  * Base class for implementing a custom {@link JndiNameResolver}
  *
- * @since 4.0
+ * @since 1.0
  */
 abstract class AbstractJndiNameResolver implements JndiNameResolver {
 

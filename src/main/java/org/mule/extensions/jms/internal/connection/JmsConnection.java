@@ -42,7 +42,7 @@ import javax.jms.TopicSession;
 /**
  * A Connection for the JmsExtension
  *
- * @since 4.0
+ * @since 1.0
  */
 public class JmsConnection implements Stoppable, Disposable {
 

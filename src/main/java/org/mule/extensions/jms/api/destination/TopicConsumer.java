@@ -23,7 +23,7 @@ import javax.jms.Topic;
  * Implementation of {@link ConsumerType} that marks the consumed {@link Destination}
  * as a {@link Topic} and provides a way to configure topic-specific consumer parameters
  *
- * @since 4.0
+ * @since 1.0
  */
 @Alias("topic-consumer")
 public final class TopicConsumer implements ConsumerType, Initialisable {

@@ -7,6 +7,8 @@
 package org.mule.extensions.jms.internal.operation;
 
 import static java.lang.String.format;
+import static org.mule.extensions.jms.internal.common.JmsCommons.QUEUE;
+import static org.mule.extensions.jms.internal.common.JmsCommons.TOPIC;
 import static org.mule.extensions.jms.internal.common.JmsCommons.evaluateMessageAck;
 import static org.mule.extensions.jms.internal.common.JmsCommons.resolveMessageContentType;
 import static org.mule.extensions.jms.internal.common.JmsCommons.resolveMessageEncoding;
@@ -57,7 +59,7 @@ import org.slf4j.Logger;
  * Operation that allows the user to send a message to a JMS {@link Destination} and waits for a response
  * either to the provided {@code ReplyTo} destination or to a temporary {@link Destination} created dynamically
  *
- * @since 4.0
+ * @since 1.0
  */
 public class JmsPublishConsume {
 
@@ -102,13 +104,12 @@ public class JmsPublishConsume {
     JmsSession session;
     Message message;
     ConsumerType replyConsumerType;
-    InternalAckMode resolvedAckMode = resolveOverride(
-                                                      toInternalAckMode(config.getConsumerConfig().getAckMode()),
+    InternalAckMode resolvedAckMode = resolveOverride(toInternalAckMode(config.getConsumerConfig().getAckMode()),
                                                       toInternalAckMode(consumeParameters.getAckMode()));
 
     try {
       if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Begin publish");
+        LOGGER.debug("Begin [publish] of [publishConsume] on destination [" + destination + "] of type [QUEUE]");
       }
 
       JmsSupport jmsSupport = connection.getJmsSupport();
@@ -118,15 +119,18 @@ public class JmsPublishConsume {
       replyConsumerType = setReplyDestination(messageBuilder, session, jmsSupport, message);
 
       if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Message built, sending message to [" + destination + "]");
+        LOGGER.debug("Message built, sending message to [" + destination + "] of type [QUEUE]");
       }
 
       Destination jmsDestination = jmsSupport.createDestination(session.get(), destination, false);
       connection.createProducer(session.get(), jmsDestination, false)
-          .publish(message, config.getProducerConfig(), publishParameters);
+          .publish(message, publishParameters);
 
       if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug(format("Message sent to destination [%s], prepare for response.", destination));
+        LOGGER.debug(format("Finished [publish] of [publishConsume] to destination [%s] of type [QUEUE] using session [%s]",
+                            destination, session.get()));
+        LOGGER.debug(format("Preparing for consuming the response from destination [%s] of type [%s].",
+                            destination, replyConsumerType.topic() ? TOPIC : QUEUE));
       }
     } catch (Exception e) {
       String msg = format("An error occurred while sending a message to destination [%s] of type QUEUE: ", destination);
@@ -138,8 +142,9 @@ public class JmsPublishConsume {
       JmsMessageConsumer consumer = connection.createConsumer(session.get(), message.getJMSReplyTo(), "", replyConsumerType);
 
       if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug(format("Waiting for incoming message in destination [%s]",
-                            getReplyDestinationName(message.getJMSReplyTo(), replyConsumerType)));
+        LOGGER.debug(format("Waiting for incoming message in destination [%s] of type [%s].",
+                            getReplyDestinationName(message.getJMSReplyTo(), replyConsumerType),
+                            replyConsumerType.topic() ? TOPIC : QUEUE));
       }
 
       Message received = consumer.consume(consumeParameters.getMaximumWaitUnit().toMillis(consumeParameters.getMaximumWait()));
@@ -159,8 +164,10 @@ public class JmsPublishConsume {
                                                         consumeParameters.getInboundEncoding()),
                                         session.getAckId());
     } catch (Exception e) {
-      LOGGER.error("An error occurred while listening for the reply: ", e);
-      throw new JmsConsumeException("An error occurred while listening for the reply: ", e);
+      String msg = format("An error occurred while listening for the reply from destination [%s] of type [%s]: %s",
+                          destination, replyConsumerType.topic() ? TOPIC : QUEUE, e.getMessage());
+      LOGGER.error(msg, e);
+      throw new JmsConsumeException(msg, e);
     }
   }
 

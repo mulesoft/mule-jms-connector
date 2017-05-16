@@ -44,7 +44,7 @@ import org.slf4j.Logger;
  * <code>Jms20Support</code> is a template class to provide an abstraction to to
  * the JMS 2.0 API specification.
  *
- * @since 4.0
+ * @since 1.0
  */
 public class Jms20Support implements JmsSupport {
 

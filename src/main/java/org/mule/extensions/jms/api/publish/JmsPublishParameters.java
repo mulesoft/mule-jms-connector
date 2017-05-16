@@ -7,8 +7,7 @@
 package org.mule.extensions.jms.api.publish;
 
 import org.mule.extensions.jms.internal.publish.PublisherParameters;
-import org.mule.runtime.extension.api.annotation.dsl.xml.XmlHints;
-import org.mule.runtime.extension.api.annotation.param.Optional;
+import org.mule.runtime.extension.api.annotation.param.ConfigOverride;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
@@ -20,53 +19,52 @@ import javax.jms.Message;
  * Contains the parameters that can override the default values for
  * publishing a {@link Message}
  *
- * @since 4.0
+ * @since 1.0
  */
-@XmlHints(allowTopLevelDefinition = true)
 public class JmsPublishParameters implements PublisherParameters {
 
   @Parameter
-  @Optional
+  @ConfigOverride
   @Summary("If true; the Message will be sent using the PERSISTENT JMSDeliveryMode")
-  private Boolean persistentDelivery;
+  private boolean persistentDelivery;
 
   @Parameter
-  @Optional
+  @ConfigOverride
   @Summary("The default JMSPriority value to be used when sending the message")
   private Integer priority;
 
   @Parameter
-  @Optional
+  @ConfigOverride
   @Summary("Defines the default time the message will be in the broker before it expires and is discarded")
   private Long timeToLive;
 
   @Parameter
-  @Optional
+  @ConfigOverride
   @Summary("Time unit to be used in the timeToLive configurations")
   private TimeUnit timeToLiveUnit;
 
   @Parameter
-  @Optional
+  @ConfigOverride
   @Summary("If true; the Message will be flagged to avoid generating its MessageID")
-  private Boolean disableMessageId;
+  private boolean disableMessageId;
 
   @Parameter
-  @Optional
+  @ConfigOverride
   @Summary("If true; the Message will be flagged to avoid generating its sent Timestamp")
-  private Boolean disableMessageTimestamp;
+  private boolean disableMessageTimestamp;
 
   // JMS 2.0
   @Parameter
-  @Optional
+  @ConfigOverride
   @Summary("Only used by JMS 2.0. Sets the delivery delay to be applied in order to postpone the Message delivery")
   private Long deliveryDelay;
 
   @Parameter
-  @Optional
+  @ConfigOverride
   @Summary("Time unit to be used in the deliveryDelay configurations")
   private TimeUnit deliveryDelayUnit;
 
-  public Boolean isPersistentDelivery() {
+  public boolean isPersistentDelivery() {
     return persistentDelivery;
   }
 
@@ -82,11 +80,11 @@ public class JmsPublishParameters implements PublisherParameters {
     return timeToLiveUnit;
   }
 
-  public Boolean isDisableMessageId() {
+  public boolean isDisableMessageId() {
     return disableMessageId;
   }
 
-  public Boolean isDisableMessageTimestamp() {
+  public boolean isDisableMessageTimestamp() {
     return disableMessageTimestamp;
   }
 

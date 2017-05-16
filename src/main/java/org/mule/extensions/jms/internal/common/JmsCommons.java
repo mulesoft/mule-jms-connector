@@ -32,12 +32,14 @@ import org.slf4j.Logger;
 /**
  * Utility class to reuse logic for JMS Extension
  *
- * @since 4.0
+ * @since 1.0
  */
 public final class JmsCommons {
 
   private static final Logger LOGGER = getLogger(JmsCommons.class);
 
+  public static final String TOPIC = "TOPIC";
+  public static final String QUEUE = "QUEUE";
   public static final String EXAMPLE_ENCODING = "UTF-8";
   public static final String EXAMPLE_CONTENT_TYPE = "application/json";
 

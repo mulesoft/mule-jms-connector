@@ -18,7 +18,7 @@ import javax.jms.Session;
  * Object to save information about the relationship between a {@link Message}, their {@link Session} and
  * the {@link JmsListenerLock} waiting for the message to be processed.
  *
- * @since 4.0
+ * @since 1.0
  */
 final class SessionInformation {
 

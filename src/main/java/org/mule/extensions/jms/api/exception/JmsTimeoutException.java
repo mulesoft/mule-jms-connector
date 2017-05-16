@@ -13,7 +13,7 @@ import org.mule.runtime.extension.api.exception.ModuleException;
  * {@link ModuleException} that represents an error when consuming a Message
  * but a timeout is reached before the Message arrives
  *
- * @since 4.0
+ * @since 1.0
  */
 public final class JmsTimeoutException extends JmsConsumeException {
 

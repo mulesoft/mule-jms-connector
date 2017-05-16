@@ -56,7 +56,7 @@ import javax.jms.Session;
 /**
  * Base implementation of a {@link PoolingConnectionProvider} for {@link JmsConnection}s
  *
- * @since 4.0
+ * @since 1.0
  */
 public abstract class BaseConnectionProvider
     implements PoolingConnectionProvider<JmsTransactionalConnection>, Initialisable, Disposable {

@@ -11,7 +11,7 @@ import org.mule.runtime.extension.api.runtime.exception.ExceptionHandler;
 /**
  * {@link ExceptionHandler} for the JMS extension.
  * 
- * @since 4.0
+ * @since 1.0
  */
 public class JmsExceptionHandler extends ExceptionHandler {
 

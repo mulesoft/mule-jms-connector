@@ -20,7 +20,7 @@ import org.apache.activemq.RedeliveryPolicy;
 /**
  * Contains the parameters required to configure an {@link ActiveMQConnectionFactory}
  *
- * @since 4.0
+ * @since 1.0
  */
 public final class ActiveMQConnectionFactoryConfiguration {
 

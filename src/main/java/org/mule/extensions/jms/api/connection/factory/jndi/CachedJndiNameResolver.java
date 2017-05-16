@@ -23,7 +23,7 @@ import javax.naming.NamingException;
  * In case of getting corrupt data, a way to cleaning up the cache is to stop
  * and then restart the instance.
  *
- * @since 4.0
+ * @since 1.0
  */
 public class CachedJndiNameResolver extends AbstractJndiNameResolver {
 

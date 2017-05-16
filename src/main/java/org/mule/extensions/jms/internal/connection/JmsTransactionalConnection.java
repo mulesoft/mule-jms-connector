@@ -27,7 +27,7 @@ import javax.jms.Session;
  * Implementation of the {@link JmsConnection} which implements {@link TransactionalConnection} for Transaction Support
  * in the {@link JmsExtension}
  *
- * @since 4.0
+ * @since 1.0
  */
 public final class JmsTransactionalConnection extends JmsConnection implements TransactionalConnection {
 

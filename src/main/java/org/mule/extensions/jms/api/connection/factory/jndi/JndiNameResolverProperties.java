@@ -17,7 +17,7 @@ import javax.naming.InitialContext;
 /**
  * Declares the properties required to create a {@link JndiNameResolver}
  *
- * @since 4.0
+ * @since 1.0
  */
 public final class JndiNameResolverProperties {
 

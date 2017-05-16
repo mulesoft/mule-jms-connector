@@ -30,7 +30,7 @@ import javax.jms.Message;
 /**
  * Operation that allows the user to perform an ACK over a {@link Message} produced by the current {@link JmsSession}
  *
- * @since 4.0
+ * @since 1.0
  */
 public final class JmsAcknowledge {
 

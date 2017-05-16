@@ -9,7 +9,6 @@ package org.mule.extensions.jms.api.config;
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import org.mule.extensions.jms.api.connection.JmsSpecification;
 import org.mule.runtime.extension.api.annotation.Expression;
-import org.mule.runtime.extension.api.annotation.dsl.xml.XmlHints;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
@@ -22,10 +21,9 @@ import javax.jms.Message;
 /**
  * Configuration parameters for sending messages to a JMS Queue or Topic
  *
- * @since 4.0
+ * @since 1.0
  */
-@XmlHints(allowTopLevelDefinition = true)
-public class JmsProducerConfig {
+public final class JmsProducerConfig {
 
   /**
    * Sets the default value for the {@link Message#getJMSDeliveryMode}.

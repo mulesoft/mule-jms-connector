@@ -13,7 +13,7 @@ package org.mule.extensions.jms.internal.connection.session;
  *     <li>{@link TransactionStatus#STARTED} means that there is a transaction being executed in the current {@link Thread}</li>
  * </ul>
  *
- * @since 4.0
+ * @since 1.0
  */
 public enum TransactionStatus {
   NONE, STARTED

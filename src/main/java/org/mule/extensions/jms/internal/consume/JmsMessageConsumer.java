@@ -22,7 +22,7 @@ import javax.jms.MessageListener;
 /**
  * Wrapper implementation of a JMS {@link MessageConsumer}
  *
- * @since 4.0
+ * @since 1.0
  */
 public final class JmsMessageConsumer implements AutoCloseable {
 

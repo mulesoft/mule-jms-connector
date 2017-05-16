@@ -34,7 +34,7 @@ import javax.jms.Message;
  * to their representation as {@link JmsxProperties}.
  * A default value is provided for the properties that are not set.
  *
- * @since 4.0
+ * @since 1.0
  */
 final class JmsxPropertiesBuilder {
 

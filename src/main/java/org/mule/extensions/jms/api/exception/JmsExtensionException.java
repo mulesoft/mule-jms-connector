@@ -12,7 +12,7 @@ import org.mule.runtime.extension.api.exception.ModuleException;
 /**
  * Custom generic exception for JmsExtension thrown errors
  *
- * @since 4.0
+ * @since 1.0
  */
 public class JmsExtensionException extends ModuleException {
 

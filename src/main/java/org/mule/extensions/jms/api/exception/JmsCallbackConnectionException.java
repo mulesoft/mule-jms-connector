@@ -15,7 +15,7 @@ import javax.jms.JMSException;
 /**
  * Custom {@link MuleRuntimeException} to be used in a JMS {@link Connection} {@link ExceptionListener}
  *
- * @since 4.0
+ * @since 1.0
  */
 public final class JmsCallbackConnectionException extends MuleRuntimeException {
 

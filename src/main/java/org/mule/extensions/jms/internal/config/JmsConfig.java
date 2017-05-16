@@ -19,9 +19,9 @@ import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.Operations;
 import org.mule.runtime.extension.api.annotation.Sources;
 import org.mule.runtime.extension.api.annotation.param.DefaultEncoding;
-import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
+import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 
 import javax.jms.Message;
@@ -31,12 +31,12 @@ import javax.jms.Topic;
 /**
  * Base configuration for {@link JmsExtension}
  *
- * @since 4.0
+ * @since 1.0
  */
 @Configuration(name = "config")
 @Operations({JmsConsume.class, JmsPublish.class, JmsPublishConsume.class})
 @Sources({JmsListener.class})
-public class JmsConfig {
+public final class JmsConfig {
 
   /**
    * The encoding of the {@link Message} {@code body} to consume if the message doesn't communicate it
@@ -57,21 +57,17 @@ public class JmsConfig {
   /**
    * Configuration parameters for consuming {@link Message}s from a JMS {@link Queue} or {@link Topic}
    */
-  @Parameter
-  @Optional
-  @NullSafe
   @Expression(NOT_SUPPORTED)
   @Placement(tab = "Consumer")
+  @ParameterGroup(name = "Consumer Config", showInDsl = true)
   private JmsConsumerConfig consumerConfig;
 
   /**
    * Configuration parameters for sending {@link Message}s to a JMS {@link Queue} or {@link Topic}
    */
-  @Parameter
-  @Optional
-  @NullSafe
   @Expression(NOT_SUPPORTED)
   @Placement(tab = "Producer")
+  @ParameterGroup(name = "Producer Config", showInDsl = true)
   private JmsProducerConfig producerConfig;
 
   public String getContentType() {

@@ -10,7 +10,6 @@ import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import org.mule.extensions.jms.api.destination.ConsumerType;
 import org.mule.extensions.jms.api.destination.QueueConsumer;
 import org.mule.runtime.extension.api.annotation.Expression;
-import org.mule.runtime.extension.api.annotation.dsl.xml.XmlHints;
 import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
@@ -21,10 +20,9 @@ import javax.jms.Message;
 /**
  * Configuration parameters for consuming messages from a JMS Queue or Topics
  *
- * @since 4.0
+ * @since 1.0
  */
-@XmlHints(allowTopLevelDefinition = true)
-public class JmsConsumerConfig {
+public final class JmsConsumerConfig {
 
   /**
    * The {@link AckMode} to use when consuming a {@link Message}

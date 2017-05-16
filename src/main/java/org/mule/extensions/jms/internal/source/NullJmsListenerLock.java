@@ -13,7 +13,7 @@ import org.mule.runtime.api.message.Error;
  * processing.
  * The usage of this lock will led to the {@link JmsListenerLock} work asynchronously.
  *
- * @since 4.0
+ * @since 1.0
  */
 public class NullJmsListenerLock implements JmsListenerLock {
 

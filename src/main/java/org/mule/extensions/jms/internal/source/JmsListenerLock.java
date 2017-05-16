@@ -12,7 +12,7 @@ import org.mule.runtime.api.message.Error;
  * Custom lock implementation to be used in {@link JmsListener} to give the capability to the message listener work
  * synchronously consuming and processing messages through the entire flow.
  *
- * @since 4.0
+ * @since 1.0
  * @see JmsListener
  */
 public interface JmsListenerLock {

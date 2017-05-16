@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
  * {@link JmsConsume#consume(JmsTransactionalConnection, JmsConfig, String, ConsumerType, ConsumerAckMode, String, String, String, Long, TimeUnit)}
  * operation operation.
  *
- * @since 4.0
+ * @since 1.0
  */
 public class JmsConsumeErrorTypeProvider implements ErrorTypeProvider {
 

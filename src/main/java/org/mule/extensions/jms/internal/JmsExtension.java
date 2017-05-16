@@ -43,7 +43,7 @@ import javax.jms.ConnectionFactory;
  * The Extension supports all JMS functionality including topics and queues,
  * durable subscribers, acknowledgement modes and local transactions.
  *
- * @since 4.0
+ * @since 1.0
  */
 @Extension(name = "JMS")
 @Xml(prefix = "jms")
