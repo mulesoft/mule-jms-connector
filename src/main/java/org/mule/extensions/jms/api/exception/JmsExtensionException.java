@@ -27,7 +27,7 @@ public class JmsExtensionException extends ModuleException {
    * {@inheritDoc}
    */
   public JmsExtensionException(Exception exception, String message) {
-    super(exception, ANY, message);
+    super(message, ANY, exception);
   }
 
   /**
@@ -48,7 +48,7 @@ public class JmsExtensionException extends ModuleException {
    * @param errorType JMS error
    */
   protected JmsExtensionException(Exception exception, JmsErrors errorType, String message) {
-    super(exception, errorType, message);
+    super(message, errorType, exception);
   }
 
 }
