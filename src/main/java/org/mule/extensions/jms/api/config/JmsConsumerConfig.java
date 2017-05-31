@@ -25,7 +25,7 @@ import javax.jms.Message;
 public final class JmsConsumerConfig {
 
   /**
-   * The {@link AckMode} to use when consuming a {@link Message}
+   * The {@link ConsumerAckMode} to use when consuming a {@link Message}
    * Can be overridden at the message source level.
    * This attribute has to be NONE if transactionType is LOCAL or MULTI
    */

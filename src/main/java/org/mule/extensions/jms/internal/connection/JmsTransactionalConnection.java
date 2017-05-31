@@ -11,6 +11,7 @@ import static org.mule.extensions.jms.internal.connection.session.TransactionSta
 import static org.mule.runtime.api.util.Preconditions.checkState;
 import static org.slf4j.LoggerFactory.getLogger;
 import org.mule.extensions.jms.internal.JmsExtension;
+import org.mule.extensions.jms.internal.connection.session.JmsSession;
 import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
 import org.mule.extensions.jms.internal.support.JmsSupport;
 import org.mule.runtime.extension.api.connectivity.TransactionalConnection;

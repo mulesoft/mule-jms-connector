@@ -18,10 +18,10 @@ import org.mule.extensions.jms.api.exception.JmsExtensionException;
 import org.mule.extensions.jms.api.exception.JmsPublishException;
 import org.mule.extensions.jms.api.exception.JmsPublisherErrorTypeProvider;
 import org.mule.extensions.jms.api.message.JmsMessageBuilder;
-import org.mule.extensions.jms.api.publish.JmsPublishParameters;
+import org.mule.extensions.jms.internal.publish.JmsPublishParameters;
 import org.mule.extensions.jms.internal.config.JmsConfig;
 import org.mule.extensions.jms.internal.connection.JmsConnection;
-import org.mule.extensions.jms.internal.connection.JmsSession;
+import org.mule.extensions.jms.internal.connection.session.JmsSession;
 import org.mule.extensions.jms.internal.connection.JmsTransactionalConnection;
 import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
 import org.mule.runtime.extension.api.annotation.dsl.xml.XmlHints;
@@ -96,7 +96,7 @@ public final class JmsPublish {
       Destination jmsDestination = connection.getJmsSupport()
           .createDestination(session.get(), destination, destinationType.isTopic());
 
-      connection.createProducer(session.get(), jmsDestination, destinationType.isTopic())
+      connection.createProducer(session, jmsDestination, destinationType.isTopic())
           .publish(message, overrides);
 
       if (LOGGER.isDebugEnabled()) {

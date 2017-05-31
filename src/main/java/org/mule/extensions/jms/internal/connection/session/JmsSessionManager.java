@@ -9,7 +9,6 @@ package org.mule.extensions.jms.internal.connection.session;
 import static java.util.Optional.ofNullable;
 import static org.slf4j.LoggerFactory.getLogger;
 import org.mule.extensions.jms.internal.config.InternalAckMode;
-import org.mule.extensions.jms.internal.connection.JmsSession;
 import org.mule.extensions.jms.internal.source.JmsListener;
 import org.mule.extensions.jms.internal.source.JmsListenerLock;
 

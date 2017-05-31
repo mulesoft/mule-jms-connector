@@ -11,7 +11,7 @@ import static org.mule.extensions.jms.api.exception.JmsErrors.ILLEGAL_BODY;
 import static org.mule.extensions.jms.api.exception.JmsErrors.PUBLISHING;
 import org.mule.extensions.jms.api.destination.DestinationType;
 import org.mule.extensions.jms.api.message.JmsMessageBuilder;
-import org.mule.extensions.jms.api.publish.JmsPublishParameters;
+import org.mule.extensions.jms.internal.publish.JmsPublishParameters;
 import org.mule.extensions.jms.internal.config.JmsConfig;
 import org.mule.extensions.jms.internal.connection.JmsTransactionalConnection;
 import org.mule.extensions.jms.internal.operation.JmsPublish;

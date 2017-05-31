@@ -6,8 +6,6 @@
  */
 package org.mule.extensions.jms.internal.connection.session;
 
-import org.mule.extensions.jms.internal.connection.JmsSession;
-
 /**
  * Object to save the information about the current transaction.
  *

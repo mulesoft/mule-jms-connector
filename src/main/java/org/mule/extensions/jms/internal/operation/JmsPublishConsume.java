@@ -25,12 +25,12 @@ import org.mule.extensions.jms.api.exception.JmsPublishConsumeErrorTypeProvider;
 import org.mule.extensions.jms.api.exception.JmsPublishException;
 import org.mule.extensions.jms.api.message.JmsAttributes;
 import org.mule.extensions.jms.api.message.JmsMessageBuilder;
-import org.mule.extensions.jms.api.publish.JmsPublishParameters;
-import org.mule.extensions.jms.consume.JmsConsumeParameters;
+import org.mule.extensions.jms.internal.publish.JmsPublishParameters;
+import org.mule.extensions.jms.internal.consume.JmsConsumeParameters;
 import org.mule.extensions.jms.internal.config.InternalAckMode;
 import org.mule.extensions.jms.internal.config.JmsConfig;
 import org.mule.extensions.jms.internal.connection.JmsConnection;
-import org.mule.extensions.jms.internal.connection.JmsSession;
+import org.mule.extensions.jms.internal.connection.session.JmsSession;
 import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
 import org.mule.extensions.jms.internal.consume.JmsMessageConsumer;
 import org.mule.extensions.jms.internal.message.JmsResultFactory;
@@ -123,7 +123,7 @@ public class JmsPublishConsume {
       }
 
       Destination jmsDestination = jmsSupport.createDestination(session.get(), destination, false);
-      connection.createProducer(session.get(), jmsDestination, false)
+      connection.createProducer(session, jmsDestination, false)
           .publish(message, publishParameters);
 
       if (LOGGER.isDebugEnabled()) {
@@ -139,7 +139,7 @@ public class JmsPublishConsume {
     }
 
     try {
-      JmsMessageConsumer consumer = connection.createConsumer(session.get(), message.getJMSReplyTo(), "", replyConsumerType);
+      JmsMessageConsumer consumer = connection.createConsumer(session, message.getJMSReplyTo(), "", replyConsumerType);
 
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug(format("Waiting for incoming message in destination [%s] of type [%s].",
