@@ -7,7 +7,7 @@
 package org.mule.extensions.jms.internal.connection.provider.activemq;
 
 import static java.lang.String.format;
-import static org.mule.runtime.core.util.ClassUtils.instanciateClass;
+import static org.mule.runtime.core.api.util.ClassUtils.instantiateClass;
 import org.mule.extensions.jms.api.connection.factory.activemq.ActiveMQConnectionFactoryConfiguration;
 import org.mule.extensions.jms.internal.connection.exception.ActiveMQException;
 import org.mule.runtime.extension.api.annotation.param.ExclusiveOptionals;
@@ -68,8 +68,7 @@ public class ActiveMQConnectionFactoryProvider {
         LOGGER.debug(format("Creating new [%s]", getFactoryClass()));
       }
 
-      this.connectionFactory = (ConnectionFactory) instanciateClass(getFactoryClass(),
-                                                                    factoryConfiguration.getBrokerUrl());
+      this.connectionFactory = (ConnectionFactory) instantiateClass(getFactoryClass(), factoryConfiguration.getBrokerUrl());
       applyVendorSpecificConnectionFactoryProperties(connectionFactory);
       return connectionFactory;
     } catch (Exception e) {
