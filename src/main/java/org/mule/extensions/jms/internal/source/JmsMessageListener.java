@@ -16,7 +16,7 @@ import org.mule.extensions.jms.api.exception.JmsExtensionException;
 import org.mule.extensions.jms.api.message.JmsAttributes;
 import org.mule.extensions.jms.internal.config.InternalAckMode;
 import org.mule.extensions.jms.internal.config.JmsConfig;
-import org.mule.extensions.jms.internal.connection.JmsSession;
+import org.mule.extensions.jms.internal.connection.session.JmsSession;
 import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
 import org.mule.extensions.jms.internal.message.JmsResultFactory;
 import org.mule.extensions.jms.internal.support.JmsSupport;

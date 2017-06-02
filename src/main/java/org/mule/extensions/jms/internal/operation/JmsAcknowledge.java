@@ -13,7 +13,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
 import org.mule.extensions.jms.api.config.AckMode;
 import org.mule.extensions.jms.internal.connection.JmsConnection;
-import org.mule.extensions.jms.internal.connection.JmsSession;
+import org.mule.extensions.jms.internal.connection.session.JmsSession;
 import org.mule.extensions.jms.api.exception.JmsAckErrorTypeProvider;
 import org.mule.extensions.jms.api.exception.JmsAckException;
 import org.mule.extensions.jms.api.exception.JmsSessionRecoverErrorTypeProvider;

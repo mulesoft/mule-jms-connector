@@ -28,7 +28,7 @@ import org.mule.extensions.jms.api.message.JmsAttributes;
 import org.mule.extensions.jms.internal.config.InternalAckMode;
 import org.mule.extensions.jms.internal.config.JmsConfig;
 import org.mule.extensions.jms.internal.connection.JmsConnection;
-import org.mule.extensions.jms.internal.connection.JmsSession;
+import org.mule.extensions.jms.internal.connection.session.JmsSession;
 import org.mule.extensions.jms.internal.connection.JmsTransactionalConnection;
 import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
 import org.mule.extensions.jms.internal.consume.JmsMessageConsumer;
@@ -118,7 +118,7 @@ public final class JmsConsume {
           createJmsSession(connection, resolvedAckMode, consumerType.topic(), sessionManager);
       Destination jmsDestination = jmsSupport.createDestination(session.get(), destination, consumerType.topic());
 
-      JmsMessageConsumer consumer = connection.createConsumer(session.get(), jmsDestination, selector, consumerType);
+      JmsMessageConsumer consumer = connection.createConsumer(session, jmsDestination, selector, consumerType);
 
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug("Consuming Message on destination [" + destination + "] of type ["

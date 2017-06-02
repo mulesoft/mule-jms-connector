@@ -4,9 +4,8 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.extensions.jms.api.publish;
+package org.mule.extensions.jms.internal.publish;
 
-import org.mule.extensions.jms.internal.publish.PublisherParameters;
 import org.mule.runtime.extension.api.annotation.param.ConfigOverride;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;

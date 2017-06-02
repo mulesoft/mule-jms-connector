@@ -12,8 +12,9 @@ import static org.mule.extensions.jms.internal.config.InternalAckMode.MANUAL;
 import static org.mule.extensions.jms.internal.config.InternalAckMode.TRANSACTED;
 import static org.slf4j.LoggerFactory.getLogger;
 import org.mule.extensions.jms.api.connection.JmsSpecification;
-import org.mule.extensions.jms.internal.config.InternalAckMode;
 import org.mule.extensions.jms.api.destination.ConsumerType;
+import org.mule.extensions.jms.internal.config.InternalAckMode;
+import org.mule.extensions.jms.internal.connection.session.JmsSession;
 import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
 import org.mule.extensions.jms.internal.consume.JmsMessageConsumer;
 import org.mule.extensions.jms.internal.publish.JmsMessageProducer;
@@ -21,8 +22,6 @@ import org.mule.extensions.jms.internal.support.JmsSupport;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.Disposable;
 import org.mule.runtime.api.lifecycle.Stoppable;
-
-import org.slf4j.Logger;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -38,6 +37,8 @@ import javax.jms.Session;
 import javax.jms.Topic;
 import javax.jms.TopicPublisher;
 import javax.jms.TopicSession;
+
+import org.slf4j.Logger;
 
 /**
  * A Connection for the JmsExtension
@@ -96,18 +97,18 @@ public class JmsConnection implements Stoppable, Disposable {
   /**
    * Creates a new JMS {@link MessageConsumer} using the given {@link Session}
    *
-   * @param session        the {@link Session} used to create the {@link MessageConsumer}
+   * @param session        the {@link JmsSession} used to create the {@link MessageConsumer}
    * @param jmsDestination the {@link Destination} from which {@link Message}s will be consumed
    * @param selector       a JMS selector string for filtering incoming {@link Message}s. Empty or {@code null} implies no filtering
    * @param consumerType   the {@link ConsumerType} to use based on the {@link Destination} type
    * @return a new {@link MessageConsumer} for the given {@link Destination}
    * @throws JMSException if an error occurs while creating the consumer
    */
-  public JmsMessageConsumer createConsumer(Session session, Destination jmsDestination, String selector,
+  public JmsMessageConsumer createConsumer(JmsSession session, Destination jmsDestination, String selector,
                                            ConsumerType consumerType)
       throws JMSException {
     JmsMessageConsumer consumer = new JmsMessageConsumer(
-                                                         jmsSupport.createConsumer(session, jmsDestination, selector,
+                                                         jmsSupport.createConsumer(session.get(), jmsDestination, selector,
                                                                                    consumerType));
 
     createdConsumers.add(consumer);
@@ -117,7 +118,7 @@ public class JmsConnection implements Stoppable, Disposable {
   /**
    * Creates a new JMS {@link MessageProducer} using the given {@link Session}
    *
-   * @param session        the {@link Session} used to create the {@link MessageProducer}
+   * @param session        the {@link JmsSession} used to create the {@link MessageProducer}
    * @param jmsDestination the {@link Destination} to where the {@link Message}s will be published
    * @param isTopic        if {@code true} the given {@link Destination} has a {@link Topic} destination type.
    *                       This distinction is made only for {@link JmsSpecification#JMS_1_0_2b} in order to decide whether
@@ -125,8 +126,8 @@ public class JmsConnection implements Stoppable, Disposable {
    * @return a new {@link MessageProducer} for the given {@link Destination}
    * @throws JMSException if an error occurs while creating the consumer
    */
-  public JmsMessageProducer createProducer(Session session, Destination jmsDestination, boolean isTopic) throws JMSException {
-    MessageProducer producer = jmsSupport.createProducer(session, jmsDestination, isTopic);
+  public JmsMessageProducer createProducer(JmsSession session, Destination jmsDestination, boolean isTopic) throws JMSException {
+    MessageProducer producer = jmsSupport.createProducer(session.get(), jmsDestination, isTopic);
     JmsMessageProducer wrapper = new JmsMessageProducer(jmsSupport, producer, isTopic);
     createdProducers.add(wrapper);
     return wrapper;
