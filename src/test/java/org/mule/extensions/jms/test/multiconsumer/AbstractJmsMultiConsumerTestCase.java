@@ -6,7 +6,9 @@
  */
 package org.mule.extensions.jms.test.multiconsumer;
 
+import static java.util.Collections.singletonMap;
 import static org.mule.extensions.jms.test.JmsMessageStorage.pollMessage;
+import static org.mule.runtime.api.metadata.MediaType.ANY;
 import org.mule.extensions.jms.api.destination.DestinationType;
 import org.mule.extensions.jms.api.message.JmsAttributes;
 import org.mule.extensions.jms.test.JmsAbstractTestCase;
@@ -15,7 +17,6 @@ import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.extension.api.runtime.operation.Result;
 import org.mule.tck.junit4.rule.SystemProperty;
 
-import com.google.common.collect.ImmutableMap;
 import org.junit.Before;
 import org.junit.Rule;
 
@@ -51,7 +52,7 @@ public abstract class AbstractJmsMultiConsumerTestCase extends JmsAbstractTestCa
 
   void publishTo(int amount, String destination, DestinationType destinationType) throws Exception {
     for (int i = 0; i < amount; i++) {
-      publish("message", destination, ImmutableMap.of("destinationType", destinationType));
+      publish("message", destination, singletonMap("destinationType", destinationType), ANY);
     }
   }
 
