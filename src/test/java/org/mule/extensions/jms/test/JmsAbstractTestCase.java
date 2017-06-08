@@ -16,6 +16,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
 import static org.mule.extensions.jms.test.JmsMessageStorage.cleanUpQueue;
+import static org.mule.runtime.api.metadata.MediaType.ANY;
 import static org.slf4j.LoggerFactory.getLogger;
 import org.mule.extensions.jms.api.destination.JmsDestination;
 import org.mule.extensions.jms.api.message.JmsAttributes;
@@ -23,6 +24,7 @@ import org.mule.extensions.jms.api.message.JmsHeaders;
 import org.mule.functional.junit4.FlowRunner;
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
 import org.mule.runtime.api.message.Message;
+import org.mule.runtime.api.metadata.MediaType;
 import org.mule.tck.junit4.rule.SystemProperty;
 import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 
@@ -76,16 +78,25 @@ public abstract class JmsAbstractTestCase extends MuleArtifactFunctionalTestCase
   }
 
   protected void publish(Object message) throws Exception {
-    publish(message, destination);
+    publish(message, ANY);
+  }
+
+  protected void publish(Object message, MediaType mediaType) throws Exception {
+    publish(message, destination, mediaType);
   }
 
   protected void publish(Object message, String destination) throws Exception {
-    publish(message, destination, emptyMap());
+    publish(message, destination, ANY);
   }
 
-  protected void publish(Object message, String destination, Map<String, Object> flowVars) throws Exception {
+  protected void publish(Object message, String destination, MediaType mediaType) throws Exception {
+    publish(message, destination, emptyMap(), mediaType);
+  }
+
+  protected void publish(Object message, String destination, Map<String, Object> flowVars, MediaType mediaType) throws Exception {
     FlowRunner publisher = flowRunner(PUBLISHER_FLOW)
         .withPayload(message)
+        .withMediaType(mediaType)
         .withVariable(DESTINATION_VAR, destination);
     flowVars.forEach(publisher::withVariable);
     publisher.run();

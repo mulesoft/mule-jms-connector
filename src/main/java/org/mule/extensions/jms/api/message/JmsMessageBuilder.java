@@ -33,6 +33,8 @@ import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
+import org.slf4j.Logger;
+
 import java.nio.charset.Charset;
 import java.util.Map;
 
@@ -40,8 +42,6 @@ import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
-
-import org.slf4j.Logger;
 
 /**
  * Enables the creation of an outgoing {@link Message}.
@@ -157,7 +157,7 @@ public class JmsMessageBuilder {
   public Message build(JmsSupport jmsSupport, Session session, JmsConfig config)
       throws JMSException {
 
-    Message message = toMessage(body.getValue(), session);
+    Message message = toMessage(body, session);
 
     setJmsCorrelationIdHeader(message);
     setJmsTypeHeader(message);

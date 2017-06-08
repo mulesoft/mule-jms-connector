@@ -14,22 +14,22 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.mule.functional.junit4.matchers.MessageMatchers.hasPayload;
+import static org.mule.runtime.api.metadata.MediaType.ANY;
 import org.mule.extensions.jms.api.destination.QueueConsumer;
 import org.mule.extensions.jms.api.message.JmsAttributes;
 import org.mule.extensions.jms.test.JmsAbstractTestCase;
 import org.mule.runtime.api.message.Message;
 
 import com.google.common.collect.ImmutableMap;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import ru.yandex.qatools.allure.annotations.Description;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import javax.jms.DeliveryMode;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import ru.yandex.qatools.allure.annotations.Description;
 
 
 public abstract class JmsBaseTopicListenResponseTestCase extends JmsAbstractTestCase {
@@ -77,7 +77,8 @@ public abstract class JmsBaseTopicListenResponseTestCase extends JmsAbstractTest
             ImmutableMap.<String, Object>builder()
                 .put(REPLY_TO_DESTINATION_VAR, REPLY_TO_DESTINATION)
                 .put(REPLY_TO_DESTINATION_TYPE_VAR, "QUEUE")
-                .build());
+                .build(),
+            ANY);
 
     Message reply = consume(REPLY_TO_DESTINATION, of(REPLY_CONSUMER_TYPE_VAR, new QueueConsumer()), -1);
     assertThat(reply, hasPayload(equalTo(READ_MESSAGE_PREFIX + payload)));
@@ -91,7 +92,8 @@ public abstract class JmsBaseTopicListenResponseTestCase extends JmsAbstractTest
             ImmutableMap.<String, Object>builder()
                 .put(REPLY_TO_DESTINATION_VAR, REPLY_TO_DESTINATION_OVERRIDES)
                 .put(REPLY_TO_DESTINATION_TYPE_VAR, "QUEUE")
-                .build());
+                .build(),
+            ANY);
 
     Message reply = consume(REPLY_TO_DESTINATION_OVERRIDES, of(REPLY_CONSUMER_TYPE_VAR, new QueueConsumer()), -1);
     assertThat(reply, hasPayload(equalTo(READ_MESSAGE_PREFIX_OVERRIDE + payload)));

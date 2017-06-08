@@ -10,9 +10,12 @@ package org.mule.extensions.jms.internal.message;
 import static java.lang.Character.isJavaIdentifierPart;
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.mule.runtime.api.metadata.MediaTypeUtils.isStringRepresentable;
 import static org.mule.runtime.api.util.Preconditions.checkArgument;
 import org.mule.extensions.jms.api.connection.JmsSpecification;
 import org.mule.extensions.jms.api.exception.JmsIllegalBodyException;
+import org.mule.runtime.api.metadata.TypedValue;
+import org.mule.runtime.core.api.util.IOUtils;
 import org.mule.runtime.core.message.OutputHandler;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -51,7 +54,9 @@ public class JmsMessageUtils {
   private static final Logger LOGGER = LoggerFactory.getLogger(JmsMessageUtils.class);
   private static final char REPLACEMENT_CHAR = '_';
 
-  public static Message toMessage(Object object, Session session) throws JMSException {
+  public static Message toMessage(TypedValue<Object> typedValueObject, Session session) throws JMSException {
+    Object object = typedValueObject.getValue();
+
     if (object == null) {
       throw new JmsIllegalBodyException("Message body was 'null', which is not a value of a supported type");
     }
@@ -65,14 +70,16 @@ public class JmsMessageUtils {
       return mapToMessage((Map<?, ?>) object, session);
 
     } else if (object instanceof InputStream) {
-      return inputStreamToMessage((InputStream) object, session);
-
+      if (isStringRepresentable(typedValueObject.getDataType().getMediaType())) {
+        return stringToMessage(IOUtils.toString((InputStream) object), session);
+      } else {
+        return byteArrayToMessage(IOUtils.toByteArray((InputStream) object), session);
+      }
     } else if (object instanceof List<?>) {
       return listToMessage((List<?>) object, session);
 
     } else if (object instanceof byte[]) {
       return byteArrayToMessage((byte[]) object, session);
-
     } else if (object instanceof Serializable) {
       return serializableToMessage((Serializable) object, session);
 
@@ -168,24 +175,6 @@ public class JmsMessageUtils {
     }
 
     return mMsg;
-  }
-
-  private static Message inputStreamToMessage(InputStream value, Session session) throws JMSException {
-    StreamMessage streamMessage = session.createStreamMessage();
-    byte[] buffer = new byte[4096];
-    int len;
-
-    try {
-      while ((len = value.read(buffer)) != -1) {
-        streamMessage.writeBytes(buffer, 0, len);
-      }
-    } catch (IOException e) {
-      throw new JmsIllegalBodyException("Failed to read input stream to create a stream message: " + e);
-    } finally {
-      closeQuietly(value);
-    }
-
-    return streamMessage;
   }
 
   private static void closeQuietly(InputStream inputStream) {
@@ -403,5 +392,4 @@ public class JmsMessageUtils {
   private static boolean validateMapMessageType(Map<?, ?> candidate) {
     return candidate.values().stream().allMatch(JmsMessageUtils::validateStreamMessageType);
   }
-
 }
