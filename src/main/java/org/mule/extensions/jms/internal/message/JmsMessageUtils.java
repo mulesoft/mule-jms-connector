@@ -10,11 +10,10 @@ package org.mule.extensions.jms.internal.message;
 import static java.lang.Character.isJavaIdentifierPart;
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.mule.runtime.api.metadata.MediaTypeUtils.STRING_REPRESENTABLE_MIME_TYPES;
+import static org.mule.runtime.api.metadata.MediaTypeUtils.isStringRepresentable;
 import static org.mule.runtime.api.util.Preconditions.checkArgument;
 import org.mule.extensions.jms.api.connection.JmsSpecification;
 import org.mule.extensions.jms.api.exception.JmsIllegalBodyException;
-import org.mule.runtime.api.metadata.MediaType;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.core.api.util.IOUtils;
 import org.mule.runtime.core.message.OutputHandler;
@@ -393,17 +392,5 @@ public class JmsMessageUtils {
    */
   private static boolean validateMapMessageType(Map<?, ?> candidate) {
     return candidate.values().stream().allMatch(JmsMessageUtils::validateStreamMessageType);
-  }
-
-  /**
-   * Utility method which given a {@link MediaType} will verify if this one is {@link String} representable
-   *
-   * @param mediaType to verify
-   * @return boolean indicating whether the {@link MediaType} is String representable or not
-   */
-  private static boolean isStringRepresentable(MediaType mediaType) {
-    return mediaType.getPrimaryType().equals(TEXT) || STRING_REPRESENTABLE_MIME_TYPES
-        .stream()
-        .anyMatch(type -> type.matches(mediaType));
   }
 }
