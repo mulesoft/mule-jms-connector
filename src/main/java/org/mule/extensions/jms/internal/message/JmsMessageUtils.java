@@ -53,7 +53,6 @@ public class JmsMessageUtils {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(JmsMessageUtils.class);
   private static final char REPLACEMENT_CHAR = '_';
-  private static final String TEXT = "text";
 
   public static Message toMessage(TypedValue<Object> typedValueObject, Session session) throws JMSException {
     Object object = typedValueObject.getValue();
