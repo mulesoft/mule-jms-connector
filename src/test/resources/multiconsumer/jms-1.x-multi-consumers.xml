@@ -30,7 +30,7 @@
     </flow>
 
     <flow name="saveMessage">
-        <component class="org.mule.extensions.jms.test.JmsMessageStorage"/>
+        <custom-processor class="org.mule.extensions.jms.test.JmsMessageStorage"/>
     </flow>
 
     <flow name="doManualAck">
