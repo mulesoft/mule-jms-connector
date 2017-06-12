@@ -16,7 +16,7 @@ import static org.mule.extensions.jms.api.destination.DestinationType.QUEUE;
 import static org.mule.extensions.jms.test.JmsMessageStorage.cleanUpQueue;
 import static org.mule.extensions.jms.test.JmsMessageStorage.receivedMessages;
 import org.mule.runtime.core.api.construct.Flow;
-import org.mule.runtime.core.retry.RetryPolicyExhaustedException;
+import org.mule.runtime.core.api.retry.policy.RetryPolicyExhaustedException;
 import org.mule.tck.probe.JUnitLambdaProbe;
 import org.mule.tck.probe.PollingProber;
 import org.mule.test.runner.RunnerDelegateTo;
