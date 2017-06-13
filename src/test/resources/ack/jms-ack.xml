@@ -26,7 +26,7 @@
             </when>
             <when expression="#[variables.action == 'EXPLODE']">
                 <logger level="DEBUG" message="THROWING EXCEPTION"/>
-                <test:component throwException="true"/>
+                <test:processor throwException="true"/>
             </when>
             <when expression="#[variables.action == 'RECOVER']">
                 <logger level="DEBUG" message="RECOVERING SESSION"/>
