@@ -11,7 +11,7 @@ import static org.mule.runtime.api.util.Preconditions.checkArgument;
 import static org.slf4j.LoggerFactory.getLogger;
 import org.mule.extensions.jms.api.exception.JmsTimeoutException;
 
-import org.apache.commons.lang.time.StopWatch;
+import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 
 import javax.jms.JMSException;

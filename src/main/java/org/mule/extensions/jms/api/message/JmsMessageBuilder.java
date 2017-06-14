@@ -8,7 +8,7 @@ package org.mule.extensions.jms.api.message;
 
 
 import static java.lang.String.format;
-import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.mule.extensions.jms.internal.common.JmsCommons.EXAMPLE_CONTENT_TYPE;
 import static org.mule.extensions.jms.internal.common.JmsCommons.EXAMPLE_ENCODING;
 import static org.mule.extensions.jms.internal.common.JmsCommons.resolveOverride;
