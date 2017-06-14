@@ -8,11 +8,13 @@ package org.mule.extensions.jms.test;
 
 import static org.mule.extensions.jms.test.JmsAbstractTestCase.POLL_DELAY_MILLIS;
 import static org.mule.extensions.jms.test.JmsAbstractTestCase.TIMEOUT_MILLIS;
+
 import org.mule.extensions.jms.api.message.JmsAttributes;
+import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.TypedValue;
-import org.mule.runtime.core.api.MuleEventContext;
-import org.mule.runtime.core.api.lifecycle.Callable;
+import org.mule.runtime.core.api.Event;
+import org.mule.runtime.core.api.processor.Processor;
 import org.mule.runtime.extension.api.runtime.operation.Result;
 import org.mule.tck.probe.JUnitLambdaProbe;
 import org.mule.tck.probe.PollingProber;
@@ -20,14 +22,14 @@ import org.mule.tck.probe.PollingProber;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class JmsMessageStorage implements Callable {
+public class JmsMessageStorage implements Processor {
 
   private static Queue<Message> messages = new ConcurrentLinkedQueue<>();
 
   @Override
-  public Object onCall(MuleEventContext eventContext) throws Exception {
-    messages.add(eventContext.getMessage());
-    return null;
+  public Event process(Event event) throws MuleException {
+    messages.add(event.getMessage());
+    return event;
   }
 
   public static void cleanUpQueue() {

@@ -36,7 +36,7 @@
                 <jms:topic-consumer/>
             </jms:consumer-type>
         </jms:listener>
-        <component class="org.mule.extensions.jms.test.JmsMessageStorage"/>
+        <custom-processor class="org.mule.extensions.jms.test.JmsMessageStorage"/>
     </flow>
 
 </mule>
