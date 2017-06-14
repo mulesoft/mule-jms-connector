@@ -7,8 +7,10 @@
 package org.mule.extensions.jms.api.connection.caching;
 
 import static java.util.Optional.of;
+import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import org.mule.extensions.jms.internal.connection.JmsCachingConnectionFactory;
 import org.mule.runtime.extension.api.annotation.Alias;
+import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 
@@ -33,8 +35,9 @@ public final class DefaultCachingStrategy implements CachingStrategy, CachingCon
    * Amount of {@link Session}s to cache
    */
   @Parameter
-  @Optional(defaultValue = "1")
-  int sessionCacheSize;
+  @Optional
+  @Expression(NOT_SUPPORTED)
+  int sessionCacheSize = Integer.MAX_VALUE;
 
   /**
    * {@code true} if the {@link ConnectionFactory} should cache the {@link MessageProducer}s
@@ -42,6 +45,7 @@ public final class DefaultCachingStrategy implements CachingStrategy, CachingCon
   @Parameter
   @Alias("cacheProducers")
   @Optional(defaultValue = "true")
+  @Expression(NOT_SUPPORTED)
   boolean producersCache;
 
   /**
@@ -50,6 +54,7 @@ public final class DefaultCachingStrategy implements CachingStrategy, CachingCon
   @Parameter
   @Alias("cacheConsumers")
   @Optional(defaultValue = "true")
+  @Expression(NOT_SUPPORTED)
   boolean consumersCache;
 
 

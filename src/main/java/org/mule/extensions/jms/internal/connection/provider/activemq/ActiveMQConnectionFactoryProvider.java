@@ -42,20 +42,19 @@ public class ActiveMQConnectionFactoryProvider {
   private static final int REDELIVERY_IGNORE = -1;
 
   /**
-   * a custom {@link ConnectionFactory} that relates to an {@link ActiveMQConnectionFactory}
-   */
-  @Parameter
-  @Optional
-  private ConnectionFactory connectionFactory;
-
-  /**
-   * configuration parameters required to configure a default {@link ActiveMQConnectionFactory}
+   * Parameters required to configure a default {@link ActiveMQConnectionFactory}
    */
   @Parameter
   @Optional
   @NullSafe
   private ActiveMQConnectionFactoryConfiguration factoryConfiguration;
 
+  /**
+   * A custom {@link ConnectionFactory} that relates to an {@link ActiveMQConnectionFactory}
+   */
+  @Parameter
+  @Optional
+  private ConnectionFactory connectionFactory;
 
   public ConnectionFactory getConnectionFactory() {
     return connectionFactory;
@@ -72,8 +71,8 @@ public class ActiveMQConnectionFactoryProvider {
       applyVendorSpecificConnectionFactoryProperties(connectionFactory);
       return connectionFactory;
     } catch (Exception e) {
-      String message = format("Failed to create a default Connection Factory for ActiveMQ using the [%s] implementation: ",
-                              getFactoryClass());
+      String message = format("Failed to create a default Connection Factory for ActiveMQ using the [%s] implementation: %s",
+                              getFactoryClass(), e.getMessage());
       LOGGER.error(message, e);
       throw new ActiveMQException(message, e);
     }
@@ -88,7 +87,7 @@ public class ActiveMQConnectionFactoryProvider {
       setRedeliveryDelay(redeliveryPolicy);
 
     } catch (Exception e) {
-      LOGGER.error("Failed to set custom ConnectionFactoryProperties for ActiveMQ RedeliveryPolicy ", e);
+      LOGGER.error("Failed to set custom ConnectionFactoryProperties for ActiveMQ RedeliveryPolicy: " + e.getMessage(), e);
     }
   }
 

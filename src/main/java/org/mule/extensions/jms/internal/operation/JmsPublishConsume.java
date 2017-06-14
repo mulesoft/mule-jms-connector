@@ -25,18 +25,17 @@ import org.mule.extensions.jms.api.exception.JmsPublishConsumeErrorTypeProvider;
 import org.mule.extensions.jms.api.exception.JmsPublishException;
 import org.mule.extensions.jms.api.message.JmsAttributes;
 import org.mule.extensions.jms.api.message.JmsMessageBuilder;
-import org.mule.extensions.jms.internal.publish.JmsPublishParameters;
-import org.mule.extensions.jms.internal.consume.JmsConsumeParameters;
 import org.mule.extensions.jms.internal.config.InternalAckMode;
 import org.mule.extensions.jms.internal.config.JmsConfig;
 import org.mule.extensions.jms.internal.connection.JmsConnection;
 import org.mule.extensions.jms.internal.connection.session.JmsSession;
 import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
+import org.mule.extensions.jms.internal.consume.JmsConsumeParameters;
 import org.mule.extensions.jms.internal.consume.JmsMessageConsumer;
 import org.mule.extensions.jms.internal.message.JmsResultFactory;
 import org.mule.extensions.jms.internal.metadata.JmsOutputResolver;
+import org.mule.extensions.jms.internal.publish.JmsPublishParameters;
 import org.mule.extensions.jms.internal.support.JmsSupport;
-import org.mule.runtime.extension.api.annotation.dsl.xml.XmlHints;
 import org.mule.runtime.extension.api.annotation.error.Throws;
 import org.mule.runtime.extension.api.annotation.metadata.OutputResolver;
 import org.mule.runtime.extension.api.annotation.param.Config;
@@ -87,8 +86,8 @@ public class JmsPublishConsume {
   @Throws(JmsPublishConsumeErrorTypeProvider.class)
   public Result<Object, JmsAttributes> publishConsume(@Config JmsConfig config,
                                                       @Connection JmsConnection connection,
-                                                      @Placement(order = 0) @XmlHints(
-                                                          allowReferences = false) @Summary("The name of the Queue destination where the Message should be sent") String destination,
+                                                      @Placement(
+                                                          order = 0) @Summary("The name of the Queue destination where the Message should be sent") String destination,
                                                       @Placement(
                                                           order = 1) @Summary("A builder for the message that will be published") @ParameterGroup(
                                                               name = "Message",

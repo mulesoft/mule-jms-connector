@@ -53,7 +53,6 @@ public final class JmsProducerConfig {
   @Optional(defaultValue = "0")
   @Expression(NOT_SUPPORTED)
   @Summary("Defines the default time the message will be in the broker before it expires and is discarded")
-  //TODO MULE-11091: Bundle with unit
   private long timeToLive;
 
   /**
@@ -65,7 +64,6 @@ public final class JmsProducerConfig {
   @Optional(defaultValue = "MILLISECONDS")
   @Expression(NOT_SUPPORTED)
   @Summary("Time unit to be used in the timeToLive configurations")
-  //TODO MULE-11091: Bundle with unit
   private TimeUnit timeToLiveUnit;
 
   /**
@@ -101,7 +99,6 @@ public final class JmsProducerConfig {
   @Expression(NOT_SUPPORTED)
   @Optional
   @Summary("Only used by JMS 2.0:  Sets the delivery delay to be applied in order to postpone the Message delivery")
-  //TODO MULE-11091: Bundle with unit
   private Long deliveryDelay;
 
   /**
@@ -113,7 +110,6 @@ public final class JmsProducerConfig {
   @Optional(defaultValue = "MILLISECONDS")
   @Expression(NOT_SUPPORTED)
   @Summary("Only used by JMS 2.0: Time unit to be used in the deliveryDelay configurations.")
-  //TODO MULE-11091: Bundle with unit
   private TimeUnit deliveryDelayUnit;
 
   /**

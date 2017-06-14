@@ -6,10 +6,8 @@
  */
 package org.mule.extensions.jms.api.config;
 
-import org.mule.extensions.jms.internal.config.JmsAckMode;
-import org.mule.extensions.jms.internal.operation.JmsConsume;
-import org.mule.extensions.jms.internal.source.JmsListener;
 import org.mule.extensions.jms.internal.config.InternalAckMode;
+import org.mule.extensions.jms.internal.config.JmsAckMode;
 
 import javax.jms.Session;
 
@@ -25,22 +23,16 @@ import javax.jms.Session;
  * @since 1.0
  */
 public enum ConsumerAckMode implements JmsAckMode {
+
   /**
-   * This is JMS {@link Session#AUTO_ACKNOWLEDGE} mode.
-   * The session automatically acknowledges the receipt when it successfully delivered the message
-   * to a {@link JmsConsume#consume} or {@link JmsListener} handler.
+   * Mule automatically ACKs the message upon reception
    */
-  AUTO(InternalAckMode.AUTO),
+  NONE(InternalAckMode.NONE),
 
   /**
    * This is JMS {@link Session#CLIENT_ACKNOWLEDGE} mode. The user must do the ACK manually within the flow
    */
-  MANUAL(InternalAckMode.MANUAL),
-
-  /**
-   * Similar to AUTO, the JMS message is acknowledged automatically but in a lazy fashion which may lead to duplicates.
-   */
-  DUPS_OK(InternalAckMode.DUPS_OK);
+  MANUAL(InternalAckMode.MANUAL);
 
   private InternalAckMode ackMode;
 

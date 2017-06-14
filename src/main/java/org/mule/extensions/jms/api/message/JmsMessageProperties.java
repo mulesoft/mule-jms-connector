@@ -39,7 +39,7 @@ public interface JmsMessageProperties {
   Map<String, Object> getJmsProperties();
 
   /**
-   * @return the user provider properties of the {@link Message}
+   * @return the user provided properties of the {@link Message}
    */
   Map<String, Object> getUserProperties();
 

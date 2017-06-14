@@ -21,7 +21,7 @@ public class DefaultJmsProperties implements JmsMessageProperties {
   private static final String JMSX_PREFIX = "JMSX";
   private static final String JMS_PREFIX = "JMS";
 
-  private final Map<String, Object> allPropertiesMap;
+  private final Map<String, Object> all;
 
   private final Map<String, Object> userProperties = new HashMap<>();
 
@@ -32,10 +32,10 @@ public class DefaultJmsProperties implements JmsMessageProperties {
   public DefaultJmsProperties(Map<String, Object> messageProperties) {
     checkArgument(messageProperties != null, "Initializer properties Map expected, but it was null");
 
-    allPropertiesMap = copyOf(messageProperties);
+    all = copyOf(messageProperties);
     JmsxPropertiesBuilder jmsxPropertiesBuilder = JmsxPropertiesBuilder.create();
 
-    allPropertiesMap.entrySet().forEach(e -> {
+    all.entrySet().forEach(e -> {
       String key = e.getKey();
       if (key.startsWith(JMSX_PREFIX) && JMSX_NAMES.contains(key)) {
         jmsxPropertiesBuilder.add(key, e.getValue());
@@ -53,7 +53,7 @@ public class DefaultJmsProperties implements JmsMessageProperties {
 
   @Override
   public Map<String, Object> asMap() {
-    return copyOf(allPropertiesMap);
+    return copyOf(all);
   }
 
   @Override
@@ -74,12 +74,12 @@ public class DefaultJmsProperties implements JmsMessageProperties {
 
   @Override
   public boolean equals(Object o) {
-    return allPropertiesMap.equals(o);
+    return all.equals(o);
   }
 
   @Override
   public int hashCode() {
-    return allPropertiesMap.hashCode();
+    return all.hashCode();
   }
 
 }

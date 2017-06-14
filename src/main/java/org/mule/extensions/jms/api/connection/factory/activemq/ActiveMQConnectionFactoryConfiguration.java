@@ -11,6 +11,8 @@ import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
+import org.mule.runtime.extension.api.annotation.param.display.Example;
+import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 import javax.jms.ConnectionFactory;
 
@@ -32,6 +34,7 @@ public final class ActiveMQConnectionFactoryConfiguration {
   @Parameter
   @Optional(defaultValue = DEFAULT_BROKER_URL)
   @Expression(NOT_SUPPORTED)
+  @Example("tcp://localhost:61616")
   private String brokerUrl;
 
   /**
@@ -49,6 +52,7 @@ public final class ActiveMQConnectionFactoryConfiguration {
   @Parameter
   @Optional(defaultValue = "1000")
   @Expression(NOT_SUPPORTED)
+  @Summary("Configures the ActiveMQ 'initialRedeliveryDelay' in the consumer's RedeliveryPolicy")
   private long initialRedeliveryDelay;
 
   /**
@@ -57,6 +61,7 @@ public final class ActiveMQConnectionFactoryConfiguration {
   @Parameter
   @Optional(defaultValue = "1000")
   @Expression(NOT_SUPPORTED)
+  @Summary("Configures the ActiveMQ 'redeliveryDelay' in the consumer's RedeliveryPolicy")
   private long redeliveryDelay;
 
   /**
@@ -66,6 +71,7 @@ public final class ActiveMQConnectionFactoryConfiguration {
   @Parameter
   @Optional(defaultValue = "0")
   @Expression(NOT_SUPPORTED)
+  @Summary("Configures the ActiveMQ 'maxRedelivery' in the consumer's RedeliveryPolicy")
   private int maxRedelivery;
 
   public int getMaxRedelivery() {

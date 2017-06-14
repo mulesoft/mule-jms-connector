@@ -28,8 +28,8 @@ import org.mule.extensions.jms.api.exception.JmsExtensionException;
 import org.mule.extensions.jms.api.message.JmsAttributes;
 import org.mule.extensions.jms.internal.config.InternalAckMode;
 import org.mule.extensions.jms.internal.config.JmsConfig;
-import org.mule.extensions.jms.internal.connection.session.JmsSession;
 import org.mule.extensions.jms.internal.connection.JmsTransactionalConnection;
+import org.mule.extensions.jms.internal.connection.session.JmsSession;
 import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
 import org.mule.extensions.jms.internal.consume.JmsMessageConsumer;
 import org.mule.extensions.jms.internal.metadata.JmsOutputResolver;
@@ -180,7 +180,7 @@ public class JmsListener extends Source<Object, JmsAttributes> {
 
     if (LOGGER.isDebugEnabled()) {
       LOGGER.debug(format("Starting JMS Listener with [%s] consumers on destination [%s] of type [%s] with AckMode [%s]",
-                          numberOfConsumers, destination, consumerType.topic() ? TOPIC : QUEUE, ackMode.name()));
+                          numberOfConsumers, destination, consumerType.topic() ? TOPIC : QUEUE, resolvedAckMode.name()));
     }
 
     try {
@@ -295,7 +295,13 @@ public class JmsListener extends Source<Object, JmsAttributes> {
   }
 
   private JmsListenerLock createJmsLock() {
-    return resolvedAckMode.equals(NONE) ? new NullJmsListenerLock() : new DefaultJmsListenerLock();
+    if (resolvedAckMode.equals(NONE) || resolvedAckMode.equals(TRANSACTED)) {
+      if (LOGGER.isTraceEnabled()) {
+        LOGGER.trace(format("Session lock skipped for ACK mode [%s].", resolvedAckMode.name()));
+      }
+      return new NullJmsListenerLock();
+    }
+    return new DefaultJmsListenerLock();
   }
 
   private void validateNumberOfConsumers(int numberOfConsumers) {

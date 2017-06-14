@@ -39,7 +39,7 @@ import javax.jms.Topic;
 public final class JmsConfig {
 
   /**
-   * The encoding of the {@link Message} {@code body} to consume if the message doesn't communicate it
+   * The default {@code encoding} of the {@link Message} {@code body} to be used if the message doesn't communicate it
    */
   @Parameter
   @DefaultEncoding
@@ -47,7 +47,7 @@ public final class JmsConfig {
   private String encoding;
 
   /**
-   * The default content type of the {@link Message} {@code body} to consume if the message doesn't communicate it
+   * The default {@code contentType} of the {@link Message} {@code body} to be used if the message doesn't communicate it
    */
   @Parameter
   @Expression(NOT_SUPPORTED)

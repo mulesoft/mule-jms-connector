@@ -36,7 +36,7 @@ public enum InternalAckMode {
   /**
    * Mule automatically ACKs the message upon reception
    */
-  NONE(0),
+  NONE(CLIENT_ACKNOWLEDGE),
 
   /**
    * This is JMS {@link Session#AUTO_ACKNOWLEDGE} mode.

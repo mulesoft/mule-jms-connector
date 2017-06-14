@@ -25,14 +25,14 @@ import javax.jms.ConnectionFactory;
 public class GenericConnectionParameters {
 
   /**
-   * Username to be used when providing credentials fpr authentication.
+   * Username to be used when providing credentials for authentication.
    */
   @Parameter
   @Optional
   private String username;
 
   /**
-   * Password to be used when providing credentials fpr authentication.
+   * Password to be used when providing credentials for authentication.
    */
   @Parameter
   @Optional

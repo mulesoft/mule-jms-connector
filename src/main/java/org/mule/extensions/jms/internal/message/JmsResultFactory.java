@@ -23,8 +23,9 @@ import org.mule.runtime.api.metadata.DataType;
 import org.mule.runtime.api.metadata.DataTypeParamsBuilder;
 import org.mule.runtime.api.metadata.MediaType;
 import org.mule.runtime.extension.api.runtime.operation.Result;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.Optional;
 
 import javax.jms.Destination;
 import javax.jms.JMSException;
@@ -32,8 +33,9 @@ import javax.jms.Message;
 import javax.jms.Queue;
 import javax.jms.Session;
 import javax.jms.Topic;
-import java.io.IOException;
-import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Factory class for creating an Operation {@link Result} based on a JMS {@link Message}
@@ -61,10 +63,7 @@ public class JmsResultFactory {
       throws IOException, JMSException {
 
     if (jmsMessage == null) {
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Resulting JMS Message was [null], creating an empty result");
-      }
-
+      LOGGER.debug("Resulting JMS Message was [null], creating an empty result");
       return createEmptyResult();
     }
 

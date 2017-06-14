@@ -10,6 +10,7 @@ import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import org.mule.extensions.jms.api.destination.ConsumerType;
 import org.mule.extensions.jms.api.destination.QueueConsumer;
 import org.mule.runtime.extension.api.annotation.Expression;
+import org.mule.runtime.extension.api.annotation.dsl.xml.XmlHints;
 import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
@@ -42,6 +43,7 @@ public final class JmsConsumerConfig {
   @Parameter
   @Optional
   @Expression(NOT_SUPPORTED)
+  @XmlHints(allowReferences = false)
   @NullSafe(defaultImplementingType = QueueConsumer.class)
   private ConsumerType consumerType;
 
