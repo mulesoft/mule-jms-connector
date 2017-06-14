@@ -23,7 +23,7 @@
         <artemisVersion>1.5.1</artemisVersion>
         <javaxJmsApiVersion>2.0.1</javaxJmsApiVersion>
         <commonsIoVersion>2.4</commonsIoVersion>
-        <commonsLangVersion>2.4</commonsLangVersion>
+        <commonsLangVersion>3.6</commonsLangVersion>
         <guavaVersion>18.0</guavaVersion>
         <springVersion>4.1.6.RELEASE</springVersion>
 
@@ -96,8 +96,8 @@
         </dependency>
 
         <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
             <version>${commonsLangVersion}</version>
         </dependency>
 

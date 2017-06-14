@@ -9,7 +9,7 @@ package org.mule.extensions.jms.internal.message;
 
 import static java.lang.Character.isJavaIdentifierPart;
 import static java.lang.String.format;
-import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.mule.runtime.api.metadata.MediaTypeUtils.isStringRepresentable;
 import static org.mule.runtime.api.util.Preconditions.checkArgument;
 import org.mule.extensions.jms.api.connection.JmsSpecification;
@@ -19,7 +19,7 @@ import org.mule.runtime.core.api.util.IOUtils;
 import org.mule.runtime.core.message.OutputHandler;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

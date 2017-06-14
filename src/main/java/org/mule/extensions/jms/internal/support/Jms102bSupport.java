@@ -10,7 +10,7 @@ import static java.lang.String.format;
 import static javax.jms.DeliveryMode.NON_PERSISTENT;
 import static javax.jms.DeliveryMode.PERSISTENT;
 import static javax.jms.Session.SESSION_TRANSACTED;
-import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.mule.extensions.jms.api.connection.JmsSpecification.JMS_1_0_2b;
 import static org.mule.extensions.jms.api.connection.LookupJndiDestination.ALWAYS;
 import static org.mule.extensions.jms.api.connection.LookupJndiDestination.TRY_ALWAYS;

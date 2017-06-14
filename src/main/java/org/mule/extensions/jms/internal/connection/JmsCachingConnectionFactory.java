@@ -6,7 +6,7 @@
  */
 package org.mule.extensions.jms.internal.connection;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.mule.runtime.api.util.Preconditions.checkArgument;
 import org.mule.extensions.jms.api.connection.caching.CachingConfiguration;
 import org.mule.extensions.jms.internal.support.JmsSupport;

@@ -7,7 +7,7 @@
 package org.mule.extensions.jms.internal.connection.provider;
 
 import static java.lang.String.format;
-import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.mule.extensions.jms.api.connection.JmsSpecification.JMS_1_0_2b;
 import static org.mule.extensions.jms.api.connection.JmsSpecification.JMS_2_0;
 import static org.mule.runtime.api.connection.ConnectionValidationResult.failure;
