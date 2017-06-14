@@ -18,13 +18,12 @@ import org.mule.extensions.jms.api.exception.JmsExtensionException;
 import org.mule.extensions.jms.api.exception.JmsPublishException;
 import org.mule.extensions.jms.api.exception.JmsPublisherErrorTypeProvider;
 import org.mule.extensions.jms.api.message.JmsMessageBuilder;
-import org.mule.extensions.jms.internal.publish.JmsPublishParameters;
 import org.mule.extensions.jms.internal.config.JmsConfig;
 import org.mule.extensions.jms.internal.connection.JmsConnection;
-import org.mule.extensions.jms.internal.connection.session.JmsSession;
 import org.mule.extensions.jms.internal.connection.JmsTransactionalConnection;
+import org.mule.extensions.jms.internal.connection.session.JmsSession;
 import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
-import org.mule.runtime.extension.api.annotation.dsl.xml.XmlHints;
+import org.mule.extensions.jms.internal.publish.JmsPublishParameters;
 import org.mule.runtime.extension.api.annotation.error.Throws;
 import org.mule.runtime.extension.api.annotation.param.Config;
 import org.mule.runtime.extension.api.annotation.param.Connection;
@@ -69,8 +68,7 @@ public final class JmsPublish {
    */
   @Throws(JmsPublisherErrorTypeProvider.class)
   public void publish(@Config JmsConfig config, @Connection JmsTransactionalConnection connection,
-                      @XmlHints(
-                          allowReferences = false) @Summary("The name of the Destination where the Message should be sent") String destination,
+                      @Summary("The name of the Destination where the Message should be sent") String destination,
                       @Optional(defaultValue = QUEUE) @Summary("The type of the Destination") DestinationType destinationType,
                       @Summary("A builder for the message that will be published") @ParameterGroup(name = "Message",
                           showInDsl = true) JmsMessageBuilder messageBuilder,

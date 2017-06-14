@@ -74,9 +74,7 @@ public final class JmsCommons {
       throws JMSException {
     try {
       if (ackMode.equals(NONE)) {
-        if (LOGGER.isDebugEnabled()) {
-          LOGGER.debug("Automatically performing an ACK over the message, since AckMode was NONE");
-        }
+        LOGGER.debug("Automatically performing an ACK over the message, since AckMode was NONE");
         receivedMessage.acknowledge();
 
       } else if (ackMode.equals(MANUAL)) {

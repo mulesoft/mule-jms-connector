@@ -6,6 +6,7 @@
  */
 package org.mule.extensions.jms.internal.source;
 
+import static java.lang.String.format;
 import static org.mule.extensions.jms.internal.common.JmsCommons.evaluateMessageAck;
 import static org.mule.extensions.jms.internal.common.JmsCommons.resolveMessageContentType;
 import static org.mule.extensions.jms.internal.common.JmsCommons.resolveMessageEncoding;
@@ -91,7 +92,7 @@ public final class JmsMessageListener implements MessageListener {
     if (ackMode.equals(TRANSACTED)) {
       sessionManager.bindToTransaction(session);
     }
-    evaluateAckAction(message);
+
     saveReplyToDestination(message, context);
     context.addVariable(JmsListener.JMS_LOCK_VAR, jmsLock);
     context.addVariable(JmsListener.JMS_SESSION_VAR, session);
@@ -137,12 +138,15 @@ public final class JmsMessageListener implements MessageListener {
 
   private void dispatchMessage(Message message, SourceCallbackContext context, String encoding, String contentType) {
     try {
-      Result<Object, JmsAttributes> result =
-          resultFactory.createResult(message, jmsSupport.getSpecification(), contentType, encoding, session.getAckId());
+      Result<Object, JmsAttributes> result = resultFactory.createResult(message, jmsSupport.getSpecification(),
+                                                                        contentType, encoding, session.getAckId());
+      evaluateAckAction(message);
       sourceCallback.handle(result, context);
 
     } catch (Exception e) {
-      LOGGER.error("An error occurred while creating the initial message", e);
+      String msg = format("An error occurred while dispatching a Message from the listener on session [%s]: %s",
+                          session.get(), e.getMessage());
+      LOGGER.error(msg, e);
       sourceCallback.onSourceException(e);
     }
   }

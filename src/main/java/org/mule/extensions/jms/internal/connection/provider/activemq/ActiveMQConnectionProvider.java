@@ -75,7 +75,7 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider {
   @Override
   protected void doClose(JmsConnection jmsConnection) {
     if (LOGGER.isDebugEnabled()) {
-      LOGGER.debug("Performing custom doClose for ActiveMq");
+      LOGGER.debug("Performing custom doClose for ActiveMQ");
     }
 
     Connection connection = jmsConnection.get();

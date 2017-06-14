@@ -12,20 +12,21 @@ import static org.mule.extensions.jms.api.connection.JmsSpecification.JMS_1_0_2b
 import static org.mule.extensions.jms.api.connection.JmsSpecification.JMS_2_0;
 import static org.mule.runtime.api.connection.ConnectionValidationResult.failure;
 import static org.mule.runtime.api.connection.ConnectionValidationResult.success;
+import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.disposeIfNeeded;
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.initialiseIfNeeded;
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.stopIfNeeded;
 import static org.mule.runtime.extension.api.annotation.param.ParameterGroup.CONNECTION;
 import static org.slf4j.LoggerFactory.getLogger;
-import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
-import org.mule.extensions.jms.internal.connection.JmsConnection;
 import org.mule.extensions.jms.api.connection.JmsSpecification;
-import org.mule.extensions.jms.internal.connection.JmsTransactionalConnection;
 import org.mule.extensions.jms.api.connection.caching.CachingStrategy;
 import org.mule.extensions.jms.api.connection.caching.DefaultCachingStrategy;
 import org.mule.extensions.jms.api.exception.JmsCallbackConnectionException;
 import org.mule.extensions.jms.internal.connection.JmsCachingConnectionFactory;
+import org.mule.extensions.jms.internal.connection.JmsConnection;
+import org.mule.extensions.jms.internal.connection.JmsTransactionalConnection;
 import org.mule.extensions.jms.internal.connection.param.GenericConnectionParameters;
+import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
 import org.mule.extensions.jms.internal.support.Jms102bSupport;
 import org.mule.extensions.jms.internal.support.Jms11Support;
 import org.mule.extensions.jms.internal.support.Jms20Support;
@@ -37,12 +38,12 @@ import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.Disposable;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
+import org.mule.runtime.extension.api.annotation.Expression;
+import org.mule.runtime.extension.api.annotation.dsl.xml.XmlHints;
 import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
-
-import org.slf4j.Logger;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -52,6 +53,8 @@ import javax.jms.ConnectionFactory;
 import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
 import javax.jms.Session;
+
+import org.slf4j.Logger;
 
 /**
  * Base implementation of a {@link PoolingConnectionProvider} for {@link JmsConnection}s
@@ -72,6 +75,8 @@ public abstract class BaseConnectionProvider
   @Parameter
   @Optional
   @NullSafe(defaultImplementingType = DefaultCachingStrategy.class)
+  @XmlHints(allowReferences = false)
+  @Expression(value = NOT_SUPPORTED)
   private CachingStrategy cachingStrategy;
 
   @Inject
@@ -214,9 +219,7 @@ public abstract class BaseConnectionProvider
 
   private void initialiseConnectionFactory() throws Exception {
 
-    if (LOGGER.isDebugEnabled()) {
-      LOGGER.debug("Initialising Connection Factory");
-    }
+    LOGGER.debug("Initialising Connection Factory");
 
     ConnectionFactory targetFactory = getConnectionFactory();
 
@@ -240,10 +243,7 @@ public abstract class BaseConnectionProvider
 
       initialiseIfNeeded(jmsConnectionFactory);
     } else {
-
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug(format("Skip CachingConnectionFactory Wrapper"));
-      }
+      LOGGER.debug("Skip CachingConnectionFactory Wrapper");
 
       jmsConnectionFactory = targetFactory;
     }

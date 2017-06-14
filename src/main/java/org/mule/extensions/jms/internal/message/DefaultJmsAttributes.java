@@ -50,7 +50,7 @@ class DefaultJmsAttributes implements JmsAttributes {
    */
   @Override
   public String getAckId() {
-    return ackId;
+    return ackId == null ? "" : ackId;
   }
 
   /**

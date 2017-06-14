@@ -8,6 +8,7 @@ package org.mule.extensions.jms.test;
 
 import static java.lang.System.currentTimeMillis;
 import static java.util.Collections.emptyMap;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
@@ -25,15 +26,20 @@ import org.mule.functional.junit4.FlowRunner;
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.MediaType;
+import org.mule.runtime.api.metadata.TypedValue;
+import org.mule.runtime.core.api.util.func.CheckedSupplier;
+import org.mule.runtime.extension.api.runtime.operation.Result;
 import org.mule.tck.junit4.rule.SystemProperty;
+import org.mule.tck.probe.JUnitLambdaProbe;
+import org.mule.tck.probe.PollingProber;
 import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
+
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.slf4j.Logger;
 import ru.yandex.qatools.allure.annotations.Features;
-
-import java.util.Map;
 
 @Features(JMS_EXTENSION)
 @ArtifactClassLoaderRunnerConfig(testInclusions = {"org.apache.activemq:artemis-jms-client"})
@@ -153,4 +159,26 @@ public abstract class JmsAbstractTestCase extends MuleArtifactFunctionalTestCase
   protected String getReplyDestination(Message firstMessage) {
     return ((JmsAttributes) firstMessage.getAttributes().getValue()).getHeaders().getJMSReplyTo().getDestination();
   }
+
+  protected void validate(CheckedSupplier<Boolean> validation, long validationTimeout, long validationDelay) {
+    new PollingProber(validationTimeout, validationDelay).check(new JUnitLambdaProbe(validation));
+  }
+
+  protected void assertQueueIsEmpty() throws Exception {
+    try {
+      JmsMessageStorage.pollMuleMessage();
+      throw new RuntimeException();
+    } catch (AssertionError error) {
+      //
+    }
+  }
+
+  protected void assertJmsMessage(Result<TypedValue<Object>, JmsAttributes> message, String jmsMessage, boolean isRedelivered) {
+    Object value = message.getOutput().getValue();
+    assertThat(value, is(jmsMessage));
+
+    JmsAttributes attributes = message.getAttributes().get();
+    assertThat(attributes.getHeaders().getJMSRedelivered(), is(isRedelivered));
+  }
+
 }

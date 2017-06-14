@@ -17,6 +17,9 @@ import static org.mule.extensions.jms.internal.common.JmsCommons.resolveMessageC
 import static org.mule.extensions.jms.internal.common.JmsCommons.resolveMessageEncoding;
 import static org.mule.extensions.jms.internal.common.JmsCommons.resolveOverride;
 import static org.mule.extensions.jms.internal.common.JmsCommons.toInternalAckMode;
+import static org.mule.extensions.jms.internal.config.InternalAckMode.AUTO;
+import static org.mule.extensions.jms.internal.config.InternalAckMode.DUPS_OK;
+import static org.mule.extensions.jms.internal.config.InternalAckMode.NONE;
 import static org.slf4j.LoggerFactory.getLogger;
 import org.mule.extensions.jms.api.config.ConsumerAckMode;
 import org.mule.extensions.jms.api.config.JmsConsumerConfig;
@@ -28,14 +31,13 @@ import org.mule.extensions.jms.api.message.JmsAttributes;
 import org.mule.extensions.jms.internal.config.InternalAckMode;
 import org.mule.extensions.jms.internal.config.JmsConfig;
 import org.mule.extensions.jms.internal.connection.JmsConnection;
-import org.mule.extensions.jms.internal.connection.session.JmsSession;
 import org.mule.extensions.jms.internal.connection.JmsTransactionalConnection;
+import org.mule.extensions.jms.internal.connection.session.JmsSession;
 import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
 import org.mule.extensions.jms.internal.consume.JmsMessageConsumer;
 import org.mule.extensions.jms.internal.message.JmsResultFactory;
 import org.mule.extensions.jms.internal.metadata.JmsOutputResolver;
 import org.mule.extensions.jms.internal.support.JmsSupport;
-import org.mule.runtime.extension.api.annotation.dsl.xml.XmlHints;
 import org.mule.runtime.extension.api.annotation.error.Throws;
 import org.mule.runtime.extension.api.annotation.metadata.OutputResolver;
 import org.mule.runtime.extension.api.annotation.param.Config;
@@ -91,8 +93,7 @@ public final class JmsConsume {
   @Throws(JmsConsumeErrorTypeProvider.class)
   public Result<Object, JmsAttributes> consume(@Config JmsConfig config,
                                                @Connection JmsTransactionalConnection connection,
-                                               @XmlHints(
-                                                   allowReferences = false) @Summary("The name of the Destination from where the Message should be consumed") String destination,
+                                               @Summary("The name of the Destination from where the Message should be consumed") String destination,
                                                @ConfigOverride @Summary("The Type of the Consumer that should be used for the provided destination") ConsumerType consumerType,
                                                @Optional @Summary("The Session ACK mode to use when consuming a message") ConsumerAckMode ackMode,
                                                @ConfigOverride @Summary("The JMS selector to be used for filtering incoming messages") String selector,
@@ -104,8 +105,7 @@ public final class JmsConsume {
                                                    defaultValue = "MILLISECONDS") @Example("MILLISECONDS") @Summary("Time unit to be used in the maximumWaitTime configuration") TimeUnit maximumWaitUnit)
       throws JmsExtensionException {
 
-    InternalAckMode resolvedAckMode = resolveOverride(toInternalAckMode(config.getConsumerConfig().getAckMode()),
-                                                      toInternalAckMode(ackMode));
+    InternalAckMode resolvedAckMode = resolveAck(config.getConsumerConfig(), ackMode);
 
     try {
       if (LOGGER.isDebugEnabled()) {
@@ -127,24 +127,39 @@ public final class JmsConsume {
 
       Message received = consumer.consume(maximumWaitUnit.toMillis(maximumWait));
 
-      if (received != null) {
-        evaluateMessageAck(resolvedAckMode, session, received, sessionManager, null);
-        // If no explicit content type was provided to the operation, fallback to the
-        // one communicated in the message properties. Finally if no property was set,
-        // use the default one provided by the config
-        contentType = resolveOverride(resolveMessageContentType(received, config.getContentType()), contentType);
-        encoding = resolveOverride(resolveMessageEncoding(received, config.getEncoding()), encoding);
+      if (received == null) {
+        LOGGER.debug("Resulting JMS Message was [null], creating an empty result");
+        return resultFactory.createEmptyResult();
       }
 
-      return resultFactory.createResult(received, jmsSupport.getSpecification(),
-                                        contentType, encoding,
-                                        session.getAckId());
+      // If no explicit content type was provided to the operation, fallback to the
+      // one communicated in the message properties. Finally if no property was set,
+      // use the default one provided by the config
+      String resolvedContentType = resolveOverride(resolveMessageContentType(received, config.getContentType()), contentType);
+      String resolvedEncoding = resolveOverride(resolveMessageEncoding(received, config.getEncoding()), encoding);
+
+      Result<Object, JmsAttributes> result = resultFactory.createResult(received, jmsSupport.getSpecification(),
+                                                                        resolvedContentType, resolvedEncoding,
+                                                                        session.getAckId());
+
+      evaluateMessageAck(resolvedAckMode, session, received, sessionManager, null);
+
+      return result;
+
     } catch (Exception e) {
       String msg = format("An error occurred while consuming a message from destination [%s] of type [%s]: %s",
                           destination, consumerType.topic() ? TOPIC : QUEUE, e.getMessage());
       LOGGER.error(msg, e);
       throw new JmsConsumeException(msg, e);
     }
+  }
+
+  private InternalAckMode resolveAck(JmsConsumerConfig config, ConsumerAckMode ackMode) {
+    InternalAckMode fallbackAck = toInternalAckMode(config.getAckMode());
+    if (AUTO.equals(fallbackAck) || DUPS_OK.equals(fallbackAck)) {
+      fallbackAck = NONE;
+    }
+    return resolveOverride(fallbackAck, toInternalAckMode(ackMode));
   }
 
 }
