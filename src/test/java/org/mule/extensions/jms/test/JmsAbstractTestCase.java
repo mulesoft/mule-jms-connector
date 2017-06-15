@@ -17,7 +17,6 @@ import static org.hamcrest.core.IsNull.nullValue;
 import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
 import static org.mule.extensions.jms.test.JmsMessageStorage.cleanUpQueue;
 import static org.mule.runtime.api.metadata.MediaType.ANY;
-import static org.slf4j.LoggerFactory.getLogger;
 import org.mule.extensions.jms.api.destination.JmsDestination;
 import org.mule.extensions.jms.api.message.JmsAttributes;
 import org.mule.extensions.jms.api.message.JmsHeaders;
@@ -30,16 +29,15 @@ import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 
 import org.junit.Before;
 import org.junit.Rule;
-import org.slf4j.Logger;
 import ru.yandex.qatools.allure.annotations.Features;
 
 import java.util.Map;
 
 @Features(JMS_EXTENSION)
-@ArtifactClassLoaderRunnerConfig(testInclusions = {"org.apache.activemq:artemis-jms-client"})
+@ArtifactClassLoaderRunnerConfig(
+    testInclusions = {"org.apache.activemq:artemis-jms-client"}, sharedRuntimeLibs = {"org.apache.activemq:activemq-client",
+        "org.apache.activemq:activemq-broker", "org.apache.activemq:activemq-kahadb-store", "javax.jms:javax.jms-api"})
 public abstract class JmsAbstractTestCase extends MuleArtifactFunctionalTestCase {
-
-  private static final Logger LOGGER = getLogger(JmsAbstractTestCase.class);
 
   protected static final String NAMESPACE = "JMS";
   protected static final String DESTINATION_VAR = "destination";

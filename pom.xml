@@ -19,8 +19,8 @@
     <description>Mule connector lets you easily send and receive messages to queues and topics for any message service which implements the JMS specification</description>
 
     <properties>
-        <activemq.version>5.14.1</activemq.version>
-        <artemisVersion>1.5.1</artemisVersion>
+        <activemq.version>5.14.5</activemq.version>
+        <artemisVersion>2.1.0</artemisVersion>
         <javaxJmsApiVersion>2.0.1</javaxJmsApiVersion>
         <commonsIoVersion>2.4</commonsIoVersion>
         <commonsLangVersion>2.4</commonsLangVersion>
@@ -31,13 +31,6 @@
     </properties>
 
     <dependencies>
-
-        <dependency>
-            <groupId>javax.jms</groupId>
-            <artifactId>javax.jms-api</artifactId>
-            <version>${javaxJmsApiVersion}</version>
-        </dependency>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jms</artifactId>
@@ -71,36 +64,15 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-broker</artifactId>
-            <version>${activemq.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-client</artifactId>
-            <version>${activemq.version}</version>
-        </dependency>
-
-        <!-- Used by ActiveMQ if persistent=true -->
-        <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-kahadb-store</artifactId>
-            <version>${activemq.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>${commonsIoVersion}</version>
         </dependency>
-
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
             <version>${commonsLangVersion}</version>
         </dependency>
-
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
@@ -108,12 +80,42 @@
         </dependency>
 
         <dependency>
+            <groupId>javax.jms</groupId>
+            <artifactId>javax.jms-api</artifactId>
+            <version>${javaxJmsApiVersion}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- ActiveMQ Dependencies-->
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-client</artifactId>
+            <version>${activemq.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Used for in memory broker -->
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-broker</artifactId>
+            <version>${activemq.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Used by ActiveMQ if persistent=true -->
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-kahadb-store</artifactId>
+            <version>${activemq.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+
+        <!-- Test Dependencies -->
+        <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>artemis-server</artifactId>
             <version>${artemisVersion}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>artemis-jms-client</artifactId>
