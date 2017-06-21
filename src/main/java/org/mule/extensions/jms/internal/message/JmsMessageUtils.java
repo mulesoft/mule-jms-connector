@@ -16,7 +16,7 @@ import org.mule.extensions.jms.api.connection.JmsSpecification;
 import org.mule.extensions.jms.api.exception.JmsIllegalBodyException;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.core.api.util.IOUtils;
-import org.mule.runtime.core.message.OutputHandler;
+import org.mule.runtime.core.api.message.OutputHandler;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang3.ArrayUtils;
