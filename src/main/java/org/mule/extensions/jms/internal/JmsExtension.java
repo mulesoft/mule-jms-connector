@@ -25,7 +25,6 @@ import org.mule.extensions.jms.internal.connection.provider.GenericConnectionPro
 import org.mule.extensions.jms.internal.connection.provider.activemq.ActiveMQConnectionProvider;
 import org.mule.extensions.jms.internal.operation.JmsAcknowledge;
 import org.mule.runtime.extension.api.annotation.Configurations;
-import org.mule.runtime.extension.api.annotation.Export;
 import org.mule.runtime.extension.api.annotation.Extension;
 import org.mule.runtime.extension.api.annotation.OnException;
 import org.mule.runtime.extension.api.annotation.Operations;
@@ -59,7 +58,6 @@ import javax.jms.ConnectionFactory;
 @SubTypeMapping(
     baseType = JndiNameResolver.class, subTypes = {SimpleJndiNameResolver.class, CachedJndiNameResolver.class})
 @ErrorTypes(JmsErrors.class)
-@Export(classes = {ConnectionFactory.class})
 @OnException(JmsExceptionHandler.class)
 public class JmsExtension {
 
