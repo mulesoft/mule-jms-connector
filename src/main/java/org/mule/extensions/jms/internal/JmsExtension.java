@@ -26,6 +26,7 @@ import org.mule.extensions.jms.internal.connection.provider.activemq.ActiveMQCon
 import org.mule.extensions.jms.internal.operation.JmsAcknowledge;
 import org.mule.runtime.extension.api.annotation.Configurations;
 import org.mule.runtime.extension.api.annotation.Extension;
+import org.mule.runtime.extension.api.annotation.ExternalDependency;
 import org.mule.runtime.extension.api.annotation.OnException;
 import org.mule.runtime.extension.api.annotation.Operations;
 import org.mule.runtime.extension.api.annotation.SubTypeMapping;
@@ -59,6 +60,7 @@ import javax.jms.ConnectionFactory;
     baseType = JndiNameResolver.class, subTypes = {SimpleJndiNameResolver.class, CachedJndiNameResolver.class})
 @ErrorTypes(JmsErrors.class)
 @OnException(JmsExceptionHandler.class)
+@ExternalDependency(name = "Javax JMS", groupId = "javax.jms", artifactId = "javax.jms-api", minVersion = "2.0.1")
 public class JmsExtension {
 
 }
