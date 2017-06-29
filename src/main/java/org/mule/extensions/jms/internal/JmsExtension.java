@@ -8,6 +8,7 @@ package org.mule.extensions.jms.internal;
  */
 
 
+import static org.mule.runtime.api.meta.LibraryType.DEPENDENCY;
 import org.mule.extensions.jms.api.connection.caching.CachingStrategy;
 import org.mule.extensions.jms.api.connection.caching.DefaultCachingStrategy;
 import org.mule.extensions.jms.api.connection.caching.NoCachingConfiguration;
@@ -26,6 +27,7 @@ import org.mule.extensions.jms.internal.connection.provider.activemq.ActiveMQCon
 import org.mule.extensions.jms.internal.operation.JmsAcknowledge;
 import org.mule.runtime.extension.api.annotation.Configurations;
 import org.mule.runtime.extension.api.annotation.Extension;
+import org.mule.runtime.extension.api.annotation.ExternalLib;
 import org.mule.runtime.extension.api.annotation.OnException;
 import org.mule.runtime.extension.api.annotation.Operations;
 import org.mule.runtime.extension.api.annotation.SubTypeMapping;
@@ -59,6 +61,7 @@ import javax.jms.ConnectionFactory;
     baseType = JndiNameResolver.class, subTypes = {SimpleJndiNameResolver.class, CachedJndiNameResolver.class})
 @ErrorTypes(JmsErrors.class)
 @OnException(JmsExceptionHandler.class)
+@ExternalLib(name = "Javax", description = "Javax JMS API", requiredClassName = "javax.jms.ConnectionFactory", type = DEPENDENCY)
 public class JmsExtension {
 
 }
