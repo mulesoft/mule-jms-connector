@@ -7,6 +7,7 @@
 package org.mule.extensions.jms.internal.connection.provider.activemq;
 
 import static org.mule.extensions.jms.api.connection.JmsSpecification.JMS_2_0;
+import static org.mule.runtime.api.meta.ExternalLibraryType.DEPENDENCY;
 import static org.slf4j.LoggerFactory.getLogger;
 import org.mule.extensions.jms.internal.connection.JmsConnection;
 import org.mule.extensions.jms.internal.connection.exception.ActiveMQException;
@@ -14,6 +15,7 @@ import org.mule.extensions.jms.internal.connection.provider.BaseConnectionProvid
 import org.mule.runtime.api.connection.ConnectionProvider;
 import org.mule.runtime.core.api.util.proxy.TargetInvocationHandler;
 import org.mule.runtime.extension.api.annotation.Alias;
+import org.mule.runtime.extension.api.annotation.ExternalLib;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 
 import java.lang.reflect.InvocationHandler;
@@ -32,6 +34,7 @@ import org.slf4j.Logger;
  * @since 1.0
  */
 @Alias("active-mq")
+@ExternalLib(name = "ActiveMQ", description = "An ActiveMQ Broker", type = DEPENDENCY)
 public class ActiveMQConnectionProvider extends BaseConnectionProvider {
 
   private static final Logger LOGGER = getLogger(ActiveMQConnectionProvider.class);

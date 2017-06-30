@@ -8,7 +8,7 @@ package org.mule.extensions.jms.internal;
  */
 
 
-import static org.mule.runtime.api.meta.LibraryType.DEPENDENCY;
+import static org.mule.runtime.api.meta.ExternalLibraryType.DEPENDENCY;
 import org.mule.extensions.jms.api.connection.caching.CachingStrategy;
 import org.mule.extensions.jms.api.connection.caching.DefaultCachingStrategy;
 import org.mule.extensions.jms.api.connection.caching.NoCachingConfiguration;
