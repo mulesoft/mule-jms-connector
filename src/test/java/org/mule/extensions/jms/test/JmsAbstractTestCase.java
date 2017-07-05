@@ -42,7 +42,7 @@ import ru.yandex.qatools.allure.annotations.Features;
 @Features(JMS_EXTENSION)
 @ArtifactClassLoaderRunnerConfig(
     testInclusions = {"org.apache.activemq:artemis-jms-client"}, sharedRuntimeLibs = {"org.apache.activemq:activemq-client",
-        "org.apache.activemq:activemq-broker", "org.apache.activemq:activemq-kahadb-store", "javax.jms:javax.jms-api"})
+        "org.apache.activemq:activemq-broker", "org.apache.activemq:activemq-kahadb-store"})
 public abstract class JmsAbstractTestCase extends MuleArtifactFunctionalTestCase {
 
   protected static final String NAMESPACE = "JMS";
