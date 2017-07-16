@@ -21,8 +21,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import ru.yandex.qatools.allure.annotations.Features;
-import ru.yandex.qatools.allure.annotations.Stories;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -37,8 +37,8 @@ import javax.jms.MapMessage;
 import javax.jms.Session;
 import javax.jms.StreamMessage;
 
-@Features(JMS_EXTENSION)
-@Stories("JMS Message Utils")
+@Feature(JMS_EXTENSION)
+@Story("JMS Message Utils")
 @RunWith(MockitoJUnitRunner.class)
 @SmallTest
 public class JmsMessageUtilsTestCase extends AbstractMuleTestCase {

@@ -17,12 +17,12 @@ import org.mule.extensions.jms.api.config.AckMode;
 import org.mule.extensions.jms.test.JmsMessageStorage;
 
 import org.junit.Test;
-import ru.yandex.qatools.allure.annotations.Description;
-import ru.yandex.qatools.allure.annotations.Features;
-import ru.yandex.qatools.allure.annotations.Stories;
+import io.qameta.allure.Description;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
 
-@Features(JMS_EXTENSION)
-@Stories("Manual Acknowledgement over sessions")
+@Feature(JMS_EXTENSION)
+@Story("Manual Acknowledgement over sessions")
 public class JmsManualAckTestCase extends JmsAbstractAckTestCase {
 
   @Override

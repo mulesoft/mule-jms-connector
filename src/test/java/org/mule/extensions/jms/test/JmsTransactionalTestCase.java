@@ -21,11 +21,11 @@ import org.mule.tck.junit4.rule.SystemProperty;
 
 import org.junit.Rule;
 import org.junit.Test;
-import ru.yandex.qatools.allure.annotations.Features;
-import ru.yandex.qatools.allure.annotations.Stories;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
 
-@Features(JMS_EXTENSION)
-@Stories("Transaction Support")
+@Feature(JMS_EXTENSION)
+@Story("Transaction Support")
 public class JmsTransactionalTestCase extends JmsAbstractTestCase {
 
   private static final String MESSAGE = "MESSAGE";
