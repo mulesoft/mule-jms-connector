@@ -15,13 +15,13 @@ import java.util.Collection;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
-import ru.yandex.qatools.allure.annotations.Features;
-import ru.yandex.qatools.allure.annotations.Stories;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
 
 
 @RunnerDelegateTo(Parameterized.class)
-@Features(JMS_EXTENSION)
-@Stories("Basic Publish and Subscribe operations test with ActiveMQ Connections")
+@Feature(JMS_EXTENSION)
+@Story("Basic Publish and Subscribe operations test with ActiveMQ Connections")
 public class ActiveMQListenResponseTestCase extends JmsBaseTopicListenResponseTestCase {
 
   @Parameter

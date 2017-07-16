@@ -37,9 +37,9 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Rule;
-import ru.yandex.qatools.allure.annotations.Features;
+import io.qameta.allure.Feature;
 
-@Features(JMS_EXTENSION)
+@Feature(JMS_EXTENSION)
 @ArtifactClassLoaderRunnerConfig(
     testInclusions = {"org.apache.activemq:artemis-jms-client"}, sharedRuntimeLibs = {"org.apache.activemq:activemq-client",
         "org.apache.activemq:activemq-broker", "org.apache.activemq:activemq-kahadb-store"})

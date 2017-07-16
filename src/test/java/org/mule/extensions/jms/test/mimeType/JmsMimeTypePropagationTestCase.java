@@ -31,12 +31,12 @@ import org.junit.Test;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
-import ru.yandex.qatools.allure.annotations.Description;
-import ru.yandex.qatools.allure.annotations.Features;
-import ru.yandex.qatools.allure.annotations.Stories;
+import io.qameta.allure.Description;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
 
-@Features(JMS_EXTENSION)
-@Stories("MimeType propagation through publishing and consuming of messages")
+@Feature(JMS_EXTENSION)
+@Story("MimeType propagation through publishing and consuming of messages")
 @RunnerDelegateTo(Parameterized.class)
 public class JmsMimeTypePropagationTestCase extends JmsAbstractTestCase {
 

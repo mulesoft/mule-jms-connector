@@ -14,13 +14,13 @@ import org.mule.test.runner.RunnerDelegateTo;
 import java.util.Collection;
 
 import org.junit.runners.Parameterized;
-import ru.yandex.qatools.allure.annotations.Features;
-import ru.yandex.qatools.allure.annotations.Stories;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
 
 
 @RunnerDelegateTo(Parameterized.class)
-@Features(JMS_EXTENSION)
-@Stories("Generic Connection Provider Queue Bridge")
+@Feature(JMS_EXTENSION)
+@Story("Generic Connection Provider Queue Bridge")
 public class GenericProviderQueueBridgeTestCase extends JmsAbstractQueueBridge {
 
   @Parameter(0)

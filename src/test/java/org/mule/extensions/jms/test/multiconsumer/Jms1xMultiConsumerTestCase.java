@@ -22,15 +22,15 @@ import org.mule.tck.probe.PollingProber;
 import org.mule.test.runner.RunnerDelegateTo;
 
 import org.junit.Test;
-import ru.yandex.qatools.allure.annotations.Features;
-import ru.yandex.qatools.allure.annotations.Stories;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-@Features("JMS Extension")
-@Stories("Multi Consumers - JMS 1.x")
+@Feature("JMS Extension")
+@Story("Multi Consumers - JMS 1.x")
 @RunnerDelegateTo()
 public class Jms1xMultiConsumerTestCase extends AbstractJmsMultiConsumerTestCase {
 

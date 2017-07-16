@@ -20,7 +20,7 @@ import org.mule.runtime.api.message.Message;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import ru.yandex.qatools.allure.annotations.Description;
+import io.qameta.allure.Description;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;

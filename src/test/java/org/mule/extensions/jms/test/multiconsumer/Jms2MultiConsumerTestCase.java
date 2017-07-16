@@ -15,12 +15,12 @@ import org.mule.tck.probe.PollingProber;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import ru.yandex.qatools.allure.annotations.Features;
-import ru.yandex.qatools.allure.annotations.Stories;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
 
 @Ignore("This should be enabled once JMS 2.0 is enabled for testing")
-@Features("JMS Extension")
-@Stories("Multi Consumers - JMS 2.0")
+@Feature("JMS Extension")
+@Story("Multi Consumers - JMS 2.0")
 public class Jms2MultiConsumerTestCase extends AbstractJmsMultiConsumerTestCase {
 
   @Override

@@ -10,13 +10,13 @@ import org.mule.tck.junit4.rule.SystemProperty;
 
 import org.junit.Rule;
 import org.junit.Test;
-import ru.yandex.qatools.allure.annotations.Features;
-import ru.yandex.qatools.allure.annotations.Stories;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
 
 import java.io.ByteArrayInputStream;
 
-@Features(JMS_EXTENSION)
-@Stories("Coercion of the input body to a JMS Message")
+@Feature(JMS_EXTENSION)
+@Story("Coercion of the input body to a JMS Message")
 public class JmsMessageCoercionTestCase extends JmsAbstractTestCase {
 
   @Rule

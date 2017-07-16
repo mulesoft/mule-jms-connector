@@ -15,13 +15,13 @@ import java.util.Collection;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
-import ru.yandex.qatools.allure.annotations.Features;
-import ru.yandex.qatools.allure.annotations.Stories;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
 
 
 @RunnerDelegateTo(Parameterized.class)
-@Features(JMS_EXTENSION)
-@Stories("Request-Reply pattern with publishConsume operation test with Queue and ActiveMQ Connections")
+@Feature(JMS_EXTENSION)
+@Story("Request-Reply pattern with publishConsume operation test with Queue and ActiveMQ Connections")
 public class GenericProviderRequestReplyQueueTestCase extends JmsBaseQueueRequestReplyTestCase {
 
   @Parameter
