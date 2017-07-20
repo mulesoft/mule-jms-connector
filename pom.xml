@@ -26,7 +26,7 @@
         <commonsLangVersion>3.6</commonsLangVersion>
         <guavaVersion>18.0</guavaVersion>
         <springVersion>4.1.6.RELEASE</springVersion>
-        <springModuleVersion>1.0.0-SNAPSHOT</springModuleVersion>
+        <muleSpringModuleVersion>1.0.0-SNAPSHOT</muleSpringModuleVersion>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
     </properties>
 
@@ -132,7 +132,7 @@
         <dependency>
             <groupId>org.mule.modules</groupId>
             <artifactId>mule-spring-module</artifactId>
-            <version>${springModuleVersion}</version>
+            <version>${muleSpringModuleVersion}</version>
             <classifier>mule-plugin</classifier>
             <scope>test</scope>
         </dependency>
