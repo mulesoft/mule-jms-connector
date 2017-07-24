@@ -6,11 +6,11 @@
       http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
 
     <flow name="publisher">
-        <jms:publish config-ref="config" destination="#[destination]"/>
+        <jms:publish config-ref="config" destination="#[vars.destination]"/>
     </flow>
 
     <flow name="consumer">
-        <jms:consume config-ref="config" destination="#[destination]" maximumWait="#[mel:maximumWait]"/>
+        <jms:consume config-ref="config" destination="#[vars.destination]" maximumWait="#[vars.maximumWait]"/>
     </flow>
 
 </mule>

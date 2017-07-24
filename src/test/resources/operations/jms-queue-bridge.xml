@@ -6,28 +6,28 @@
       http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
 
     <flow name="send-payload">
-        <jms:publish config-ref="config" destination="#[initialDestination]">
+        <jms:publish config-ref="config" destination="#[vars.initialDestination]">
             <jms:message>
                 <jms:properties>
-                   #[{(initialProperty): propertyValue}]
+                   #[{(vars.initialProperty): vars.propertyValue}]
                 </jms:properties>
             </jms:message>
         </jms:publish>
     </flow>
 
     <flow name="bridge">
-        <jms:consume config-ref="config" destination="#[initialDestination]" maximumWait="1000"/>
+        <jms:consume config-ref="config" destination="#[vars.initialDestination]" maximumWait="1000"/>
         <logger level="ERROR"/>
-        <jms:publish config-ref="config" destination="#[finalDestination]">
+        <jms:publish config-ref="config" destination="#[vars.finalDestination]">
             <jms:message jmsxProperties="#[attributes.properties.jmsxProperties]">
-                <jms:body>#[bridgePrefix ++ payload]</jms:body>
+                <jms:body>#[vars.bridgePrefix ++ payload]</jms:body>
                 <jms:properties>#[attributes.properties.userProperties]</jms:properties>
             </jms:message>
         </jms:publish>
     </flow>
 
     <flow name="bridge-receiver">
-        <jms:consume config-ref="config" destination="#[finalDestination]" maximumWait="1000"/>
+        <jms:consume config-ref="config" destination="#[vars.finalDestination]" maximumWait="1000"/>
     </flow>
 
 </mule>

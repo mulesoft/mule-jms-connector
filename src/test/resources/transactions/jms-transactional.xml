@@ -8,19 +8,19 @@
       http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
 
     <flow name="publisher">
-        <jms:publish config-ref="config" destination="#[destination]"/>
+        <jms:publish config-ref="config" destination="#[vars.destination]"/>
     </flow>
 
     <flow name="consumer">
-        <jms:consume config-ref="config" destination="#[destination]" maximumWait="#[maximumWait]"/>
+        <jms:consume config-ref="config" destination="#[vars.destination]" maximumWait="#[vars.maximumWait]"/>
     </flow>
 
     <flow name="executionWrapper">
         <try>
             <try transactionalAction="ALWAYS_BEGIN">
-                <flow-ref name="#[variables.flowName]"/>
+                <flow-ref name="#[vars.flowName]"/>
                 <choice>
-                    <when expression="#[variables.rollback]">
+                    <when expression="#[vars.rollback]">
                         <test:throw exception="java.lang.RuntimeException" error="ROUTING"/>
                     </when>
                     <otherwise>
@@ -36,16 +36,16 @@
     </flow>
     
     <flow name="txPublish">
-        <jms:publish config-ref="config" destination="#[publishDestination]" />
+        <jms:publish config-ref="config" destination="#[vars.publishDestination]" />
     </flow>
 
     <flow name="txConsume">
-        <jms:consume config-ref="config" destination="#[consumeDestination]" maximumWait="1000"/>
+        <jms:consume config-ref="config" destination="#[vars.consumeDestination]" maximumWait="1000"/>
     </flow>
 
     <flow name="txConsumeAndPublish">
-        <jms:consume config-ref="config" destination="#[consumeDestination]"/>
-        <jms:publish config-ref="config" destination="#[publishDestination]"/>
+        <jms:consume config-ref="config" destination="#[vars.consumeDestination]"/>
+        <jms:publish config-ref="config" destination="#[vars.publishDestination]"/>
     </flow>
     
     <flow name="txSubscriberWithPublish" initialState="stopped">

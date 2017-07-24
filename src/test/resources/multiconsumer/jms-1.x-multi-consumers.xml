@@ -9,7 +9,7 @@
 
     <flow name="publisher">
         <set-payload value="#[payload]" mimeType="application/json"/>
-        <jms:publish config-ref="config" destination="#[destination]" destinationType="#[destinationType]"/>
+        <jms:publish config-ref="config" destination="#[vars.destination]" destinationType="#[vars.destinationType]"/>
         <logger level="DEBUG" message="#[payload]"/>
     </flow>
 

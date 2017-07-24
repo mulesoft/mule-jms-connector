@@ -6,9 +6,9 @@
       http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
 
     <flow name="request-reply-explicit-destination">
-        <jms:publish-consume config-ref="config" destination="#[destination]">
+        <jms:publish-consume config-ref="config" destination="#[vars.destination]">
             <jms:message>
-                <jms:reply-to destination="#[replyToDestination]" destinationType="TOPIC"/>
+                <jms:reply-to destination="#[vars.replyToDestination]" destinationType="TOPIC"/>
             </jms:message>
             <jms:publish-configuration disableMessageTimestamp="true"/>
             <jms:consume-configuration maximumWait="10000"/>

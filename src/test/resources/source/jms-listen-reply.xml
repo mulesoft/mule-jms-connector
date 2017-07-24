@@ -6,15 +6,15 @@
       http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
 
     <flow name="publisher">
-        <jms:publish config-ref="config" destination="#[destination]" destinationType="TOPIC">
+        <jms:publish config-ref="config" destination="#[vars.destination]" destinationType="TOPIC">
             <jms:message>
-                <jms:reply-to destination="#[replyToDestination]" destinationType="#[replyToDestinationType]"/>
+                <jms:reply-to destination="#[vars.replyToDestination]" destinationType="#[vars.replyToDestinationType]"/>
             </jms:message>
         </jms:publish>
     </flow>
 
     <flow name="consumer">
-        <jms:consume config-ref="config" destination="#[destination]" consumerType="#[consumerType]"/>
+        <jms:consume config-ref="config" destination="#[vars.destination]" consumerType="#[vars.consumerType]"/>
     </flow>
 
     <flow name="listenerDefault">
