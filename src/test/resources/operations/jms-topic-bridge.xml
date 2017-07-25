@@ -10,7 +10,7 @@
             <jms:message>
                 <jms:reply-to destination="${finalDestination}" destinationType="TOPIC"/>
                 <jms:properties>
-                    #[{(initialProperty): propertyValue}]
+                    #[{(vars.initialProperty): vars.propertyValue}]
                 </jms:properties>
             </jms:message>
         </jms:publish>

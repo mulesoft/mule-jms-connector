@@ -20,15 +20,15 @@
         <set-variable variableName="action" value="#[output application/java --- payload.action]" mimeType="application/java"/>
         <flow-ref name="saveMessage" />
         <choice>
-            <when expression="#[variables.action == 'ACK']">
+            <when expression="#[vars.action == 'ACK']">
                 <logger level="DEBUG" message="ACKNOWLEDGING SESSION"/>
                 <jms:ack ackId="#[attributes.ackId]"/>
             </when>
-            <when expression="#[variables.action == 'EXPLODE']">
+            <when expression="#[vars.action == 'EXPLODE']">
                 <logger level="DEBUG" message="THROWING EXCEPTION"/>
                 <test:processor throwException="true"/>
             </when>
-            <when expression="#[variables.action == 'RECOVER']">
+            <when expression="#[vars.action == 'RECOVER']">
                 <logger level="DEBUG" message="RECOVERING SESSION"/>
                 <jms:recover-session ackId="#[attributes.ackId]"/>
             </when>
