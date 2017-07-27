@@ -28,7 +28,7 @@ public final class JmsConsumerConfig {
   /**
    * The {@link ConsumerAckMode} to use when consuming a {@link Message}
    * Can be overridden at the message source level.
-   * This attribute has to be NONE if transactionType is LOCAL or MULTI
+   * This attribute has to be IMMEDIATE if transactionType is LOCAL or MULTI
    */
   @Parameter
   @Optional(defaultValue = "AUTO")

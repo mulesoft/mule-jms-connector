@@ -37,7 +37,7 @@ import javax.jms.ConnectionFactory;
 
 
 /**
- * <code>JmsExtension</code> is a JMS 1.0.2b, 1.1 and 2.0 compliant MuleSoft Extension,
+ * <code>JmsConnector</code> is a JMS 1.0.2b, 1.1 and 2.0 compliant MuleSoft Extension,
  * used to consume and produce JMS Messages.
  * The Extension supports all JMS functionality including topics and queues,
  * durable subscribers, acknowledgement modes and local transactions.
@@ -59,6 +59,6 @@ import javax.jms.ConnectionFactory;
     baseType = JndiNameResolver.class, subTypes = {SimpleJndiNameResolver.class, CachedJndiNameResolver.class})
 @ErrorTypes(JmsErrors.class)
 @OnException(JmsExceptionHandler.class)
-public class JmsExtension {
+public class JmsConnector {
 
 }

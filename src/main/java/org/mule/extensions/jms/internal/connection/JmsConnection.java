@@ -41,7 +41,7 @@ import javax.jms.TopicSession;
 import org.slf4j.Logger;
 
 /**
- * A Connection for the JmsExtension
+ * A Connection for the JmsConnector
  *
  * @since 1.0
  */

@@ -9,7 +9,7 @@ package org.mule.extensions.jms.internal.config;
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import org.mule.extensions.jms.api.config.JmsConsumerConfig;
 import org.mule.extensions.jms.api.config.JmsProducerConfig;
-import org.mule.extensions.jms.internal.JmsExtension;
+import org.mule.extensions.jms.internal.JmsConnector;
 import org.mule.extensions.jms.internal.operation.JmsConsume;
 import org.mule.extensions.jms.internal.operation.JmsPublish;
 import org.mule.extensions.jms.internal.operation.JmsPublishConsume;
@@ -29,7 +29,7 @@ import javax.jms.Queue;
 import javax.jms.Topic;
 
 /**
- * Base configuration for {@link JmsExtension}
+ * Base configuration for {@link JmsConnector}
  *
  * @since 1.0
  */

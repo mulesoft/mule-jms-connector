@@ -10,7 +10,7 @@ import static org.mule.extensions.jms.internal.connection.session.TransactionSta
 import static org.mule.extensions.jms.internal.connection.session.TransactionStatus.STARTED;
 import static org.mule.runtime.api.util.Preconditions.checkState;
 import static org.slf4j.LoggerFactory.getLogger;
-import org.mule.extensions.jms.internal.JmsExtension;
+import org.mule.extensions.jms.internal.JmsConnector;
 import org.mule.extensions.jms.internal.connection.session.JmsSession;
 import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
 import org.mule.extensions.jms.internal.support.JmsSupport;
@@ -26,7 +26,7 @@ import javax.jms.Session;
 
 /**
  * Implementation of the {@link JmsConnection} which implements {@link TransactionalConnection} for Transaction Support
- * in the {@link JmsExtension}
+ * in the {@link JmsConnector}
  *
  * @since 1.0
  */

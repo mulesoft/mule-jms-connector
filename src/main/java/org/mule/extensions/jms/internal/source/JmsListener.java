@@ -16,7 +16,7 @@ import static org.mule.extensions.jms.internal.common.JmsCommons.resolveOverride
 import static org.mule.extensions.jms.internal.common.JmsCommons.toInternalAckMode;
 import static org.mule.extensions.jms.internal.config.InternalAckMode.AUTO;
 import static org.mule.extensions.jms.internal.config.InternalAckMode.DUPS_OK;
-import static org.mule.extensions.jms.internal.config.InternalAckMode.NONE;
+import static org.mule.extensions.jms.internal.config.InternalAckMode.IMMEDIATE;
 import static org.mule.extensions.jms.internal.config.InternalAckMode.TRANSACTED;
 import static org.mule.runtime.extension.api.tx.SourceTransactionalAction.ALWAYS_BEGIN;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -56,9 +56,7 @@ import org.mule.runtime.extension.api.runtime.source.Source;
 import org.mule.runtime.extension.api.runtime.source.SourceCallback;
 import org.mule.runtime.extension.api.runtime.source.SourceCallbackContext;
 import org.mule.runtime.extension.api.tx.SourceTransactionalAction;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.slf4j.Logger;
 
 import javax.inject.Inject;
 import javax.jms.Destination;
@@ -66,8 +64,8 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Queue;
 import javax.jms.Topic;
-
-import org.slf4j.Logger;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * JMS Subscriber for {@link Destination}s, allows to listen
@@ -295,7 +293,7 @@ public class JmsListener extends Source<Object, JmsAttributes> {
   }
 
   private JmsListenerLock createJmsLock() {
-    if (resolvedAckMode.equals(NONE) || resolvedAckMode.equals(TRANSACTED)) {
+    if (resolvedAckMode.equals(IMMEDIATE) || resolvedAckMode.equals(TRANSACTED)) {
       if (LOGGER.isTraceEnabled()) {
         LOGGER.trace(format("Session lock skipped for ACK mode [%s].", resolvedAckMode.name()));
       }
