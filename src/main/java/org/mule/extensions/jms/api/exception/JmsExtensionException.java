@@ -10,7 +10,7 @@ import static org.mule.runtime.extension.api.error.MuleErrors.ANY;
 import org.mule.runtime.extension.api.exception.ModuleException;
 
 /**
- * Custom generic exception for JmsExtension thrown errors
+ * Custom generic exception for JmsConnector thrown errors
  *
  * @since 1.0
  */

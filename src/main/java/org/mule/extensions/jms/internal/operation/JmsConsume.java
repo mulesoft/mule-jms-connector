@@ -19,7 +19,7 @@ import static org.mule.extensions.jms.internal.common.JmsCommons.resolveOverride
 import static org.mule.extensions.jms.internal.common.JmsCommons.toInternalAckMode;
 import static org.mule.extensions.jms.internal.config.InternalAckMode.AUTO;
 import static org.mule.extensions.jms.internal.config.InternalAckMode.DUPS_OK;
-import static org.mule.extensions.jms.internal.config.InternalAckMode.NONE;
+import static org.mule.extensions.jms.internal.config.InternalAckMode.IMMEDIATE;
 import static org.slf4j.LoggerFactory.getLogger;
 import org.mule.extensions.jms.api.config.ConsumerAckMode;
 import org.mule.extensions.jms.api.config.JmsConsumerConfig;
@@ -47,15 +47,13 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 import org.mule.runtime.extension.api.runtime.operation.Result;
-
-import java.util.concurrent.TimeUnit;
+import org.slf4j.Logger;
 
 import javax.inject.Inject;
 import javax.jms.Destination;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
-
-import org.slf4j.Logger;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Operation that allows the user to consume a single {@link Message} from a given {@link Destination}
@@ -157,7 +155,7 @@ public final class JmsConsume {
   private InternalAckMode resolveAck(JmsConsumerConfig config, ConsumerAckMode ackMode) {
     InternalAckMode fallbackAck = toInternalAckMode(config.getAckMode());
     if (AUTO.equals(fallbackAck) || DUPS_OK.equals(fallbackAck)) {
-      fallbackAck = NONE;
+      fallbackAck = IMMEDIATE;
     }
     return resolveOverride(fallbackAck, toInternalAckMode(ackMode));
   }

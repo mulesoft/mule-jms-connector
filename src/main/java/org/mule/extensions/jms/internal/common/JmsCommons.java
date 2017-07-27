@@ -11,7 +11,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.mule.extensions.jms.api.message.JmsMessageBuilder.BODY_CONTENT_TYPE_JMS_PROPERTY;
 import static org.mule.extensions.jms.api.message.JmsMessageBuilder.BODY_ENCODING_JMS_PROPERTY;
 import static org.mule.extensions.jms.internal.config.InternalAckMode.MANUAL;
-import static org.mule.extensions.jms.internal.config.InternalAckMode.NONE;
+import static org.mule.extensions.jms.internal.config.InternalAckMode.IMMEDIATE;
 import static org.mule.extensions.jms.internal.config.InternalAckMode.TRANSACTED;
 import static org.slf4j.LoggerFactory.getLogger;
 import org.mule.extensions.jms.api.exception.JmsAckException;
@@ -73,8 +73,8 @@ public final class JmsCommons {
                                         JmsSessionManager messageSessionManager, JmsListenerLock jmsLock)
       throws JMSException {
     try {
-      if (ackMode.equals(NONE)) {
-        LOGGER.debug("Automatically performing an ACK over the message, since AckMode was NONE");
+      if (ackMode.equals(IMMEDIATE)) {
+        LOGGER.debug("Automatically performing an ACK over the message, since AckMode was IMMEDIATE");
         receivedMessage.acknowledge();
 
       } else if (ackMode.equals(MANUAL)) {
