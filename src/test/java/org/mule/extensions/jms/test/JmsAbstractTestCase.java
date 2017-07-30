@@ -21,7 +21,7 @@ import static org.mule.runtime.api.metadata.MediaType.ANY;
 import org.mule.extensions.jms.api.destination.JmsDestination;
 import org.mule.extensions.jms.api.message.JmsAttributes;
 import org.mule.extensions.jms.api.message.JmsHeaders;
-import org.mule.functional.junit4.FlowRunner;
+import org.mule.functional.api.flow.FlowRunner;
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.MediaType;
