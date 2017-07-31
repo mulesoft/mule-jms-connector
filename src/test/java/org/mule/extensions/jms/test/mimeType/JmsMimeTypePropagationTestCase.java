@@ -15,7 +15,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.mule.extensions.jms.test.JmsAbstractTestCase;
 import org.mule.extensions.jms.test.JmsMessageStorage;
-import org.mule.functional.junit4.FlowRunner;
+import org.mule.functional.api.flow.FlowRunner;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.MediaType;
 import org.mule.runtime.core.api.Event;
