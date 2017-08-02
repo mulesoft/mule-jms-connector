@@ -8,21 +8,23 @@ package org.mule.extensions.jms.internal.connection;
 
 import static org.mule.extensions.jms.internal.connection.session.TransactionStatus.NONE;
 import static org.mule.extensions.jms.internal.connection.session.TransactionStatus.STARTED;
+import static org.mule.runtime.api.i18n.I18nMessageFactory.createStaticMessage;
 import static org.mule.runtime.api.util.Preconditions.checkState;
 import static org.slf4j.LoggerFactory.getLogger;
 import org.mule.extensions.jms.internal.JmsConnector;
 import org.mule.extensions.jms.internal.connection.session.JmsSession;
 import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
 import org.mule.extensions.jms.internal.support.JmsSupport;
+import org.mule.runtime.api.tx.TransactionException;
 import org.mule.runtime.extension.api.connectivity.TransactionalConnection;
-
-import org.slf4j.Logger;
 
 import java.util.Optional;
 
 import javax.jms.Connection;
 import javax.jms.JMSException;
 import javax.jms.Session;
+
+import org.slf4j.Logger;
 
 /**
  * Implementation of the {@link JmsConnection} which implements {@link TransactionalConnection} for Transaction Support
@@ -45,7 +47,7 @@ public final class JmsTransactionalConnection extends JmsConnection implements T
    * {@link Thread} is being part of a transaction.
    */
   @Override
-  public void begin() throws Exception {
+  public void begin() throws TransactionException {
     jmsSessionManager.changeTransactionStatus(STARTED);
   }
 
@@ -53,16 +55,24 @@ public final class JmsTransactionalConnection extends JmsConnection implements T
    * Executes a commit action over the bound {@link JmsSession} to the current {@link Thread}
    */
   @Override
-  public void commit() throws Exception {
-    executeTransactionAction(COMMIT, Session::commit);
+  public void commit() throws TransactionException {
+    try {
+      executeTransactionAction(COMMIT, Session::commit);
+    } catch (Exception e) {
+      throw new TransactionException(createStaticMessage("Could not commit transaction: " + e.getMessage()), e);
+    }
   }
 
   /**
    * Executes a rollback action over the bound {@link JmsSession} to the current {@link Thread}
    */
   @Override
-  public void rollback() throws Exception {
-    executeTransactionAction(ROLLBACK, Session::rollback);
+  public void rollback() throws TransactionException {
+    try {
+      executeTransactionAction(ROLLBACK, Session::rollback);
+    } catch (Exception e) {
+      throw new TransactionException(createStaticMessage("Could not rollback transaction: " + e.getMessage()), e);
+    }
   }
 
   private void executeTransactionAction(String action, SessionAction transactionalAction) throws JMSException {
