@@ -35,6 +35,7 @@ import org.mule.extensions.jms.internal.consume.JmsMessageConsumer;
 import org.mule.extensions.jms.internal.metadata.JmsOutputResolver;
 import org.mule.extensions.jms.internal.support.Jms102bSupport;
 import org.mule.extensions.jms.internal.support.JmsSupport;
+import org.mule.runtime.api.connection.ConnectionProvider;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.message.Error;
 import org.mule.runtime.core.api.util.Pair;
@@ -56,7 +57,9 @@ import org.mule.runtime.extension.api.runtime.source.Source;
 import org.mule.runtime.extension.api.runtime.source.SourceCallback;
 import org.mule.runtime.extension.api.runtime.source.SourceCallbackContext;
 import org.mule.runtime.extension.api.tx.SourceTransactionalAction;
-import org.slf4j.Logger;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.jms.Destination;
@@ -64,8 +67,8 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Queue;
 import javax.jms.Topic;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.slf4j.Logger;
 
 /**
  * JMS Subscriber for {@link Destination}s, allows to listen
@@ -90,6 +93,8 @@ public class JmsListener extends Source<Object, JmsAttributes> {
   private JmsConfig config;
 
   @Connection
+  private ConnectionProvider<JmsTransactionalConnection> connectionProvider;
+
   private JmsTransactionalConnection connection;
 
   private JmsSupport jmsSupport;
@@ -168,6 +173,7 @@ public class JmsListener extends Source<Object, JmsAttributes> {
         ? TRANSACTED
         : resolveOverride(toInternalAckMode(consumerConfig.getAckMode()), toInternalAckMode(ackMode));
 
+    connection = connectionProvider.connect();
     jmsSupport = connection.getJmsSupport();
 
     JmsMessageListenerFactory messageListenerFactory =
@@ -214,6 +220,10 @@ public class JmsListener extends Source<Object, JmsAttributes> {
     sessions.stream()
         .map(Pair::getSecond)
         .forEach(JmsListenerLock::unlockWithFailure);
+
+    if (connection != null) {
+      connectionProvider.disconnect(connection);
+    }
   }
 
   @OnSuccess
