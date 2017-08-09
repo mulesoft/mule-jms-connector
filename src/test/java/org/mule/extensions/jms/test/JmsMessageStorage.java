@@ -13,7 +13,7 @@ import org.mule.extensions.jms.api.message.JmsAttributes;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.TypedValue;
-import org.mule.runtime.core.api.Event;
+import org.mule.runtime.core.api.InternalEvent;
 import org.mule.runtime.core.api.processor.Processor;
 import org.mule.runtime.extension.api.runtime.operation.Result;
 import org.mule.tck.probe.JUnitLambdaProbe;
@@ -27,7 +27,7 @@ public class JmsMessageStorage implements Processor {
   private static Queue<Message> messages = new ConcurrentLinkedQueue<>();
 
   @Override
-  public Event process(Event event) throws MuleException {
+  public InternalEvent process(InternalEvent event) throws MuleException {
     messages.add(event.getMessage());
     return event;
   }
