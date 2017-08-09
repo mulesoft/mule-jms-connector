@@ -11,7 +11,7 @@ import static org.mule.runtime.api.util.Preconditions.checkArgument;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.extension.api.annotation.Alias;
-import org.mule.runtime.extension.api.annotation.dsl.xml.XmlHints;
+import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
@@ -64,7 +64,7 @@ public final class TopicConsumer implements ConsumerType, Initialisable {
    */
   @Parameter
   @Optional
-  @XmlHints(allowReferences = false)
+  @ParameterDsl(allowReferences = false)
   @Summary("The name to be used for the subscription")
   private String subscriptionName;
 
