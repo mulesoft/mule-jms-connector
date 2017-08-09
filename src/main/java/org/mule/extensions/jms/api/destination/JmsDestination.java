@@ -7,7 +7,7 @@
 package org.mule.extensions.jms.api.destination;
 
 import static org.mule.extensions.jms.internal.common.JmsCommons.QUEUE;
-import org.mule.runtime.extension.api.annotation.dsl.xml.XmlHints;
+import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
@@ -27,7 +27,7 @@ public final class JmsDestination {
    * The name that identifies the destination where a reply to a message should be sent
    */
   @Parameter
-  @XmlHints(allowReferences = false)
+  @ParameterDsl(allowReferences = false)
   @DisplayName("Destination Name")
   @Summary("It is the destination where a reply to the message should be sent")
   private String destination;

@@ -23,7 +23,7 @@ import org.mule.extensions.jms.internal.config.JmsConfig;
 import org.mule.extensions.jms.internal.support.JmsSupport;
 import org.mule.runtime.api.metadata.DataType;
 import org.mule.runtime.api.metadata.TypedValue;
-import org.mule.runtime.extension.api.annotation.dsl.xml.XmlHints;
+import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
 import org.mule.runtime.extension.api.annotation.param.ConfigOverride;
 import org.mule.runtime.extension.api.annotation.param.Content;
 import org.mule.runtime.extension.api.annotation.param.NullSafe;
@@ -59,7 +59,7 @@ public class JmsMessageBuilder {
    * The body of the {@link Message}
    */
   @Parameter
-  @XmlHints(allowReferences = false)
+  @ParameterDsl(allowReferences = false)
   @Content(primary = true)
   @Summary("The body of the Message")
   private TypedValue<Object> body;

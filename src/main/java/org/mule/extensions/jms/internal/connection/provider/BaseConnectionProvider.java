@@ -39,7 +39,7 @@ import org.mule.runtime.api.lifecycle.Disposable;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.extension.api.annotation.Expression;
-import org.mule.runtime.extension.api.annotation.dsl.xml.XmlHints;
+import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
 import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
@@ -75,7 +75,7 @@ public abstract class BaseConnectionProvider
   @Parameter
   @Optional
   @NullSafe(defaultImplementingType = DefaultCachingStrategy.class)
-  @XmlHints(allowReferences = false)
+  @ParameterDsl(allowReferences = false)
   @Expression(value = NOT_SUPPORTED)
   private CachingStrategy cachingStrategy;
 

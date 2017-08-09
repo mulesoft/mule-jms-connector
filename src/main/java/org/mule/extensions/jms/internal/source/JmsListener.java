@@ -41,7 +41,7 @@ import org.mule.runtime.api.message.Error;
 import org.mule.runtime.core.api.util.Pair;
 import org.mule.runtime.core.api.util.StringMessageUtils;
 import org.mule.runtime.extension.api.annotation.Alias;
-import org.mule.runtime.extension.api.annotation.dsl.xml.XmlHints;
+import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
 import org.mule.runtime.extension.api.annotation.execution.OnError;
 import org.mule.runtime.extension.api.annotation.execution.OnSuccess;
 import org.mule.runtime.extension.api.annotation.metadata.MetadataScope;
@@ -112,7 +112,7 @@ public class JmsListener extends Source<Object, JmsAttributes> {
    * The name of the Destination from where the Message should be consumed
    */
   @Parameter
-  @XmlHints(allowReferences = false)
+  @ParameterDsl(allowReferences = false)
   private String destination;
 
   /**
