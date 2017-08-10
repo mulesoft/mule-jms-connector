@@ -18,6 +18,7 @@ import static org.mule.extensions.jms.internal.config.InternalAckMode.AUTO;
 import static org.mule.extensions.jms.internal.config.InternalAckMode.DUPS_OK;
 import static org.mule.extensions.jms.internal.config.InternalAckMode.IMMEDIATE;
 import static org.mule.extensions.jms.internal.config.InternalAckMode.TRANSACTED;
+import static org.mule.runtime.core.api.util.ExceptionUtils.extractConnectionException;
 import static org.mule.runtime.extension.api.tx.SourceTransactionalAction.ALWAYS_BEGIN;
 import static org.slf4j.LoggerFactory.getLogger;
 import org.mule.extensions.jms.api.config.AckMode;
@@ -85,6 +86,15 @@ public class JmsListener extends Source<Object, JmsAttributes> {
   static final String REPLY_TO_DESTINATION_VAR = "REPLY_TO_DESTINATION";
   static final String JMS_LOCK_VAR = "JMS_LOCK";
   static final String JMS_SESSION_VAR = "JMS_SESSION";
+
+  static void notifyIfConnectionProblem(SourceCallbackContext callbackContext, Exception e) {
+    notifyIfConnectionProblem(callbackContext.getSourceCallback(), e);
+  }
+
+  static void notifyIfConnectionProblem(SourceCallback callback, Exception e) {
+    extractConnectionException(e).ifPresent(ce -> callback.onConnectionException(ce));
+  }
+
 
   @Inject
   private JmsSessionManager sessionManager;
@@ -207,7 +217,7 @@ public class JmsListener extends Source<Object, JmsAttributes> {
       String msg = format("An error occurred while creating the consumers for destination [%s]: %s",
                           destination, e.getMessage());
       LOGGER.error(msg, e);
-      sourceCallback.onSourceException(new JmsExtensionException(e, msg));
+      throw new JmsExtensionException(e, msg);
     }
   }
 
@@ -258,7 +268,7 @@ public class JmsListener extends Source<Object, JmsAttributes> {
       destinationName = replyToTopic ? ((Topic) replyTo).getTopicName() : ((Queue) replyTo).getQueueName();
     } catch (JMSException e) {
       LOGGER.error(format("An error occurred during reply. Failed to obtain the destination name: %s", e.getMessage()));
-      callbackContext.getSourceCallback().onSourceException(e);
+      notifyIfConnectionProblem(callbackContext, e);
       return;
     }
 
@@ -282,7 +292,7 @@ public class JmsListener extends Source<Object, JmsAttributes> {
       LOGGER.error(format("An error occurred during reply to destination [%s] of type [%s]: %s",
                           destinationName, replyToTopic ? TOPIC : QUEUE, e.getMessage()),
                    e);
-      callbackContext.getSourceCallback().onSourceException(e);
+      notifyIfConnectionProblem(callbackContext, e);
     }
   }
 
