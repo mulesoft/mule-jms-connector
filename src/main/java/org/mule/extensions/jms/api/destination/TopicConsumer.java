@@ -8,6 +8,7 @@ package org.mule.extensions.jms.api.destination;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.mule.runtime.api.util.Preconditions.checkArgument;
+
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.extension.api.annotation.Alias;
@@ -26,7 +27,7 @@ import javax.jms.Topic;
  * @since 1.0
  */
 @Alias("topic-consumer")
-public final class TopicConsumer implements ConsumerType, Initialisable {
+public class TopicConsumer implements ConsumerType, Initialisable {
 
   /**
    * Allows an application to receive all the messages published on a topic,

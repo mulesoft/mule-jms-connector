@@ -7,6 +7,7 @@
 package org.mule.extensions.jms.api.connection.factory.activemq;
 
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
+
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Optional;
@@ -14,17 +15,17 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.RedeliveryPolicy;
+
+import javax.jms.ConnectionFactory;
 
 /**
  * Contains the parameters required to configure an {@link ActiveMQConnectionFactory}
  *
  * @since 1.0
  */
-public final class ActiveMQConnectionFactoryConfiguration {
+public class ActiveMQConnectionFactoryConfiguration {
 
   private static final String DEFAULT_BROKER_URL = "vm://localhost?broker.persistent=false&broker.useJmx=false";
 

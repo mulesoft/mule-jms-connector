@@ -7,6 +7,7 @@
 package org.mule.extensions.jms.internal.config;
 
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
+
 import org.mule.extensions.jms.api.config.JmsConsumerConfig;
 import org.mule.extensions.jms.api.config.JmsProducerConfig;
 import org.mule.extensions.jms.internal.JmsConnector;
@@ -36,7 +37,7 @@ import javax.jms.Topic;
 @Configuration(name = "config")
 @Operations({JmsConsume.class, JmsPublish.class, JmsPublishConsume.class})
 @Sources({JmsListener.class})
-public final class JmsConfig {
+public class JmsConfig {
 
   /**
    * The default {@code encoding} of the {@link Message} {@code body} to be used if the message doesn't communicate it

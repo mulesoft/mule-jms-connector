@@ -13,6 +13,7 @@ import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.disposeIfNeeded
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.initialiseIfNeeded;
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.startIfNeeded;
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.stopIfNeeded;
+
 import org.mule.extensions.jms.api.connection.LookupJndiDestination;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.InitialisationException;
@@ -21,14 +22,14 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.jms.connection.DelegatingConnectionFactory;
+
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.JMSContext;
 import javax.naming.NamingException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.jms.connection.DelegatingConnectionFactory;
 
 /**
  * A {@link ConnectionFactory} that wraps a {@link ConnectionFactory delegate}
@@ -36,7 +37,7 @@ import org.springframework.jms.connection.DelegatingConnectionFactory;
  *
  * @since 1.0
  */
-public final class JndiConnectionFactory extends DelegatingConnectionFactory implements Lifecycle {
+public class JndiConnectionFactory extends DelegatingConnectionFactory implements Lifecycle {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(JndiConnectionFactory.class);
 
