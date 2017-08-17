@@ -18,7 +18,7 @@ import javax.jms.Queue;
  * @since 1.0
  */
 @Alias("queue-consumer")
-public final class QueueConsumer implements ConsumerType {
+public class QueueConsumer implements ConsumerType {
 
   /**
    * {@inheritDoc}

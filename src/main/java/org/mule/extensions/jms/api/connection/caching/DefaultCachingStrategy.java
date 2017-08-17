@@ -8,19 +8,20 @@ package org.mule.extensions.jms.api.connection.caching;
 
 import static java.util.Optional.of;
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
+
 import org.mule.extensions.jms.internal.connection.JmsCachingConnectionFactory;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 
+import org.springframework.jms.connection.CachingConnectionFactory;
+
 import javax.jms.ConnectionFactory;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.jms.XAConnectionFactory;
-
-import org.springframework.jms.connection.CachingConnectionFactory;
 
 /**
  * Default implementation of {@link CachingConfiguration} that not only enables caching
@@ -29,7 +30,7 @@ import org.springframework.jms.connection.CachingConnectionFactory;
  * @since 1.0
  */
 @Alias("default-caching")
-public final class DefaultCachingStrategy implements CachingStrategy, CachingConfiguration {
+public class DefaultCachingStrategy implements CachingStrategy, CachingConfiguration {
 
   /**
    * Amount of {@link Session}s to cache
@@ -61,6 +62,7 @@ public final class DefaultCachingStrategy implements CachingStrategy, CachingCon
   /**
    * @return the {@code sessionCacheSize}
    */
+  @Override
   public int getSessionCacheSize() {
     return sessionCacheSize;
   }
@@ -68,6 +70,7 @@ public final class DefaultCachingStrategy implements CachingStrategy, CachingCon
   /**
    * @return {@code true} if {@link MessageProducer}s should be cached
    */
+  @Override
   public boolean isProducersCache() {
     return producersCache;
   }
@@ -75,6 +78,7 @@ public final class DefaultCachingStrategy implements CachingStrategy, CachingCon
   /**
    * @return {@code true} if {@link MessageConsumer}s should be cached
    */
+  @Override
   public boolean isConsumersCache() {
     return consumersCache;
   }
