@@ -12,7 +12,7 @@
     <jms:config name="config">
         <jms:generic-connection connectionFactory="customConnectionFactory"
                                  username="user" password="pass" clientId="myclient"
-                                 specification="JMS_1_1" disableValidation="false">
+                                 specification="JMS_1_1">
             <jms:caching-strategy>
                 <jms:no-caching/>
             </jms:caching-strategy>

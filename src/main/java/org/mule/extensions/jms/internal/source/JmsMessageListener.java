@@ -12,8 +12,8 @@ import static org.mule.extensions.jms.internal.common.JmsCommons.resolveMessageC
 import static org.mule.extensions.jms.internal.common.JmsCommons.resolveMessageEncoding;
 import static org.mule.extensions.jms.internal.common.JmsCommons.resolveOverride;
 import static org.mule.extensions.jms.internal.config.InternalAckMode.TRANSACTED;
+import static org.mule.extensions.jms.internal.source.JmsListener.notifyIfConnectionProblem;
 import static org.slf4j.LoggerFactory.getLogger;
-import org.mule.extensions.jms.api.exception.JmsExtensionException;
 import org.mule.extensions.jms.api.message.JmsAttributes;
 import org.mule.extensions.jms.internal.config.InternalAckMode;
 import org.mule.extensions.jms.internal.config.JmsConfig;
@@ -105,7 +105,7 @@ public final class JmsMessageListener implements MessageListener {
       evaluateMessageAck(ackMode, session, message, sessionManager, jmsLock);
     } catch (JMSException e) {
       LOGGER.error("An error occurred while processing an incoming message: ", e);
-      sourceCallback.onSourceException(e);
+      notifyIfConnectionProblem(sourceCallback, e);
     }
   }
 
@@ -131,8 +131,7 @@ public final class JmsMessageListener implements MessageListener {
       }
     } catch (JMSException e) {
       LOGGER.error("An error occurred while obtaining the ReplyTo destination: ", e);
-      sourceCallback
-          .onSourceException(new JmsExtensionException(e, "An error occurred while obtaining the ReplyTo destination: "));
+      notifyIfConnectionProblem(sourceCallback, e);
     }
   }
 
@@ -147,7 +146,7 @@ public final class JmsMessageListener implements MessageListener {
       String msg = format("An error occurred while dispatching a Message from the listener on session [%s]: %s",
                           session.get(), e.getMessage());
       LOGGER.error(msg, e);
-      sourceCallback.onSourceException(e);
+      notifyIfConnectionProblem(sourceCallback, e);
     }
   }
 
