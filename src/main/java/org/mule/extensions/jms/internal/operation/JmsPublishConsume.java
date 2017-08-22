@@ -10,6 +10,7 @@ import static java.lang.String.format;
 import static org.mule.extensions.jms.internal.common.JmsCommons.QUEUE;
 import static org.mule.extensions.jms.internal.common.JmsCommons.TOPIC;
 import static org.mule.extensions.jms.internal.common.JmsCommons.evaluateMessageAck;
+import static org.mule.extensions.jms.internal.common.JmsCommons.releaseResources;
 import static org.mule.extensions.jms.internal.common.JmsCommons.resolveMessageContentType;
 import static org.mule.extensions.jms.internal.common.JmsCommons.resolveMessageEncoding;
 import static org.mule.extensions.jms.internal.common.JmsCommons.resolveOverride;
@@ -34,6 +35,7 @@ import org.mule.extensions.jms.internal.consume.JmsConsumeParameters;
 import org.mule.extensions.jms.internal.consume.JmsMessageConsumer;
 import org.mule.extensions.jms.internal.message.JmsResultFactory;
 import org.mule.extensions.jms.internal.metadata.JmsOutputResolver;
+import org.mule.extensions.jms.internal.publish.JmsMessageProducer;
 import org.mule.extensions.jms.internal.publish.JmsPublishParameters;
 import org.mule.extensions.jms.internal.support.JmsSupport;
 import org.mule.runtime.extension.api.annotation.error.Throws;
@@ -44,6 +46,7 @@ import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 import org.mule.runtime.extension.api.runtime.operation.Result;
+import org.slf4j.Logger;
 
 import javax.inject.Inject;
 import javax.jms.Destination;
@@ -51,8 +54,6 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Queue;
 import javax.jms.Topic;
-
-import org.slf4j.Logger;
 
 /**
  * Operation that allows the user to send a message to a JMS {@link Destination} and waits for a response
@@ -106,6 +107,7 @@ public class JmsPublishConsume {
     InternalAckMode resolvedAckMode = resolveOverride(toInternalAckMode(config.getConsumerConfig().getAckMode()),
                                                       toInternalAckMode(consumeParameters.getAckMode()));
 
+    JmsMessageProducer producer;
     try {
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug("Begin [publish] of [publishConsume] on destination [" + destination + "] of type [QUEUE]");
@@ -122,7 +124,8 @@ public class JmsPublishConsume {
       }
 
       Destination jmsDestination = jmsSupport.createDestination(session.get(), destination, false);
-      connection.createProducer(session, jmsDestination, false)
+      producer = connection.createProducer(session, jmsDestination, false);
+      producer
           .publish(message, publishParameters);
 
       if (LOGGER.isDebugEnabled()) {
@@ -152,8 +155,15 @@ public class JmsPublishConsume {
         evaluateMessageAck(resolvedAckMode, session, received, sessionManager, null);
       }
 
+      releaseResources(session, sessionManager, consumer, producer);
+
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug("Creating response result");
+      }
+
+      if (received == null) {
+        LOGGER.debug("Resulting JMS Message was [null], creating an empty result");
+        return resultFactory.createEmptyResult();
       }
 
       return resultFactory.createResult(received, connection.getJmsSupport().getSpecification(),

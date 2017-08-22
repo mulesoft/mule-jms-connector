@@ -31,6 +31,7 @@ import org.mule.extensions.jms.internal.support.Jms102bSupport;
 import org.mule.extensions.jms.internal.support.Jms11Support;
 import org.mule.extensions.jms.internal.support.Jms20Support;
 import org.mule.extensions.jms.internal.support.JmsSupport;
+import org.mule.runtime.api.connection.CachedConnectionProvider;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.connection.ConnectionValidationResult;
 import org.mule.runtime.api.connection.PoolingConnectionProvider;
@@ -44,8 +45,7 @@ import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
-
-import java.util.concurrent.atomic.AtomicBoolean;
+import org.slf4j.Logger;
 
 import javax.inject.Inject;
 import javax.jms.Connection;
@@ -53,8 +53,7 @@ import javax.jms.ConnectionFactory;
 import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
 import javax.jms.Session;
-
-import org.slf4j.Logger;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Base implementation of a {@link PoolingConnectionProvider} for {@link JmsConnection}s
@@ -62,7 +61,7 @@ import org.slf4j.Logger;
  * @since 1.0
  */
 public abstract class BaseConnectionProvider
-    implements PoolingConnectionProvider<JmsTransactionalConnection>, Initialisable, Disposable {
+    implements CachedConnectionProvider<JmsTransactionalConnection>, Initialisable, Disposable {
 
   private static final Logger LOGGER = getLogger(BaseConnectionProvider.class);
 
@@ -181,11 +180,6 @@ public abstract class BaseConnectionProvider
     disconnecting.set(true);
     doStop(jmsConnection);
     doClose(jmsConnection);
-  }
-
-  @Override
-  public void onReturn(JmsTransactionalConnection connection) {
-    connection.releaseResources();
   }
 
   protected void doStop(JmsConnection jmsConnection) {

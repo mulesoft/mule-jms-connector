@@ -13,6 +13,7 @@ import static org.mule.extensions.jms.internal.common.JmsCommons.QUEUE;
 import static org.mule.extensions.jms.internal.common.JmsCommons.TOPIC;
 import static org.mule.extensions.jms.internal.common.JmsCommons.createJmsSession;
 import static org.mule.extensions.jms.internal.common.JmsCommons.evaluateMessageAck;
+import static org.mule.extensions.jms.internal.common.JmsCommons.releaseResources;
 import static org.mule.extensions.jms.internal.common.JmsCommons.resolveMessageContentType;
 import static org.mule.extensions.jms.internal.common.JmsCommons.resolveMessageEncoding;
 import static org.mule.extensions.jms.internal.common.JmsCommons.resolveOverride;
@@ -127,6 +128,7 @@ public final class JmsConsume {
 
       if (received == null) {
         LOGGER.debug("Resulting JMS Message was [null], creating an empty result");
+        releaseResources(session, sessionManager, consumer);
         return resultFactory.createEmptyResult();
       }
 
@@ -141,6 +143,7 @@ public final class JmsConsume {
                                                                         session.getAckId());
 
       evaluateMessageAck(resolvedAckMode, session, received, sessionManager, null);
+      releaseResources(session, sessionManager, consumer);
 
       return result;
 

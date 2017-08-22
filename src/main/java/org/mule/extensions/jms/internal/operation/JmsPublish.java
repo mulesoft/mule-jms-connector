@@ -10,6 +10,7 @@ import static java.lang.String.format;
 import static org.mule.extensions.jms.internal.common.JmsCommons.QUEUE;
 import static org.mule.extensions.jms.internal.common.JmsCommons.TOPIC;
 import static org.mule.extensions.jms.internal.common.JmsCommons.createJmsSession;
+import static org.mule.extensions.jms.internal.common.JmsCommons.releaseResources;
 import static org.mule.extensions.jms.internal.config.InternalAckMode.AUTO;
 import static org.slf4j.LoggerFactory.getLogger;
 import org.mule.extensions.jms.api.config.JmsProducerConfig;
@@ -23,6 +24,7 @@ import org.mule.extensions.jms.internal.connection.JmsConnection;
 import org.mule.extensions.jms.internal.connection.JmsTransactionalConnection;
 import org.mule.extensions.jms.internal.connection.session.JmsSession;
 import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
+import org.mule.extensions.jms.internal.publish.JmsMessageProducer;
 import org.mule.extensions.jms.internal.publish.JmsPublishParameters;
 import org.mule.runtime.extension.api.annotation.error.Throws;
 import org.mule.runtime.extension.api.annotation.param.Config;
@@ -30,13 +32,12 @@ import org.mule.runtime.extension.api.annotation.param.Connection;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
+import org.slf4j.Logger;
 
 import javax.inject.Inject;
 import javax.jms.DeliveryMode;
 import javax.jms.Destination;
 import javax.jms.Message;
-
-import org.slf4j.Logger;
 
 /**
  * Operation that allows the user to send a message to a JMS {@link Destination}
@@ -94,13 +95,17 @@ public final class JmsPublish {
       Destination jmsDestination = connection.getJmsSupport()
           .createDestination(session.get(), destination, destinationType.isTopic());
 
-      connection.createProducer(session, jmsDestination, destinationType.isTopic())
+      JmsMessageProducer producer = connection.createProducer(session, jmsDestination, destinationType.isTopic());
+      producer
           .publish(message, overrides);
 
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug(format("Finished [publish] to destination [%s] of type [%s] using session [%s]",
                             destination, destinationType.isTopic() ? TOPIC : QUEUE, session.get()));
       }
+
+      releaseResources(session, jmsSessionManager, producer);
+
     } catch (Exception e) {
       String msg = format("An error occurred while sending a message to destination [%s] of type [%s]: %s",
                           destination, destinationType.isTopic() ? TOPIC : QUEUE, e.getMessage());
