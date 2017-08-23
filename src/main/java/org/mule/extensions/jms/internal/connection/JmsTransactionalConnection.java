@@ -6,6 +6,7 @@
  */
 package org.mule.extensions.jms.internal.connection;
 
+import static org.mule.extensions.jms.internal.common.JmsCommons.closeQuietly;
 import static org.mule.extensions.jms.internal.connection.session.TransactionStatus.NONE;
 import static org.mule.extensions.jms.internal.connection.session.TransactionStatus.STARTED;
 import static org.mule.runtime.api.i18n.I18nMessageFactory.createStaticMessage;
@@ -86,9 +87,9 @@ public final class JmsTransactionalConnection extends JmsConnection implements T
     try {
       transactionalAction.execute(jmsSession);
     } finally {
+      closeQuietly(jmsSession);
       jmsSessionManager.changeTransactionStatus(NONE);
       jmsSessionManager.unbindSession();
-      jmsSession.close();
     }
   }
 

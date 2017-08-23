@@ -15,6 +15,7 @@ import static org.mule.extensions.jms.internal.config.InternalAckMode.IMMEDIATE;
 import static org.mule.extensions.jms.internal.config.InternalAckMode.MANUAL;
 import static org.mule.extensions.jms.internal.config.InternalAckMode.TRANSACTED;
 import static org.slf4j.LoggerFactory.getLogger;
+import org.mule.extensions.jms.api.config.AckMode;
 import org.mule.extensions.jms.api.exception.JmsAckException;
 import org.mule.extensions.jms.internal.config.InternalAckMode;
 import org.mule.extensions.jms.internal.config.JmsAckMode;
@@ -140,10 +141,23 @@ public final class JmsCommons {
   public static void releaseResources(JmsSession session, JmsSessionManager sessionManager, AutoCloseable... closeables) {
     stream(closeables).forEach(JmsCommons::closeQuietly);
 
-    if (!session.getAckId().isPresent()
-        && (!sessionManager.getTransactedSession().isPresent() || sessionManager.getTransactedSession().get() != session)) {
+    if (!isManualAck(session) && isPartOfCurrentTx(session, sessionManager)) {
       closeQuietly(session);
     }
+  }
+
+  /**
+   * Verifies if the given session ACK Mode is {@link AckMode#MANUAL}
+   */
+  private static boolean isManualAck(JmsSession session) {
+    return session.getAckId().isPresent();
+  }
+
+  /**
+   * Verifies if the given session is part of the current TX.
+   */
+  private static boolean isPartOfCurrentTx(JmsSession session, JmsSessionManager sessionManager) {
+    return !sessionManager.getTransactedSession().isPresent() || sessionManager.getTransactedSession().get() != session;
   }
 
   /**
@@ -151,7 +165,7 @@ public final class JmsCommons {
    *
    * @param closable the resource to close
    */
-  private static void closeQuietly(AutoCloseable closable) {
+  public static void closeQuietly(AutoCloseable closable) {
     if (closable != null) {
       try {
         closable.close();
