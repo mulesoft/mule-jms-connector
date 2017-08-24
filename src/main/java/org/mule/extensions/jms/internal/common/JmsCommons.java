@@ -7,13 +7,15 @@
 package org.mule.extensions.jms.internal.common;
 
 import static java.lang.String.format;
+import static java.util.Arrays.stream;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.mule.extensions.jms.api.message.JmsMessageBuilder.BODY_CONTENT_TYPE_JMS_PROPERTY;
 import static org.mule.extensions.jms.api.message.JmsMessageBuilder.BODY_ENCODING_JMS_PROPERTY;
-import static org.mule.extensions.jms.internal.config.InternalAckMode.MANUAL;
 import static org.mule.extensions.jms.internal.config.InternalAckMode.IMMEDIATE;
+import static org.mule.extensions.jms.internal.config.InternalAckMode.MANUAL;
 import static org.mule.extensions.jms.internal.config.InternalAckMode.TRANSACTED;
 import static org.slf4j.LoggerFactory.getLogger;
+import org.mule.extensions.jms.api.config.AckMode;
 import org.mule.extensions.jms.api.exception.JmsAckException;
 import org.mule.extensions.jms.internal.config.InternalAckMode;
 import org.mule.extensions.jms.internal.config.JmsAckMode;
@@ -21,13 +23,12 @@ import org.mule.extensions.jms.internal.connection.JmsConnection;
 import org.mule.extensions.jms.internal.connection.session.JmsSession;
 import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
 import org.mule.extensions.jms.internal.source.JmsListenerLock;
+import org.slf4j.Logger;
 
-import java.util.Optional;
-
+import javax.jms.Connection;
 import javax.jms.JMSException;
 import javax.jms.Message;
-
-import org.slf4j.Logger;
+import java.util.Optional;
 
 /**
  * Utility class to reuse logic for JMS Extension
@@ -126,5 +127,51 @@ public final class JmsCommons {
 
   public static InternalAckMode toInternalAckMode(JmsAckMode jmsAckMode) {
     return jmsAckMode == null ? null : jmsAckMode.getInternalAckMode();
+  }
+
+  /**
+   * Releases all the resources that are required to close.
+   * The session only will be closed if this one doesn't belong to the current transaction or it doesn't have
+   * an a Client ACK.
+   *
+   * @param session        Session to close
+   * @param sessionManager Session manager to check the transactional status
+   * @param closeables     All the things that can be closed
+   */
+  public static void releaseResources(JmsSession session, JmsSessionManager sessionManager, AutoCloseable... closeables) {
+    stream(closeables).forEach(JmsCommons::closeQuietly);
+
+    if (!isManualAck(session) && isPartOfCurrentTx(session, sessionManager)) {
+      closeQuietly(session);
+    }
+  }
+
+  /**
+   * Verifies if the given session ACK Mode is {@link AckMode#MANUAL}
+   */
+  private static boolean isManualAck(JmsSession session) {
+    return session.getAckId().isPresent();
+  }
+
+  /**
+   * Verifies if the given session is part of the current TX.
+   */
+  private static boolean isPartOfCurrentTx(JmsSession session, JmsSessionManager sessionManager) {
+    return !sessionManager.getTransactedSession().isPresent() || sessionManager.getTransactedSession().get() != session;
+  }
+
+  /**
+   * Closes {@code this} {@link Connection} resource without throwing an exception (an error message is logged instead)
+   *
+   * @param closable the resource to close
+   */
+  public static void closeQuietly(AutoCloseable closable) {
+    if (closable != null) {
+      try {
+        closable.close();
+      } catch (Exception e) {
+        LOGGER.warn("Failed to close jms connection resource: ", e);
+      }
+    }
   }
 }

@@ -11,16 +11,14 @@ import static org.slf4j.LoggerFactory.getLogger;
 import org.mule.extensions.jms.internal.config.InternalAckMode;
 import org.mule.extensions.jms.internal.source.JmsListener;
 import org.mule.extensions.jms.internal.source.JmsListenerLock;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import org.slf4j.Logger;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
-
-import org.slf4j.Logger;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Manager that takes the responsibility of register the session information to be able to execute a manual

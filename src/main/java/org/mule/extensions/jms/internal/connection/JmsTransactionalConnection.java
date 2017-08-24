@@ -6,6 +6,7 @@
  */
 package org.mule.extensions.jms.internal.connection;
 
+import static org.mule.extensions.jms.internal.common.JmsCommons.closeQuietly;
 import static org.mule.extensions.jms.internal.connection.session.TransactionStatus.NONE;
 import static org.mule.extensions.jms.internal.connection.session.TransactionStatus.STARTED;
 import static org.mule.runtime.api.i18n.I18nMessageFactory.createStaticMessage;
@@ -17,14 +18,12 @@ import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
 import org.mule.extensions.jms.internal.support.JmsSupport;
 import org.mule.runtime.api.tx.TransactionException;
 import org.mule.runtime.extension.api.connectivity.TransactionalConnection;
-
-import java.util.Optional;
+import org.slf4j.Logger;
 
 import javax.jms.Connection;
 import javax.jms.JMSException;
 import javax.jms.Session;
-
-import org.slf4j.Logger;
+import java.util.Optional;
 
 /**
  * Implementation of the {@link JmsConnection} which implements {@link TransactionalConnection} for Transaction Support
@@ -88,6 +87,7 @@ public final class JmsTransactionalConnection extends JmsConnection implements T
     try {
       transactionalAction.execute(jmsSession);
     } finally {
+      closeQuietly(jmsSession);
       jmsSessionManager.changeTransactionStatus(NONE);
       jmsSessionManager.unbindSession();
     }
