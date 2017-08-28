@@ -12,6 +12,7 @@ import org.mule.extensions.jms.api.connection.caching.CachingConfiguration;
 import org.mule.extensions.jms.internal.support.JmsSupport;
 import org.mule.runtime.api.lifecycle.Disposable;
 import org.mule.runtime.api.lifecycle.Stoppable;
+import org.springframework.jms.connection.CachingConnectionFactory;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
@@ -20,8 +21,6 @@ import javax.jms.JMSContext;
 import javax.jms.JMSException;
 import javax.jms.QueueConnection;
 import javax.jms.TopicConnection;
-
-import org.springframework.jms.connection.CachingConnectionFactory;
 
 
 /**
@@ -47,7 +46,7 @@ public class JmsCachingConnectionFactory extends CachingConnectionFactory implem
     super.setCacheConsumers(config.isConsumersCache());
     super.setCacheProducers(config.isProducersCache());
     super.setSessionCacheSize(config.getSessionCacheSize());
-    super.setReconnectOnException(false);
+    super.setReconnectOnException(true);
     super.setExceptionListener(exceptionListener);
 
     this.username = username;

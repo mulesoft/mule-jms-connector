@@ -12,6 +12,7 @@ import static org.mule.extensions.jms.internal.common.JmsCommons.EXAMPLE_CONTENT
 import static org.mule.extensions.jms.internal.common.JmsCommons.EXAMPLE_ENCODING;
 import static org.mule.extensions.jms.internal.common.JmsCommons.QUEUE;
 import static org.mule.extensions.jms.internal.common.JmsCommons.TOPIC;
+import static org.mule.extensions.jms.internal.common.JmsCommons.closeQuietly;
 import static org.mule.extensions.jms.internal.common.JmsCommons.resolveOverride;
 import static org.mule.extensions.jms.internal.common.JmsCommons.toInternalAckMode;
 import static org.mule.extensions.jms.internal.config.InternalAckMode.AUTO;
@@ -36,10 +37,10 @@ import org.mule.extensions.jms.internal.consume.JmsMessageConsumer;
 import org.mule.extensions.jms.internal.metadata.JmsOutputResolver;
 import org.mule.extensions.jms.internal.support.Jms102bSupport;
 import org.mule.extensions.jms.internal.support.JmsSupport;
+import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.connection.ConnectionProvider;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.message.Error;
-import org.mule.runtime.api.util.Pair;
 import org.mule.runtime.core.api.util.StringMessageUtils;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
@@ -58,9 +59,7 @@ import org.mule.runtime.extension.api.runtime.source.Source;
 import org.mule.runtime.extension.api.runtime.source.SourceCallback;
 import org.mule.runtime.extension.api.runtime.source.SourceCallbackContext;
 import org.mule.runtime.extension.api.tx.SourceTransactionalAction;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.slf4j.Logger;
 
 import javax.inject.Inject;
 import javax.jms.Destination;
@@ -68,8 +67,9 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Queue;
 import javax.jms.Topic;
-
-import org.slf4j.Logger;
+import java.net.ConnectException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * JMS Subscriber for {@link Destination}s, allows to listen
@@ -95,7 +95,6 @@ public class JmsListener extends Source<Object, JmsAttributes> {
     extractConnectionException(e).ifPresent(ce -> callback.onConnectionException(ce));
   }
 
-
   @Inject
   private JmsSessionManager sessionManager;
 
@@ -116,7 +115,7 @@ public class JmsListener extends Source<Object, JmsAttributes> {
   /**
    * List to save all the created {@link JmsSession} and {@link JmsListenerLock} by this listener.
    */
-  private final List<Pair<JmsSession, JmsListenerLock>> sessions = new ArrayList<>();
+  private final List<MessageListenerInfo> createdListeners = new ArrayList<>();
 
   /**
    * The name of the Destination from where the Message should be consumed
@@ -169,7 +168,6 @@ public class JmsListener extends Source<Object, JmsAttributes> {
   @Optional(defaultValue = "4")
   private int numberOfConsumers;
 
-
   @Override
   public void onStart(SourceCallback<Object, JmsAttributes> sourceCallback) throws MuleException {
 
@@ -186,6 +184,8 @@ public class JmsListener extends Source<Object, JmsAttributes> {
     connection = connectionProvider.connect();
     jmsSupport = connection.getJmsSupport();
 
+    connection.registerExceptionListener(e -> sourceCallback.onConnectionException(new ConnectionException(e)));
+
     JmsMessageListenerFactory messageListenerFactory =
         new JmsMessageListenerFactory(resolvedAckMode, inboundEncoding, inboundContentType, config, sessionManager, jmsSupport,
                                       sourceCallback);
@@ -194,7 +194,7 @@ public class JmsListener extends Source<Object, JmsAttributes> {
 
     if (LOGGER.isDebugEnabled()) {
       LOGGER.debug(format("Starting JMS Listener with [%s] consumers on destination [%s] of type [%s] with AckMode [%s]",
-                          numberOfConsumers, destination, consumerType.topic() ? TOPIC : QUEUE, resolvedAckMode.name()));
+                          numberOfConsumers, destination, getDestinationType(), resolvedAckMode.name()));
     }
 
     try {
@@ -210,13 +210,19 @@ public class JmsListener extends Source<Object, JmsAttributes> {
         }
 
         JmsListenerLock jmsLock = createJmsLock();
-        sessions.add(new Pair<>(session, jmsLock));
+        createdListeners.add(new MessageListenerInfo(session, jmsLock, consumer));
         consumer.listen(messageListenerFactory.createMessageListener(session, jmsLock));
       }
     } catch (Exception e) {
-      String msg = format("An error occurred while creating the consumers for destination [%s]: %s",
-                          destination, e.getMessage());
+      String msg = format("An error occurred while creating the consumers for destination [%s:%s]: %s",
+                          getDestinationType(), destination, e.getMessage());
       LOGGER.error(msg, e);
+      releaseListeners();
+
+      if (e.getCause() instanceof ConnectException) {
+        throw new ConnectionException(e);
+      }
+
       throw new JmsExtensionException(e, msg);
     }
   }
@@ -224,12 +230,10 @@ public class JmsListener extends Source<Object, JmsAttributes> {
   @Override
   public void onStop() {
     if (LOGGER.isDebugEnabled()) {
-      LOGGER.debug(format("Stopping JMS Listener on destination [%s]", destination));
+      LOGGER.debug(format("Stopping JMS Listener on destination [%s:%s]", getDestinationType(), destination));
     }
 
-    sessions.stream()
-        .map(Pair::getSecond)
-        .forEach(JmsListenerLock::unlockWithFailure);
+    releaseListeners();
 
     if (connection != null) {
       connectionProvider.disconnect(connection);
@@ -340,5 +344,46 @@ public class JmsListener extends Source<Object, JmsAttributes> {
 
   private boolean isCapableOfMultiConsumersOnTopic(TopicConsumer topicConsumer) {
     return jmsSupport.getSpecification().equals(JMS_2_0) && topicConsumer.isShared();
+  }
+
+  private void releaseListeners() {
+    try {
+      createdListeners.forEach(info -> {
+        info.getLock().unlockWithFailure();
+        closeQuietly(info.getConsumer());
+        closeQuietly(info.getSession());
+      });
+    } finally {
+      createdListeners.clear();
+    }
+  }
+
+  private static class MessageListenerInfo {
+
+    private JmsSession session;
+    private JmsListenerLock jmsListenerLock;
+    private JmsMessageConsumer messageConsumer;
+
+    MessageListenerInfo(JmsSession session, JmsListenerLock jmsListenerLock, JmsMessageConsumer messageConsumer) {
+      this.session = session;
+      this.jmsListenerLock = jmsListenerLock;
+      this.messageConsumer = messageConsumer;
+    }
+
+    public JmsSession getSession() {
+      return session;
+    }
+
+    public JmsListenerLock getLock() {
+      return jmsListenerLock;
+    }
+
+    public JmsMessageConsumer getConsumer() {
+      return messageConsumer;
+    }
+  }
+
+  private String getDestinationType() {
+    return consumerType.topic() ? TOPIC : QUEUE;
   }
 }

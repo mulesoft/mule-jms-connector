@@ -13,6 +13,7 @@ import static org.mule.runtime.api.i18n.I18nMessageFactory.createStaticMessage;
 import static org.mule.runtime.api.util.Preconditions.checkState;
 import static org.slf4j.LoggerFactory.getLogger;
 import org.mule.extensions.jms.internal.JmsConnector;
+import org.mule.extensions.jms.internal.connection.exception.CompositeJmsExceptionListener;
 import org.mule.extensions.jms.internal.connection.session.JmsSession;
 import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
 import org.mule.extensions.jms.internal.support.JmsSupport;
@@ -31,14 +32,15 @@ import java.util.Optional;
  *
  * @since 1.0
  */
-public final class JmsTransactionalConnection extends JmsConnection implements TransactionalConnection {
+public class JmsTransactionalConnection extends JmsConnection implements TransactionalConnection {
 
   private static final Logger LOGGER = getLogger(JmsTransactionalConnection.class);
   private static final String COMMIT = "Commit";
   private static final String ROLLBACK = "Rollback";
 
-  public JmsTransactionalConnection(JmsSupport jmsSupport, Connection connection, JmsSessionManager jmsSessionManager) {
-    super(jmsSupport, connection, jmsSessionManager);
+  public JmsTransactionalConnection(JmsSupport jmsSupport, Connection connection, JmsSessionManager jmsSessionManager,
+                                    CompositeJmsExceptionListener exceptionListener) {
+    super(jmsSupport, connection, jmsSessionManager, exceptionListener);
   }
 
   /**

@@ -21,10 +21,10 @@ import static org.slf4j.LoggerFactory.getLogger;
 import org.mule.extensions.jms.api.connection.JmsSpecification;
 import org.mule.extensions.jms.api.connection.caching.CachingStrategy;
 import org.mule.extensions.jms.api.connection.caching.DefaultCachingStrategy;
-import org.mule.extensions.jms.api.exception.JmsCallbackConnectionException;
 import org.mule.extensions.jms.internal.connection.JmsCachingConnectionFactory;
 import org.mule.extensions.jms.internal.connection.JmsConnection;
 import org.mule.extensions.jms.internal.connection.JmsTransactionalConnection;
+import org.mule.extensions.jms.internal.connection.exception.CompositeJmsExceptionListener;
 import org.mule.extensions.jms.internal.connection.param.GenericConnectionParameters;
 import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
 import org.mule.extensions.jms.internal.support.Jms102bSupport;
@@ -50,7 +50,6 @@ import org.slf4j.Logger;
 import javax.inject.Inject;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
-import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
 import javax.jms.Session;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -81,6 +80,7 @@ public abstract class BaseConnectionProvider
   @Inject
   JmsSessionManager jmsSessionManager;
 
+  private CompositeJmsExceptionListener exceptionListener = new CompositeJmsExceptionListener();
 
   /**
    * Used to ignore handling of ExceptionListener#onException when in the process of disconnecting
@@ -125,7 +125,7 @@ public abstract class BaseConnectionProvider
     try {
       Connection connection = createConnection();
       connection.start();
-      return new JmsTransactionalConnection(jmsSupport, connection, jmsSessionManager);
+      return new JmsTransactionalConnection(jmsSupport, connection, jmsSessionManager, exceptionListener);
 
     } catch (Exception e) {
       try {
@@ -178,6 +178,7 @@ public abstract class BaseConnectionProvider
     // This invocations will be ignored when using a CachingConnectionFactory,
     // since a single connection is cached
     disconnecting.set(true);
+    exceptionListener = new CompositeJmsExceptionListener();
     doStop(jmsConnection);
     doClose(jmsConnection);
   }
@@ -233,7 +234,7 @@ public abstract class BaseConnectionProvider
       jmsConnectionFactory =
           new JmsCachingConnectionFactory(targetFactory, username, password, clientId,
                                           cachingStrategy.strategyConfiguration().get(),
-                                          jmsSupport, getExceptionListener());
+                                          jmsSupport, exceptionListener);
 
       initialiseIfNeeded(jmsConnectionFactory);
     } else {
@@ -289,7 +290,7 @@ public abstract class BaseConnectionProvider
 
       if (connection.getExceptionListener() == null) {
         try {
-          connection.setExceptionListener(getExceptionListener());
+          connection.setExceptionListener(exceptionListener);
         } catch (Exception e) {
           if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("An error occurred while setting the ExceptionListener. "
@@ -298,16 +299,7 @@ public abstract class BaseConnectionProvider
         }
       }
     }
-
     return connection;
-  }
-
-  private ExceptionListener getExceptionListener() {
-    return e -> {
-      if (!disconnecting.get()) {
-        throw new JmsCallbackConnectionException(e);
-      }
-    };
   }
 
   public GenericConnectionParameters getConnectionParameters() {
