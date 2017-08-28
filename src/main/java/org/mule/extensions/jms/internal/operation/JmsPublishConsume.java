@@ -7,9 +7,8 @@
 package org.mule.extensions.jms.internal.operation;
 
 import static java.lang.String.format;
-import static org.mule.extensions.jms.internal.common.JmsCommons.QUEUE;
-import static org.mule.extensions.jms.internal.common.JmsCommons.TOPIC;
 import static org.mule.extensions.jms.internal.common.JmsCommons.evaluateMessageAck;
+import static org.mule.extensions.jms.internal.common.JmsCommons.getDestinationType;
 import static org.mule.extensions.jms.internal.common.JmsCommons.releaseResources;
 import static org.mule.extensions.jms.internal.common.JmsCommons.resolveMessageContentType;
 import static org.mule.extensions.jms.internal.common.JmsCommons.resolveMessageEncoding;
@@ -24,6 +23,7 @@ import org.mule.extensions.jms.api.exception.JmsConsumeException;
 import org.mule.extensions.jms.api.exception.JmsExtensionException;
 import org.mule.extensions.jms.api.exception.JmsPublishConsumeErrorTypeProvider;
 import org.mule.extensions.jms.api.exception.JmsPublishException;
+import org.mule.extensions.jms.api.exception.JmsSecurityException;
 import org.mule.extensions.jms.api.message.JmsAttributes;
 import org.mule.extensions.jms.api.message.JmsMessageBuilder;
 import org.mule.extensions.jms.internal.config.InternalAckMode;
@@ -51,6 +51,7 @@ import org.slf4j.Logger;
 import javax.inject.Inject;
 import javax.jms.Destination;
 import javax.jms.JMSException;
+import javax.jms.JMSSecurityException;
 import javax.jms.Message;
 import javax.jms.Queue;
 import javax.jms.Topic;
@@ -110,7 +111,7 @@ public class JmsPublishConsume {
     JmsMessageProducer producer;
     try {
       if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Begin [publish] of [publishConsume] on destination [" + destination + "] of type [QUEUE]");
+        LOGGER.debug("Begin [publish] of [publishConsume] to the QUEUE: [" + destination + "]");
       }
 
       JmsSupport jmsSupport = connection.getJmsSupport();
@@ -120,7 +121,7 @@ public class JmsPublishConsume {
       replyConsumerType = setReplyDestination(messageBuilder, session, jmsSupport, message);
 
       if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Message built, sending message to [" + destination + "] of type [QUEUE]");
+        LOGGER.debug("Message built, sending message to the QUEUE:  [" + destination + "]");
       }
 
       Destination jmsDestination = jmsSupport.createDestination(session.get(), destination, false);
@@ -129,24 +130,26 @@ public class JmsPublishConsume {
           .publish(message, publishParameters);
 
       if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug(format("Finished [publish] of [publishConsume] to destination [%s] of type [QUEUE] using session [%s]",
+        LOGGER.debug(format("Finished [publish] of [publishConsume] to the QUEUE: [%s] using session [%s]",
                             destination, session.get()));
-        LOGGER.debug(format("Preparing for consuming the response from destination [%s] of type [%s].",
-                            destination, replyConsumerType.topic() ? TOPIC : QUEUE));
+        LOGGER.debug(format("Preparing for consuming the response from the %s: [%s].",
+                            getDestinationType(replyConsumerType), destination));
       }
+    } catch (JMSSecurityException e) {
+      String msg = format("A security error occurred while sending a message to the QUEUE: [%s] : ", destination);
+      throw new JmsSecurityException(e, msg);
     } catch (Exception e) {
-      String msg = format("An error occurred while sending a message to destination [%s] of type QUEUE: ", destination);
-      LOGGER.error(msg, e);
-      throw new JmsPublishException(msg, e);
+      String msg = format("An error occurred while sending a message to the QUEUE: [%s]: ", destination);
+      throw new JmsPublishException(e, msg);
     }
 
     try {
       JmsMessageConsumer consumer = connection.createConsumer(session, message.getJMSReplyTo(), "", replyConsumerType);
 
       if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug(format("Waiting for incoming message in destination [%s] of type [%s].",
-                            getReplyDestinationName(message.getJMSReplyTo(), replyConsumerType),
-                            replyConsumerType.topic() ? TOPIC : QUEUE));
+        LOGGER.debug(format("Waiting for incoming message of %s [%s].",
+                            getDestinationType(replyConsumerType),
+                            getReplyDestinationName(message.getJMSReplyTo(), replyConsumerType)));
       }
 
       Message received = consumer.consume(consumeParameters.getMaximumWaitUnit().toMillis(consumeParameters.getMaximumWait()));
@@ -172,10 +175,13 @@ public class JmsPublishConsume {
                                         resolveOverride(resolveMessageEncoding(received, config.getEncoding()),
                                                         consumeParameters.getInboundEncoding()),
                                         session.getAckId());
+    } catch (JMSSecurityException e) {
+      String msg = format("A security error occurred while listening for the reply from the %s: [%s]: %s",
+                          getDestinationType(replyConsumerType), destination, e.getMessage());
+      throw new JmsSecurityException(e, msg);
     } catch (Exception e) {
-      String msg = format("An error occurred while listening for the reply from destination [%s] of type [%s]: %s",
-                          destination, replyConsumerType.topic() ? TOPIC : QUEUE, e.getMessage());
-      LOGGER.error(msg, e);
+      String msg = format("An error occurred while listening for the reply from the %s: [%s]: %s",
+                          getDestinationType(replyConsumerType), destination, e.getMessage());
       throw new JmsConsumeException(msg, e);
     }
   }

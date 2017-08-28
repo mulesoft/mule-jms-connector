@@ -6,7 +6,7 @@
  */
 package org.mule.extensions.jms.api.exception;
 
-import static org.mule.extensions.jms.api.exception.JmsErrors.ILLEGAL_BODY;
+import static org.mule.extensions.jms.api.exception.JmsError.ILLEGAL_BODY;
 import org.mule.runtime.extension.api.exception.ModuleException;
 
 /**
