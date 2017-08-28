@@ -13,6 +13,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 import org.mule.extensions.jms.api.connection.JmsSpecification;
 import org.mule.extensions.jms.api.destination.ConsumerType;
 import org.mule.extensions.jms.internal.config.InternalAckMode;
+import org.mule.extensions.jms.internal.connection.exception.CompositeJmsExceptionListener;
 import org.mule.extensions.jms.internal.connection.session.JmsSession;
 import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
 import org.mule.extensions.jms.internal.consume.JmsMessageConsumer;
@@ -25,6 +26,7 @@ import org.slf4j.Logger;
 
 import javax.jms.Connection;
 import javax.jms.Destination;
+import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
@@ -46,12 +48,15 @@ public class JmsConnection implements Stoppable, Disposable {
 
   private final JmsSupport jmsSupport;
   private final Connection connection;
+  private final CompositeJmsExceptionListener compositeExceptionListener;
   final JmsSessionManager jmsSessionManager;
 
-  public JmsConnection(JmsSupport jmsSupport, Connection connection, JmsSessionManager jmsSessionManager) {
+  public JmsConnection(JmsSupport jmsSupport, Connection connection, JmsSessionManager jmsSessionManager,
+                       CompositeJmsExceptionListener exceptionListener) {
     this.jmsSupport = jmsSupport;
     this.connection = connection;
     this.jmsSessionManager = jmsSessionManager;
+    this.compositeExceptionListener = exceptionListener;
   }
 
   public JmsSupport getJmsSupport() {
@@ -138,8 +143,9 @@ public class JmsConnection implements Stoppable, Disposable {
       }
     } catch (JMSException ex) {
       if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Could not stop JMS Connection - assuming this method has been called in a Java EE web or EJB application: ",
-                     ex);
+        LOGGER
+            .debug("Could not stop JMS Connection - assuming this method has been called in a Java EE web or EJB application: ",
+                   ex);
       }
     }
   }
@@ -161,5 +167,9 @@ public class JmsConnection implements Stoppable, Disposable {
         LOGGER.debug("Could not close JMS Connection : ", ex);
       }
     }
+  }
+
+  public void registerExceptionListener(ExceptionListener exceptionListener) {
+    compositeExceptionListener.registerExceptionListener(exceptionListener);
   }
 }
