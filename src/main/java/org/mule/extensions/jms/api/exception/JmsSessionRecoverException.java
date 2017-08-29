@@ -6,7 +6,7 @@
  */
 package org.mule.extensions.jms.api.exception;
 
-import static org.mule.extensions.jms.api.exception.JmsErrors.SESSION_RECOVER;
+import static org.mule.extensions.jms.api.exception.JmsError.SESSION_RECOVER;
 import org.mule.runtime.extension.api.exception.ModuleException;
 
 /**

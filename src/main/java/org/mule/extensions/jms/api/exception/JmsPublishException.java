@@ -6,11 +6,10 @@
  */
 package org.mule.extensions.jms.api.exception;
 
-import static org.mule.extensions.jms.api.exception.JmsErrors.PUBLISHING;
-import org.mule.runtime.extension.api.exception.ModuleException;
+import static org.mule.extensions.jms.api.exception.JmsError.PUBLISHING;
 
 /**
- * {@link ModuleException} to be thrown in the cases in which the received content to be written is invalid.
+ * {@link JmsExtensionException} to be thrown in the cases where an error occurs when trying to publish a message
  *
  * @since 1.0
  */
@@ -28,10 +27,10 @@ public class JmsPublishException extends JmsExtensionException {
   /**
    * Creates a new instance with the specified detail {@code message}
    *
-   * @param message the detail message
    * @param exception cause of this exception
+   * @param message the detail message
    */
-  public JmsPublishException(String message, Exception exception) {
+  public JmsPublishException(Exception exception, String message) {
     super(exception, PUBLISHING, message);
   }
 
@@ -42,7 +41,7 @@ public class JmsPublishException extends JmsExtensionException {
    * @param message the detail message
    * @param errorType JMS error
    */
-  protected JmsPublishException(String message, JmsErrors errorType) {
+  protected JmsPublishException(String message, JmsError errorType) {
     super(message, errorType);
   }
 
@@ -53,7 +52,7 @@ public class JmsPublishException extends JmsExtensionException {
    * @param errorType JMS error
    * @param exception cause of this exception
    */
-  protected JmsPublishException(String message, JmsErrors errorType, Exception exception) {
+  protected JmsPublishException(String message, JmsError errorType, Exception exception) {
     super(exception, errorType, message);
   }
 }

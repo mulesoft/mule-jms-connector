@@ -6,29 +6,28 @@
  */
 package org.mule.extensions.jms.api.exception;
 
-import static org.mule.extensions.jms.api.exception.JmsErrors.ACK;
-import static org.mule.extensions.jms.api.exception.JmsErrors.CONSUMING;
-import static org.mule.extensions.jms.api.exception.JmsErrors.DESTINATION_NOT_FOUND;
-import static org.mule.extensions.jms.api.exception.JmsErrors.ILLEGAL_BODY;
-import static org.mule.extensions.jms.api.exception.JmsErrors.PUBLISHING;
-import static org.mule.extensions.jms.api.exception.JmsErrors.TIMEOUT;
-import org.mule.extensions.jms.api.config.AckMode;
+import static org.mule.extensions.jms.api.exception.JmsError.ACK;
+import static org.mule.extensions.jms.api.exception.JmsError.CONSUMING;
+import static org.mule.extensions.jms.api.exception.JmsError.DESTINATION_NOT_FOUND;
+import static org.mule.extensions.jms.api.exception.JmsError.ILLEGAL_BODY;
+import static org.mule.extensions.jms.api.exception.JmsError.PUBLISHING;
+import static org.mule.extensions.jms.api.exception.JmsError.SECURITY;
+import static org.mule.extensions.jms.api.exception.JmsError.TIMEOUT;
+import org.mule.extensions.jms.api.message.JmsMessageBuilder;
 import org.mule.extensions.jms.internal.config.JmsConfig;
 import org.mule.extensions.jms.internal.connection.JmsConnection;
-import org.mule.extensions.jms.api.message.JmsMessageBuilder;
+import org.mule.extensions.jms.internal.consume.JmsConsumeParameters;
 import org.mule.extensions.jms.internal.operation.JmsPublishConsume;
 import org.mule.extensions.jms.internal.publish.JmsPublishParameters;
 import org.mule.runtime.extension.api.annotation.error.ErrorTypeProvider;
 import org.mule.runtime.extension.api.error.ErrorTypeDefinition;
-
 import com.google.common.collect.ImmutableSet;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Errors that can be thrown in the
- * {@link JmsPublishConsume#publishConsume(JmsConfig, JmsConnection, String, JmsMessageBuilder, AckMode, long, TimeUnit, JmsPublishParameters, String, String)}
+ * {@link JmsPublishConsume#publishConsume(JmsConfig, JmsConnection, String, JmsMessageBuilder, JmsPublishParameters, JmsConsumeParameters)}
  * operation operation.
  *
  * @since 1.0
@@ -43,6 +42,7 @@ public class JmsPublishConsumeErrorTypeProvider implements ErrorTypeProvider {
         .add(CONSUMING)
         .add(TIMEOUT)
         .add(DESTINATION_NOT_FOUND)
+        .add(SECURITY)
         .add(ACK)
         .build();
   }

@@ -6,7 +6,7 @@
  */
 package org.mule.extensions.jms.api.exception;
 
-import static org.mule.extensions.jms.api.exception.JmsErrors.CONSUMING;
+import static org.mule.extensions.jms.api.exception.JmsError.CONSUMING;
 import org.mule.runtime.extension.api.exception.ModuleException;
 
 /**
@@ -41,7 +41,7 @@ public class JmsConsumeException extends JmsExtensionException {
    * @param message the detail message
    * @param errorType JMS error
    */
-  protected JmsConsumeException(String message, JmsErrors errorType) {
+  protected JmsConsumeException(String message, JmsError errorType) {
     super(message, errorType);
   }
 
@@ -52,7 +52,7 @@ public class JmsConsumeException extends JmsExtensionException {
    * @param errorType JMS error
    * @param exception cause of this exception
    */
-  protected JmsConsumeException(String message, JmsErrors errorType, Exception exception) {
+  protected JmsConsumeException(String message, JmsError errorType, Exception exception) {
     super(exception, errorType, message);
   }
 }

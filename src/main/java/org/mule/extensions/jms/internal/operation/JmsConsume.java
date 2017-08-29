@@ -9,10 +9,9 @@ package org.mule.extensions.jms.internal.operation;
 import static java.lang.String.format;
 import static org.mule.extensions.jms.internal.common.JmsCommons.EXAMPLE_CONTENT_TYPE;
 import static org.mule.extensions.jms.internal.common.JmsCommons.EXAMPLE_ENCODING;
-import static org.mule.extensions.jms.internal.common.JmsCommons.QUEUE;
-import static org.mule.extensions.jms.internal.common.JmsCommons.TOPIC;
 import static org.mule.extensions.jms.internal.common.JmsCommons.createJmsSession;
 import static org.mule.extensions.jms.internal.common.JmsCommons.evaluateMessageAck;
+import static org.mule.extensions.jms.internal.common.JmsCommons.getDestinationType;
 import static org.mule.extensions.jms.internal.common.JmsCommons.releaseResources;
 import static org.mule.extensions.jms.internal.common.JmsCommons.resolveMessageContentType;
 import static org.mule.extensions.jms.internal.common.JmsCommons.resolveMessageEncoding;
@@ -28,6 +27,7 @@ import org.mule.extensions.jms.api.destination.ConsumerType;
 import org.mule.extensions.jms.api.exception.JmsConsumeErrorTypeProvider;
 import org.mule.extensions.jms.api.exception.JmsConsumeException;
 import org.mule.extensions.jms.api.exception.JmsExtensionException;
+import org.mule.extensions.jms.api.exception.JmsSecurityException;
 import org.mule.extensions.jms.api.message.JmsAttributes;
 import org.mule.extensions.jms.internal.config.InternalAckMode;
 import org.mule.extensions.jms.internal.config.JmsConfig;
@@ -52,6 +52,7 @@ import org.slf4j.Logger;
 
 import javax.inject.Inject;
 import javax.jms.Destination;
+import javax.jms.JMSSecurityException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import java.util.concurrent.TimeUnit;
@@ -108,8 +109,8 @@ public final class JmsConsume {
 
     try {
       if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Begin [consume] on destination [" + destination + "] of type ["
-            + (consumerType.topic() ? TOPIC : QUEUE) + "]");
+        LOGGER.debug("Begin [consume] on the " + getDestinationType(consumerType) + ": ["
+            + destination + "]");
       }
 
       JmsSupport jmsSupport = connection.getJmsSupport();
@@ -120,8 +121,8 @@ public final class JmsConsume {
       JmsMessageConsumer consumer = connection.createConsumer(session, jmsDestination, selector, consumerType);
 
       if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Consuming Message on destination [" + destination + "] of type ["
-            + (consumerType.topic() ? TOPIC : QUEUE) + "]");
+        LOGGER.debug("Consuming Message from the " + getDestinationType(consumerType) + ": ["
+            + destination + "]");
       }
 
       Message received = consumer.consume(maximumWaitUnit.toMillis(maximumWait));
@@ -146,11 +147,13 @@ public final class JmsConsume {
       releaseResources(session, sessionManager, consumer);
 
       return result;
-
+    } catch (JMSSecurityException e) {
+      String msg = format("A security error occurred while consuming a message from the %s: [%s]: %s",
+                          getDestinationType(consumerType), destination, e.getMessage());
+      throw new JmsSecurityException(e, msg);
     } catch (Exception e) {
-      String msg = format("An error occurred while consuming a message from destination [%s] of type [%s]: %s",
-                          destination, consumerType.topic() ? TOPIC : QUEUE, e.getMessage());
-      LOGGER.error(msg, e);
+      String msg = format("An error occurred while consuming a message from the %s [%s]: %s",
+                          getDestinationType(consumerType), destination, e.getMessage());
       throw new JmsConsumeException(msg, e);
     }
   }
