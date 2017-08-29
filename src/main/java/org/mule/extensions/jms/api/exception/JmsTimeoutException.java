@@ -6,7 +6,7 @@
  */
 package org.mule.extensions.jms.api.exception;
 
-import static org.mule.extensions.jms.api.exception.JmsErrors.TIMEOUT;
+import static org.mule.extensions.jms.api.exception.JmsError.TIMEOUT;
 import org.mule.runtime.extension.api.exception.ModuleException;
 
 /**

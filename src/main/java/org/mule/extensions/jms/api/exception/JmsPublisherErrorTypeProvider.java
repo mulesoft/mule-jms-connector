@@ -6,9 +6,10 @@
  */
 package org.mule.extensions.jms.api.exception;
 
-import static org.mule.extensions.jms.api.exception.JmsErrors.DESTINATION_NOT_FOUND;
-import static org.mule.extensions.jms.api.exception.JmsErrors.ILLEGAL_BODY;
-import static org.mule.extensions.jms.api.exception.JmsErrors.PUBLISHING;
+import static org.mule.extensions.jms.api.exception.JmsError.DESTINATION_NOT_FOUND;
+import static org.mule.extensions.jms.api.exception.JmsError.ILLEGAL_BODY;
+import static org.mule.extensions.jms.api.exception.JmsError.PUBLISHING;
+import static org.mule.extensions.jms.api.exception.JmsError.SECURITY;
 import org.mule.extensions.jms.api.destination.DestinationType;
 import org.mule.extensions.jms.api.message.JmsMessageBuilder;
 import org.mule.extensions.jms.internal.publish.JmsPublishParameters;
@@ -37,6 +38,7 @@ public class JmsPublisherErrorTypeProvider implements ErrorTypeProvider {
         .add(PUBLISHING)
         .add(ILLEGAL_BODY)
         .add(DESTINATION_NOT_FOUND)
+        .add(SECURITY)
         .build();
   }
 }

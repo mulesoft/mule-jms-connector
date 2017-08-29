@@ -6,7 +6,7 @@
  */
 package org.mule.extensions.jms.api.exception;
 
-import static org.mule.extensions.jms.api.exception.JmsErrors.ACK;
+import static org.mule.extensions.jms.api.exception.JmsError.ACK;
 import org.mule.runtime.extension.api.exception.ModuleException;
 
 /**

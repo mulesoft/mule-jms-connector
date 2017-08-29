@@ -7,8 +7,8 @@
 package org.mule.extensions.jms.test.exception;
 
 import static java.util.Collections.emptyMap;
-import static org.mule.extensions.jms.api.exception.JmsErrors.ILLEGAL_BODY;
-import static org.mule.extensions.jms.api.exception.JmsErrors.TIMEOUT;
+import static org.mule.extensions.jms.api.exception.JmsError.ILLEGAL_BODY;
+import static org.mule.extensions.jms.api.exception.JmsError.TIMEOUT;
 import org.mule.extensions.jms.api.exception.JmsConsumeException;
 import org.mule.extensions.jms.api.exception.JmsPublishException;
 import org.mule.extensions.jms.test.JmsAbstractTestCase;

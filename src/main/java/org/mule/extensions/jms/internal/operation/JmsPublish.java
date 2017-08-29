@@ -8,8 +8,8 @@ package org.mule.extensions.jms.internal.operation;
 
 import static java.lang.String.format;
 import static org.mule.extensions.jms.internal.common.JmsCommons.QUEUE;
-import static org.mule.extensions.jms.internal.common.JmsCommons.TOPIC;
 import static org.mule.extensions.jms.internal.common.JmsCommons.createJmsSession;
+import static org.mule.extensions.jms.internal.common.JmsCommons.getDestinationType;
 import static org.mule.extensions.jms.internal.common.JmsCommons.releaseResources;
 import static org.mule.extensions.jms.internal.config.InternalAckMode.AUTO;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -18,6 +18,7 @@ import org.mule.extensions.jms.api.destination.DestinationType;
 import org.mule.extensions.jms.api.exception.JmsExtensionException;
 import org.mule.extensions.jms.api.exception.JmsPublishException;
 import org.mule.extensions.jms.api.exception.JmsPublisherErrorTypeProvider;
+import org.mule.extensions.jms.api.exception.JmsSecurityException;
 import org.mule.extensions.jms.api.message.JmsMessageBuilder;
 import org.mule.extensions.jms.internal.config.JmsConfig;
 import org.mule.extensions.jms.internal.connection.JmsConnection;
@@ -37,6 +38,7 @@ import org.slf4j.Logger;
 import javax.inject.Inject;
 import javax.jms.DeliveryMode;
 import javax.jms.Destination;
+import javax.jms.JMSSecurityException;
 import javax.jms.Message;
 
 /**
@@ -79,8 +81,8 @@ public final class JmsPublish {
 
     try {
       if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Begin [publish] on destination [" + destination + "] of type ["
-            + (destinationType.isTopic() ? TOPIC : QUEUE) + "]");
+        LOGGER.debug("Begin [publish] on " + getDestinationType(destinationType) + ": ["
+            + destination + "]");
       }
 
       JmsSession session = createJmsSession(connection, AUTO, destinationType.isTopic(), jmsSessionManager);
@@ -88,8 +90,8 @@ public final class JmsPublish {
       Message message = messageBuilder.build(connection.getJmsSupport(), session.get(), config);
 
       if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug(format("Message built, sending message to destination [%s] of type [%s] using session [%s]",
-                            destination, destinationType.isTopic() ? TOPIC : QUEUE, session.get()));
+        LOGGER.debug(format("Message built, sending message to the %s: [%s] using session [%s]",
+                            getDestinationType(destinationType), destination, session.get()));
       }
 
       Destination jmsDestination = connection.getJmsSupport()
@@ -100,17 +102,20 @@ public final class JmsPublish {
           .publish(message, overrides);
 
       if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug(format("Finished [publish] to destination [%s] of type [%s] using session [%s]",
-                            destination, destinationType.isTopic() ? TOPIC : QUEUE, session.get()));
+        LOGGER.debug(format("Finished [publish] to the %s: [%s] using session [%s]",
+                            getDestinationType(destinationType), destination, session.get()));
       }
 
       releaseResources(session, jmsSessionManager, producer);
 
+    } catch (JMSSecurityException e) {
+      String msg = format("A security error occurred while sending a message to the %s: [%s]: %s",
+                          getDestinationType(destinationType), destination, e.getMessage());
+      throw new JmsSecurityException(e, msg);
     } catch (Exception e) {
-      String msg = format("An error occurred while sending a message to destination [%s] of type [%s]: %s",
-                          destination, destinationType.isTopic() ? TOPIC : QUEUE, e.getMessage());
-      LOGGER.error(msg, e);
-      throw new JmsPublishException(msg, e);
+      String msg = format("An error occurred while sending a message to the %s: [%s]: %s",
+                          getDestinationType(destinationType), destination, e.getMessage());
+      throw new JmsPublishException(e, msg);
     }
   }
 }

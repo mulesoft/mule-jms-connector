@@ -36,7 +36,7 @@ public class JmsExtensionException extends ModuleException {
    * @param message the detail message
    * @param errorType JMS error
    */
-  protected JmsExtensionException(String message, JmsErrors errorType) {
+  protected JmsExtensionException(String message, JmsError errorType) {
     super(message, errorType);
   }
 
@@ -47,7 +47,7 @@ public class JmsExtensionException extends ModuleException {
    * @param message the detail message
    * @param errorType JMS error
    */
-  protected JmsExtensionException(Exception exception, JmsErrors errorType, String message) {
+  protected JmsExtensionException(Exception exception, JmsError errorType, String message) {
     super(message, errorType, exception);
   }
 

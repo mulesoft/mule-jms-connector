@@ -9,7 +9,7 @@ package org.mule.extensions.jms.test;
 import static java.util.Collections.emptyMap;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mule.extensions.jms.api.exception.JmsErrors.TIMEOUT;
+import static org.mule.extensions.jms.api.exception.JmsError.TIMEOUT;
 import static org.mule.tck.junit4.matcher.ErrorTypeMatcher.errorType;
 import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
 import org.mule.runtime.api.message.Error;

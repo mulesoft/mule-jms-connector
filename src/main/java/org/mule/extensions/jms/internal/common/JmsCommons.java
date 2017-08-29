@@ -16,6 +16,8 @@ import static org.mule.extensions.jms.internal.config.InternalAckMode.MANUAL;
 import static org.mule.extensions.jms.internal.config.InternalAckMode.TRANSACTED;
 import static org.slf4j.LoggerFactory.getLogger;
 import org.mule.extensions.jms.api.config.AckMode;
+import org.mule.extensions.jms.api.destination.ConsumerType;
+import org.mule.extensions.jms.api.destination.DestinationType;
 import org.mule.extensions.jms.api.exception.JmsAckException;
 import org.mule.extensions.jms.internal.config.InternalAckMode;
 import org.mule.extensions.jms.internal.config.JmsAckMode;
@@ -173,5 +175,13 @@ public final class JmsCommons {
         LOGGER.warn("Failed to close jms connection resource: ", e);
       }
     }
+  }
+
+  public static String getDestinationType(ConsumerType consumerType) {
+    return consumerType.topic() ? TOPIC : QUEUE;
+  }
+
+  public static String getDestinationType(DestinationType consumerType) {
+    return consumerType.isTopic() ? TOPIC : QUEUE;
   }
 }

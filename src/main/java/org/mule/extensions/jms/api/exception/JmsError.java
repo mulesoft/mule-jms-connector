@@ -16,24 +16,26 @@ import java.util.Optional;
  * 
  * @since 1.0
  */
-public enum JmsErrors implements ErrorTypeDefinition<JmsErrors> {
+public enum JmsError implements ErrorTypeDefinition<JmsError> {
 
   PUBLISHING, ILLEGAL_BODY(PUBLISHING),
 
   CONSUMING, ACK(CONSUMING), TIMEOUT(CONSUMING), SESSION_RECOVER(CONSUMING),
 
-  DESTINATION_NOT_FOUND;
+  DESTINATION_NOT_FOUND,
 
-  private ErrorTypeDefinition<?> parentErrortype;
+  SECURITY;
 
-  JmsErrors(ErrorTypeDefinition parentErrorType) {
-    this.parentErrortype = parentErrorType;
+  private ErrorTypeDefinition<?> parentErrorType;
+
+  JmsError(ErrorTypeDefinition parentErrorType) {
+    this.parentErrorType = parentErrorType;
   }
 
-  JmsErrors() {}
+  JmsError() {}
 
   @Override
   public Optional<ErrorTypeDefinition<? extends Enum<?>>> getParent() {
-    return ofNullable(parentErrortype);
+    return ofNullable(parentErrorType);
   }
 }

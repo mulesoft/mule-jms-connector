@@ -6,7 +6,7 @@
  */
 package org.mule.extensions.jms.api.exception;
 
-import static org.mule.extensions.jms.api.exception.JmsErrors.DESTINATION_NOT_FOUND;
+import static org.mule.extensions.jms.api.exception.JmsError.DESTINATION_NOT_FOUND;
 
 import javax.jms.Destination;
 

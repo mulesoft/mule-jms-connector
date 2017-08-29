@@ -6,7 +6,7 @@
  */
 package org.mule.extensions.jms.api.exception;
 
-import static org.mule.extensions.jms.api.exception.JmsErrors.SESSION_RECOVER;
+import static org.mule.extensions.jms.api.exception.JmsError.SESSION_RECOVER;
 import com.google.common.collect.ImmutableSet;
 import org.mule.extensions.jms.internal.operation.JmsAcknowledge;
 import org.mule.runtime.extension.api.annotation.error.ErrorTypeProvider;

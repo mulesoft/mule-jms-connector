@@ -13,6 +13,7 @@ import static org.mule.extensions.jms.internal.common.JmsCommons.EXAMPLE_ENCODIN
 import static org.mule.extensions.jms.internal.common.JmsCommons.QUEUE;
 import static org.mule.extensions.jms.internal.common.JmsCommons.TOPIC;
 import static org.mule.extensions.jms.internal.common.JmsCommons.closeQuietly;
+import static org.mule.extensions.jms.internal.common.JmsCommons.getDestinationType;
 import static org.mule.extensions.jms.internal.common.JmsCommons.resolveOverride;
 import static org.mule.extensions.jms.internal.common.JmsCommons.toInternalAckMode;
 import static org.mule.extensions.jms.internal.config.InternalAckMode.AUTO;
@@ -194,7 +195,7 @@ public class JmsListener extends Source<Object, JmsAttributes> {
 
     if (LOGGER.isDebugEnabled()) {
       LOGGER.debug(format("Starting JMS Listener with [%s] consumers on destination [%s] of type [%s] with AckMode [%s]",
-                          numberOfConsumers, destination, getDestinationType(), resolvedAckMode.name()));
+                          numberOfConsumers, destination, getDestinationType(consumerType), resolvedAckMode.name()));
     }
 
     try {
@@ -215,7 +216,7 @@ public class JmsListener extends Source<Object, JmsAttributes> {
       }
     } catch (Exception e) {
       String msg = format("An error occurred while creating the consumers for destination [%s:%s]: %s",
-                          getDestinationType(), destination, e.getMessage());
+                          getDestinationType(consumerType), destination, e.getMessage());
       LOGGER.error(msg, e);
       releaseListeners();
 
@@ -230,7 +231,7 @@ public class JmsListener extends Source<Object, JmsAttributes> {
   @Override
   public void onStop() {
     if (LOGGER.isDebugEnabled()) {
-      LOGGER.debug(format("Stopping JMS Listener on destination [%s:%s]", getDestinationType(), destination));
+      LOGGER.debug(format("Stopping JMS Listener on destination [%s:%s]", getDestinationType(consumerType), destination));
     }
 
     releaseListeners();
@@ -381,9 +382,5 @@ public class JmsListener extends Source<Object, JmsAttributes> {
     public JmsMessageConsumer getConsumer() {
       return messageConsumer;
     }
-  }
-
-  private String getDestinationType() {
-    return consumerType.topic() ? TOPIC : QUEUE;
   }
 }
