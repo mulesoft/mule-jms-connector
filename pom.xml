@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.mule.extensions</groupId>
         <artifactId>mule-core-modules-parent</artifactId>
-        <version>1.0.0-rc.darkseid-SNAPSHOT</version>
+        <version>1.0.0-rc.darkseid</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -26,7 +26,7 @@
         <commonsLangVersion>3.6</commonsLangVersion>
         <guavaVersion>18.0</guavaVersion>
         <springVersion>4.1.6.RELEASE</springVersion>
-        <muleSpringModuleVersion>0.9.0-rc.darkseid-SNAPSHOT</muleSpringModuleVersion>
+        <muleSpringModuleVersion>0.9.0-rc.darkseid</muleSpringModuleVersion>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
     </properties>
 
