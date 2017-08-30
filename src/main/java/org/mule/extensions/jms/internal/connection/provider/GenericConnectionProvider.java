@@ -66,7 +66,7 @@ public class GenericConnectionProvider extends BaseConnectionProvider {
 
     LookupJndiDestination lookupJndiDestination = jndiConnectionFactory.getLookupDestination();
 
-    JmsSpecification specification = getConnectionParameters().getSpecification();
+    JmsSpecification specification = getSpecification();
     if (JMS_1_0_2b.equals(specification)) {
       setJmsSupport(new Jms102bSupport(lookupJndiDestination, jndiConnectionFactory::getJndiDestination));
     } else if (JMS_1_1.equals(specification)) {

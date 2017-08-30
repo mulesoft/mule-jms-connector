@@ -7,11 +7,12 @@
 package org.mule.extensions.jms.api.destination;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import static org.mule.runtime.api.util.Preconditions.checkArgument;
-
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.extension.api.annotation.Alias;
+import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
@@ -37,6 +38,7 @@ public class TopicConsumer implements ConsumerType, Initialisable {
    */
   @Parameter
   @Optional(defaultValue = "false")
+  @Expression(NOT_SUPPORTED)
   @Summary("Allows an application to receive all the messages published on a topic, including the ones published when there is no consumer associated with it")
   private boolean isDurable;
 
@@ -48,6 +50,7 @@ public class TopicConsumer implements ConsumerType, Initialisable {
    */
   @Parameter
   @Optional(defaultValue = "false")
+  @Expression(NOT_SUPPORTED)
   @Summary("Only for JMS 2.0: Allows the processing of messages from a topic subscription by multiple threads, connections or JVMs")
   private boolean isShared;
 
@@ -57,6 +60,7 @@ public class TopicConsumer implements ConsumerType, Initialisable {
    */
   @Parameter
   @Optional(defaultValue = "false")
+  @Expression(NOT_SUPPORTED)
   @Summary("Specifies that messages published to the topic by its own connection must not be added to the subscription")
   private boolean noLocal;
 
@@ -66,6 +70,7 @@ public class TopicConsumer implements ConsumerType, Initialisable {
   @Parameter
   @Optional
   @ParameterDsl(allowReferences = false)
+  @Expression(NOT_SUPPORTED)
   @Summary("The name to be used for the subscription")
   private String subscriptionName;
 
