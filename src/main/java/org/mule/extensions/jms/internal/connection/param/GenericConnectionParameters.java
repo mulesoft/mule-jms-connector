@@ -6,16 +6,12 @@
  */
 package org.mule.extensions.jms.internal.connection.param;
 
-import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
-import org.mule.extensions.jms.api.connection.JmsSpecification;
 import org.mule.extensions.jms.internal.connection.provider.BaseConnectionProvider;
-import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Password;
 
 import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
 
 /**
  * Common connection parameters for the {@link BaseConnectionProvider}
@@ -54,16 +50,6 @@ public class GenericConnectionParameters {
   @Optional
   private String clientId;
 
-  /**
-   * Versions of the {@link JmsSpecification} to be used by the extension.
-   * This version should be compatible with the implementation of the {@link ConnectionFactory}
-   * configured. Functionality available only for certain versions of the spec
-   * will throw an error if the version requirement is not met.
-   */
-  @Parameter
-  @Optional(defaultValue = "JMS_1_1")
-  @Expression(NOT_SUPPORTED)
-  private JmsSpecification specification;
 
   public String getUsername() {
     return username;
@@ -75,10 +61,6 @@ public class GenericConnectionParameters {
 
   public String getClientId() {
     return clientId;
-  }
-
-  public JmsSpecification getSpecification() {
-    return specification;
   }
 
 }

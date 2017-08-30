@@ -17,6 +17,7 @@ import org.mule.runtime.core.api.util.proxy.TargetInvocationHandler;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.ExternalLib;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
+import org.mule.runtime.extension.api.annotation.param.display.Placement;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -43,6 +44,7 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider {
    * a provider for an {@link ActiveMQConnectionFactory}
    */
   @ParameterGroup(name = "Connection Factory")
+  @Placement(order = 1)
   private ActiveMQConnectionFactoryProvider connectionFactoryProvider;
 
   private ConnectionFactory connectionFactory;
@@ -63,7 +65,7 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider {
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug("No custom connection factory provided, creating the default for ActiveMq");
       }
-      if (JMS_2_0.equals(getConnectionParameters().getSpecification())) {
+      if (JMS_2_0.equals(getSpecification())) {
 
         //TODO we could support a JMS 2.0 default using ActiveMQ Artemis (HornetQ) instead of ActiveMQ 5.x
         throw new ActiveMQException(

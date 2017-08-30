@@ -198,7 +198,7 @@ public class JmsResultFactory {
 
   private void addCorrelationProperties(Message jmsMessage, DefaultJmsHeaders.Builder jmsHeadersBuilder) {
     //TODO previously here the MULE_CORRELATION_ID was set also, see what to do with that.
-    addHeader(jmsMessage::getJMSCorrelationID, (value) -> jmsHeadersBuilder.setCorrelactionId((String) value),
+    addHeader(jmsMessage::getJMSCorrelationID, (value) -> jmsHeadersBuilder.setCorrelationId((String) value),
               "An error occurred while retrieving the JMSCorrelationID property");
   }
 

@@ -64,6 +64,17 @@ public abstract class BaseConnectionProvider
 
   private static final Logger LOGGER = getLogger(BaseConnectionProvider.class);
 
+  /**
+   * Versions of the {@link JmsSpecification} to be used by the extension.
+   * This version should be compatible with the implementation of the {@link ConnectionFactory}
+   * configured. Functionality available only for certain versions of the spec
+   * will throw an error if the version requirement is not met.
+   */
+  @Parameter
+  @Optional(defaultValue = "JMS_1_1")
+  @Expression(NOT_SUPPORTED)
+  private JmsSpecification specification;
+
   @ParameterGroup(name = CONNECTION)
   private GenericConnectionParameters connectionParameters;
 
@@ -250,7 +261,7 @@ public abstract class BaseConnectionProvider
    * @see JmsSupport
    */
   protected void createJmsSupport() {
-    JmsSpecification specification = getConnectionParameters().getSpecification();
+    JmsSpecification specification = getSpecification();
     if (JMS_1_0_2b.equals(specification)) {
       jmsSupport = new Jms102bSupport();
 
@@ -312,6 +323,10 @@ public abstract class BaseConnectionProvider
 
   protected void setJmsSupport(JmsSupport jmsSupport) {
     this.jmsSupport = jmsSupport;
+  }
+
+  public JmsSpecification getSpecification() {
+    return specification;
   }
 
 }

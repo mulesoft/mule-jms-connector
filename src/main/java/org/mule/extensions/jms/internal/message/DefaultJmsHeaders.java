@@ -74,7 +74,7 @@ final class DefaultJmsHeaders implements JmsHeaders {
    *
    * the message correlationId
    */
-  private String correlactionId;
+  private String correlationId;
 
   /**
    * the name of the Destination supplied by a client when a message is sent,
@@ -132,7 +132,7 @@ final class DefaultJmsHeaders implements JmsHeaders {
    */
   @Override
   public String getJMSCorrelationID() {
-    return correlactionId;
+    return correlationId;
   }
 
   /**
@@ -213,8 +213,8 @@ final class DefaultJmsHeaders implements JmsHeaders {
       return this;
     }
 
-    public Builder setCorrelactionId(String correlationId) {
-      jmsHeaders.correlactionId = correlationId;
+    public Builder setCorrelationId(String correlationId) {
+      jmsHeaders.correlationId = correlationId;
       return this;
     }
 
