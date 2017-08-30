@@ -7,7 +7,9 @@
 package org.mule.extensions.jms.api.connection.factory.jndi;
 
 import static java.lang.String.format;
+import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import org.mule.runtime.api.lifecycle.InitialisationException;
+import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.ExclusiveOptionals;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
@@ -31,6 +33,7 @@ public final class JndiNameResolverProvider {
    */
   @Parameter
   @Optional
+  @Expression(NOT_SUPPORTED)
   private JndiNameResolver customJndiNameResolver;
 
   /**
@@ -38,6 +41,7 @@ public final class JndiNameResolverProvider {
    */
   @Parameter
   @Optional
+  @Expression(NOT_SUPPORTED)
   private JndiNameResolverProperties nameResolverBuilder;
 
 

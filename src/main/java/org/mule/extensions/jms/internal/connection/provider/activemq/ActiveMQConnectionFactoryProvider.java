@@ -10,10 +10,13 @@ import static java.lang.String.format;
 import static org.mule.runtime.core.api.util.ClassUtils.instantiateClass;
 import org.mule.extensions.jms.api.connection.factory.activemq.ActiveMQConnectionFactoryConfiguration;
 import org.mule.extensions.jms.internal.connection.exception.ActiveMQException;
+import org.mule.runtime.api.meta.ExpressionSupport;
+import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.ExclusiveOptionals;
 import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
+import org.mule.runtime.extension.api.annotation.param.display.Placement;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -47,6 +50,8 @@ public class ActiveMQConnectionFactoryProvider {
   @Parameter
   @Optional
   @NullSafe
+  @Expression(ExpressionSupport.NOT_SUPPORTED)
+  @Placement(order = 1)
   private ActiveMQConnectionFactoryConfiguration factoryConfiguration;
 
   /**
@@ -54,6 +59,8 @@ public class ActiveMQConnectionFactoryProvider {
    */
   @Parameter
   @Optional
+  @Expression(ExpressionSupport.NOT_SUPPORTED)
+  @Placement(order = 2)
   private ConnectionFactory connectionFactory;
 
   public ConnectionFactory getConnectionFactory() {
