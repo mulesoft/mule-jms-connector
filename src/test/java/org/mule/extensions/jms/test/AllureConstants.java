@@ -7,6 +7,8 @@ public class AllureConstants {
     String JMS_EXTENSION = "JMS Extension";
 
     interface JmsStory {
+
+      String CORRELATION_ID = "Correlation Id";
     }
 
   }
