@@ -16,6 +16,10 @@ import org.mule.runtime.extension.api.exception.ModuleException;
  */
 public class JmsExtensionException extends ModuleException {
 
+  private static String buildMessage(String message, Exception exception) {
+    return message + ". " + exception.getMessage();
+  }
+
   /**
    * {@inheritDoc}
    */
@@ -27,7 +31,7 @@ public class JmsExtensionException extends ModuleException {
    * {@inheritDoc}
    */
   public JmsExtensionException(Exception exception, String message) {
-    super(message, ANY, exception);
+    super(buildMessage(message, exception), ANY, exception);
   }
 
   /**
@@ -48,7 +52,6 @@ public class JmsExtensionException extends ModuleException {
    * @param errorType JMS error
    */
   protected JmsExtensionException(Exception exception, JmsError errorType, String message) {
-    super(message, errorType, exception);
+    super(buildMessage(message, exception), errorType, exception);
   }
-
 }
