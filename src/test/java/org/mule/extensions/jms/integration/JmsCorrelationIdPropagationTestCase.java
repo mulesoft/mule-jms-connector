@@ -7,8 +7,11 @@
 package org.mule.extensions.jms.integration;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
+import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JmsStory.CORRELATION_ID;
 
 import org.mule.extensions.jms.api.message.JmsAttributes;
 import org.mule.extensions.jms.api.message.JmsHeaders;
@@ -16,13 +19,14 @@ import org.mule.extensions.jms.test.JmsAbstractTestCase;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.TypedValue;
 
+import io.qameta.allure.Description;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Step;
+import io.qameta.allure.Story;
 import org.junit.Test;
 
-import io.qameta.allure.Feature;
-import io.qameta.allure.Story;
-
 @Feature(JMS_EXTENSION)
-@Story("Tests the correct propagation of the correlation id property within the JMS connector.")
+@Story(CORRELATION_ID)
 public class JmsCorrelationIdPropagationTestCase extends JmsAbstractTestCase {
 
   private static final String FIRST_MESSAGE = "My First Message";
@@ -41,10 +45,11 @@ public class JmsCorrelationIdPropagationTestCase extends JmsAbstractTestCase {
 
   @Override
   protected String[] getConfigFiles() {
-    return new String[] {"config/activemq/activemq-default.xml", "integration/jms-correlation-id-propagation.xml"};
+    return new String[]{"config/activemq/activemq-default.xml", "integration/jms-correlation-id-propagation.xml"};
   }
 
   @Test
+  @Description("Tests the correct propagation of the correlation id property within the JMS connector.")
   public void testMuleCorrelationIdPropagation() throws Exception {
     sendMessage();
     executeBridge();
@@ -52,15 +57,7 @@ public class JmsCorrelationIdPropagationTestCase extends JmsAbstractTestCase {
     assertExpectedMessage(message);
   }
 
-  protected void assertExpectedMessage(Message message) {
-    TypedValue<Object> attributes = message.getAttributes();
-    assertThat(attributes, not(nullValue()));
-
-    JmsHeaders headers = ((JmsAttributes) attributes.getValue()).getHeaders();
-    assertThat(headers, not(nullValue()));
-    assertThat(headers.getJMSCorrelationID(), is(CUSTOM_CORRELATION_ID));
-  }
-
+  @Step("Send message")
   protected void sendMessage() throws Exception {
     flowRunner(SEND_PAYLOAD_FLOW)
         .withVariable(INITIAL_DESTINATION_VAR, INITIAL_DESTINATION)
@@ -69,6 +66,7 @@ public class JmsCorrelationIdPropagationTestCase extends JmsAbstractTestCase {
         .run();
   }
 
+  @Step("Execute bridge")
   protected void executeBridge() throws Exception {
     flowRunner(BRIDGE_FLOW)
         .withVariable(INITIAL_DESTINATION_VAR, INITIAL_DESTINATION)
@@ -76,11 +74,22 @@ public class JmsCorrelationIdPropagationTestCase extends JmsAbstractTestCase {
         .run();
   }
 
+  @Step("Receive message from bridge target")
   protected Message receiveMessageFromBridgeTarget() throws Exception {
     return flowRunner(BRIDGE_RECEIVER_FLOW)
         .withVariable(FINAL_DESTINATION_VAR, FINAL_DESTINATION)
         .run()
         .getMessage();
+  }
+
+  @Step("Verify correlation id properly was propagated")
+  protected void assertExpectedMessage(Message message) {
+    TypedValue<Object> attributes = message.getAttributes();
+    assertThat(attributes, not(nullValue()));
+
+    JmsHeaders headers = ((JmsAttributes) attributes.getValue()).getHeaders();
+    assertThat(headers, not(nullValue()));
+    assertThat(headers.getJMSCorrelationID(), is(CUSTOM_CORRELATION_ID));
   }
 
 }
