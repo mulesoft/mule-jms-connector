@@ -45,7 +45,7 @@ public class JmsCorrelationIdPropagationTestCase extends JmsAbstractTestCase {
 
   @Override
   protected String[] getConfigFiles() {
-    return new String[]{"config/activemq/activemq-default.xml", "integration/jms-correlation-id-propagation.xml"};
+    return new String[] {"config/activemq/activemq-default.xml", "integration/jms-correlation-id-propagation.xml"};
   }
 
   @Test
