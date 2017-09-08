@@ -14,8 +14,8 @@ import static org.mule.tck.junit4.matcher.ErrorTypeMatcher.errorType;
 import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
 import org.mule.runtime.api.message.Error;
 import org.mule.runtime.api.message.Message;
-import org.mule.runtime.core.api.InternalEvent;
 import org.mule.runtime.core.api.construct.Flow;
+import org.mule.runtime.core.api.event.BaseEvent;
 import org.mule.runtime.core.api.exception.MessagingException;
 import org.mule.tck.junit4.rule.SystemProperty;
 
@@ -72,7 +72,7 @@ public class JmsTransactionalTestCase extends JmsAbstractTestCase {
     publish(MESSAGE, txConsumeDestination);
 
     consumeTx(txConsumeDestination, true);
-    InternalEvent event = consumeTx(txConsumeDestination, false);
+    BaseEvent event = consumeTx(txConsumeDestination, false);
     assertThat(event.getMessage().getPayload().getValue(), is(MESSAGE));
   }
 
@@ -104,30 +104,30 @@ public class JmsTransactionalTestCase extends JmsAbstractTestCase {
     publish(MESSAGE, txConsumeDestination);
     consumeAndPublishTx(txConsumeDestination, txPublishDestination, true);
 
-    InternalEvent consume = consumeTx(txConsumeDestination, false);
+    BaseEvent consume = consumeTx(txConsumeDestination, false);
     assertThat(consume.getMessage().getPayload().getValue(), is(MESSAGE));
     checkForEmptyDestination(txPublishDestination);
   }
 
-  private InternalEvent consumeAndPublishTx(String txConsumeDestination, String txPublishDestination, boolean rollback)
+  private BaseEvent consumeAndPublishTx(String txConsumeDestination, String txPublishDestination, boolean rollback)
       throws Exception {
     return runFlowWithTxWrapper("txConsumeAndPublish", txPublishDestination, txConsumeDestination, rollback);
   }
 
-  private InternalEvent consumeTx(String txConsumeDestination, boolean rollback) throws Exception {
+  private BaseEvent consumeTx(String txConsumeDestination, boolean rollback) throws Exception {
     return runFlowWithTxWrapper("txConsume", txConsumeDestination, txConsumeDestination, rollback);
   }
 
-  private InternalEvent publishTx(String txPublishDestination) throws Exception {
+  private BaseEvent publishTx(String txPublishDestination) throws Exception {
     return publishTx(txPublishDestination, false);
   }
 
-  private InternalEvent publishTx(String txPublishDestination, boolean rollback) throws Exception {
+  private BaseEvent publishTx(String txPublishDestination, boolean rollback) throws Exception {
     return runFlowWithTxWrapper("txPublish", txPublishDestination, null, rollback);
   }
 
-  private InternalEvent runFlowWithTxWrapper(String flowName, String txPublishDestination, String txConsumeDestination,
-                                             boolean shouldRollback)
+  private BaseEvent runFlowWithTxWrapper(String flowName, String txPublishDestination, String txConsumeDestination,
+                                         boolean shouldRollback)
       throws Exception {
     return flowRunner("executionWrapper")
         .withVariable("publishDestination", txPublishDestination)
