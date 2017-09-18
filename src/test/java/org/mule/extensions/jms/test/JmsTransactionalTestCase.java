@@ -10,8 +10,9 @@ import static java.util.Collections.emptyMap;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mule.extensions.jms.api.exception.JmsError.TIMEOUT;
-import static org.mule.tck.junit4.matcher.ErrorTypeMatcher.errorType;
 import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
+import static org.mule.tck.junit4.matcher.ErrorTypeMatcher.errorType;
+
 import org.mule.runtime.api.message.Error;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.core.api.construct.Flow;
@@ -21,6 +22,10 @@ import org.mule.tck.junit4.rule.SystemProperty;
 
 import org.junit.Rule;
 import org.junit.Test;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import io.qameta.allure.Feature;
 import io.qameta.allure.Story;
 
@@ -36,9 +41,18 @@ public class JmsTransactionalTestCase extends JmsAbstractTestCase {
   @Rule
   public SystemProperty publishDestination = new SystemProperty("publishDestination", newDestination("publishDestination"));
 
+  @Inject
+  @Named("txSubscriberWithPublish")
+  private Flow txSubscriberWithPublishFlow;
+
   @Override
   protected String[] getConfigFiles() {
     return new String[] {"transactions/jms-transactional.xml", "config/activemq/activemq-default.xml"};
+  }
+
+  @Override
+  protected boolean doTestClassInjection() {
+    return true;
   }
 
   @Test
@@ -79,7 +93,7 @@ public class JmsTransactionalTestCase extends JmsAbstractTestCase {
   @Test
   public void txSubscriberWithPublish() throws Exception {
     publish(MESSAGE, listenerDestination.getValue());
-    ((Flow) getFlowConstruct("txSubscriberWithPublish")).start();
+    txSubscriberWithPublishFlow.start();
     Message event = consume(publishDestination.getValue(), emptyMap(), 5000L);
     assertThat(event.getPayload().getValue(), is(MESSAGE));
   }
