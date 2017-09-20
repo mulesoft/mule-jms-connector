@@ -7,11 +7,20 @@
 package org.mule.extensions.jms.internal.connection.provider.activemq;
 
 import static org.mule.extensions.jms.api.connection.JmsSpecification.JMS_2_0;
+import static org.mule.extensions.jms.internal.connection.provider.activemq.ActiveMQConnectionProvider.ACTIVEMQ_VERSION;
+import static org.mule.extensions.jms.internal.connection.provider.activemq.ActiveMQConnectionProvider.BROKER_CLASS;
+import static org.mule.extensions.jms.internal.connection.provider.activemq.ActiveMQConnectionProvider.BROKER_GA;
+import static org.mule.extensions.jms.internal.connection.provider.activemq.ActiveMQConnectionProvider.CONNECTION_FACTORY_CLASS;
+import static org.mule.extensions.jms.internal.connection.provider.activemq.ActiveMQConnectionProvider.KAHA_DB_STORE_CLASS;
 import static org.mule.runtime.api.meta.ExternalLibraryType.DEPENDENCY;
 import static org.slf4j.LoggerFactory.getLogger;
+
+import org.mule.extensions.jms.api.exception.JmsMissingLibraryException;
 import org.mule.extensions.jms.internal.connection.JmsConnection;
+import org.mule.extensions.jms.internal.connection.JmsTransactionalConnection;
 import org.mule.extensions.jms.internal.connection.exception.ActiveMQException;
 import org.mule.extensions.jms.internal.connection.provider.BaseConnectionProvider;
+import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.connection.ConnectionProvider;
 import org.mule.runtime.core.api.util.proxy.TargetInvocationHandler;
 import org.mule.runtime.extension.api.annotation.Alias;
@@ -19,12 +28,13 @@ import org.mule.runtime.extension.api.annotation.ExternalLib;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
+import javax.jms.JMSException;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.slf4j.Logger;
@@ -35,10 +45,26 @@ import org.slf4j.Logger;
  * @since 1.0
  */
 @Alias("active-mq")
-@ExternalLib(name = "ActiveMQ", description = "An ActiveMQ Broker", type = DEPENDENCY)
+@ExternalLib(name = "ActiveMQ Client", description = "The ActiveMQ JMS Client implementation.", type = DEPENDENCY,
+    requiredClassName = CONNECTION_FACTORY_CLASS, coordinates = "org.apache.activemq:activemq-client:" + ACTIVEMQ_VERSION)
+@ExternalLib(name = "ActiveMQ Broker",
+    description = "The ActiveMQ Message Broker implementation. Only required if it is required to start an on memory broker based in the VM transport.",
+    type = DEPENDENCY, requiredClassName = BROKER_CLASS, coordinates = BROKER_GA + ":" + ACTIVEMQ_VERSION,
+    optional = true)
+@ExternalLib(name = "ActiveMQ KahaDB",
+    description = "The ActiveMQ KahaDB Store Implementation. Only required if using an on memory broker and required to be persistent. E.g: 'vm://localhost?broker.persistent=true'",
+    type = DEPENDENCY, requiredClassName = KAHA_DB_STORE_CLASS,
+    coordinates = ActiveMQConnectionProvider.KAHA_DB_GA + ":" + ACTIVEMQ_VERSION,
+    optional = true)
 public class ActiveMQConnectionProvider extends BaseConnectionProvider {
 
   private static final Logger LOGGER = getLogger(ActiveMQConnectionProvider.class);
+  static final String CONNECTION_FACTORY_CLASS = "org.apache.activemq.ActiveMQConnectionFactory";
+  static final String BROKER_CLASS = "org.apache.activemq.broker.Broker";
+  static final String KAHA_DB_STORE_CLASS = "org.apache.activemq.store.kahadb.KahaDBPersistenceAdapter";
+  static final String ACTIVEMQ_VERSION = "5.14.5";
+  static final String BROKER_GA = "org.apache.activemq:activemq-broker";
+  static final String KAHA_DB_GA = "org.apache.activemq:activemq-kahadb-store";
 
   /**
    * a provider for an {@link ActiveMQConnectionFactory}
@@ -48,6 +74,33 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider {
   private ActiveMQConnectionFactoryProvider connectionFactoryProvider;
 
   private ConnectionFactory connectionFactory;
+
+  @Override
+  public JmsTransactionalConnection connect() throws ConnectionException {
+    try {
+      return super.connect();
+    } catch (ConnectionException e) {
+      Throwable cause = e.getCause();
+      if (cause instanceof JMSException) {
+
+        boolean unableToCreateInVMTransport = e.getMessage().contains("Transport scheme NOT recognized: [vm]");
+        if (unableToCreateInVMTransport) {
+          throw new JmsMissingLibraryException(new ConnectionException(e),
+                                               "Unable to create a connection to a broker based on the VM Transport. "
+                                                   + getAdviceMessage(BROKER_GA));
+        }
+
+        boolean unableToCreatePersistenceAdapter =
+            e.getMessage().contains("Class 'org.apache.activemq.store.kahadb.KahaDBPersistenceAdapter' not found in classloader");
+        if (unableToCreatePersistenceAdapter) {
+          throw new JmsMissingLibraryException(new ConnectionException(e),
+                                               "Unable to create a local broker with persistence enabled. "
+                                                   + getAdviceMessage(KAHA_DB_GA));
+        }
+      }
+      throw e;
+    }
+  }
 
   @Override
   public ConnectionFactory getConnectionFactory() throws ActiveMQException {
@@ -132,6 +185,10 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider {
     if (cleanupMethod != null) {
       cleanupMethod.invoke(connection, (Object[]) null);
     }
+  }
+
+  private String getAdviceMessage(String library) {
+    return "Validate that the Mule Application has the required library: \"" + library + "\" as a Shared Library";
   }
 
   public ActiveMQConnectionFactoryProvider getConnectionFactoryProvider() {

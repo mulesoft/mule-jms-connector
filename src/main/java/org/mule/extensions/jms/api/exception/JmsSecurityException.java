@@ -12,10 +12,10 @@ public class JmsSecurityException extends JmsExtensionException {
   /**
    * Creates a new JMS Security Exception
    *
-   * @param exception Cause of this exception
    * @param message   Message of the new exception
+   * @param exception Cause of this exception
    */
-  public JmsSecurityException(Exception exception, String message) {
-    super(exception, SECURITY, message);
+  public JmsSecurityException(String message, Exception exception) {
+    super(message, SECURITY, exception);
   }
 }

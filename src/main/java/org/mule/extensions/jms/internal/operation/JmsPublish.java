@@ -111,11 +111,11 @@ public final class JmsPublish {
     } catch (JMSSecurityException e) {
       String msg = format("A security error occurred while sending a message to the %s: [%s]: %s",
                           getDestinationType(destinationType), destination, e.getMessage());
-      throw new JmsSecurityException(e, msg);
+      throw new JmsSecurityException(msg, e);
     } catch (Exception e) {
       String msg = format("An error occurred while sending a message to the %s: [%s]: %s",
                           getDestinationType(destinationType), destination, e.getMessage());
-      throw new JmsPublishException(e, msg);
+      throw new JmsPublishException(msg, e);
     }
   }
 }

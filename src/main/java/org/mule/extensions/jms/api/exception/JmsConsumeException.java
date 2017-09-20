@@ -32,7 +32,7 @@ public class JmsConsumeException extends JmsExtensionException {
    * @param exception cause of this exception
    */
   public JmsConsumeException(String message, Exception exception) {
-    super(exception, CONSUMING, message);
+    super(message, CONSUMING, exception);
   }
 
   /**
@@ -53,6 +53,6 @@ public class JmsConsumeException extends JmsExtensionException {
    * @param exception cause of this exception
    */
   protected JmsConsumeException(String message, JmsError errorType, Exception exception) {
-    super(exception, errorType, message);
+    super(message, errorType, exception);
   }
 }

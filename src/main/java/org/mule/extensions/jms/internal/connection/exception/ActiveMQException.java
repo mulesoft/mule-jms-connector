@@ -24,6 +24,6 @@ public class ActiveMQException extends JmsExtensionException {
   }
 
   public ActiveMQException(String message, Exception exception) {
-    super(exception, message);
+    super(message, exception);
   }
 }

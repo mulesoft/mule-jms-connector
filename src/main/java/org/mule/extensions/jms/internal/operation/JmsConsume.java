@@ -150,7 +150,7 @@ public final class JmsConsume {
     } catch (JMSSecurityException e) {
       String msg = format("A security error occurred while consuming a message from the %s: [%s]: %s",
                           getDestinationType(consumerType), destination, e.getMessage());
-      throw new JmsSecurityException(e, msg);
+      throw new JmsSecurityException(msg, e);
     } catch (Exception e) {
       String msg = format("An error occurred while consuming a message from the %s [%s]: %s",
                           getDestinationType(consumerType), destination, e.getMessage());

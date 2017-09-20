@@ -27,11 +27,11 @@ public class JmsPublishException extends JmsExtensionException {
   /**
    * Creates a new instance with the specified detail {@code message}
    *
-   * @param exception cause of this exception
    * @param message the detail message
+   * @param exception cause of this exception
    */
-  public JmsPublishException(Exception exception, String message) {
-    super(exception, PUBLISHING, message);
+  public JmsPublishException(String message, Exception exception) {
+    super(message, PUBLISHING, exception);
   }
 
 
@@ -53,6 +53,6 @@ public class JmsPublishException extends JmsExtensionException {
    * @param exception cause of this exception
    */
   protected JmsPublishException(String message, JmsError errorType, Exception exception) {
-    super(exception, errorType, message);
+    super(message, errorType, exception);
   }
 }

@@ -8,7 +8,9 @@ package org.mule.extensions.jms.internal.connection.provider.activemq;
 
 import static java.lang.String.format;
 import static org.mule.runtime.core.api.util.ClassUtils.instantiateClass;
+
 import org.mule.extensions.jms.api.connection.factory.activemq.ActiveMQConnectionFactoryConfiguration;
+import org.mule.extensions.jms.api.exception.JmsMissingLibraryException;
 import org.mule.extensions.jms.internal.connection.exception.ActiveMQException;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
@@ -18,10 +20,10 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 
+import javax.jms.ConnectionFactory;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
-import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.slf4j.Logger;
@@ -77,6 +79,14 @@ public class ActiveMQConnectionFactoryProvider {
       this.connectionFactory = (ConnectionFactory) instantiateClass(getFactoryClass(), factoryConfiguration.getBrokerUrl());
       applyVendorSpecificConnectionFactoryProperties(connectionFactory);
       return connectionFactory;
+    } catch (ClassNotFoundException e) {
+      String message =
+          format("Failed to create a default Connection Factory for ActiveMQ using the [%s] implementation because the Class was not found. \n "
+              +
+              "Please verify that you have configured the ActiveMQ Client Dependency as a Shared Library of your application.",
+                 getFactoryClass());
+      LOGGER.error(message, e);
+      throw new JmsMissingLibraryException(e, message);
     } catch (Exception e) {
       String message = format("Failed to create a default Connection Factory for ActiveMQ using the [%s] implementation: %s",
                               getFactoryClass(), e.getMessage());

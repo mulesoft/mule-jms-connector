@@ -224,7 +224,7 @@ public class JmsListener extends Source<Object, JmsAttributes> {
         throw new ConnectionException(e);
       }
 
-      throw new JmsExtensionException(e, msg);
+      throw new JmsExtensionException(msg, e);
     }
   }
 

@@ -6,8 +6,6 @@ package org.mule.extensions.jms.internal;
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-
-
 import org.mule.extensions.jms.api.connection.caching.CachingStrategy;
 import org.mule.extensions.jms.api.connection.caching.DefaultCachingStrategy;
 import org.mule.extensions.jms.api.connection.caching.NoCachingConfiguration;
@@ -37,10 +35,9 @@ import javax.jms.ConnectionFactory;
 
 
 /**
- * <code>JmsConnector</code> is a JMS 1.0.2b, 1.1 and 2.0 compliant MuleSoft Extension,
- * used to consume and produce JMS Messages.
- * The Extension supports all JMS functionality including topics and queues,
- * durable subscribers, acknowledgement modes and local transactions.
+ * JmsConnector is a JMS 1.0.2b, 1.1 and 2.0 compliant MuleSoft Extension, used to consume and produce JMS Messages.
+ * The Extension supports all JMS functionality including topics and queues, durable subscribers, acknowledgement modes
+ * and local transactions.
  *
  * @since 1.0
  */

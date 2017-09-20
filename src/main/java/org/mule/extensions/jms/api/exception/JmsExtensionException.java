@@ -7,6 +7,7 @@
 package org.mule.extensions.jms.api.exception;
 
 import static org.mule.runtime.extension.api.error.MuleErrors.ANY;
+
 import org.mule.runtime.extension.api.exception.ModuleException;
 
 /**
@@ -30,14 +31,14 @@ public class JmsExtensionException extends ModuleException {
   /**
    * {@inheritDoc}
    */
-  public JmsExtensionException(Exception exception, String message) {
+  public JmsExtensionException(String message, Exception exception) {
     super(buildMessage(message, exception), ANY, exception);
   }
 
   /**
    * Creates a new instance with the specified detail {@code message}
    *
-   * @param message the detail message
+   * @param message   the detail message
    * @param errorType JMS error
    */
   protected JmsExtensionException(String message, JmsError errorType) {
@@ -47,11 +48,11 @@ public class JmsExtensionException extends ModuleException {
   /**
    * Creates a new instance with the specified detail {@code message}
    *
-   * @param exception cause of this exception
-   * @param message the detail message
+   * @param message   the detail message
    * @param errorType JMS error
+   * @param exception cause of this exception
    */
-  protected JmsExtensionException(Exception exception, JmsError errorType, String message) {
+  protected JmsExtensionException(String message, JmsError errorType, Exception exception) {
     super(buildMessage(message, exception), errorType, exception);
   }
 }
