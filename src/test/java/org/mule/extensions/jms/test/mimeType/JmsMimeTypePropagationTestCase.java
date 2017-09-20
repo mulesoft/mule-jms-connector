@@ -16,7 +16,6 @@ import static org.mule.functional.junit4.matchers.MessageMatchers.hasPayload;
 import org.mule.extensions.jms.test.JmsAbstractTestCase;
 import org.mule.extensions.jms.test.JmsMessageStorage;
 import org.mule.functional.api.flow.FlowRunner;
-import org.mule.runtime.api.artifact.Registry;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.MediaType;
 import org.mule.runtime.core.api.construct.Flow;
@@ -32,8 +31,6 @@ import org.junit.runners.Parameterized.Parameters;
 
 import java.nio.charset.Charset;
 import java.util.Collection;
-
-import javax.inject.Inject;
 
 import io.qameta.allure.Description;
 import io.qameta.allure.Feature;
@@ -91,17 +88,9 @@ public class JmsMimeTypePropagationTestCase extends JmsAbstractTestCase {
     });
   }
 
-  @Inject
-  private Registry registry;
-
   @Override
   protected String[] getConfigFiles() {
     return new String[] {"mimeType/jms-mime-type-propagation.xml", "config/activemq/activemq-default.xml"};
-  }
-
-  @Override
-  protected boolean doTestClassInjection() {
-    return true;
   }
 
   @Test

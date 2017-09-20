@@ -48,11 +48,6 @@ public class Jms1xMultiConsumerTestCase extends AbstractJmsMultiConsumerTestCase
     return new String[] {"multiconsumer/jms-1.x-multi-consumers.xml", "config/activemq/activemq-default.xml"};
   }
 
-  @Override
-  protected boolean doTestClassInjection() {
-    return true;
-  }
-
   @Test
   public void multiConsumersConsumeMessagesInParallel() throws Exception {
     publishTo(NUMBER_OF_MESSAGES, destination.getValue(), QUEUE);

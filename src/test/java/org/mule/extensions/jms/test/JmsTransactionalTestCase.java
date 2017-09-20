@@ -50,11 +50,6 @@ public class JmsTransactionalTestCase extends JmsAbstractTestCase {
     return new String[] {"transactions/jms-transactional.xml", "config/activemq/activemq-default.xml"};
   }
 
-  @Override
-  protected boolean doTestClassInjection() {
-    return true;
-  }
-
   @Test
   public void txPublish() throws Exception {
     String txPublishDestination = newDestination("txPublish");
