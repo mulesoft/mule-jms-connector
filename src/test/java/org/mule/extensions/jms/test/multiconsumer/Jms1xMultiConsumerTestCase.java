@@ -15,6 +15,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mule.extensions.jms.api.destination.DestinationType.QUEUE;
 import static org.mule.extensions.jms.test.JmsMessageStorage.cleanUpQueue;
 import static org.mule.extensions.jms.test.JmsMessageStorage.receivedMessages;
+
 import org.mule.runtime.core.api.construct.Flow;
 import org.mule.runtime.core.api.retry.policy.RetryPolicyExhaustedException;
 import org.mule.tck.probe.JUnitLambdaProbe;
@@ -22,17 +23,25 @@ import org.mule.tck.probe.PollingProber;
 import org.mule.test.runner.RunnerDelegateTo;
 
 import org.junit.Test;
-import io.qameta.allure.Feature;
-import io.qameta.allure.Story;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
+
 @Feature("JMS Extension")
 @Story("Multi Consumers - JMS 1.x")
 @RunnerDelegateTo()
 public class Jms1xMultiConsumerTestCase extends AbstractJmsMultiConsumerTestCase {
+
+  @Inject
+  @Named("topicListener")
+  private Flow topicListenerFlow;
 
   @Override
   protected String[] getConfigFiles() {
@@ -77,7 +86,7 @@ public class Jms1xMultiConsumerTestCase extends AbstractJmsMultiConsumerTestCase
   @Test
   public void non2JMSTopicsCanOnlyUseOneConsumer() throws Exception {
     try {
-      ((Flow) getFlowConstruct("topicListener")).start();
+      topicListenerFlow.start();
     } catch (RetryPolicyExhaustedException e) {
       assertThat(e.getCause().getCause(), is(instanceOf(IllegalArgumentException.class)));
     }

@@ -6,12 +6,12 @@
  */
 package org.mule.extensions.jms.test.mimeType;
 
-import static org.mule.functional.junit4.matchers.MessageMatchers.hasMediaType;
-import static org.mule.functional.junit4.matchers.MessageMatchers.hasPayload;
-import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
+import static org.mule.functional.junit4.matchers.MessageMatchers.hasMediaType;
+import static org.mule.functional.junit4.matchers.MessageMatchers.hasPayload;
 
 import org.mule.extensions.jms.test.JmsAbstractTestCase;
 import org.mule.extensions.jms.test.JmsMessageStorage;
@@ -23,14 +23,15 @@ import org.mule.runtime.core.api.event.BaseEvent;
 import org.mule.tck.junit4.rule.SystemProperty;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import java.nio.charset.Charset;
-import java.util.Collection;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
+
+import java.nio.charset.Charset;
+import java.util.Collection;
+
 import io.qameta.allure.Description;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Story;
@@ -141,11 +142,12 @@ public class JmsMimeTypePropagationTestCase extends JmsAbstractTestCase {
     return publisher.run();
   }
 
+  @Override
   protected Message consume() throws Exception {
     return flowRunner(consumerFlow).run().getMessage();
   }
 
   private void startListener() throws Exception {
-    ((Flow) getFlowConstruct(listenerFlow)).start();
+    registry.<Flow>lookupByName(listenerFlow).get().start();
   }
 }
