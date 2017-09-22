@@ -7,12 +7,12 @@
 package org.mule.extensions.jms.internal.connection.provider.activemq;
 
 import static java.lang.String.format;
+import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import static org.mule.runtime.core.api.util.ClassUtils.instantiateClass;
 
 import org.mule.extensions.jms.api.connection.factory.activemq.ActiveMQConnectionFactoryConfiguration;
 import org.mule.extensions.jms.api.exception.JmsMissingLibraryException;
 import org.mule.extensions.jms.internal.connection.exception.ActiveMQException;
-import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.ExclusiveOptionals;
 import org.mule.runtime.extension.api.annotation.param.NullSafe;
@@ -52,7 +52,7 @@ public class ActiveMQConnectionFactoryProvider {
   @Parameter
   @Optional
   @NullSafe
-  @Expression(ExpressionSupport.NOT_SUPPORTED)
+  @Expression(NOT_SUPPORTED)
   @Placement(order = 1)
   private ActiveMQConnectionFactoryConfiguration factoryConfiguration;
 
@@ -61,12 +61,16 @@ public class ActiveMQConnectionFactoryProvider {
    */
   @Parameter
   @Optional
-  @Expression(ExpressionSupport.NOT_SUPPORTED)
+  @Expression(NOT_SUPPORTED)
   @Placement(order = 2)
   private ConnectionFactory connectionFactory;
 
   public ConnectionFactory getConnectionFactory() {
     return connectionFactory;
+  }
+
+  ActiveMQConnectionFactoryConfiguration getFactoryConfiguration() {
+    return factoryConfiguration;
   }
 
   ConnectionFactory createDefaultConnectionFactory() throws ActiveMQException {

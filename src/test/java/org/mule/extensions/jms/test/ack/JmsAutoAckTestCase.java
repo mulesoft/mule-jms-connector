@@ -14,21 +14,15 @@ import static org.mule.extensions.jms.test.ack.JmsAbstractAckTestCase.Actions.NO
 
 import org.mule.extensions.jms.api.config.AckMode;
 import org.mule.extensions.jms.test.JmsMessageStorage;
-import org.mule.tck.junit4.rule.SystemProperty;
-import org.mule.tck.util.TestConnectivityUtils;
 
 import io.qameta.allure.Description;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Story;
-import org.junit.Rule;
 import org.junit.Test;
 
 @Feature(JMS_EXTENSION)
 @Story("Auto Acknowledgement over sessions with synchronous listener")
 public class JmsAutoAckTestCase extends JmsAbstractAckTestCase {
-
-  @Rule
-  public SystemProperty sada = TestConnectivityUtils.disableAutomaticTestConnectivity();
 
   @Override
   public AckMode getAckMode() {

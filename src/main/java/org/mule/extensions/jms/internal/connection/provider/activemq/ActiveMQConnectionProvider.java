@@ -48,11 +48,11 @@ import org.slf4j.Logger;
 @ExternalLib(name = "ActiveMQ Client", description = "The ActiveMQ JMS Client implementation.", type = DEPENDENCY,
     requiredClassName = CONNECTION_FACTORY_CLASS, coordinates = "org.apache.activemq:activemq-client:" + ACTIVEMQ_VERSION)
 @ExternalLib(name = "ActiveMQ Broker",
-    description = "The ActiveMQ Message Broker implementation. Only required if it is required to start an on memory broker based in the VM transport.",
+    description = "The ActiveMQ Message Broker implementation. Only required when using an in-memory broker based on the VM transport, like the one configured by default.",
     type = DEPENDENCY, requiredClassName = BROKER_CLASS, coordinates = BROKER_GA + ":" + ACTIVEMQ_VERSION,
     optional = true)
 @ExternalLib(name = "ActiveMQ KahaDB",
-    description = "The ActiveMQ KahaDB Store Implementation. Only required if using an on memory broker and required to be persistent. E.g: 'vm://localhost?broker.persistent=true'",
+    description = "The ActiveMQ KahaDB Store Implementation. Only required if using a persistent in-memory broker. For example: 'vm://localhost?broker.persistent=true'",
     type = DEPENDENCY, requiredClassName = KAHA_DB_STORE_CLASS,
     coordinates = ActiveMQConnectionProvider.KAHA_DB_GA + ":" + ACTIVEMQ_VERSION,
     optional = true)
@@ -82,21 +82,8 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider {
     } catch (ConnectionException e) {
       Throwable cause = e.getCause();
       if (cause instanceof JMSException) {
-
-        boolean unableToCreateInVMTransport = e.getMessage().contains("Transport scheme NOT recognized: [vm]");
-        if (unableToCreateInVMTransport) {
-          throw new JmsMissingLibraryException(new ConnectionException(e),
-                                               "Unable to create a connection to a broker based on the VM Transport. "
-                                                   + getAdviceMessage(BROKER_GA));
-        }
-
-        boolean unableToCreatePersistenceAdapter =
-            e.getMessage().contains("Class 'org.apache.activemq.store.kahadb.KahaDBPersistenceAdapter' not found in classloader");
-        if (unableToCreatePersistenceAdapter) {
-          throw new JmsMissingLibraryException(new ConnectionException(e),
-                                               "Unable to create a local broker with persistence enabled. "
-                                                   + getAdviceMessage(KAHA_DB_GA));
-        }
+        checkMissingBrokerLib(e);
+        checkMissingPersistenceLib(e);
       }
       throw e;
     }
@@ -188,7 +175,28 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider {
   }
 
   private String getAdviceMessage(String library) {
-    return "Validate that the Mule Application has the required library: \"" + library + "\" as a Shared Library";
+    return "Validate that the Mule Application has the required library: \"" + library
+        + "\" as a Shared Library. Connecting to broker: [" + connectionFactoryProvider.getFactoryConfiguration().getBrokerUrl()
+        + "]";
+  }
+
+  void checkMissingPersistenceLib(ConnectionException e) {
+    boolean unableToCreatePersistenceAdapter =
+        e.getMessage().contains("Class 'org.apache.activemq.store.kahadb.KahaDBPersistenceAdapter' not found in classloader");
+    if (unableToCreatePersistenceAdapter) {
+      throw new JmsMissingLibraryException(new ConnectionException(e),
+                                           "Unable to create a local in-memory broker with persistence mode enabled. "
+                                               + getAdviceMessage(KAHA_DB_GA));
+    }
+  }
+
+  void checkMissingBrokerLib(ConnectionException e) {
+    boolean unableToCreateInVMTransport = e.getMessage().contains("Transport scheme NOT recognized: [vm]");
+    if (unableToCreateInVMTransport) {
+      throw new JmsMissingLibraryException(new ConnectionException(e),
+                                           "Unable to create a connection to a broker based on the VM Transport. "
+                                               + getAdviceMessage(BROKER_GA));
+    }
   }
 
   public ActiveMQConnectionFactoryProvider getConnectionFactoryProvider() {
