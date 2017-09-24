@@ -30,7 +30,7 @@ import javax.jms.Topic;
 @Alias("topic-consumer")
 public class TopicConsumer implements ConsumerType, Initialisable {
 
-  /**
+  /**                                                    
    * Allows an application to receive all the messages published on a topic,
    * including the ones published when there is no consumer associated with it.
    *
@@ -40,7 +40,7 @@ public class TopicConsumer implements ConsumerType, Initialisable {
   @Optional(defaultValue = "false")
   @Expression(NOT_SUPPORTED)
   @Summary("Allows an application to receive all the messages published on a topic, including the ones published when there is no consumer associated with it")
-  private boolean isDurable;
+  private boolean durable;
 
   /**
    * Only for JMS 2.0: Allows the processing of messages from at topic
@@ -52,7 +52,7 @@ public class TopicConsumer implements ConsumerType, Initialisable {
   @Optional(defaultValue = "false")
   @Expression(NOT_SUPPORTED)
   @Summary("Only for JMS 2.0: Allows the processing of messages from a topic subscription by multiple threads, connections or JVMs")
-  private boolean isShared;
+  private boolean shared;
 
   /**
    * Specifies that messages published to the topic by its own connection
@@ -83,11 +83,11 @@ public class TopicConsumer implements ConsumerType, Initialisable {
   }
 
   public boolean isDurable() {
-    return isDurable;
+    return durable;
   }
 
   public boolean isShared() {
-    return isShared;
+    return shared;
   }
 
   public String getSubscriptionName() {
