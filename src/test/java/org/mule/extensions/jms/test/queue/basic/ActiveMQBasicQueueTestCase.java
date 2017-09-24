@@ -6,17 +6,18 @@
  */
 package org.mule.extensions.jms.test.queue.basic;
 
-import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
 import static java.util.Arrays.asList;
+import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
+
 import org.mule.test.runner.RunnerDelegateTo;
 
 import java.util.Collection;
 
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
-import io.qameta.allure.Feature;
-import io.qameta.allure.Story;
 
 
 @RunnerDelegateTo(Parameterized.class)

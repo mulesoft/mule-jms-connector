@@ -18,6 +18,7 @@ import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.initialiseIfNee
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.stopIfNeeded;
 import static org.mule.runtime.extension.api.annotation.param.ParameterGroup.CONNECTION;
 import static org.slf4j.LoggerFactory.getLogger;
+
 import org.mule.extensions.jms.api.connection.JmsSpecification;
 import org.mule.extensions.jms.api.connection.caching.CachingStrategy;
 import org.mule.extensions.jms.api.connection.caching.DefaultCachingStrategy;
@@ -45,14 +46,16 @@ import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
-import org.slf4j.Logger;
 
 import javax.inject.Inject;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 import javax.jms.Session;
+
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import org.slf4j.Logger;
 
 /**
  * Base implementation of a {@link PoolingConnectionProvider} for {@link JmsConnection}s

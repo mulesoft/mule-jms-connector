@@ -18,6 +18,7 @@ import static org.hamcrest.core.IsNull.nullValue;
 import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
 import static org.mule.extensions.jms.test.JmsMessageStorage.cleanUpQueue;
 import static org.mule.runtime.api.metadata.MediaType.ANY;
+
 import org.mule.extensions.jms.api.destination.JmsDestination;
 import org.mule.extensions.jms.api.message.JmsAttributes;
 import org.mule.extensions.jms.api.message.JmsHeaders;
@@ -35,9 +36,9 @@ import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 
 import java.util.Map;
 
+import io.qameta.allure.Feature;
 import org.junit.Before;
 import org.junit.Rule;
-import io.qameta.allure.Feature;
 
 @Feature(JMS_EXTENSION)
 @ArtifactClassLoaderRunnerConfig(

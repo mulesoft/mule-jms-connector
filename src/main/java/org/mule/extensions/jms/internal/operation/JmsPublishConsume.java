@@ -137,10 +137,10 @@ public class JmsPublishConsume {
       }
     } catch (JMSSecurityException e) {
       String msg = format("A security error occurred while sending a message to the QUEUE: [%s] : ", destination);
-      throw new JmsSecurityException(e, msg);
+      throw new JmsSecurityException(msg, e);
     } catch (Exception e) {
       String msg = format("An error occurred while sending a message to the QUEUE: [%s]: ", destination);
-      throw new JmsPublishException(e, msg);
+      throw new JmsPublishException(msg, e);
     }
 
     try {
@@ -178,7 +178,7 @@ public class JmsPublishConsume {
     } catch (JMSSecurityException e) {
       String msg = format("A security error occurred while listening for the reply from the %s: [%s]: %s",
                           getDestinationType(replyConsumerType), destination, e.getMessage());
-      throw new JmsSecurityException(e, msg);
+      throw new JmsSecurityException(msg, e);
     } catch (Exception e) {
       String msg = format("An error occurred while listening for the reply from the %s: [%s]: %s",
                           getDestinationType(replyConsumerType), destination, e.getMessage());

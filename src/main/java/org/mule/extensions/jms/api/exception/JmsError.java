@@ -7,6 +7,7 @@
 package org.mule.extensions.jms.api.exception;
 
 import static java.util.Optional.ofNullable;
+
 import org.mule.runtime.extension.api.error.ErrorTypeDefinition;
 
 import java.util.Optional;
@@ -23,6 +24,8 @@ public enum JmsError implements ErrorTypeDefinition<JmsError> {
   CONSUMING, ACK(CONSUMING), TIMEOUT(CONSUMING), SESSION_RECOVER(CONSUMING),
 
   DESTINATION_NOT_FOUND,
+
+  MISSING_LIBRARIES,
 
   SECURITY;
 

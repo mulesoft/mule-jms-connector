@@ -9,16 +9,19 @@ package org.mule.extensions.jms.internal.connection.provider;
 import static org.mule.extensions.jms.api.connection.JmsSpecification.JMS_1_0_2b;
 import static org.mule.extensions.jms.api.connection.JmsSpecification.JMS_1_1;
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
-import org.mule.extensions.jms.internal.connection.JmsConnection;
+import static org.mule.runtime.api.meta.ExternalLibraryType.DEPENDENCY;
+
 import org.mule.extensions.jms.api.connection.JmsSpecification;
 import org.mule.extensions.jms.api.connection.LookupJndiDestination;
 import org.mule.extensions.jms.api.connection.factory.jndi.JndiConnectionFactory;
+import org.mule.extensions.jms.internal.connection.JmsConnection;
 import org.mule.extensions.jms.internal.support.Jms102bSupport;
 import org.mule.extensions.jms.internal.support.Jms11Support;
 import org.mule.extensions.jms.internal.support.Jms20Support;
 import org.mule.runtime.api.connection.ConnectionProvider;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.Expression;
+import org.mule.runtime.extension.api.annotation.ExternalLib;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 
 import javax.jms.ConnectionFactory;
@@ -33,6 +36,7 @@ import org.slf4j.LoggerFactory;
  * @since 1.0
  */
 @Alias("generic")
+@ExternalLib(name = "JMS Client", description = "Client which lets communicate with a JMS broker", type = DEPENDENCY)
 public class GenericConnectionProvider extends BaseConnectionProvider {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(BaseConnectionProvider.class);

@@ -7,18 +7,18 @@
 package org.mule.extensions.jms.test.ack;
 
 import static org.mule.extensions.jms.api.config.AckMode.AUTO;
+import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
 import static org.mule.extensions.jms.test.JmsMessageStorage.pollMessage;
 import static org.mule.extensions.jms.test.ack.JmsAbstractAckTestCase.Actions.EXPLODE;
 import static org.mule.extensions.jms.test.ack.JmsAbstractAckTestCase.Actions.NOTHING;
-import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
 
 import org.mule.extensions.jms.api.config.AckMode;
 import org.mule.extensions.jms.test.JmsMessageStorage;
 
-import org.junit.Test;
 import io.qameta.allure.Description;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Story;
+import org.junit.Test;
 
 @Feature(JMS_EXTENSION)
 @Story("Auto Acknowledgement over sessions with synchronous listener")
