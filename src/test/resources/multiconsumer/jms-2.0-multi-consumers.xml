@@ -16,7 +16,7 @@
     <flow name="topicListener" initialState="started">
         <jms:listener config-ref="config" destination="${topicDestination}" ackMode="MANUAL" numberOfConsumers="${consumers}">
             <jms:consumer-type>
-                <jms:topic-consumer isShared="true"/>
+                <jms:topic-consumer shared="true"/>
             </jms:consumer-type>
         </jms:listener>
         <logger level="DEBUG" message="#[payload]"/>
