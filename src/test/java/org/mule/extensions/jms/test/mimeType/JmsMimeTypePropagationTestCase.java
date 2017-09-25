@@ -19,7 +19,7 @@ import org.mule.functional.api.flow.FlowRunner;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.MediaType;
 import org.mule.runtime.core.api.construct.Flow;
-import org.mule.runtime.core.api.event.BaseEvent;
+import org.mule.runtime.core.api.event.CoreEvent;
 import org.mule.tck.junit4.rule.SystemProperty;
 import org.mule.test.runner.RunnerDelegateTo;
 
@@ -130,11 +130,11 @@ public class JmsMimeTypePropagationTestCase extends JmsAbstractTestCase {
     return runWithMediaType(publishConsumerFlow, message, mediaType).getMessage();
   }
 
-  private BaseEvent publish(String message, MediaType mediaType) throws Exception {
+  private CoreEvent publish(String message, MediaType mediaType) throws Exception {
     return runWithMediaType(publisherFlow, message, mediaType);
   }
 
-  private BaseEvent runWithMediaType(String flowName, String payload, MediaType mediaType) throws Exception {
+  private CoreEvent runWithMediaType(String flowName, String payload, MediaType mediaType) throws Exception {
     FlowRunner publisher = flowRunner(flowName).withPayload(payload);
     if (mediaType != null) {
       publisher.withMediaType(mediaType);

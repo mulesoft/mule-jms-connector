@@ -16,7 +16,7 @@ import static org.mule.tck.junit4.matcher.ErrorTypeMatcher.errorType;
 import org.mule.runtime.api.message.Error;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.core.api.construct.Flow;
-import org.mule.runtime.core.api.event.BaseEvent;
+import org.mule.runtime.core.api.event.CoreEvent;
 import org.mule.runtime.core.api.exception.MessagingException;
 import org.mule.tck.junit4.rule.SystemProperty;
 
@@ -81,7 +81,7 @@ public class JmsTransactionalTestCase extends JmsAbstractTestCase {
     publish(MESSAGE, txConsumeDestination);
 
     consumeTx(txConsumeDestination, true);
-    BaseEvent event = consumeTx(txConsumeDestination, false);
+    CoreEvent event = consumeTx(txConsumeDestination, false);
     assertThat(event.getMessage().getPayload().getValue(), is(MESSAGE));
   }
 
@@ -113,29 +113,29 @@ public class JmsTransactionalTestCase extends JmsAbstractTestCase {
     publish(MESSAGE, txConsumeDestination);
     consumeAndPublishTx(txConsumeDestination, txPublishDestination, true);
 
-    BaseEvent consume = consumeTx(txConsumeDestination, false);
+    CoreEvent consume = consumeTx(txConsumeDestination, false);
     assertThat(consume.getMessage().getPayload().getValue(), is(MESSAGE));
     checkForEmptyDestination(txPublishDestination);
   }
 
-  private BaseEvent consumeAndPublishTx(String txConsumeDestination, String txPublishDestination, boolean rollback)
+  private CoreEvent consumeAndPublishTx(String txConsumeDestination, String txPublishDestination, boolean rollback)
       throws Exception {
     return runFlowWithTxWrapper("txConsumeAndPublish", txPublishDestination, txConsumeDestination, rollback);
   }
 
-  private BaseEvent consumeTx(String txConsumeDestination, boolean rollback) throws Exception {
+  private CoreEvent consumeTx(String txConsumeDestination, boolean rollback) throws Exception {
     return runFlowWithTxWrapper("txConsume", txConsumeDestination, txConsumeDestination, rollback);
   }
 
-  private BaseEvent publishTx(String txPublishDestination) throws Exception {
+  private CoreEvent publishTx(String txPublishDestination) throws Exception {
     return publishTx(txPublishDestination, false);
   }
 
-  private BaseEvent publishTx(String txPublishDestination, boolean rollback) throws Exception {
+  private CoreEvent publishTx(String txPublishDestination, boolean rollback) throws Exception {
     return runFlowWithTxWrapper("txPublish", txPublishDestination, null, rollback);
   }
 
-  private BaseEvent runFlowWithTxWrapper(String flowName, String txPublishDestination, String txConsumeDestination,
+  private CoreEvent runFlowWithTxWrapper(String flowName, String txPublishDestination, String txConsumeDestination,
                                          boolean shouldRollback)
       throws Exception {
     return flowRunner("executionWrapper")
