@@ -15,6 +15,13 @@ public class AllureConstants {
     interface JmsStory {
 
       String CORRELATION_ID = "Correlation Id";
+
+      String RECONNECTION = "Reconnection";
+
+      String REDELIVERY = "Redelivery";
+
+      String CONNECTION_FACTORY = "Connection Factory";
+
     }
 
   }
