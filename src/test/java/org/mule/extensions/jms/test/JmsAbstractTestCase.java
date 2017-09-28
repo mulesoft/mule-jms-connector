@@ -19,6 +19,7 @@ import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENS
 import static org.mule.extensions.jms.test.JmsMessageStorage.cleanUpQueue;
 import static org.mule.runtime.api.metadata.MediaType.ANY;
 
+import io.qameta.allure.Step;
 import org.mule.extensions.jms.api.destination.JmsDestination;
 import org.mule.extensions.jms.api.message.JmsAttributes;
 import org.mule.extensions.jms.api.message.JmsHeaders;
@@ -82,22 +83,27 @@ public abstract class JmsAbstractTestCase extends MuleArtifactFunctionalTestCase
     return name + currentTimeMillis();
   }
 
+  @Step("Publish message to default dest")
   protected void publish(Object message) throws Exception {
     publish(message, ANY);
   }
 
+  @Step("Publish message with media type")
   protected void publish(Object message, MediaType mediaType) throws Exception {
     publish(message, destination, mediaType);
   }
 
+  @Step("Publish message to destination: {destination}")
   protected void publish(Object message, String destination) throws Exception {
     publish(message, destination, ANY);
   }
 
+  @Step("Publish message to destination: {destination} with media type")
   protected void publish(Object message, String destination, MediaType mediaType) throws Exception {
     publish(message, destination, emptyMap(), mediaType);
   }
 
+  @Step("Run publish flow message to destination: {destination} with media type and flow vars")
   protected void publish(Object message, String destination, Map<String, Object> flowVars, MediaType mediaType) throws Exception {
     FlowRunner publisher = flowRunner(PUBLISHER_FLOW)
         .withPayload(message)
@@ -107,18 +113,22 @@ public abstract class JmsAbstractTestCase extends MuleArtifactFunctionalTestCase
     publisher.run();
   }
 
+  @Step("Consume message from default dest")
   protected Message consume() throws Exception {
     return consume(destination, emptyMap(), maximumWait);
   }
 
+  @Step("Consume message from dest: {destination}")
   protected Message consume(String destination) throws Exception {
     return consume(destination, emptyMap(), maximumWait);
   }
 
+  @Step("Run consume message flow from dest: {destination} with flow vars")
   protected Message consume(String destination, Map<String, Object> flowVars) throws Exception {
     return consume(destination, flowVars, maximumWait);
   }
 
+  @Step("Run consume message flow from dest: {destination} with flow vars and maximum wait")
   protected Message consume(String destination, Map<String, Object> flowVars, long maximumWait) throws Exception {
     FlowRunner consumer = flowRunner(CONSUMER_FLOW)
         .withVariable(DESTINATION_VAR, destination)
@@ -127,6 +137,7 @@ public abstract class JmsAbstractTestCase extends MuleArtifactFunctionalTestCase
     return consumer.run().getMessage();
   }
 
+  @Step("Assert message headers")
   protected void assertHeaders(JmsAttributes attributes, JmsDestination destination, Integer deliveryMode,
                                Integer priority, boolean hasMessageId, boolean hasTimestamp, String correlationId,
                                JmsDestination replyTo, String type, Boolean redelivered) {
@@ -150,19 +161,23 @@ public abstract class JmsAbstractTestCase extends MuleArtifactFunctionalTestCase
     }
   }
 
+  @Step("Assert destination")
   private void assertDestination(JmsDestination actual, JmsDestination expected) {
     assertThat(actual.getDestination(), equalTo(expected.getDestination()));
     assertThat(actual.getDestinationType(), equalTo(expected.getDestinationType()));
   }
 
+  @Step("Assert reply destination")
   protected String getReplyDestination(Message firstMessage) {
     return ((JmsAttributes) firstMessage.getAttributes().getValue()).getHeaders().getJMSReplyTo().getDestination();
   }
 
+  @Step("Polling probe validation")
   protected void validate(CheckedSupplier<Boolean> validation, long validationTimeout, long validationDelay) {
     new PollingProber(validationTimeout, validationDelay).check(new JUnitLambdaProbe(validation));
   }
 
+  @Step("Assert queue is empty")
   protected void assertQueueIsEmpty() throws Exception {
     try {
       JmsMessageStorage.pollMuleMessage();
@@ -172,6 +187,7 @@ public abstract class JmsAbstractTestCase extends MuleArtifactFunctionalTestCase
     }
   }
 
+  @Step("Assert JMS message")
   protected void assertJmsMessage(Result<TypedValue<Object>, JmsAttributes> message, String jmsMessage, boolean isRedelivered) {
     Object value = message.getOutput().getValue();
     assertThat(value, is(jmsMessage));
