@@ -73,8 +73,7 @@ public class JmsRedeliveryTestCase extends JmsAbstractTestCase {
   @Description("verifies that message redelivery attempts correspond to the configured value")
   public void testMaxRedelivery() throws Exception {
     publish(TEST_MESSAGE);
-    new PollingProber(REDELIVERY_TIMEOUT, POLL_DELAY_MILLIS)
-        .check(new JUnitLambdaProbe(this::hasReachedNumberOfExpectedRedelivers));
+    validate(this::hasReachedNumberOfExpectedRedelivers, REDELIVERY_TIMEOUT, POLL_DELAY_MILLIS);
   }
 
   private boolean hasReachedNumberOfExpectedRedelivers() {
