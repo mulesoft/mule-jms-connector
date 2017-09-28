@@ -83,22 +83,18 @@ public abstract class JmsAbstractTestCase extends MuleArtifactFunctionalTestCase
     return name + currentTimeMillis();
   }
 
-  @Step("Publish message to default dest")
   protected void publish(Object message) throws Exception {
     publish(message, ANY);
   }
 
-  @Step("Publish message with media type")
   protected void publish(Object message, MediaType mediaType) throws Exception {
     publish(message, destination, mediaType);
   }
 
-  @Step("Publish message to destination: {destination}")
   protected void publish(Object message, String destination) throws Exception {
     publish(message, destination, ANY);
   }
 
-  @Step("Publish message to destination: {destination} with media type")
   protected void publish(Object message, String destination, MediaType mediaType) throws Exception {
     publish(message, destination, emptyMap(), mediaType);
   }
@@ -113,17 +109,14 @@ public abstract class JmsAbstractTestCase extends MuleArtifactFunctionalTestCase
     publisher.run();
   }
 
-  @Step("Consume message from default dest")
   protected Message consume() throws Exception {
     return consume(destination, emptyMap(), maximumWait);
   }
 
-  @Step("Consume message from dest: {destination}")
   protected Message consume(String destination) throws Exception {
     return consume(destination, emptyMap(), maximumWait);
   }
 
-  @Step("Run consume message flow from dest: {destination} with flow vars")
   protected Message consume(String destination, Map<String, Object> flowVars) throws Exception {
     return consume(destination, flowVars, maximumWait);
   }
