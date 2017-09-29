@@ -17,14 +17,12 @@ import static org.junit.rules.RuleChain.outerRule;
 import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
 import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JmsStory.RECONNECTION;
 import static org.mule.extensions.jms.test.JmsMessageStorage.pollMuleMessage;
-
 import org.mule.extensions.jms.api.exception.JmsConsumeException;
 import org.mule.extensions.jms.test.JmsAbstractTestCase;
 import org.mule.extensions.jms.test.JmsMessageStorage;
 import org.mule.extensions.jms.test.util.ActiveMQBroker;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.core.api.construct.Flow;
-import org.mule.runtime.core.api.exception.MessagingException;
 import org.mule.tck.junit4.rule.SystemProperty;
 
 import io.qameta.allure.Description;
@@ -106,7 +104,6 @@ public class JmsReconnectionTestCase extends JmsAbstractTestCase {
       " surpassed.")
   public void testReconnectionFail() throws Exception {
     destination = failedListenerDest;
-    expected.expect(MessagingException.class);
     expected.expectMessage("Failed to retrieve a Message, operation timed out");
     expected.expectCause(instanceOf(JmsConsumeException.class));
 
