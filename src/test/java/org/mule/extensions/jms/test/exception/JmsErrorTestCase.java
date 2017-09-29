@@ -12,7 +12,7 @@ import static org.mule.extensions.jms.api.exception.JmsError.TIMEOUT;
 import org.mule.extensions.jms.api.exception.JmsConsumeException;
 import org.mule.extensions.jms.api.exception.JmsPublishException;
 import org.mule.extensions.jms.test.JmsAbstractTestCase;
-import org.mule.functional.junit4.rules.ExpectedError;
+import org.mule.functional.api.exception.ExpectedError;
 
 import org.junit.Ignore;
 import org.junit.Rule;
