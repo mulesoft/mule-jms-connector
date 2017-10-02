@@ -9,6 +9,7 @@
         <jms:active-mq-connection>
             <jms:factory-configuration brokerUrl="${amq.url}"/>
         </jms:active-mq-connection>
+        <jms:consumer-config ackMode="AUTO"/>
     </jms:config>
 
 </mule>

@@ -9,12 +9,13 @@ package org.mule.extensions.jms.test.queue.basic;
 import static com.google.common.collect.ImmutableList.of;
 import static java.lang.String.format;
 import static java.util.Collections.emptyMap;
-import static javax.jms.DeliveryMode.PERSISTENT;
+import static javax.jms.DeliveryMode.NON_PERSISTENT;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.mule.extensions.jms.api.destination.DestinationType.QUEUE;
 import static org.mule.functional.junit4.matchers.MessageMatchers.hasPayload;
+
 import org.mule.extensions.jms.api.destination.JmsDestination;
 import org.mule.extensions.jms.api.message.JmsAttributes;
 import org.mule.extensions.jms.test.JmsAbstractTestCase;
@@ -91,7 +92,7 @@ public abstract class JmsBaseQueuePublishAndConsumeTestCase extends JmsAbstractT
     Message message = consume();
     assertThat(message, hasPayload(equalTo(payload)));
     assertHeaders((JmsAttributes) message.getAttributes().getValue(),
-                  new JmsDestination(destination, QUEUE), PERSISTENT,
+                  new JmsDestination(destination, QUEUE), NON_PERSISTENT,
                   4, true, true, null, null, null,
                   false);
   }

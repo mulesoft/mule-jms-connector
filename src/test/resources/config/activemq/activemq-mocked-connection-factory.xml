@@ -11,6 +11,7 @@
 
     <jms:config name="consumer">
         <jms:active-mq-connection connectionFactory="customConnectionFactory"/>
+        <jms:consumer-config ackMode="AUTO"/>
     </jms:config>
 
 </mule>

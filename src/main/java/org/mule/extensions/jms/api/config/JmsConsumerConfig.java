@@ -31,7 +31,7 @@ public final class JmsConsumerConfig {
    * This attribute has to be IMMEDIATE if transactionType is LOCAL or MULTI
    */
   @Parameter
-  @Optional(defaultValue = "AUTO")
+  @Optional(defaultValue = "IMMEDIATE")
   @Expression(NOT_SUPPORTED)
   @Summary("The Session ACK mode to use when consuming a message")
   private AckMode ackMode;
