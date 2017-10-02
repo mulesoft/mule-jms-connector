@@ -7,16 +7,17 @@
 package org.mule.extensions.jms.api.config;
 
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
+
 import org.mule.extensions.jms.api.connection.JmsSpecification;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
-import java.util.concurrent.TimeUnit;
-
 import javax.jms.DeliveryMode;
 import javax.jms.Message;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Configuration parameters for sending messages to a JMS Queue or Topic
@@ -32,7 +33,7 @@ public final class JmsProducerConfig {
    * is not lost in transit due to a JMS provider failure.
    */
   @Parameter
-  @Optional(defaultValue = "true")
+  @Optional(defaultValue = "false")
   @Expression(NOT_SUPPORTED)
   @Summary("If true, the Message will be sent using the PERSISTENT JMSDeliveryMode")
   private boolean persistentDelivery;
