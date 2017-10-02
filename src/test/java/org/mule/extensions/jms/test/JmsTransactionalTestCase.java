@@ -9,15 +9,14 @@ package org.mule.extensions.jms.test;
 import static java.util.Collections.emptyMap;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.any;
 import static org.mule.extensions.jms.api.exception.JmsError.TIMEOUT;
 import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
-import static org.mule.tck.junit4.matcher.ErrorTypeMatcher.errorType;
 
-import org.mule.runtime.api.message.Error;
+import org.mule.functional.api.exception.ExpectedError;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.core.api.construct.Flow;
 import org.mule.runtime.core.api.event.CoreEvent;
-import org.mule.runtime.core.api.exception.MessagingException;
 import org.mule.tck.junit4.rule.SystemProperty;
 
 import org.junit.Rule;
@@ -34,6 +33,9 @@ import io.qameta.allure.Story;
 public class JmsTransactionalTestCase extends JmsAbstractTestCase {
 
   private static final String MESSAGE = "MESSAGE";
+
+  @Rule
+  public ExpectedError expectedError = ExpectedError.none();
 
   @Rule
   public SystemProperty listenerDestination = new SystemProperty("destination", newDestination("destination"));
@@ -148,12 +150,7 @@ public class JmsTransactionalTestCase extends JmsAbstractTestCase {
   }
 
   private void checkForEmptyDestination(String txPublishDestination) throws Exception {
-    try {
-      consumeTx(txPublishDestination, false);
-      throw new RuntimeException("The queue is not empty");
-    } catch (MessagingException e) {
-      Error error = e.getEvent().getError().get();
-      assertThat(error.getErrorType(), is(errorType(TIMEOUT)));
-    }
+    expectedError.expectErrorType(any(String.class), is(TIMEOUT.getType()));
+    consumeTx(txPublishDestination, false);
   }
 }
