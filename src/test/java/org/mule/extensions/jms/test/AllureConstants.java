@@ -22,6 +22,8 @@ public class AllureConstants {
 
       String CONNECTION_FACTORY = "Connection Factory";
 
+      String TRANSACTION = "Transaction";
+
     }
 
   }
