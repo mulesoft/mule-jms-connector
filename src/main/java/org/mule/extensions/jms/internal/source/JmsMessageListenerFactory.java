@@ -6,6 +6,7 @@
  */
 package org.mule.extensions.jms.internal.source;
 
+import org.mule.extensions.jms.internal.connection.JmsTransactionalConnection;
 import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
 import org.mule.extensions.jms.internal.config.InternalAckMode;
 import org.mule.extensions.jms.internal.config.JmsConfig;
@@ -30,6 +31,7 @@ final class JmsMessageListenerFactory {
   private final JmsSessionManager sessionManager;
   private JmsSupport jmsSupport;
   private SourceCallback<Object, JmsAttributes> sourceCallback;
+  private JmsTransactionalConnection connection;
 
   /**
    * Creates a new factory with the common information that is shared between {@link JmsMessageListener} of the same
@@ -42,10 +44,11 @@ final class JmsMessageListenerFactory {
    * @param sessionManager manager to store the session and ACK ID of each dispatched message
    * @param jmsSupport     JMS Support that communicates the used specification
    * @param sourceCallback callback use to dispatch the {@link Message} to the mule flow
+   * @param connection     The connection which created the current {@link JmsSession}
    */
   JmsMessageListenerFactory(InternalAckMode ackMode, String encoding, String contentType, JmsConfig config,
                             JmsSessionManager sessionManager, JmsSupport jmsSupport,
-                            SourceCallback<Object, JmsAttributes> sourceCallback) {
+                            SourceCallback<Object, JmsAttributes> sourceCallback, JmsTransactionalConnection connection) {
     this.ackMode = ackMode;
     this.encoding = encoding;
     this.contentType = contentType;
@@ -53,6 +56,7 @@ final class JmsMessageListenerFactory {
     this.sessionManager = sessionManager;
     this.jmsSupport = jmsSupport;
     this.sourceCallback = sourceCallback;
+    this.connection = connection;
   }
 
   /**
@@ -65,6 +69,6 @@ final class JmsMessageListenerFactory {
    */
   JmsMessageListener createMessageListener(JmsSession session, JmsListenerLock jmsLock) {
     return new JmsMessageListener(session, config, jmsLock, sessionManager, sourceCallback, jmsSupport, ackMode, encoding,
-                                  contentType);
+                                  contentType, connection);
   }
 }

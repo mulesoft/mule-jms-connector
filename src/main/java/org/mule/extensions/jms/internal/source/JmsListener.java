@@ -23,6 +23,7 @@ import static org.mule.extensions.jms.internal.config.InternalAckMode.TRANSACTED
 import static org.mule.runtime.core.api.util.ExceptionUtils.extractConnectionException;
 import static org.mule.runtime.extension.api.tx.SourceTransactionalAction.ALWAYS_BEGIN;
 import static org.slf4j.LoggerFactory.getLogger;
+
 import org.mule.extensions.jms.api.config.AckMode;
 import org.mule.extensions.jms.api.config.JmsConsumerConfig;
 import org.mule.extensions.jms.api.destination.ConsumerType;
@@ -60,7 +61,6 @@ import org.mule.runtime.extension.api.runtime.source.Source;
 import org.mule.runtime.extension.api.runtime.source.SourceCallback;
 import org.mule.runtime.extension.api.runtime.source.SourceCallbackContext;
 import org.mule.runtime.extension.api.tx.SourceTransactionalAction;
-import org.slf4j.Logger;
 
 import javax.inject.Inject;
 import javax.jms.Destination;
@@ -68,9 +68,12 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Queue;
 import javax.jms.Topic;
+
 import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.slf4j.Logger;
 
 /**
  * JMS Subscriber for {@link Destination}s, allows to listen
@@ -189,7 +192,7 @@ public class JmsListener extends Source<Object, JmsAttributes> {
 
     JmsMessageListenerFactory messageListenerFactory =
         new JmsMessageListenerFactory(resolvedAckMode, inboundEncoding, inboundContentType, config, sessionManager, jmsSupport,
-                                      sourceCallback);
+                                      sourceCallback, connection);
 
     validateNumberOfConsumers(numberOfConsumers);
 
