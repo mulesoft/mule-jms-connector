@@ -8,7 +8,6 @@
 
     <jms:config name="config">
         <jms:active-mq-connection username="user" password="pass"/>
-        <jms:consumer-config ackMode="AUTO"/>
     </jms:config>
 
 </mule>

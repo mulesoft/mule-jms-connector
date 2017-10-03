@@ -7,13 +7,15 @@
 package org.mule.extensions.jms.internal.source;
 
 import static java.lang.String.format;
-import static org.mule.extensions.jms.internal.common.JmsCommons.evaluateMessageAck;
 import static org.mule.extensions.jms.internal.common.JmsCommons.resolveMessageContentType;
 import static org.mule.extensions.jms.internal.common.JmsCommons.resolveMessageEncoding;
 import static org.mule.extensions.jms.internal.common.JmsCommons.resolveOverride;
+import static org.mule.extensions.jms.internal.config.InternalAckMode.IMMEDIATE;
+import static org.mule.extensions.jms.internal.config.InternalAckMode.MANUAL;
 import static org.mule.extensions.jms.internal.config.InternalAckMode.TRANSACTED;
 import static org.mule.extensions.jms.internal.source.JmsListener.notifyIfConnectionProblem;
 import static org.slf4j.LoggerFactory.getLogger;
+
 import org.mule.extensions.jms.api.message.JmsAttributes;
 import org.mule.extensions.jms.internal.config.InternalAckMode;
 import org.mule.extensions.jms.internal.config.JmsConfig;
@@ -100,15 +102,6 @@ public final class JmsMessageListener implements MessageListener {
     waitForMessageToBeProcessed(jmsLock);
   }
 
-  private void evaluateAckAction(Message message) {
-    try {
-      evaluateMessageAck(ackMode, session, message, sessionManager, jmsLock);
-    } catch (JMSException e) {
-      LOGGER.error("An error occurred while processing an incoming message: ", e);
-      notifyIfConnectionProblem(sourceCallback, e);
-    }
-  }
-
   private String resolveContentType(Message message) {
     // If no explicit content type was provided to the operation, fallback to the
     // one communicated in the message properties. Finally if no property was set,
@@ -139,14 +132,38 @@ public final class JmsMessageListener implements MessageListener {
     try {
       Result<Object, JmsAttributes> result = resultFactory.createResult(message, jmsSupport.getSpecification(),
                                                                         contentType, encoding, session.getAckId());
-      evaluateAckAction(message);
+
+      registerAckIdIfRequired(message);
+
       sourceCallback.handle(result, context);
+
+      doAckIfRequired(message);
 
     } catch (Exception e) {
       String msg = format("An error occurred while dispatching a Message from the listener on session [%s]: %s",
                           session.get(), e.getMessage());
       LOGGER.error(msg, e);
+
       notifyIfConnectionProblem(sourceCallback, e);
+    }
+  }
+
+  private void registerAckIdIfRequired(Message message) {
+    if (ackMode.equals(MANUAL)) {
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug("Registering pending ACK on session: " + session.getAckId());
+      }
+      String id = session.getAckId()
+          .orElseThrow(() -> new IllegalArgumentException("An AckId is required when MANUAL AckMode is set"));
+
+      sessionManager.registerMessageForAck(id, message, session.get(), jmsLock);
+    }
+  }
+
+  private void doAckIfRequired(Message message) throws JMSException {
+    if (ackMode.equals(IMMEDIATE)) {
+      LOGGER.debug("Automatically performing an ACK over the message, since AckMode was IMMEDIATE");
+      message.acknowledge();
     }
   }
 
