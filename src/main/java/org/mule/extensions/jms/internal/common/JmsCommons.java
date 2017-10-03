@@ -15,6 +15,7 @@ import static org.mule.extensions.jms.internal.config.InternalAckMode.IMMEDIATE;
 import static org.mule.extensions.jms.internal.config.InternalAckMode.MANUAL;
 import static org.mule.extensions.jms.internal.config.InternalAckMode.TRANSACTED;
 import static org.slf4j.LoggerFactory.getLogger;
+
 import org.mule.extensions.jms.api.config.AckMode;
 import org.mule.extensions.jms.api.destination.ConsumerType;
 import org.mule.extensions.jms.api.destination.DestinationType;
@@ -25,12 +26,14 @@ import org.mule.extensions.jms.internal.connection.JmsConnection;
 import org.mule.extensions.jms.internal.connection.session.JmsSession;
 import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
 import org.mule.extensions.jms.internal.source.JmsListenerLock;
-import org.slf4j.Logger;
 
 import javax.jms.Connection;
 import javax.jms.JMSException;
 import javax.jms.Message;
+
 import java.util.Optional;
+
+import org.slf4j.Logger;
 
 /**
  * Utility class to reuse logic for JMS Extension

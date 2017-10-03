@@ -10,7 +10,6 @@
             <jms:factory-configuration brokerUrl="vm://localhost?broker.useJmx=false"
                                        maxRedelivery="3" initialRedeliveryDelay="10" redeliveryDelay="20"/>
         </jms:active-mq-connection>
-        <jms:consumer-config ackMode="AUTO"/>
     </jms:config>
 
 </mule>

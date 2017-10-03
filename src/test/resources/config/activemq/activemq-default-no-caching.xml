@@ -12,7 +12,6 @@
                 <jms:no-caching/>
             </jms:caching-strategy>
         </jms:active-mq-connection>
-        <jms:consumer-config ackMode="AUTO"/>
     </jms:config>
 
 </mule>
