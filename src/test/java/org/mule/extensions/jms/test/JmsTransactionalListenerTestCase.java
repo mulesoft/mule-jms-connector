@@ -59,8 +59,7 @@ public class JmsTransactionalListenerTestCase extends JmsAbstractTestCase {
   @Test
   @Description("Verifies that rollback of transactions started by a listener does not involve element that did not join" +
       " them")
-  @Ignore("Failed to retrieve the message from the publishing destination. I think this means that the publishing got " +
-      "into the transaction, which is not the expected behavior (according to my understanding)")
+  @Ignore("MULE-13711")
   public void txListenerWithPublishNotJoinedToTransactionRolledBack() throws Exception {
     String message = publishMessage(Actions.EXPLODE);
 
