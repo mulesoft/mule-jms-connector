@@ -47,11 +47,35 @@ public class JmsTransactionalListenerTestCase extends JmsAbstractTestCase {
   }
 
   @Test
-  @Description("Verifies that transactions started by listener work well even though subsequent element do not join them")
-  public void txListenerWithPublishNotJoinedToTransaction() throws Exception {
+  @Description("Verifies that transactions started by a listener work well when subsequent publish joins if possible")
+  public void txListenerWithPublishDefaultTxAction() throws Exception {
     String message = publishMessage(Actions.NOTHING);
 
-    ((Flow) getFlowConstruct("txListenerWithPublishNotJoin")).start();
+    ((Flow) getFlowConstruct("txListenerWithPublishDefaultTxAction")).start();
+
+    checkForMessageOnDestination(message, publishDestination.getValue());
+    checkForEmptyDestination(listenerDestination.getValue());
+  }
+
+  @Test
+  @Description("Verifies that rollbacks works as expected when transaction are started by a listener and subsequent " +
+      "publish is set to join if possible")
+  public void txListenerWithPublishDefaultTxActionRolledBack() throws Exception {
+    String message = publishMessage(Actions.EXPLODE);
+
+    ((Flow) getFlowConstruct("txListenerWithPublishDefaultTxAction")).start();
+
+    checkForEmptyDestination(publishDestination.getValue());
+    checkForMessageOnDestination(message, listenerDestination.getValue());
+  }
+
+  @Test
+  @Description("Verifies that transactions started by listener work well even though subsequent publish does not join" +
+      " them")
+  public void txListenerWithPublishNotSupportedTxAction() throws Exception {
+    String message = publishMessage(Actions.NOTHING);
+
+    ((Flow) getFlowConstruct("txListenerWithPublishNotSupportedTxAction")).start();
     checkForMessageOnDestination(message, publishDestination.getValue());
     checkForEmptyDestination(listenerDestination.getValue());
   }
@@ -60,33 +84,33 @@ public class JmsTransactionalListenerTestCase extends JmsAbstractTestCase {
   @Description("Verifies that rollback of transactions started by a listener does not involve element that did not join" +
       " them")
   @Ignore("MULE-13711")
-  public void txListenerWithPublishNotJoinedToTransactionRolledBack() throws Exception {
+  public void txListenerWithPublishNotSupportedTxActionRolledBack() throws Exception {
     String message = publishMessage(Actions.EXPLODE);
 
-    ((Flow) getFlowConstruct("txListenerWithPublishNotJoin")).start();
+    ((Flow) getFlowConstruct("txListenerWithPublishNotSupportedTxAction")).start();
 
     checkForMessageOnDestination(message, publishDestination.getValue());
     checkForMessageOnDestination(message, listenerDestination.getValue());
   }
 
   @Test
-  @Description("Verifies that transactions started by a listener work well when subsequent elements joined them")
-  public void txListenerWithPublishJoinedToTransaction() throws Exception {
+  @Description("Verifies that transactions started by a listener work well when a subsequent publish joins them")
+  public void txListenerWithPublishAlwaysJoinTxAction() throws Exception {
     String message = publishMessage(Actions.NOTHING);
 
-    ((Flow) getFlowConstruct("txListenerWithPublishJoin")).start();
+    ((Flow) getFlowConstruct("txListenerWithPublishAlwaysJoinTxAction")).start();
 
     checkForMessageOnDestination(message, publishDestination.getValue());
     checkForEmptyDestination(listenerDestination.getValue());
   }
 
   @Test
-  @Description("Verifies that rollbacks works as expected when transaction are started by a listener and subsequent " +
-      "elements joined them")
-  public void txListenerWithPublishJoinedToTransactionRolledBack() throws Exception {
+  @Description("Verifies that rollbacks works as expected when transaction are started by a listener and a subsequent " +
+      "publish joins them")
+  public void txListenerWithPublishAlwaysJoinTxActionRolledBack() throws Exception {
     String message = publishMessage(Actions.EXPLODE);
 
-    ((Flow) getFlowConstruct("txListenerWithPublishJoin")).start();
+    ((Flow) getFlowConstruct("txListenerWithPublishAlwaysJoinTxAction")).start();
 
     checkForEmptyDestination(publishDestination.getValue());
     checkForMessageOnDestination(message, listenerDestination.getValue());
