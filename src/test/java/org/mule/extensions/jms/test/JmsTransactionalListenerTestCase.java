@@ -6,12 +6,13 @@
  */
 package org.mule.extensions.jms.test;
 
-import static java.util.Collections.emptyMap;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
-import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JmsStory.TRANSACTION;
-
+import io.qameta.allure.Description;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Step;
+import io.qameta.allure.Story;
+import org.junit.Ignore;
+import org.junit.Rule;
+import org.junit.Test;
 import org.mule.functional.api.exception.ExpectedError;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.MediaType;
@@ -19,14 +20,14 @@ import org.mule.runtime.core.api.construct.Flow;
 import org.mule.tck.junit4.rule.SystemProperty;
 import org.mule.tck.junit4.rule.SystemPropertyLambda;
 
-import io.qameta.allure.Feature;
-import io.qameta.allure.Story;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.any;
+import static org.mule.extensions.jms.api.exception.JmsError.TIMEOUT;
+import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
+import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JmsStory.TRANSACTION;
 
 @Feature(JMS_EXTENSION)
-// TODO: Would it be better to call this story local transaction to differentiate it from XA transactions?
 @Story(TRANSACTION)
 public class JmsTransactionalListenerTestCase extends JmsAbstractTestCase {
 
@@ -46,36 +47,72 @@ public class JmsTransactionalListenerTestCase extends JmsAbstractTestCase {
   }
 
   @Test
-  //TODO: Allure desc
+  @Description("Verifies that transactions started by listener work well even though subsequent element do not join them")
   public void txListenerWithPublishNotJoinedToTransaction() throws Exception {
-    String message = buildMessage(TEST_MESSAGE, Actions.NOTHING);
-    publish(message, listenerDestination.getValue(), MediaType.APPLICATION_JSON);
+    String message = publishMessage(Actions.NOTHING);
 
     ((Flow) getFlowConstruct("txListenerWithPublishNotJoin")).start();
-
-    Message event = consume(publishDestination.getValue(), emptyMap(), 5000L);
-    assertThat(event.getPayload().getValue(), is(message));
+    checkForMessageOnDestination(message, publishDestination.getValue());
+    checkForEmptyDestination(listenerDestination.getValue());
   }
 
   @Test
-  //TODO: Allure desc
-  @Ignore("A transaction is not available for this session, but transaction action is \"Always Join\"")
+  @Description("Verifies that rollback of transactions started by a listener does not involve element that did not join" +
+      " them")
+  @Ignore("Failed to retrieve the message from the publishing destination. I think this means that the publishing got " +
+      "into the transaction, which is not the expected behavior (according to my understanding)")
+  public void txListenerWithPublishNotJoinedToTransactionRolledBack() throws Exception {
+    String message = publishMessage(Actions.EXPLODE);
+
+    ((Flow) getFlowConstruct("txListenerWithPublishNotJoin")).start();
+
+    checkForMessageOnDestination(message, publishDestination.getValue());
+    checkForMessageOnDestination(message, listenerDestination.getValue());
+  }
+
+  @Test
+  @Description("Verifies that transactions started by a listener work well when subsequent elements joined them")
   public void txListenerWithPublishJoinedToTransaction() throws Exception {
-    String message = buildMessage(TEST_MESSAGE, Actions.NOTHING);
-    publish(message, listenerDestination.getValue(), MediaType.APPLICATION_JSON);
+    String message = publishMessage(Actions.NOTHING);
 
     ((Flow) getFlowConstruct("txListenerWithPublishJoin")).start();
 
-    Message event = consume(publishDestination.getValue(), emptyMap(), 5000L);
-    assertThat(event.getPayload().getValue(), is(message));
+    checkForMessageOnDestination(message, publishDestination.getValue());
+    checkForEmptyDestination(listenerDestination.getValue());
   }
 
-  String buildMessage(String message, Actions action) {
-    return "{\"message\" : \"" + message + "\", \"action\" : \"" + action + "\"}";
+  @Test
+  @Description("Verifies that rollbacks works as expected when transaction are started by a listener and subsequent " +
+      "elements joined them")
+  public void txListenerWithPublishJoinedToTransactionRolledBack() throws Exception {
+    String message = publishMessage(Actions.EXPLODE);
+
+    ((Flow) getFlowConstruct("txListenerWithPublishJoin")).start();
+
+    checkForEmptyDestination(publishDestination.getValue());
+    checkForMessageOnDestination(message, listenerDestination.getValue());
+  }
+
+  @Step("Publish actionable message")
+  private String publishMessage(Actions action) throws Exception {
+    String message = "{\"message\" : \"" + TEST_MESSAGE + "\", \"action\" : \"" + action + "\"}";
+    publish(message, listenerDestination.getValue(), MediaType.APPLICATION_JSON);
+    return message;
+  }
+
+  @Step("Check for no messages on dest: {destination}")
+  private void checkForEmptyDestination(String destination) throws Exception {
+    expectedError.expectErrorType(any(String.class), is(TIMEOUT.getType()));
+    consume(destination);
+  }
+
+  @Step("check for messages on dest: {destination}")
+  private void checkForMessageOnDestination(String message, String destination) throws Exception {
+    Message event = consume(destination);
+    assertThat(event.getPayload().getValue(), is(message));
   }
 
   public enum Actions {
     EXPLODE, NOTHING
   }
-
 }
