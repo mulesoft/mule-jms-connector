@@ -6,40 +6,71 @@
  */
 package org.mule.extensions.jms.test;
 
-import io.qameta.allure.Description;
-import io.qameta.allure.Feature;
-import io.qameta.allure.Step;
-import io.qameta.allure.Story;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.any;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.runners.Parameterized.Parameter;
+import static org.junit.runners.Parameterized.Parameters;
+import static org.mule.extensions.jms.api.exception.JmsError.TIMEOUT;
+import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
+import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JmsStory.TRANSACTION;
+import static org.mule.functional.junit4.matchers.MessageMatchers.hasPayload;
+
 import org.mule.functional.api.exception.ExpectedError;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.MediaType;
 import org.mule.runtime.core.api.construct.Flow;
 import org.mule.tck.junit4.rule.SystemProperty;
 import org.mule.tck.junit4.rule.SystemPropertyLambda;
+import org.mule.test.runner.RunnerDelegateTo;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.any;
-import static org.mule.extensions.jms.api.exception.JmsError.TIMEOUT;
-import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
-import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JmsStory.TRANSACTION;
+import java.util.Collection;
+
+import org.junit.Ignore;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runners.Parameterized;
+
+import io.qameta.allure.Description;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Step;
+import io.qameta.allure.Story;
 
 @Feature(JMS_EXTENSION)
 @Story(TRANSACTION)
+@RunnerDelegateTo(Parameterized.class)
 public class JmsTransactionalListenerTestCase extends JmsAbstractTestCase {
 
   @Rule
   public ExpectedError expectedError = ExpectedError.none();
 
-  @Rule
-  public SystemProperty listenerDestination = new SystemPropertyLambda("destination", () -> newDestination("destination"));
+  @Parameter
+  public Operations operation;
 
   @Rule
-  public SystemProperty publishDestination =
-      new SystemPropertyLambda("publishDestination", () -> newDestination("publishDestination"));
+  public SystemProperty initialDestination =
+      new SystemPropertyLambda("initialDestination", () -> newDestination("initialDestination"));
+
+  @Rule
+  public SystemProperty finalDestination =
+      new SystemPropertyLambda("finalDestination", () -> newDestination("finalDestination"));
+
+  @Rule
+  public SystemProperty consumeDestination =
+      new SystemPropertyLambda("consumeDestination", () -> newDestination("consumeDestination"));
+
+  private String message;
+
+  @Parameters(name = "operation:{0}")
+  public static Collection<Object[]> data() {
+    return asList(new Object[][] {
+        {Operations.PUBLISH},
+        //TODO: Review error: Cannot synchronously receive a message when a MessageListener is set.
+        {Operations.CONSUME}
+    });
+  }
 
   @Override
   protected String[] getConfigFiles() {
@@ -47,80 +78,120 @@ public class JmsTransactionalListenerTestCase extends JmsAbstractTestCase {
   }
 
   @Test
-  @Description("Verifies that transactions started by a listener work well when subsequent publish joins if possible")
-  public void txListenerWithPublishDefaultTxAction() throws Exception {
-    String message = publishMessage(Actions.NOTHING);
+  @Description("Verifies that transactions started by a listener work well when subsequent jms operation are set to " +
+      "join if possible")
+  public void txListenerWithDefaultTxActionOnNextOperation() throws Exception {
+    message = buildMessage(operation, Actions.NOTHING);
+    publishMessage(message, initialDestination.getValue());
+    publishMessage(message, consumeDestination.getValue());
 
-    ((Flow) getFlowConstruct("txListenerWithPublishDefaultTxAction")).start();
+    ((Flow) getFlowConstruct("txListenerWithDefaultTxActionOnNextOperation")).start();
 
-    checkForMessageOnDestination(message, publishDestination.getValue());
-    checkForEmptyDestination(listenerDestination.getValue());
+    assertSuccessfulExecution();
+    checkForEmptyDestination(initialDestination.getValue());
   }
 
   @Test
   @Description("Verifies that rollbacks works as expected when transaction are started by a listener and subsequent " +
-      "publish is set to join if possible")
-  public void txListenerWithPublishDefaultTxActionRolledBack() throws Exception {
-    String message = publishMessage(Actions.EXPLODE);
+      "jms operations are set to join if possible")
+  public void txListenerWithDefaultTxActionOnNextOperationRolledBack() throws Exception {
+    message = buildMessage(operation, Actions.EXPLODE);
+    publishMessage(message, initialDestination.getValue());
+    publishMessage(message, consumeDestination.getValue());
 
-    ((Flow) getFlowConstruct("txListenerWithPublishDefaultTxAction")).start();
+    ((Flow) getFlowConstruct("txListenerWithDefaultTxActionOnNextOperation")).start();
 
-    checkForEmptyDestination(publishDestination.getValue());
-    checkForMessageOnDestination(message, listenerDestination.getValue());
+    assertRollbackExecution();
+    checkForMessageOnDestination(message, initialDestination.getValue());
   }
 
   @Test
-  @Description("Verifies that transactions started by listener work well even though subsequent publish does not join" +
-      " them")
-  public void txListenerWithPublishNotSupportedTxAction() throws Exception {
-    String message = publishMessage(Actions.NOTHING);
+  @Description("Verifies that transactions started by listener work well even though subsequent jms operation are set " +
+      "to not join them")
+  public void txListenerWithNotSupportedTxActionOnNextOperation() throws Exception {
+    message = buildMessage(operation, Actions.NOTHING);
+    publishMessage(message, initialDestination.getValue());
+    publishMessage(message, consumeDestination.getValue());
 
-    ((Flow) getFlowConstruct("txListenerWithPublishNotSupportedTxAction")).start();
-    checkForMessageOnDestination(message, publishDestination.getValue());
-    checkForEmptyDestination(listenerDestination.getValue());
+    ((Flow) getFlowConstruct("txListenerWithNotSupportedTxActionOnNextOperation")).start();
+
+    assertSuccessfulExecution();
+    checkForEmptyDestination(initialDestination.getValue());
   }
 
   @Test
-  @Description("Verifies that rollback of transactions started by a listener does not involve element that did not join" +
-      " them")
+  @Description("Verifies that rollback of transactions started by a listener does not involve subsequent jms operation " +
+      "set to not join them")
   @Ignore("MULE-13711")
-  public void txListenerWithPublishNotSupportedTxActionRolledBack() throws Exception {
-    String message = publishMessage(Actions.EXPLODE);
+  public void txListenerWithNotSupportedTxActionOnNextOperationRolledBack() throws Exception {
+    message = buildMessage(operation, Actions.EXPLODE);
+    publishMessage(message, initialDestination.getValue());
+    publishMessage(message, consumeDestination.getValue());
 
-    ((Flow) getFlowConstruct("txListenerWithPublishNotSupportedTxAction")).start();
+    ((Flow) getFlowConstruct("txListenerWithNotSupportedTxActionOnNextOperation")).start();
 
-    checkForMessageOnDestination(message, publishDestination.getValue());
-    checkForMessageOnDestination(message, listenerDestination.getValue());
+    assertSuccessfulExecution();
+    checkForMessageOnDestination(message, finalDestination.getValue());
   }
 
   @Test
-  @Description("Verifies that transactions started by a listener work well when a subsequent publish joins them")
-  public void txListenerWithPublishAlwaysJoinTxAction() throws Exception {
-    String message = publishMessage(Actions.NOTHING);
+  @Description("Verifies that transactions started by a listener work well when subsequent jms operation are set to " +
+      "always join")
+  public void txListenerAlwaysJoinTxActionOnNextOperation() throws Exception {
+    message = buildMessage(operation, Actions.NOTHING);
+    publishMessage(message, initialDestination.getValue());
+    publishMessage(message, consumeDestination.getValue());
 
-    ((Flow) getFlowConstruct("txListenerWithPublishAlwaysJoinTxAction")).start();
+    ((Flow) getFlowConstruct("txListenerAlwaysJoinTxActionOnNextOperation")).start();
 
-    checkForMessageOnDestination(message, publishDestination.getValue());
-    checkForEmptyDestination(listenerDestination.getValue());
+    assertSuccessfulExecution();
+    checkForEmptyDestination(initialDestination.getValue());
   }
 
   @Test
-  @Description("Verifies that rollbacks works as expected when transaction are started by a listener and a subsequent " +
-      "publish joins them")
-  public void txListenerWithPublishAlwaysJoinTxActionRolledBack() throws Exception {
-    String message = publishMessage(Actions.EXPLODE);
+  @Description("Verifies that rollbacks works as expected when transaction are started by a listener and subsequent " +
+      "jms operations are set to always join")
+  public void txListenerAlwaysJoinTxActionOnNextOperationRolledBack() throws Exception {
+    message = buildMessage(operation, Actions.EXPLODE);
+    publishMessage(message, initialDestination.getValue());
+    publishMessage(message, consumeDestination.getValue());
 
-    ((Flow) getFlowConstruct("txListenerWithPublishAlwaysJoinTxAction")).start();
+    ((Flow) getFlowConstruct("txListenerAlwaysJoinTxActionOnNextOperation")).start();
 
-    checkForEmptyDestination(publishDestination.getValue());
-    checkForMessageOnDestination(message, listenerDestination.getValue());
+    assertRollbackExecution();
+    checkForMessageOnDestination(message, initialDestination.getValue());
   }
 
-  @Step("Publish actionable message")
-  private String publishMessage(Actions action) throws Exception {
-    String message = "{\"message\" : \"" + TEST_MESSAGE + "\", \"action\" : \"" + action + "\"}";
-    publish(message, listenerDestination.getValue(), MediaType.APPLICATION_JSON);
-    return message;
+
+  @Step("Build actionable message")
+  private String buildMessage(Operations operation, Actions action) {
+    return "{\"message\" : \"" + TEST_MESSAGE + "\", \"operation\" : \"" + operation + "\", \"action\" : \"" + action
+        + "\"}";
+  }
+
+  @Step("Publish message")
+  private void publishMessage(String message, String destination) throws Exception {
+    publish(message, destination, MediaType.APPLICATION_JSON);
+  }
+
+  @Step("Assert results on final message location based on operation")
+  private void assertSuccessfulExecution() throws Exception {
+    switch (operation) {
+      case PUBLISH:
+        checkForMessageOnDestination(message, finalDestination.getValue());
+      case CONSUME:
+        checkForEmptyDestination(consumeDestination.getValue());
+    }
+  }
+
+  @Step("Assert rollback results on final message location based on operation")
+  private void assertRollbackExecution() throws Exception {
+    switch (operation) {
+      case PUBLISH:
+        checkForEmptyDestination(finalDestination.getValue());
+      case CONSUME:
+        checkForMessageOnDestination(message, consumeDestination.getValue());
+    }
   }
 
   @Step("Check for no messages on dest: {destination}")
@@ -129,13 +200,17 @@ public class JmsTransactionalListenerTestCase extends JmsAbstractTestCase {
     consume(destination);
   }
 
-  @Step("check for messages on dest: {destination}")
+  @Step("Check for messages on dest: {destination}")
   private void checkForMessageOnDestination(String message, String destination) throws Exception {
-    Message event = consume(destination);
-    assertThat(event.getPayload().getValue(), is(message));
+    assertThat(consume(destination), hasPayload(equalTo(message)));
+
   }
 
   public enum Actions {
     EXPLODE, NOTHING
+  }
+
+  public enum Operations {
+    CONSUME, PUBLISH
   }
 }

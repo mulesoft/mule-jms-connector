@@ -160,7 +160,7 @@ public abstract class JmsAbstractTestCase extends MuleArtifactFunctionalTestCase
     assertThat(actual.getDestinationType(), equalTo(expected.getDestinationType()));
   }
 
-  @Step("Assert reply destination")
+  @Step("Get reply destination")
   protected String getReplyDestination(Message firstMessage) {
     return ((JmsAttributes) firstMessage.getAttributes().getValue()).getHeaders().getJMSReplyTo().getDestination();
   }
