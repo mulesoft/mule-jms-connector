@@ -18,6 +18,8 @@
     <flow name="txListenerWithPublishConsume" initialState="stopped">
         <jms:listener config-ref="config" destination="${initialDestination}" transactionalAction="ALWAYS_BEGIN"
                       numberOfConsumers="1"/>
+        <set-variable variableName="action" value="#[output application/java --- payload.action]"
+                      mimeType="application/java"/>
         <jms:publish-consume config-ref="config" destination="${finalDestination}"/>
         <flow-ref name="failConditionally"/>
     </flow>
@@ -26,6 +28,7 @@
         <try transactionalAction="BEGIN_OR_JOIN">
             <choice>
                 <when expression="#[vars.action == 'EXPLODE']">
+                    <logger level="DEBUG" message="EXPLODING"/>
                     <test:throw exception="java.lang.RuntimeException" error="ROUTING"/>
                 </when>
                 <otherwise>
