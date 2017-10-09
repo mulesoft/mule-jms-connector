@@ -45,6 +45,10 @@ public class JmsTransactionalListenerPublishConsumeTestCase extends JmsAbstractT
   public SystemProperty finalDestination =
       new SystemPropertyLambda("finalDestination", () -> newDestination("finalDestination"));
 
+  //  @Rule
+  //  public SystemProperty replyToDestination =
+  //      new SystemPropertyLambda("replyToDestination", () -> newDestination("replyToDestination"));
+
   private String message;
 
   @Override
@@ -75,7 +79,7 @@ public class JmsTransactionalListenerPublishConsumeTestCase extends JmsAbstractT
     ((Flow) getFlowConstruct("txListenerWithPublishConsume")).start();
 
     assertPublishedMessageAndReply();
-    //    checkForMessageOnDestination(message, initialDestination.getValue());
+    checkForMessageOnDestination(message, initialDestination.getValue());
   }
 
   @Step("Build actionable message")

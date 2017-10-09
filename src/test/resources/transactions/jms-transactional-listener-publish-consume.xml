@@ -21,6 +21,12 @@
         <set-variable variableName="action" value="#[output application/java --- payload.action]"
                       mimeType="application/java"/>
         <jms:publish-consume config-ref="config" destination="${finalDestination}"/>
+        <!--<jms:publish-consume config-ref="config" destination="${finalDestination}">-->
+            <!--<jms:message>-->
+                <!--<jms:reply-to destination="${replyToDestination}"/>-->
+            <!--</jms:message>-->
+        <!--</jms:publish-consume>-->
+        <logger level="ERROR" message="#['REPLY:' ++ payload]"/>
         <flow-ref name="failConditionally"/>
     </flow>
 
