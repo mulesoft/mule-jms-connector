@@ -18,67 +18,27 @@
     <flow name="txListenerWithDefaultTxActionOnNextOperation" initialState="stopped">
         <jms:listener config-ref="config" destination="${initialDestination}" transactionalAction="ALWAYS_BEGIN"
                       numberOfConsumers="1"/>
-        <set-variable variableName="operation" value="#[output application/java --- payload.operation]"
-                      mimeType="application/java"/>
         <set-variable variableName="action" value="#[output application/java --- payload.action]"
                       mimeType="application/java"/>
-        <!--<logger level="ERROR" message="#['OPERATION: ' ++ vars.operation ++ '  - ACTION: ' ++ vars.action]"/>-->
-        <choice>
-            <when expression="#[vars.operation == 'CONSUME']">
-                <!--<logger level="ERROR" message="INSIDE DESIRED OPERATION"/>-->
-                <jms:consume config-ref="config" destination="${consumeDestination}"/>
-            </when>
-            <when expression="#[vars.operation == 'PUBLISH']">
-                <jms:publish config-ref="config" destination="${finalDestination}"/>
-            </when>
-            <otherwise>
-                <logger level="DEBUG" message="NOTHING TO DO"/>
-            </otherwise>
-        </choice>
+        <jms:publish config-ref="config" destination="${finalDestination}"/>
         <flow-ref name="failConditionally"/>
     </flow>
-
 
     <flow name="txListenerWithNotSupportedTxActionOnNextOperation" initialState="stopped">
         <jms:listener config-ref="config" destination="${initialDestination}" transactionalAction="ALWAYS_BEGIN"
                       numberOfConsumers="1"/>
-        <set-variable variableName="operation" value="#[output application/java --- payload.operation]"
-                      mimeType="application/java"/>
         <set-variable variableName="action" value="#[output application/java --- payload.action]"
                       mimeType="application/java"/>
-        <logger level="ERROR" message="#['action: ' ++ vars.action]"/>
-        <choice>
-            <when expression="#[vars.operation == 'CONSUME']">
-                <jms:consume config-ref="config" destination="${consumeDestination}" transactionalAction="NOT_SUPPORTED"/>
-            </when>
-            <when expression="#[vars.operation == 'PUBLISH']">
-                <jms:publish config-ref="config" destination="${finalDestination}" transactionalAction="NOT_SUPPORTED"/>
-            </when>
-            <otherwise>
-                <logger level="DEBUG" message="NOTHING TO DO"/>
-            </otherwise>
-        </choice>
+        <jms:publish config-ref="config" destination="${finalDestination}" transactionalAction="NOT_SUPPORTED"/>
         <flow-ref name="failConditionally"/>
     </flow>
 
     <flow name="txListenerAlwaysJoinTxActionOnNextOperation" initialState="stopped">
         <jms:listener config-ref="config" destination="${initialDestination}" transactionalAction="ALWAYS_BEGIN"
                       numberOfConsumers="1"/>
-        <set-variable variableName="operation" value="#[output application/java --- payload.operation]"
-                      mimeType="application/java"/>
         <set-variable variableName="action" value="#[output application/java --- payload.action]"
                       mimeType="application/java"/>
-        <choice>
-            <when expression="#[vars.operation == 'CONSUME']">
-                <jms:consume config-ref="config" destination="${consumeDestination}" transactionalAction="ALWAYS_JOIN"/>
-            </when>
-            <when expression="#[vars.operation == 'PUBLISH']">
-                <jms:publish config-ref="config" destination="${finalDestination}" transactionalAction="ALWAYS_JOIN"/>
-            </when>
-            <otherwise>
-                <logger level="DEBUG" message="NOTHING TO DO"/>
-            </otherwise>
-        </choice>
+        <jms:publish config-ref="config" destination="${finalDestination}" transactionalAction="ALWAYS_JOIN"/>
         <flow-ref name="failConditionally"/>
     </flow>
 
