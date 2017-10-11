@@ -72,36 +72,21 @@ public class JmsConnection implements Stoppable, Disposable {
   /**
    * Creates a new JMS {@link Session} using the current {@link Connection}
    *
-   * @param ackMode the {@link Session} {@link InternalAckMode}
-   * @param isTopic if {@code true} the {@link Session} created will be a {@link TopicSession}.
-   *                This distinction is made only for {@link JmsSpecification#JMS_1_0_2b}
+   * @param ackMode          the {@link Session} {@link InternalAckMode}
+   * @param isTopic          if {@code true} the {@link Session} created will be a {@link TopicSession}.
+   *                         This distinction is made only for {@link JmsSpecification#JMS_1_0_2b}]
    * @return a new {@link Session}
    * @throws JMSException if an error occurs while creating the {@link Session}
    */
   public JmsSession createSession(InternalAckMode ackMode, boolean isTopic) throws JMSException {
-    return createSession(ackMode, isTopic, true);
-  }
-
-  /**
-   * Creates a new JMS {@link Session} using the current {@link Connection}
-   *
-   * @param ackMode          the {@link Session} {@link InternalAckMode}
-   * @param isTopic          if {@code true} the {@link Session} created will be a {@link TopicSession}.
-   *                         This distinction is made only for {@link JmsSpecification#JMS_1_0_2b}]
-   * @param closeImmediately indicates if the session must be closed immediately after the publish or consume of a message
-   * @return a new {@link Session}
-   * @throws JMSException if an error occurs while creating the {@link Session}
-   * @see JmsSession#isCloseImmediately()
-   */
-  public JmsSession createSession(InternalAckMode ackMode, boolean isTopic, boolean closeImmediately) throws JMSException {
     Session session = jmsSupport.createSession(connection, isTopic, ackMode.equals(TRANSACTED), ackMode.getAckModeValue());
     JmsSession wrapper;
 
     if (ackMode.equals(MANUAL)) {
       String ackId = randomAlphanumeric(16);
-      wrapper = new JmsSession(session, ackId, closeImmediately);
+      wrapper = new JmsSession(session, ackId);
     } else {
-      wrapper = new JmsSession(session, closeImmediately);
+      wrapper = new JmsSession(session);
     }
 
     return wrapper;

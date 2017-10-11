@@ -93,9 +93,7 @@ public class JmsTransactionalConnection extends JmsConnection implements Transac
     try {
       transactionalAction.execute(jmsSession);
     } finally {
-      if (internalJmsSession.isCloseImmediately()) {
-        closeQuietly(jmsSession);
-      }
+      closeQuietly(internalJmsSession);
       jmsSessionManager.changeTransactionStatus(NONE);
       jmsSessionManager.unbindSession();
     }

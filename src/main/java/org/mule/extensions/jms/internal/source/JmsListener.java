@@ -203,7 +203,7 @@ public class JmsListener extends Source<Object, JmsAttributes> {
 
     try {
       for (int i = 0; i < numberOfConsumers; i++) {
-        JmsSession session = connection.createSession(resolvedAckMode, consumerType.topic(), false);
+        JmsSession session = connection.createSession(resolvedAckMode, consumerType.topic());
 
         final Destination jmsDestination = jmsSupport.createDestination(session.get(), destination, consumerType.topic());
         final JmsMessageConsumer consumer = connection.createConsumer(session, jmsDestination, selector, consumerType);
@@ -215,7 +215,7 @@ public class JmsListener extends Source<Object, JmsAttributes> {
 
         JmsListenerLock jmsLock = createJmsLock();
         createdListeners.add(new MessageListenerInfo(session, jmsLock, consumer));
-        consumer.listen(messageListenerFactory.createMessageListener(session, jmsLock));
+        consumer.listen(messageListenerFactory.createMessageListener(new JmsNotClosableSession(session), jmsLock));
       }
     } catch (Exception e) {
       String msg = format("An error occurred while creating the consumers for destination [%s:%s]: %s",
