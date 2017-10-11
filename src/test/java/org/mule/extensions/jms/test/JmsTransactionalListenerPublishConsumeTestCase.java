@@ -69,8 +69,7 @@ public class JmsTransactionalListenerPublishConsumeTestCase extends JmsAbstractT
   @Test
   @Description("Verifies that rollbacks works as expected when transaction are started by a listener and next " +
       "element is a publish-consume operation")
-  @Ignore("TODO: Issue is still pending to be reported. According to @esteban.wasinger analysis a double rollback is" +
-      " being performed, but we not sure yet if this is a connector or mule issue.")
+  @Ignore("MULE-13769")
   public void txListenerWithDefaultTxActionOnNextOperationRolledBack() throws Exception {
     message = buildMessage(Actions.EXPLODE);
     publishMessage(message, initialDestination.getValue());
