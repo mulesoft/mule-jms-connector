@@ -192,7 +192,7 @@ public class JmsListener extends Source<Object, JmsAttributes> {
 
     JmsMessageListenerFactory messageListenerFactory =
         new JmsMessageListenerFactory(resolvedAckMode, inboundEncoding, inboundContentType, config, sessionManager, jmsSupport,
-                                      sourceCallback, connection);
+                                      sourceCallback, connectionProvider);
 
     validateNumberOfConsumers(numberOfConsumers);
 
@@ -203,7 +203,7 @@ public class JmsListener extends Source<Object, JmsAttributes> {
 
     try {
       for (int i = 0; i < numberOfConsumers; i++) {
-        JmsSession session = connection.createSession(resolvedAckMode, consumerType.topic());
+        JmsSession session = connection.createSession(resolvedAckMode, consumerType.topic(), false);
 
         final Destination jmsDestination = jmsSupport.createDestination(session.get(), destination, consumerType.topic());
         final JmsMessageConsumer consumer = connection.createConsumer(session, jmsDestination, selector, consumerType);

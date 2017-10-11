@@ -21,6 +21,7 @@ import static org.mule.extensions.jms.internal.config.InternalAckMode.AUTO;
 import static org.mule.extensions.jms.internal.config.InternalAckMode.DUPS_OK;
 import static org.mule.extensions.jms.internal.config.InternalAckMode.IMMEDIATE;
 import static org.slf4j.LoggerFactory.getLogger;
+
 import org.mule.extensions.jms.api.config.ConsumerAckMode;
 import org.mule.extensions.jms.api.config.JmsConsumerConfig;
 import org.mule.extensions.jms.api.destination.ConsumerType;
@@ -48,14 +49,17 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 import org.mule.runtime.extension.api.runtime.operation.Result;
-import org.slf4j.Logger;
+import org.mule.runtime.extension.api.tx.OperationTransactionalAction;
 
 import javax.inject.Inject;
 import javax.jms.Destination;
 import javax.jms.JMSSecurityException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
+
 import java.util.concurrent.TimeUnit;
+
+import org.slf4j.Logger;
 
 /**
  * Operation that allows the user to consume a single {@link Message} from a given {@link Destination}
@@ -102,7 +106,8 @@ public final class JmsConsume {
                                                @Optional(
                                                    defaultValue = "10000") @Summary("Maximum time to wait for a message to arrive before timeout") Long maximumWait,
                                                @Optional(
-                                                   defaultValue = "MILLISECONDS") @Example("MILLISECONDS") @Summary("Time unit to be used in the maximumWaitTime configuration") TimeUnit maximumWaitUnit)
+                                                   defaultValue = "MILLISECONDS") @Example("MILLISECONDS") @Summary("Time unit to be used in the maximumWaitTime configuration") TimeUnit maximumWaitUnit,
+                                               OperationTransactionalAction transactionalAction)
       throws JmsExtensionException {
 
     InternalAckMode resolvedAckMode = resolveAck(config.getConsumerConfig(), ackMode);
@@ -115,7 +120,7 @@ public final class JmsConsume {
 
       JmsSupport jmsSupport = connection.getJmsSupport();
       JmsSession session =
-          createJmsSession(connection, resolvedAckMode, consumerType.topic(), sessionManager);
+          createJmsSession(connection, resolvedAckMode, consumerType.topic(), sessionManager, transactionalAction);
       Destination jmsDestination = jmsSupport.createDestination(session.get(), destination, consumerType.topic());
 
       JmsMessageConsumer consumer = connection.createConsumer(session, jmsDestination, selector, consumerType);

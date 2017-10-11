@@ -14,6 +14,7 @@ import static org.mule.extensions.jms.api.message.JmsMessageBuilder.BODY_ENCODIN
 import static org.mule.extensions.jms.internal.config.InternalAckMode.IMMEDIATE;
 import static org.mule.extensions.jms.internal.config.InternalAckMode.MANUAL;
 import static org.mule.extensions.jms.internal.config.InternalAckMode.TRANSACTED;
+import static org.mule.runtime.extension.api.tx.OperationTransactionalAction.NOT_SUPPORTED;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import org.mule.extensions.jms.api.config.AckMode;
@@ -26,6 +27,7 @@ import org.mule.extensions.jms.internal.connection.JmsConnection;
 import org.mule.extensions.jms.internal.connection.session.JmsSession;
 import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
 import org.mule.extensions.jms.internal.source.JmsListenerLock;
+import org.mule.runtime.extension.api.tx.OperationTransactionalAction;
 
 import javax.jms.Connection;
 import javax.jms.JMSException;
@@ -108,26 +110,13 @@ public final class JmsCommons {
    * @throws JMSException If an error happens creating a new {@link JmsSession}
    */
   public static JmsSession createJmsSession(JmsConnection jmsConnection, InternalAckMode ackMode, boolean isTopic,
-                                            JmsSessionManager jmsSessionManager)
+                                            JmsSessionManager jmsSessionManager, OperationTransactionalAction transactionalAction)
       throws JMSException {
-    Optional<JmsSession> transactedSession = jmsSessionManager.getTransactedSession();
-    JmsSession session;
 
-    if (transactedSession.isPresent()) {
-      session = transactedSession.get();
-    } else {
-      switch (jmsSessionManager.getTransactionStatus()) {
-        case STARTED:
-          ackMode = TRANSACTED;
-          session = jmsConnection.createSession(ackMode, isTopic);
-          jmsSessionManager.bindToTransaction(session);
-          break;
-        default:
-          session = jmsConnection.createSession(ackMode, isTopic);
-          break;
-      }
-    }
-    return session;
+    return !transactionalAction.equals(NOT_SUPPORTED)
+        ? getOrCreateTransactedSession(jmsConnection, ackMode, isTopic, jmsSessionManager,
+                                       jmsSessionManager.getTransactedSession())
+        : jmsConnection.createSession(ackMode, isTopic);
   }
 
   public static InternalAckMode toInternalAckMode(JmsAckMode jmsAckMode) {
@@ -186,5 +175,27 @@ public final class JmsCommons {
 
   public static String getDestinationType(DestinationType consumerType) {
     return consumerType.isTopic() ? TOPIC : QUEUE;
+  }
+
+  private static JmsSession getOrCreateTransactedSession(JmsConnection jmsConnection, InternalAckMode ackMode, boolean isTopic,
+                                                         JmsSessionManager jmsSessionManager,
+                                                         Optional<JmsSession> transactedSession)
+      throws JMSException {
+    JmsSession session;
+    if (transactedSession.isPresent()) {
+      session = transactedSession.get();
+    } else {
+      switch (jmsSessionManager.getTransactionStatus()) {
+        case STARTED:
+          ackMode = TRANSACTED;
+          session = jmsConnection.createSession(ackMode, isTopic);
+          jmsSessionManager.bindToTransaction(session);
+          break;
+        default:
+          session = jmsConnection.createSession(ackMode, isTopic);
+          break;
+      }
+    }
+    return session;
   }
 }

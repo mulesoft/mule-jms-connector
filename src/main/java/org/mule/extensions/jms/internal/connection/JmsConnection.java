@@ -10,6 +10,7 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.mule.extensions.jms.internal.config.InternalAckMode.MANUAL;
 import static org.mule.extensions.jms.internal.config.InternalAckMode.TRANSACTED;
 import static org.slf4j.LoggerFactory.getLogger;
+
 import org.mule.extensions.jms.api.connection.JmsSpecification;
 import org.mule.extensions.jms.api.destination.ConsumerType;
 import org.mule.extensions.jms.internal.config.InternalAckMode;
@@ -22,7 +23,6 @@ import org.mule.extensions.jms.internal.support.JmsSupport;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.Disposable;
 import org.mule.runtime.api.lifecycle.Stoppable;
-import org.slf4j.Logger;
 
 import javax.jms.Connection;
 import javax.jms.Destination;
@@ -36,6 +36,8 @@ import javax.jms.Session;
 import javax.jms.Topic;
 import javax.jms.TopicPublisher;
 import javax.jms.TopicSession;
+
+import org.slf4j.Logger;
 
 /**
  * A Connection for the JmsConnector
@@ -77,14 +79,29 @@ public class JmsConnection implements Stoppable, Disposable {
    * @throws JMSException if an error occurs while creating the {@link Session}
    */
   public JmsSession createSession(InternalAckMode ackMode, boolean isTopic) throws JMSException {
+    return createSession(ackMode, isTopic, true);
+  }
+
+  /**
+   * Creates a new JMS {@link Session} using the current {@link Connection}
+   *
+   * @param ackMode          the {@link Session} {@link InternalAckMode}
+   * @param isTopic          if {@code true} the {@link Session} created will be a {@link TopicSession}.
+   *                         This distinction is made only for {@link JmsSpecification#JMS_1_0_2b}]
+   * @param closeImmediately indicates if the session must be closed immediately after the publish or consume of a message
+   * @return a new {@link Session}
+   * @throws JMSException if an error occurs while creating the {@link Session}
+   * @see JmsSession#isCloseImmediately()
+   */
+  public JmsSession createSession(InternalAckMode ackMode, boolean isTopic, boolean closeImmediately) throws JMSException {
     Session session = jmsSupport.createSession(connection, isTopic, ackMode.equals(TRANSACTED), ackMode.getAckModeValue());
     JmsSession wrapper;
 
     if (ackMode.equals(MANUAL)) {
       String ackId = randomAlphanumeric(16);
-      wrapper = new JmsSession(session, ackId);
+      wrapper = new JmsSession(session, ackId, closeImmediately);
     } else {
-      wrapper = new JmsSession(session);
+      wrapper = new JmsSession(session, closeImmediately);
     }
 
     return wrapper;
@@ -128,7 +145,6 @@ public class JmsConnection implements Stoppable, Disposable {
    * can be restarted using the connection's {@code start} method. When
    * the connection is stopped, delivery to all the connection's message
    * consumers is inhibited.
-   *
    */
   @Override
   public void stop() throws MuleException {
