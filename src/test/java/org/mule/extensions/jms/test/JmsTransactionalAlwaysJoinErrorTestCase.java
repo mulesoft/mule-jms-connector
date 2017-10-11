@@ -6,7 +6,7 @@
  */
 package org.mule.extensions.jms.test;
 
-import static java.util.Collections.emptyMap;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -14,19 +14,21 @@ import static org.hamcrest.Matchers.any;
 import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
 
 import org.mule.functional.api.exception.ExpectedError;
-import org.mule.runtime.api.message.Message;
+import org.mule.runtime.api.notification.ExceptionNotificationListener;
 import org.mule.runtime.core.api.construct.Flow;
 import org.mule.runtime.core.api.event.CoreEvent;
 import org.mule.tck.junit4.rule.SystemProperty;
+
+import java.util.concurrent.CountDownLatch;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.junit.Rule;
 import org.junit.Test;
 
 import io.qameta.allure.Feature;
 import io.qameta.allure.Story;
-
-import javax.inject.Inject;
-import javax.inject.Named;
 
 @Feature(JMS_EXTENSION)
 @Story("Transaction Support")
@@ -70,13 +72,17 @@ public class JmsTransactionalAlwaysJoinErrorTestCase extends JmsAbstractTestCase
 
   @Test
   public void txListenerWithPublishAlwaysJoinWhenNotTxAvailable() throws Exception {
-    expectedError.expectErrorType(any(String.class), is("UNKNOWN"));
-    expectedError.expectMessage(containsString("A transaction is not available for this session"));
+    final CountDownLatch latch = new CountDownLatch(1);
+    notificationListenerRegistry.registerListener((ExceptionNotificationListener) notification -> {
+      if (notification.getException().getMessage().contains("A transaction is not available for this session")) {
+        latch.countDown();
+      }
+    });
 
     publish(MESSAGE, listenerDestination.getValue());
     txListenerWithPublishAlwaysJoinFlow.start();
-    //    Message event = consume(publishDestination.getValue(), emptyMap(), 5000L);
-    //    assertThat(event.getPayload().getValue(), is(MESSAGE));
+
+    assertThat(latch.await(2, SECONDS), is(true));
   }
 
   private CoreEvent runFlow(String flowName, String destination) throws Exception {
