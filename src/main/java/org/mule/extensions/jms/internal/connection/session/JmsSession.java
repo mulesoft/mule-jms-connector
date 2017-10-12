@@ -6,16 +6,9 @@
  */
 package org.mule.extensions.jms.internal.connection.session;
 
-import static java.util.Optional.ofNullable;
-import static org.mule.runtime.api.util.Preconditions.checkArgument;
-import static org.slf4j.LoggerFactory.getLogger;
-
-import javax.jms.JMSException;
 import javax.jms.Session;
 
 import java.util.Optional;
-
-import org.slf4j.Logger;
 
 /**
  * Wrapper element for a JMS {@link Session} that relates the
@@ -23,43 +16,16 @@ import org.slf4j.Logger;
  *
  * @since 1.0
  */
-public class JmsSession implements AutoCloseable {
-
-  private static final Logger LOGGER = getLogger(JmsSession.class);
-
-  private final Session session;
-  private String ackId;
-
-  public JmsSession(Session session) {
-    checkArgument(session != null, "A non null Session is required to use as delegate");
-    this.session = session;
-  }
-
-  public JmsSession(Session session, String ackId) {
-    checkArgument(session != null, "A non null Session is required to use as delegate");
-    this.session = session;
-    this.ackId = ackId;
-  }
+public interface JmsSession extends AutoCloseable {
 
   /**
    * @return the JMS {@link Session}
    */
-  public Session get() {
-    return session;
-  }
+  Session get();
 
   /**
    * @return the AckId of this {@link Session} or {@link Optional#empty} if no AckId is required
    */
-  public Optional<String> getAckId() {
-    return ofNullable(ackId);
-  }
+  Optional<String> getAckId();
 
-  @Override
-  public void close() throws JMSException {
-    if (LOGGER.isDebugEnabled()) {
-      LOGGER.debug("Closing session " + session);
-    }
-    session.close();
-  }
 }

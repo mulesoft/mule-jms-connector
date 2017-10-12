@@ -215,7 +215,7 @@ public class JmsListener extends Source<Object, JmsAttributes> {
 
         JmsListenerLock jmsLock = createJmsLock();
         createdListeners.add(new MessageListenerInfo(session, jmsLock, consumer));
-        consumer.listen(messageListenerFactory.createMessageListener(new JmsNotClosableSession(session), jmsLock));
+        consumer.listen(messageListenerFactory.createMessageListener(session, jmsLock));
       }
     } catch (Exception e) {
       String msg = format("An error occurred while creating the consumers for destination [%s:%s]: %s",

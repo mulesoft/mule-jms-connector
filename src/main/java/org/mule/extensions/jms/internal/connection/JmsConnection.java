@@ -15,6 +15,7 @@ import org.mule.extensions.jms.api.connection.JmsSpecification;
 import org.mule.extensions.jms.api.destination.ConsumerType;
 import org.mule.extensions.jms.internal.config.InternalAckMode;
 import org.mule.extensions.jms.internal.connection.exception.CompositeJmsExceptionListener;
+import org.mule.extensions.jms.internal.connection.session.DefaultJmsSession;
 import org.mule.extensions.jms.internal.connection.session.JmsSession;
 import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
 import org.mule.extensions.jms.internal.consume.JmsMessageConsumer;
@@ -84,9 +85,9 @@ public class JmsConnection implements Stoppable, Disposable {
 
     if (ackMode.equals(MANUAL)) {
       String ackId = randomAlphanumeric(16);
-      wrapper = new JmsSession(session, ackId);
+      wrapper = new DefaultJmsSession(session, ackId);
     } else {
-      wrapper = new JmsSession(session);
+      wrapper = new DefaultJmsSession(session);
     }
 
     return wrapper;

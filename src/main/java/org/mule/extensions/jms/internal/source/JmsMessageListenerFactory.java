@@ -73,7 +73,8 @@ final class JmsMessageListenerFactory {
    * @return An instance of a {@link JmsMessageListener} ready to listen for messages and dispatch them to a Mule Flow
    */
   JmsMessageListener createMessageListener(JmsSession session, JmsListenerLock jmsLock) {
-    return new JmsMessageListener(session, config, jmsLock, sessionManager, sourceCallback, jmsSupport, ackMode, encoding,
+    return new JmsMessageListener(new JmsListenerSession(session), config, jmsLock, sessionManager, sourceCallback, jmsSupport,
+                                  ackMode, encoding,
                                   contentType, connectionProvider);
   }
 }

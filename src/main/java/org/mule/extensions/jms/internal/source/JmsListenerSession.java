@@ -9,20 +9,41 @@ package org.mule.extensions.jms.internal.source;
 import org.mule.extensions.jms.internal.connection.session.JmsSession;
 
 import javax.jms.JMSException;
+import javax.jms.Session;
+
+import java.util.Optional;
 
 /**
- * {@link JmsSession} wrapper which ignores the {@link this#close()} action
+ * {@link JmsSession} specialization for the {@link JmsListener}
  *
  * @since 1.0
  */
-public final class JmsNotClosableSession extends JmsSession {
+final class JmsListenerSession implements JmsSession {
 
-  JmsNotClosableSession(JmsSession session) {
-    super(session.get(), session.getAckId().orElse(null));
+  private JmsSession session;
+
+  JmsListenerSession(JmsSession session) {
+    this.session = session;
   }
 
   @Override
   public void close() throws JMSException {
     //The session must not be closed
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public Session get() {
+    return session.get();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public Optional<String> getAckId() {
+    return session.getAckId();
   }
 }
