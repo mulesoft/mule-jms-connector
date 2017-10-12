@@ -4,7 +4,7 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.extensions.jms.test;
+package org.mule.extensions.jms.test.transaction;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.CoreMatchers.containsString;
@@ -13,7 +13,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.any;
 import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
 
-import org.mule.functional.api.exception.ExpectedError;
+import org.mule.extensions.jms.test.JmsAbstractTestCase;
 import org.mule.runtime.api.notification.ExceptionNotificationListener;
 import org.mule.runtime.core.api.construct.Flow;
 import org.mule.runtime.core.api.event.CoreEvent;
@@ -35,9 +35,6 @@ import io.qameta.allure.Story;
 public class JmsTransactionalAlwaysJoinErrorTestCase extends JmsAbstractTestCase {
 
   private static final String MESSAGE = "MESSAGE";
-
-  @Rule
-  public ExpectedError expectedError = ExpectedError.none();
 
   @Rule
   public SystemProperty listenerDestination = new SystemProperty("destination", newDestination("destination"));

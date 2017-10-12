@@ -10,19 +10,22 @@ import static java.lang.System.currentTimeMillis;
 import static java.util.Collections.emptyMap;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.any;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
+import static org.mule.extensions.jms.api.exception.JmsError.TIMEOUT;
 import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
 import static org.mule.extensions.jms.test.JmsMessageStorage.cleanUpQueue;
+import static org.mule.functional.junit4.matchers.MessageMatchers.hasPayload;
 import static org.mule.runtime.api.metadata.MediaType.ANY;
 
-import io.qameta.allure.Step;
 import org.mule.extensions.jms.api.destination.JmsDestination;
 import org.mule.extensions.jms.api.message.JmsAttributes;
 import org.mule.extensions.jms.api.message.JmsHeaders;
+import org.mule.functional.api.exception.ExpectedError;
 import org.mule.functional.api.flow.FlowRunner;
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
 import org.mule.runtime.api.message.Message;
@@ -37,9 +40,11 @@ import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 
 import java.util.Map;
 
-import io.qameta.allure.Feature;
 import org.junit.Before;
 import org.junit.Rule;
+
+import io.qameta.allure.Feature;
+import io.qameta.allure.Step;
 
 @Feature(JMS_EXTENSION)
 @ArtifactClassLoaderRunnerConfig(
@@ -60,6 +65,9 @@ public abstract class JmsAbstractTestCase extends MuleArtifactFunctionalTestCase
   protected static final String MAX_REDELIVERY = "max.redelivery";
   protected String destination;
   protected long maximumWait = 10000;
+
+  @Rule
+  public ExpectedError expectedError = ExpectedError.none();
 
   @Rule
   public SystemProperty maxRedelivery = new SystemProperty(MAX_REDELIVERY, "0");
@@ -189,4 +197,14 @@ public abstract class JmsAbstractTestCase extends MuleArtifactFunctionalTestCase
     assertThat(attributes.getHeaders().getJMSRedelivered(), is(isRedelivered));
   }
 
+  @Step("Check for no messages on dest: {destination}")
+  protected void assertEmptyDestination(String destination) throws Exception {
+    expectedError.expectErrorType(any(String.class), is(TIMEOUT.getType()));
+    consume(destination);
+  }
+
+  @Step("Check for message on dest: {destination}")
+  protected void assertMessageOnDestination(String message, String destination) throws Exception {
+    assertThat(consume(destination), hasPayload(equalTo(message)));
+  }
 }

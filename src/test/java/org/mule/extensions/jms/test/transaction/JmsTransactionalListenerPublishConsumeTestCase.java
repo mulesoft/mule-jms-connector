@@ -4,25 +4,22 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.extensions.jms.test;
+package org.mule.extensions.jms.test.transaction;
 
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.any;
 import static org.hamcrest.Matchers.equalTo;
-import static org.mule.extensions.jms.api.exception.JmsError.TIMEOUT;
 import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
 import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JmsStory.TRANSACTION;
 import static org.mule.functional.junit4.matchers.MessageMatchers.hasPayload;
 
-import org.junit.Ignore;
-import org.mule.functional.api.exception.ExpectedError;
+import org.mule.extensions.jms.test.JmsAbstractTestCase;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.MediaType;
 import org.mule.runtime.core.api.construct.Flow;
 import org.mule.tck.junit4.rule.SystemProperty;
 import org.mule.tck.junit4.rule.SystemPropertyLambda;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -36,15 +33,11 @@ import io.qameta.allure.Story;
 public class JmsTransactionalListenerPublishConsumeTestCase extends JmsAbstractTestCase {
 
   @Rule
-  public ExpectedError expectedError = ExpectedError.none();
-
-  @Rule
   public SystemProperty initialDestination =
       new SystemPropertyLambda("initialDestination", () -> newDestination("initialDestination"));
 
   @Rule
-  public SystemProperty finalDestination =
-      new SystemPropertyLambda("finalDestination", () -> newDestination("finalDestination"));
+  public SystemProperty finalDestination = new SystemPropertyLambda("finalDestination", () -> newDestination("finalDestination"));
 
   private String message;
 
@@ -63,7 +56,7 @@ public class JmsTransactionalListenerPublishConsumeTestCase extends JmsAbstractT
     ((Flow) getFlowConstruct("txListenerWithPublishConsume")).start();
 
     assertPublishedMessageAndReply();
-    checkForEmptyDestination(initialDestination.getValue());
+    assertEmptyDestination(initialDestination.getValue());
   }
 
   @Test
@@ -77,7 +70,7 @@ public class JmsTransactionalListenerPublishConsumeTestCase extends JmsAbstractT
     ((Flow) getFlowConstruct("txListenerWithPublishConsume")).start();
 
     assertPublishedMessageAndReply();
-    checkForMessageOnDestination(message, initialDestination.getValue());
+    assertMessageOnDestination(message, initialDestination.getValue());
   }
 
   @Step("Build actionable message")
@@ -88,17 +81,6 @@ public class JmsTransactionalListenerPublishConsumeTestCase extends JmsAbstractT
   @Step("Publish message")
   private void publishMessage(String message, String destination) throws Exception {
     publish(message, destination, MediaType.APPLICATION_JSON);
-  }
-
-  @Step("Check for no messages on dest: {destination}")
-  private void checkForEmptyDestination(String destination) throws Exception {
-    expectedError.expectErrorType(any(String.class), is(TIMEOUT.getType()));
-    consume(destination);
-  }
-
-  @Step("Check for messages on dest: {destination}")
-  private void checkForMessageOnDestination(String message, String destination) throws Exception {
-    assertThat(consume(destination), hasPayload(equalTo(message)));
   }
 
   @Step("Verifies that message was published on final destination and send the response back to replyTo dest")

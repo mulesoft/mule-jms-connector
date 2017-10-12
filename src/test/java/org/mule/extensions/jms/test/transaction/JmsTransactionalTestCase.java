@@ -4,18 +4,17 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.extensions.jms.test;
+package org.mule.extensions.jms.test.transaction;
 
 import static java.util.Collections.emptyMap;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.any;
-import static org.mule.extensions.jms.api.exception.JmsError.TIMEOUT;
 import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
+import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JmsStory.TRANSACTION;
 import static org.mule.extensions.jms.test.JmsMessageStorage.receivedMessages;
 import static org.mule.tck.probe.PollingProber.probe;
 
-import org.mule.functional.api.exception.ExpectedError;
+import org.mule.extensions.jms.test.JmsAbstractTestCase;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.core.api.construct.Flow;
 import org.mule.runtime.core.api.event.CoreEvent;
@@ -24,19 +23,17 @@ import org.mule.tck.junit4.rule.SystemProperty;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import io.qameta.allure.Feature;
-import io.qameta.allure.Story;
 import org.junit.Rule;
 import org.junit.Test;
 
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
+
 @Feature(JMS_EXTENSION)
-@Story("Transaction Support")
+@Story(TRANSACTION)
 public class JmsTransactionalTestCase extends JmsAbstractTestCase {
 
   private static final String MESSAGE = "MESSAGE";
-
-  @Rule
-  public ExpectedError expectedError = ExpectedError.none();
 
   @Rule
   public SystemProperty listenerDestination = new SystemProperty("destination", newDestination("destination"));
@@ -70,7 +67,7 @@ public class JmsTransactionalTestCase extends JmsAbstractTestCase {
     String txPublishDestination = newDestination("txPublish");
     publishTx(txPublishDestination, true);
 
-    checkForEmptyDestination(txPublishDestination);
+    assertEmptyDestination(txPublishDestination);
   }
 
   @Test
@@ -79,7 +76,7 @@ public class JmsTransactionalTestCase extends JmsAbstractTestCase {
     publish(MESSAGE, txConsumeDestination);
 
     consumeTx(txConsumeDestination, false);
-    checkForEmptyDestination(txConsumeDestination);
+    assertEmptyDestination(txConsumeDestination);
   }
 
   @Test
@@ -114,7 +111,7 @@ public class JmsTransactionalTestCase extends JmsAbstractTestCase {
         .runExpectingException();
 
     consume(nonTxDestination);
-    checkForEmptyDestination(txDestination);
+    assertEmptyDestination(txDestination);
   }
 
   @Test
@@ -152,7 +149,7 @@ public class JmsTransactionalTestCase extends JmsAbstractTestCase {
 
     CoreEvent consume = consumeTx(txConsumeDestination, false);
     assertThat(consume.getMessage().getPayload().getValue(), is(MESSAGE));
-    checkForEmptyDestination(txPublishDestination);
+    assertEmptyDestination(txPublishDestination);
   }
 
   private CoreEvent consumeAndPublishTx(String txConsumeDestination, String txPublishDestination, boolean rollback)
@@ -182,10 +179,5 @@ public class JmsTransactionalTestCase extends JmsAbstractTestCase {
         .withVariable("rollback", shouldRollback)
         .withPayload(MESSAGE)
         .run();
-  }
-
-  private void checkForEmptyDestination(String txPublishDestination) throws Exception {
-    expectedError.expectErrorType(any(String.class), is(TIMEOUT.getType()));
-    consumeTx(txPublishDestination, false);
   }
 }
