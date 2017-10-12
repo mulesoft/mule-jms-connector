@@ -10,10 +10,12 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.mule.extensions.jms.internal.config.InternalAckMode.MANUAL;
 import static org.mule.extensions.jms.internal.config.InternalAckMode.TRANSACTED;
 import static org.slf4j.LoggerFactory.getLogger;
+
 import org.mule.extensions.jms.api.connection.JmsSpecification;
 import org.mule.extensions.jms.api.destination.ConsumerType;
 import org.mule.extensions.jms.internal.config.InternalAckMode;
 import org.mule.extensions.jms.internal.connection.exception.CompositeJmsExceptionListener;
+import org.mule.extensions.jms.internal.connection.session.DefaultJmsSession;
 import org.mule.extensions.jms.internal.connection.session.JmsSession;
 import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
 import org.mule.extensions.jms.internal.consume.JmsMessageConsumer;
@@ -22,7 +24,6 @@ import org.mule.extensions.jms.internal.support.JmsSupport;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.Disposable;
 import org.mule.runtime.api.lifecycle.Stoppable;
-import org.slf4j.Logger;
 
 import javax.jms.Connection;
 import javax.jms.Destination;
@@ -36,6 +37,8 @@ import javax.jms.Session;
 import javax.jms.Topic;
 import javax.jms.TopicPublisher;
 import javax.jms.TopicSession;
+
+import org.slf4j.Logger;
 
 /**
  * A Connection for the JmsConnector
@@ -70,9 +73,9 @@ public class JmsConnection implements Stoppable, Disposable {
   /**
    * Creates a new JMS {@link Session} using the current {@link Connection}
    *
-   * @param ackMode the {@link Session} {@link InternalAckMode}
-   * @param isTopic if {@code true} the {@link Session} created will be a {@link TopicSession}.
-   *                This distinction is made only for {@link JmsSpecification#JMS_1_0_2b}
+   * @param ackMode          the {@link Session} {@link InternalAckMode}
+   * @param isTopic          if {@code true} the {@link Session} created will be a {@link TopicSession}.
+   *                         This distinction is made only for {@link JmsSpecification#JMS_1_0_2b}]
    * @return a new {@link Session}
    * @throws JMSException if an error occurs while creating the {@link Session}
    */
@@ -82,9 +85,9 @@ public class JmsConnection implements Stoppable, Disposable {
 
     if (ackMode.equals(MANUAL)) {
       String ackId = randomAlphanumeric(16);
-      wrapper = new JmsSession(session, ackId);
+      wrapper = new DefaultJmsSession(session, ackId);
     } else {
-      wrapper = new JmsSession(session);
+      wrapper = new DefaultJmsSession(session);
     }
 
     return wrapper;
@@ -128,7 +131,6 @@ public class JmsConnection implements Stoppable, Disposable {
    * can be restarted using the connection's {@code start} method. When
    * the connection is stopped, delivery to all the connection's message
    * consumers is inhibited.
-   *
    */
   @Override
   public void stop() throws MuleException {

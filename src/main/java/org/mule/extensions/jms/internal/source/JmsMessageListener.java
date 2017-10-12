@@ -19,12 +19,14 @@ import static org.slf4j.LoggerFactory.getLogger;
 import org.mule.extensions.jms.api.message.JmsAttributes;
 import org.mule.extensions.jms.internal.config.InternalAckMode;
 import org.mule.extensions.jms.internal.config.JmsConfig;
+import org.mule.extensions.jms.internal.connection.JmsConnection;
 import org.mule.extensions.jms.internal.connection.JmsTransactionalConnection;
 import org.mule.extensions.jms.internal.connection.session.JmsSession;
 import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
 import org.mule.extensions.jms.internal.message.JmsResultFactory;
 import org.mule.extensions.jms.internal.support.JmsSupport;
 import org.mule.runtime.api.connection.ConnectionException;
+import org.mule.runtime.api.connection.ConnectionProvider;
 import org.mule.runtime.api.tx.TransactionException;
 import org.mule.runtime.extension.api.runtime.operation.Result;
 import org.mule.runtime.extension.api.runtime.source.SourceCallback;
@@ -55,26 +57,34 @@ public final class JmsMessageListener implements MessageListener {
   private final JmsConfig config;
   private final JmsSessionManager sessionManager;
   private final JmsSupport jmsSupport;
-  private JmsTransactionalConnection connection;
+  private ConnectionProvider<JmsTransactionalConnection> connectionProvider;
   private final JmsResultFactory resultFactory = new JmsResultFactory();
 
   /**
    * Creates a new instance of a {@link JmsMessageListener}
-  
-   * @param session        the session to create the JMS Consumer
-   * @param config         JMS
-   * @param jmsLock        the lock to use to synchronize the message dispatch
-   * @param sessionManager manager to store the session and ACK ID of each dispatched message
-   * @param sourceCallback callback use to dispatch the {@link Message} to the mule flow
-   * @param jmsSupport     JMS Support that communicates the used specification
-   * @param ackMode        Acknowledgement mode to use to consume the messages
-   * @param encoding       Default encoding if the consumed message doesn't provide one
-   * @param contentType    Default contentType if the consumed message doesn't provide one
-   * @param connection     The connection which created the current {@link JmsSession}
+   *
+   * @param session            the session to create the JMS Consumer
+   * @param config             JMS
+   * @param jmsLock            the lock to use to synchronize the message dispatch
+   * @param sessionManager     manager to store the session and ACK ID of each dispatched message
+   * @param sourceCallback     callback use to dispatch the {@link Message} to the mule flow
+   * @param jmsSupport         JMS Support that communicates the used specification
+   * @param ackMode            Acknowledgement mode to use to consume the messages
+   * @param encoding           Default encoding if the consumed message doesn't provide one
+   * @param contentType        Default contentType if the consumed message doesn't provide one
+   * @param connectionProvider JMS Connection provider which will provide {@link JmsConnection} to bind into the
+   *                           {@link SourceCallbackContext}
    */
-  JmsMessageListener(JmsSession session, JmsConfig config, JmsListenerLock jmsLock, JmsSessionManager sessionManager,
-                     SourceCallback<Object, JmsAttributes> sourceCallback, JmsSupport jmsSupport, InternalAckMode ackMode,
-                     String encoding, String contentType, JmsTransactionalConnection connection) {
+  JmsMessageListener(JmsSession session,
+                     JmsConfig config,
+                     JmsListenerLock jmsLock,
+                     JmsSessionManager sessionManager,
+                     SourceCallback<Object, JmsAttributes> sourceCallback,
+                     JmsSupport jmsSupport,
+                     InternalAckMode ackMode,
+                     String encoding,
+                     String contentType,
+                     ConnectionProvider<JmsTransactionalConnection> connectionProvider) {
     this.session = session;
     this.sourceCallback = sourceCallback;
     this.jmsLock = jmsLock;
@@ -84,7 +94,7 @@ public final class JmsMessageListener implements MessageListener {
     this.config = config;
     this.sessionManager = sessionManager;
     this.jmsSupport = jmsSupport;
-    this.connection = connection;
+    this.connectionProvider = connectionProvider;
   }
 
   /**
@@ -97,13 +107,15 @@ public final class JmsMessageListener implements MessageListener {
     }
 
     SourceCallbackContext context = sourceCallback.createContext();
+
+    try {
+      context.bindConnection(connectionProvider.connect());
+    } catch (ConnectionException | TransactionException e) {
+      notifyIfConnectionProblem(sourceCallback, e);
+    }
+
     if (ackMode.equals(TRANSACTED)) {
       sessionManager.bindToTransaction(session);
-      try {
-        context.bindConnection(connection);
-      } catch (ConnectionException | TransactionException e) {
-        notifyIfConnectionProblem(sourceCallback, e);
-      }
     }
 
     saveReplyToDestination(message, context);

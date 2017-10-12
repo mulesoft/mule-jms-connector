@@ -12,6 +12,7 @@ import static org.mule.extensions.jms.internal.connection.session.TransactionSta
 import static org.mule.runtime.api.i18n.I18nMessageFactory.createStaticMessage;
 import static org.mule.runtime.api.util.Preconditions.checkState;
 import static org.slf4j.LoggerFactory.getLogger;
+
 import org.mule.extensions.jms.internal.JmsConnector;
 import org.mule.extensions.jms.internal.connection.exception.CompositeJmsExceptionListener;
 import org.mule.extensions.jms.internal.connection.session.JmsSession;
@@ -19,12 +20,14 @@ import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
 import org.mule.extensions.jms.internal.support.JmsSupport;
 import org.mule.runtime.api.tx.TransactionException;
 import org.mule.runtime.extension.api.connectivity.TransactionalConnection;
-import org.slf4j.Logger;
 
 import javax.jms.Connection;
 import javax.jms.JMSException;
 import javax.jms.Session;
+
 import java.util.Optional;
+
+import org.slf4j.Logger;
 
 /**
  * Implementation of the {@link JmsConnection} which implements {@link TransactionalConnection} for Transaction Support
@@ -80,7 +83,8 @@ public class JmsTransactionalConnection extends JmsConnection implements Transac
     Optional<JmsSession> transactedSession = jmsSessionManager.getTransactedSession();
     checkState(transactedSession.isPresent(), "Unable to " + action + " transaction, the TX Session doesn't exist.");
 
-    Session jmsSession = transactedSession.get().get();
+    JmsSession internalJmsSession = transactedSession.get();
+    Session jmsSession = internalJmsSession.get();
 
     if (LOGGER.isDebugEnabled()) {
       LOGGER.debug("JMS Transaction " + action + " over Session [" + jmsSession + "]");
@@ -89,7 +93,7 @@ public class JmsTransactionalConnection extends JmsConnection implements Transac
     try {
       transactionalAction.execute(jmsSession);
     } finally {
-      closeQuietly(jmsSession);
+      closeQuietly(internalJmsSession);
       jmsSessionManager.changeTransactionStatus(NONE);
       jmsSessionManager.unbindSession();
     }

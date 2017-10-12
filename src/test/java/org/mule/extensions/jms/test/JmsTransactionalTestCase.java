@@ -12,6 +12,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.any;
 import static org.mule.extensions.jms.api.exception.JmsError.TIMEOUT;
 import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
+import static org.mule.extensions.jms.test.JmsMessageStorage.receivedMessages;
+import static org.mule.tck.probe.PollingProber.probe;
 
 import org.mule.functional.api.exception.ExpectedError;
 import org.mule.runtime.api.message.Message;
@@ -19,14 +21,13 @@ import org.mule.runtime.core.api.construct.Flow;
 import org.mule.runtime.core.api.event.CoreEvent;
 import org.mule.tck.junit4.rule.SystemProperty;
 
-import org.junit.Rule;
-import org.junit.Test;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import io.qameta.allure.Feature;
 import io.qameta.allure.Story;
+import org.junit.Rule;
+import org.junit.Test;
 
 @Feature(JMS_EXTENSION)
 @Story("Transaction Support")
@@ -47,9 +48,13 @@ public class JmsTransactionalTestCase extends JmsAbstractTestCase {
   @Named("txSubscriberWithPublish")
   private Flow txSubscriberWithPublishFlow;
 
+  @Inject
+  @Named("txListener")
+  private Flow txListener;
+
   @Override
   protected String[] getConfigFiles() {
-    return new String[] {"transactions/jms-transactional.xml", "config/activemq/activemq-default.xml"};
+    return new String[] {"transactions/jms-transactional.xml", "config/activemq/activemq-default-no-caching.xml"};
   }
 
   @Test
@@ -93,6 +98,36 @@ public class JmsTransactionalTestCase extends JmsAbstractTestCase {
     txSubscriberWithPublishFlow.start();
     Message event = consume(publishDestination.getValue(), emptyMap(), 5000L);
     assertThat(event.getPayload().getValue(), is(MESSAGE));
+  }
+
+  @Test
+  public void nonTxPublishMustNotJoinCurrentTx() throws Exception {
+    String txDestinationName = "txDestination";
+    String txDestination = newDestination(txDestinationName);
+    String nonTxDestinationName = "nonTxDestination";
+    String nonTxDestination = newDestination(nonTxDestinationName);
+
+    flowRunner("nonTxPublishMustNotJoinCurrentTx")
+        .withPayload(MESSAGE)
+        .withVariable(txDestinationName, txDestination)
+        .withVariable(nonTxDestinationName, nonTxDestination)
+        .runExpectingException();
+
+    consume(nonTxDestination);
+    checkForEmptyDestination(txDestination);
+  }
+
+  @Test
+  public void txListenerPublishSeveralMessages() throws Exception {
+    txListener.start();
+
+    publish(MESSAGE, listenerDestination.getValue());
+    publish(MESSAGE, listenerDestination.getValue());
+    publish(MESSAGE, listenerDestination.getValue());
+    publish(MESSAGE, listenerDestination.getValue());
+    publish(MESSAGE, listenerDestination.getValue());
+
+    probe(() -> receivedMessages() == 5);
   }
 
   @Test

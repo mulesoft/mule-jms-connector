@@ -192,7 +192,7 @@ public class JmsListener extends Source<Object, JmsAttributes> {
 
     JmsMessageListenerFactory messageListenerFactory =
         new JmsMessageListenerFactory(resolvedAckMode, inboundEncoding, inboundContentType, config, sessionManager, jmsSupport,
-                                      sourceCallback, connection);
+                                      sourceCallback, connectionProvider);
 
     validateNumberOfConsumers(numberOfConsumers);
 

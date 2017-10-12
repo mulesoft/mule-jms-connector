@@ -13,6 +13,7 @@ import static org.mule.extensions.jms.internal.common.JmsCommons.getDestinationT
 import static org.mule.extensions.jms.internal.common.JmsCommons.releaseResources;
 import static org.mule.extensions.jms.internal.config.InternalAckMode.AUTO;
 import static org.slf4j.LoggerFactory.getLogger;
+
 import org.mule.extensions.jms.api.config.JmsProducerConfig;
 import org.mule.extensions.jms.api.destination.DestinationType;
 import org.mule.extensions.jms.api.exception.JmsExtensionException;
@@ -33,13 +34,14 @@ import org.mule.runtime.extension.api.annotation.param.Connection;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
-import org.slf4j.Logger;
+import org.mule.runtime.extension.api.tx.OperationTransactionalAction;
 
 import javax.inject.Inject;
-import javax.jms.DeliveryMode;
 import javax.jms.Destination;
 import javax.jms.JMSSecurityException;
 import javax.jms.Message;
+
+import org.slf4j.Logger;
 
 /**
  * Operation that allows the user to send a message to a JMS {@link Destination}
@@ -54,20 +56,17 @@ public final class JmsPublish {
   private JmsSessionManager jmsSessionManager;
 
   /**
-   * Operation that allows the user to send a {@link Message} to a JMS {@link Destination
+   * Operation that allows the user to send a {@link Message} to a JMS {@link Destination}
    *
-   * @param config             the current {@link JmsProducerConfig }
-   * @param connection         the current {@link JmsConnection}
-   * @param destination        the name of the {@link Destination} where the {@link Message} should be sent
-   * @param type               the {@link DestinationType} of the {@code destination}
-   * @param messageBuilder     the {@link JmsMessageBuilder } used to create the {@link Message} to be sent
-   * @param persistentDelivery {@code true} if {@link DeliveryMode#PERSISTENT} should be used
-   * @param priority           the {@link Message#getJMSPriority} to be set
-   * @param timeToLive         the time the message will be in the broker before it expires and is discarded
-   * @param timeToLiveUnit     unit to be used in the timeToLive configurations
-   * @param deliveryDelay      Only used by JMS 2.0. Sets the delivery delay to be applied in order to postpone the Message delivery
-   * @param deliveryDelayUnit  Time unit to be used in the deliveryDelay configurations
-   * @throws JmsPublishException if an error occurs
+   * @param config              the current {@link JmsProducerConfig }
+   * @param connection          the current {@link JmsConnection}
+   * @param destination         the name of the {@link Destination} where the {@link Message} should be sent
+   * @param destinationType     the {@link DestinationType} of the {@code destination}
+   * @param messageBuilder      the {@link JmsMessageBuilder } used to create the {@link Message} to be sent
+   * @param overrides           Parameter Group with overriding parameters from the configuration
+   * @param transactionalAction Transactional Action for the operation. Indicates if the publish must be executed
+   *                            or not in a transaction.
+   * @throws JmsExtensionException if an error occurs trying to publish a message
    */
   @Throws(JmsPublisherErrorTypeProvider.class)
   public void publish(@Config JmsConfig config, @Connection JmsTransactionalConnection connection,
@@ -75,7 +74,8 @@ public final class JmsPublish {
                       @Optional(defaultValue = QUEUE) @Summary("The type of the Destination") DestinationType destinationType,
                       @Summary("A builder for the message that will be published") @ParameterGroup(name = "Message",
                           showInDsl = true) JmsMessageBuilder messageBuilder,
-                      @ParameterGroup(name = "Publish Configuration") JmsPublishParameters overrides)
+                      @ParameterGroup(name = "Publish Configuration") JmsPublishParameters overrides,
+                      OperationTransactionalAction transactionalAction)
 
       throws JmsExtensionException {
 
@@ -85,7 +85,7 @@ public final class JmsPublish {
             + destination + "]");
       }
 
-      JmsSession session = createJmsSession(connection, AUTO, destinationType.isTopic(), jmsSessionManager);
+      JmsSession session = createJmsSession(connection, AUTO, destinationType.isTopic(), jmsSessionManager, transactionalAction);
 
       Message message = messageBuilder.build(connection.getJmsSupport(), session.get(), config);
 
