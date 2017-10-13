@@ -21,11 +21,8 @@ import org.junit.Test;
 public class JmsErrorTestCase extends JmsAbstractTestCase {
 
   public static final String TEST_DESTINATION = "test";
-  public static final String MESSAGE = "Body";
   public static final String AN_ERROR_OCCURRED_WHILE_SENDING_A_MESSAGE = "An error occurred while sending a message";
   public static final String AN_ERROR_OCCURRED_WHILE_CONSUMING_A_MESSAGE = "An error occurred while consuming a message";
-  @Rule
-  public ExpectedError expectedError = ExpectedError.none();
 
   @Override
   protected String[] getConfigFiles() {
