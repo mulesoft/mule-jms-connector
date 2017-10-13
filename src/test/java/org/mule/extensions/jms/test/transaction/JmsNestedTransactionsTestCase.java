@@ -11,7 +11,6 @@ import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JmsStory.T
 import static org.mule.extensions.jms.test.transaction.JmsNestedTransactionsTestCase.Actions.EXPLODE;
 import static org.mule.extensions.jms.test.transaction.JmsNestedTransactionsTestCase.Actions.NOTHING;
 
-import io.qameta.allure.Description;
 import org.mule.extensions.jms.test.JmsAbstractTestCase;
 import org.mule.runtime.api.metadata.MediaType;
 import org.mule.runtime.core.api.construct.Flow;
@@ -20,12 +19,12 @@ import org.mule.tck.junit4.rule.SystemProperty;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.junit.Rule;
-import org.junit.Test;
-
+import io.qameta.allure.Description;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Step;
 import io.qameta.allure.Story;
+import org.junit.Rule;
+import org.junit.Test;
 
 @Feature(JMS_EXTENSION)
 @Story(TRANSACTION)

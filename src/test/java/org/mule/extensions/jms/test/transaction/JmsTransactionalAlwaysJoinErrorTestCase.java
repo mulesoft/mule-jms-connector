@@ -12,6 +12,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.any;
 import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
+import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JmsStory.TRANSACTION;
 
 import org.mule.extensions.jms.test.JmsAbstractTestCase;
 import org.mule.runtime.api.notification.ExceptionNotificationListener;
@@ -24,14 +25,13 @@ import java.util.concurrent.CountDownLatch;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
 import org.junit.Rule;
 import org.junit.Test;
 
-import io.qameta.allure.Feature;
-import io.qameta.allure.Story;
-
 @Feature(JMS_EXTENSION)
-@Story("Transaction Support")
+@Story(TRANSACTION)
 public class JmsTransactionalAlwaysJoinErrorTestCase extends JmsAbstractTestCase {
 
   private static final String MESSAGE = "MESSAGE";

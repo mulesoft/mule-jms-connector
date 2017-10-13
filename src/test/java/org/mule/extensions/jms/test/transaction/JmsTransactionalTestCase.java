@@ -23,11 +23,10 @@ import org.mule.tck.junit4.rule.SystemProperty;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.junit.Rule;
-import org.junit.Test;
-
 import io.qameta.allure.Feature;
 import io.qameta.allure.Story;
+import org.junit.Rule;
+import org.junit.Test;
 
 @Feature(JMS_EXTENSION)
 @Story(TRANSACTION)

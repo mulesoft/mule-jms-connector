@@ -40,11 +40,10 @@ import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Rule;
-
 import io.qameta.allure.Feature;
 import io.qameta.allure.Step;
+import org.junit.Before;
+import org.junit.Rule;
 
 @Feature(JMS_EXTENSION)
 @ArtifactClassLoaderRunnerConfig(

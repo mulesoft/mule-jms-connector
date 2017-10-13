@@ -15,14 +15,12 @@ import org.mule.runtime.core.api.construct.Flow;
 import org.mule.tck.junit4.rule.SystemProperty;
 import org.mule.tck.junit4.rule.SystemPropertyLambda;
 
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-
 import io.qameta.allure.Description;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Step;
 import io.qameta.allure.Story;
+import org.junit.Rule;
+import org.junit.Test;
 
 @Feature(JMS_EXTENSION)
 @Story(TRANSACTION)
@@ -91,7 +89,6 @@ public class JmsTransactionalListenerTestCase extends JmsAbstractTestCase {
   @Test
   @Description("Verifies that rollback of transactions started by a listener does not involve next jms operation" +
       " if set not to join them")
-  @Ignore("MULE-13711")
   public void txListenerWithNotSupportedTxActionOnNextOperationRolledBack() throws Exception {
     message = buildMessage(Actions.EXPLODE);
     publishMessage(message, initialDestination.getValue());

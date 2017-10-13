@@ -12,6 +12,7 @@ import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENS
 import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JmsStory.TRANSACTION;
 import static org.mule.functional.junit4.matchers.MessageMatchers.hasPayload;
 
+import io.qameta.allure.Issue;
 import org.mule.extensions.jms.test.JmsAbstractTestCase;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.MediaType;
@@ -19,14 +20,13 @@ import org.mule.runtime.core.api.construct.Flow;
 import org.mule.tck.junit4.rule.SystemProperty;
 import org.mule.tck.junit4.rule.SystemPropertyLambda;
 
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-
 import io.qameta.allure.Description;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Step;
 import io.qameta.allure.Story;
+import org.junit.Ignore;
+import org.junit.Rule;
+import org.junit.Test;
 
 @Feature(JMS_EXTENSION)
 @Story(TRANSACTION)
@@ -62,7 +62,8 @@ public class JmsTransactionalListenerPublishConsumeTestCase extends JmsAbstractT
   @Test
   @Description("Verifies that rollbacks works as expected when transaction are started by a listener and next " +
       "element is a publish-consume operation")
-  @Ignore("MULE-13769")
+  @Ignore("MULE-13769: Transactions rolledback twice when the TXs scopes are nested")
+  @Issue("MULE-13769")
   public void txListenerWithDefaultTxActionOnNextOperationRolledBack() throws Exception {
     message = buildMessage(Actions.EXPLODE);
     publishMessage(message, initialDestination.getValue());
