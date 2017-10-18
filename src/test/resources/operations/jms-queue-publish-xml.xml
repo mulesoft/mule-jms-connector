@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+      xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
+
+    <jms:config name="JMS_Config">
+        <jms:active-mq-connection >
+            <jms:caching-strategy >
+                <jms:default-caching />
+            </jms:caching-strategy>
+        </jms:active-mq-connection>
+        <jms:consumer-config >
+            <jms:consumer-type >
+                <jms:queue-consumer />
+            </jms:consumer-type>
+        </jms:consumer-config>
+    </jms:config>
+
+    <flow name="publisher">
+        <set-payload value="#[output application/xml encoding='UTF-8' --- employees: { employee: {name: 'Jhon', lastName: 'Doe'}}]"/>
+        <jms:publish config-ref="JMS_Config" destination="#[vars.destination]">
+            <jms:message outboundContentType="application/xml" />
+        </jms:publish>
+    </flow>
+
+    <flow name="consumer">
+        <jms:consume config-ref="JMS_Config" destination="#[vars.destination]"/>
+    </flow>
+
+</mule>
