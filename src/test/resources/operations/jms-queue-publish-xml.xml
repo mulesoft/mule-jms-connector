@@ -9,16 +9,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
 
     <jms:config name="JMS_Config">
-        <jms:active-mq-connection >
-            <jms:caching-strategy >
-                <jms:default-caching />
-            </jms:caching-strategy>
-        </jms:active-mq-connection>
-        <jms:consumer-config >
-            <jms:consumer-type >
-                <jms:queue-consumer />
-            </jms:consumer-type>
-        </jms:consumer-config>
+        <jms:active-mq-connection/>
     </jms:config>
 
     <flow name="publisher">
