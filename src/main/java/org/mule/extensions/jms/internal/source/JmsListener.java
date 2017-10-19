@@ -28,7 +28,6 @@ import org.mule.extensions.jms.api.config.AckMode;
 import org.mule.extensions.jms.api.config.JmsConsumerConfig;
 import org.mule.extensions.jms.api.destination.ConsumerType;
 import org.mule.extensions.jms.api.destination.TopicConsumer;
-import org.mule.extensions.jms.api.exception.JmsExtensionException;
 import org.mule.extensions.jms.api.message.JmsAttributes;
 import org.mule.extensions.jms.internal.config.InternalAckMode;
 import org.mule.extensions.jms.internal.config.JmsConfig;
@@ -69,7 +68,6 @@ import javax.jms.Message;
 import javax.jms.Queue;
 import javax.jms.Topic;
 
-import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -188,7 +186,7 @@ public class JmsListener extends Source<Object, JmsAttributes> {
     connection = connectionProvider.connect();
     jmsSupport = connection.getJmsSupport();
 
-    connection.registerExceptionListener(e -> sourceCallback.onConnectionException(new ConnectionException(e)));
+    connection.registerExceptionListener(e -> sourceCallback.onConnectionException(new ConnectionException(e, connection)));
 
     JmsMessageListenerFactory messageListenerFactory =
         new JmsMessageListenerFactory(resolvedAckMode, inboundEncoding, inboundContentType, config, sessionManager, jmsSupport,
@@ -223,11 +221,7 @@ public class JmsListener extends Source<Object, JmsAttributes> {
       LOGGER.error(msg, e);
       releaseListeners();
 
-      if (e.getCause() instanceof ConnectException) {
-        throw new ConnectionException(e);
-      }
-
-      throw new JmsExtensionException(msg, e);
+      throw new ConnectionException(msg, e, null, connection);
     }
   }
 

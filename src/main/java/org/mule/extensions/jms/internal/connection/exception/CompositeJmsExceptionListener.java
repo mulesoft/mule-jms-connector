@@ -11,8 +11,9 @@ import org.mule.extensions.jms.internal.source.JmsListener;
 
 import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
-import java.util.ArrayList;
+
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Composite pattern implementation for {@link ExceptionListener}.
@@ -23,7 +24,7 @@ import java.util.List;
  */
 public class CompositeJmsExceptionListener implements ExceptionListener {
 
-  List<ExceptionListener> exceptionListenerList = new ArrayList<>();
+  private List<ExceptionListener> exceptionListenerList = new CopyOnWriteArrayList<>();
 
   /**
    * {@inheritDoc}
