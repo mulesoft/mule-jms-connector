@@ -48,7 +48,7 @@ import org.junit.Rule;
 @Feature(JMS_EXTENSION)
 @ArtifactClassLoaderRunnerConfig(
     testInclusions = {"org.apache.activemq:artemis-jms-client"}, sharedRuntimeLibs = {"org.apache.activemq:activemq-client",
-        "org.apache.activemq:activemq-broker", "org.apache.activemq:activemq-kahadb-store"})
+        "org.apache.activemq:activemq-broker", "org.apache.activemq:activemq-kahadb-store", "org.mule.tests:mule-tests-unit"})
 public abstract class JmsAbstractTestCase extends MuleArtifactFunctionalTestCase {
 
   protected static final String NAMESPACE = "JMS";
