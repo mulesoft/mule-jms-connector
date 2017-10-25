@@ -21,7 +21,6 @@ import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENS
 import static org.mule.extensions.jms.test.JmsMessageStorage.cleanUpQueue;
 import static org.mule.functional.junit4.matchers.MessageMatchers.hasPayload;
 import static org.mule.runtime.api.metadata.MediaType.ANY;
-
 import org.mule.extensions.jms.api.destination.JmsDestination;
 import org.mule.extensions.jms.api.message.JmsAttributes;
 import org.mule.extensions.jms.api.message.JmsHeaders;
@@ -47,8 +46,10 @@ import org.junit.Rule;
 
 @Feature(JMS_EXTENSION)
 @ArtifactClassLoaderRunnerConfig(
-    testInclusions = {"org.apache.activemq:artemis-jms-client"}, sharedRuntimeLibs = {"org.apache.activemq:activemq-client",
-        "org.apache.activemq:activemq-broker", "org.apache.activemq:activemq-kahadb-store", "org.mule.tests:mule-tests-unit"})
+    testInclusions = {"org.apache.activemq:artemis-jms-client"},
+    applicationSharedRuntimeLibs = {"org.apache.activemq:activemq-client",
+        "org.apache.activemq:activemq-broker", "org.apache.activemq:activemq-kahadb-store", "org.fusesource.hawtbuf:hawtbuf",
+        "org.apache.activemq.protobuf:activemq-protobuf"})
 public abstract class JmsAbstractTestCase extends MuleArtifactFunctionalTestCase {
 
   protected static final String NAMESPACE = "JMS";
