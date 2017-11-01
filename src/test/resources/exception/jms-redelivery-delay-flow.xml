@@ -13,7 +13,7 @@
 
     <flow name="listener">
         <jms:listener config-ref="config" destination="${destination}" ackMode="AUTO" numberOfConsumers="1"/>
-        <logger level="DEBUG" message="GUSTAVO"/>
+        <logger level="DEBUG"/>
         <test:processor class="org.mule.extensions.jms.test.exception.JmsRedeliveryDelayTestCase$TestProcessor"/>
     </flow>
 

@@ -91,7 +91,6 @@ public class JmsTransactionalListenerTestCase extends JmsAbstractTestCase {
 
     ((Flow) getFlowConstruct("txListenerWithNotSupportedTxActionOnNextOperation")).start();
     assertMessageOnDestination(message, finalDestination.getValue());
-    //    assertMessageOnDestination(message, initialDestination.getValue());
   }
 
   @Test
