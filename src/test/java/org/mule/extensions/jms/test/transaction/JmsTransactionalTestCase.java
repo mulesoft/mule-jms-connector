@@ -40,6 +40,9 @@ public class JmsTransactionalTestCase extends JmsAbstractTestCase {
   @Rule
   public SystemProperty publishDestination = new SystemProperty("publishDestination", newDestination("publishDestination"));
 
+  @Rule
+  public SystemProperty maxRedelivery = new SystemProperty(MAX_REDELIVERY, "1");
+
   @Inject
   @Named("txSubscriberWithPublish")
   private Flow txSubscriberWithPublishFlow;

@@ -34,8 +34,7 @@ public class JmsTransactionalListenerTestCase extends JmsAbstractTestCase {
   public SystemProperty finalDestination = new SystemPropertyLambda("finalDestination", () -> newDestination("finalDestination"));
 
   @Rule
-  public SystemProperty consumeDestination =
-      new SystemPropertyLambda("consumeDestination", () -> newDestination("consumeDestination"));
+  public SystemProperty maxRedelivery = new SystemProperty(MAX_REDELIVERY, "6");
 
   private String message;
 
@@ -50,7 +49,6 @@ public class JmsTransactionalListenerTestCase extends JmsAbstractTestCase {
   public void txListenerWithDefaultTxActionOnNextOperation() throws Exception {
     message = buildMessage(Actions.NOTHING);
     publishMessage(message, initialDestination.getValue());
-    publishMessage(message, consumeDestination.getValue());
 
     ((Flow) getFlowConstruct("txListenerWithDefaultTxActionOnNextOperation")).start();
 
@@ -64,7 +62,6 @@ public class JmsTransactionalListenerTestCase extends JmsAbstractTestCase {
   public void txListenerWithDefaultTxActionOnNextOperationRolledBack() throws Exception {
     message = buildMessage(Actions.EXPLODE);
     publishMessage(message, initialDestination.getValue());
-    publishMessage(message, consumeDestination.getValue());
 
     ((Flow) getFlowConstruct("txListenerWithDefaultTxActionOnNextOperation")).start();
 
@@ -78,7 +75,6 @@ public class JmsTransactionalListenerTestCase extends JmsAbstractTestCase {
   public void txListenerWithNotSupportedTxActionOnNextOperation() throws Exception {
     message = buildMessage(Actions.NOTHING);
     publishMessage(message, initialDestination.getValue());
-    publishMessage(message, consumeDestination.getValue());
 
     ((Flow) getFlowConstruct("txListenerWithNotSupportedTxActionOnNextOperation")).start();
 
@@ -92,12 +88,10 @@ public class JmsTransactionalListenerTestCase extends JmsAbstractTestCase {
   public void txListenerWithNotSupportedTxActionOnNextOperationRolledBack() throws Exception {
     message = buildMessage(Actions.EXPLODE);
     publishMessage(message, initialDestination.getValue());
-    publishMessage(message, consumeDestination.getValue());
 
     ((Flow) getFlowConstruct("txListenerWithNotSupportedTxActionOnNextOperation")).start();
-
     assertMessageOnDestination(message, finalDestination.getValue());
-    assertMessageOnDestination(message, finalDestination.getValue());
+    //    assertMessageOnDestination(message, initialDestination.getValue());
   }
 
   @Test
@@ -106,7 +100,6 @@ public class JmsTransactionalListenerTestCase extends JmsAbstractTestCase {
   public void txListenerAlwaysJoinTxActionOnNextOperation() throws Exception {
     message = buildMessage(Actions.NOTHING);
     publishMessage(message, initialDestination.getValue());
-    publishMessage(message, consumeDestination.getValue());
 
     ((Flow) getFlowConstruct("txListenerAlwaysJoinTxActionOnNextOperation")).start();
 
@@ -120,7 +113,6 @@ public class JmsTransactionalListenerTestCase extends JmsAbstractTestCase {
   public void txListenerAlwaysJoinTxActionOnNextOperationRolledBack() throws Exception {
     message = buildMessage(Actions.EXPLODE);
     publishMessage(message, initialDestination.getValue());
-    publishMessage(message, consumeDestination.getValue());
 
     ((Flow) getFlowConstruct("txListenerAlwaysJoinTxActionOnNextOperation")).start();
 

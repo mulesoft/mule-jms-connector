@@ -11,6 +11,7 @@
             <jms:caching-strategy>
                 <jms:no-caching/>
             </jms:caching-strategy>
+            <jms:factory-configuration maxRedelivery="${max.redelivery}"/>
         </jms:active-mq-connection>
     </jms:config>
 

@@ -116,11 +116,6 @@ public class ActiveMQConnectionFactoryProvider {
       throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
     Method setMaximumRedeliveriesMethod = redeliveryPolicy.getClass().getMethod("setMaximumRedeliveries", Integer.TYPE);
     int maxRedelivery = factoryConfiguration.getMaxRedelivery();
-    if (maxRedelivery != REDELIVERY_IGNORE) {
-      // redelivery = deliveryCount - 1, but AMQ is considering the first delivery attempt
-      // as a redelivery (wrong!). adjust for it
-      maxRedelivery++;
-    }
     setMaximumRedeliveriesMethod.invoke(redeliveryPolicy, maxRedelivery);
   }
 
