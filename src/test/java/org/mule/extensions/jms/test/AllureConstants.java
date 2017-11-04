@@ -24,6 +24,7 @@ public class AllureConstants {
 
       String TRANSACTION = "Transaction";
 
+      String DURABLE_SUBSCRIBER = "Durable Subscriber";
     }
 
   }
