@@ -6,14 +6,14 @@
     <parent>
         <groupId>org.mule.extensions</groupId>
         <artifactId>mule-core-modules-parent</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.mule.connectors</groupId>
     <artifactId>mule-jms-connector</artifactId>
     <packaging>mule-extension</packaging>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.1.0-SNAPSHOT</version>
 
     <name>JMS Connector</name>
     <description>Mule connector lets you easily send and receive messages to queues and topics for any message service which implements the JMS specification</description>
@@ -27,7 +27,7 @@
         <guavaVersion>18.0</guavaVersion>
         <springVersion>5.0.0.RELEASE</springVersion>
         <hawtbufVersion>1.1</hawtbufVersion>
-        <muleSpringModuleVersion>1.0.0-SNAPSHOT</muleSpringModuleVersion>
+        <muleSpringModuleVersion>1.1.0-SNAPSHOT</muleSpringModuleVersion>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
     </properties>
 
