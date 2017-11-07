@@ -348,12 +348,21 @@ public class JmsListener extends Source<Object, JmsAttributes> {
     try {
       createdListeners.forEach(info -> {
         info.getLock().unlockWithFailure();
-        closeQuietly(info.getConsumer());
+        closeConsumer(info.getConsumer());
         closeQuietly(info.getSession());
       });
     } finally {
       createdListeners.clear();
     }
+  }
+
+  private void closeConsumer(JmsMessageConsumer consumer) {
+    try {
+      consumer.listen(null);
+    } catch (JMSException e) {
+      LOGGER.error(format("An unexpected error occurred trying to turn off a MessageListener [%s].", consumer), e);
+    }
+    closeQuietly(consumer);
   }
 
   private static class MessageListenerInfo {
