@@ -10,27 +10,31 @@ import static java.lang.System.currentTimeMillis;
 import static java.util.Collections.emptyMap;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.any;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
+import static org.junit.Assert.fail;
 import static org.mule.extensions.jms.api.exception.JmsError.TIMEOUT;
 import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
 import static org.mule.extensions.jms.test.JmsMessageStorage.cleanUpQueue;
 import static org.mule.functional.junit4.matchers.MessageMatchers.hasPayload;
 import static org.mule.runtime.api.metadata.MediaType.ANY;
+import static org.mule.tck.junit4.matcher.ErrorTypeMatcher.errorType;
+
 import org.mule.extensions.jms.api.destination.JmsDestination;
 import org.mule.extensions.jms.api.message.JmsAttributes;
 import org.mule.extensions.jms.api.message.JmsHeaders;
 import org.mule.functional.api.exception.ExpectedError;
 import org.mule.functional.api.flow.FlowRunner;
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
+import org.mule.runtime.api.message.Error;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.MediaType;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.core.api.util.func.CheckedSupplier;
+import org.mule.runtime.core.privileged.exception.EventProcessingException;
 import org.mule.runtime.extension.api.runtime.operation.Result;
 import org.mule.tck.junit4.rule.SystemProperty;
 import org.mule.tck.probe.JUnitLambdaProbe;
@@ -38,6 +42,7 @@ import org.mule.tck.probe.PollingProber;
 import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 
 import java.util.Map;
+import java.util.Optional;
 
 import io.qameta.allure.Feature;
 import io.qameta.allure.Step;
@@ -199,8 +204,21 @@ public abstract class JmsAbstractTestCase extends MuleArtifactFunctionalTestCase
 
   @Step("Check for no messages on dest: {destination}")
   protected void assertEmptyDestination(String destination) throws Exception {
-    expectedError.expectErrorType(any(String.class), is(TIMEOUT.getType()));
-    consume(destination);
+    boolean emptyDestination = false;
+    try {
+      consume(destination);
+    } catch (EventProcessingException exception) {
+      Optional<Error> error = exception.getEvent().getError();
+      if (error.isPresent() && errorType(TIMEOUT).matches(error.get().getErrorType())) {
+        emptyDestination = true;
+      }
+    } catch (Throwable throwable) {
+      fail("Unexpected exception was caught when trying to find out if destination was empty");
+    }
+
+    if (!emptyDestination) {
+      fail("Destination is not empty");
+    }
   }
 
   @Step("Check for message on dest: {destination}")

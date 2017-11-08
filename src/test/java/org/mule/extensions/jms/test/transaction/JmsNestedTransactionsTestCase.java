@@ -6,15 +6,19 @@
  */
 package org.mule.extensions.jms.test.transaction;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
 import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JmsStory.TRANSACTION;
-import static org.mule.extensions.jms.test.transaction.JmsNestedTransactionsTestCase.Actions.EXPLODE;
-import static org.mule.extensions.jms.test.transaction.JmsNestedTransactionsTestCase.Actions.NOTHING;
 
 import org.mule.extensions.jms.test.JmsAbstractTestCase;
 import org.mule.runtime.api.metadata.MediaType;
+import org.mule.runtime.api.notification.ExceptionNotificationListener;
 import org.mule.runtime.core.api.construct.Flow;
 import org.mule.tck.junit4.rule.SystemProperty;
+
+import java.util.concurrent.CountDownLatch;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -46,30 +50,19 @@ public class JmsNestedTransactionsTestCase extends JmsAbstractTestCase {
   }
 
   @Test
-  @Description("Verifies that there is no issues when beginning two transactions on the same flow")
+  @Description("Verifies that nested TXs are not supported")
   public void nestedTx() throws Exception {
-    String message = buildMessage(NOTHING);
-    publishMessage(message, listenerDestination.getValue());
+    final CountDownLatch latch = new CountDownLatch(1);
+    notificationListenerRegistry.registerListener((ExceptionNotificationListener) notification -> {
+      if (notification.getException().getMessage().contains("Non-XA transactions can't be nested")) {
+        latch.countDown();
+      }
+    });
+
+    publishMessage(TEST_MESSAGE, listenerDestination.getValue());
     nestedTxFlow.start();
 
-    assertEmptyDestination(listenerDestination.getValue());
-    assertMessageOnDestination(message, publishDestination.getValue());
-  }
-
-  @Test
-  @Description("Verifies that there is no issues when beginning two transactions on the same flow")
-  public void nestedTxRollback() throws Exception {
-    String message = buildMessage(EXPLODE);
-    publishMessage(message, listenerDestination.getValue());
-    nestedTxFlow.start();
-
-    assertEmptyDestination(listenerDestination.getValue());
-    assertEmptyDestination(publishDestination.getValue());
-  }
-
-  @Step("Build actionable message")
-  private String buildMessage(Actions action) {
-    return "{\"message\" : \"" + TEST_MESSAGE + "\", \"action\" : \"" + action + "\"}";
+    assertThat(latch.await(2, SECONDS), is(true));
   }
 
   @Step("Publish message")
@@ -77,7 +70,4 @@ public class JmsNestedTransactionsTestCase extends JmsAbstractTestCase {
     publish(message, destination, MediaType.APPLICATION_JSON);
   }
 
-  public enum Actions {
-    EXPLODE, NOTHING
-  }
 }

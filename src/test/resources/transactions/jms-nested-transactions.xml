@@ -1,36 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
-      xmlns:test="http://www.mulesoft.org/schema/mule/test"
       xmlns="http://www.mulesoft.org/schema/mule/core"
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-                          http://www.mulesoft.org/schema/mule/test http://www.mulesoft.org/schema/mule/test/current/mule-test.xsd
                           http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
 
     <flow name="publisher">
         <jms:publish config-ref="config" destination="#[vars.destination]"/>
     </flow>
 
-    <flow name="consumer">
-        <jms:consume config-ref="config" destination="#[vars.destination]" maximumWait="#[vars.maximumWait]"/>
-    </flow>
-
     <flow name="nestedTx" initialState="stopped">
         <jms:listener config-ref="config" destination="${listenerDestination}" transactionalAction="ALWAYS_BEGIN"
                       numberOfConsumers="1"/>
-        <set-variable variableName="action" value="#[output application/java --- payload.action]"
-                      mimeType="application/java"/>
         <try transactionalAction="ALWAYS_BEGIN">
             <jms:publish config-ref="config" destination="${publishDestination}" transactionalAction="ALWAYS_JOIN"/>
-            <choice>
-                <when expression="#[vars.action == 'EXPLODE']">
-                    <logger level="DEBUG" message="THROWING EXCEPTION"/>
-                    <test:processor throwException="true"/>
-                </when>
-                <otherwise>
-                    <logger level="DEBUG" message="DO NOTHING"/>
-                </otherwise>
-            </choice>
         </try>
     </flow>
 </mule>

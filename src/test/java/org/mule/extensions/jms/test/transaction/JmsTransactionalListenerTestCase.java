@@ -34,13 +34,14 @@ public class JmsTransactionalListenerTestCase extends JmsAbstractTestCase {
   public SystemProperty finalDestination = new SystemPropertyLambda("finalDestination", () -> newDestination("finalDestination"));
 
   @Rule
-  public SystemProperty maxRedelivery = new SystemProperty(MAX_REDELIVERY, "6");
+  public SystemProperty maxRedelivery = new SystemProperty(MAX_REDELIVERY, "10");
 
   private String message;
 
   @Override
   protected String[] getConfigFiles() {
-    return new String[] {"transactions/jms-transactional-listener.xml", "config/activemq/activemq-default.xml"};
+    // TODO: Once MULE-14010 get resolved this test should work with the default caching-strategy
+    return new String[] {"transactions/jms-transactional-listener.xml", "config/activemq/activemq-default-no-caching.xml"};
   }
 
   @Test
@@ -66,6 +67,9 @@ public class JmsTransactionalListenerTestCase extends JmsAbstractTestCase {
     ((Flow) getFlowConstruct("txListenerWithDefaultTxActionOnNextOperation")).start();
 
     assertEmptyDestination(finalDestination.getValue());
+
+    ((Flow) getFlowConstruct("txListenerWithDefaultTxActionOnNextOperation")).stop();
+
     assertMessageOnDestination(message, initialDestination.getValue());
   }
 
@@ -116,6 +120,9 @@ public class JmsTransactionalListenerTestCase extends JmsAbstractTestCase {
     ((Flow) getFlowConstruct("txListenerAlwaysJoinTxActionOnNextOperation")).start();
 
     assertEmptyDestination(finalDestination.getValue());
+
+    ((Flow) getFlowConstruct("txListenerAlwaysJoinTxActionOnNextOperation")).stop();
+
     assertMessageOnDestination(message, initialDestination.getValue());
   }
 
