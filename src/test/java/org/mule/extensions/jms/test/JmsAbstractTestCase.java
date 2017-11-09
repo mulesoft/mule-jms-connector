@@ -54,7 +54,7 @@ import org.junit.Rule;
     testInclusions = {"org.apache.activemq:artemis-jms-client"},
     applicationSharedRuntimeLibs = {"org.apache.activemq:activemq-client",
         "org.apache.activemq:activemq-broker", "org.apache.activemq:activemq-kahadb-store", "org.fusesource.hawtbuf:hawtbuf",
-        "org.apache.activemq.protobuf:activemq-protobuf"})
+        "org.apache.activemq.protobuf:activemq-protobuf", "org.mule.tests:mule-tests-model"})
 public abstract class JmsAbstractTestCase extends MuleArtifactFunctionalTestCase {
 
   protected static final String NAMESPACE = "JMS";
