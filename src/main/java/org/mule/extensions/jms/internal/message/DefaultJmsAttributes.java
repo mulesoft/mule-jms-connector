@@ -19,6 +19,8 @@ import org.mule.extensions.jms.api.message.JmsMessageProperties;
  */
 class DefaultJmsAttributes implements JmsAttributes {
 
+  private static final long serialVersionUID = -8148917084189760450L;
+
   private final JmsMessageProperties properties;
   private final JmsHeaders headers;
   private final String ackId;
