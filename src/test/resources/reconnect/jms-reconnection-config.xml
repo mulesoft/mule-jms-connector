@@ -10,19 +10,19 @@
     </flow>
 
     <flow name="reconnected-listener" initialState="stopped">
-        <jms:listener config-ref="config" destination="${listenerDest}" numberOfConsumers="1">
+        <jms:listener config-ref="config" destination="${listenerDestination}" numberOfConsumers="1">
             <reconnect frequency="100" count="10"/>
         </jms:listener>
         <logger level="DEBUG" message="#[payload]"/>
-        <custom-processor class="org.mule.extensions.jms.test.JmsMessageStorage"/>
+        <jms:publish config-ref="config" destination="${publishDestination}"/>
     </flow>
 
     <flow name="fail-reconnect-listener" initialState="stopped">
-        <jms:listener config-ref="config" destination="${failedListenerDest}" numberOfConsumers="1">
+        <jms:listener config-ref="config" destination="${listenerDestination}" numberOfConsumers="1">
             <reconnect frequency="100" count="1"/>
         </jms:listener>
         <logger level="DEBUG" message="#[payload]"/>
-        <jms:publish config-ref="config" destination="${publishDest}"/>
+        <jms:publish config-ref="config" destination="${publishDestination}"/>
     </flow>
 
     <flow name="consumer">
