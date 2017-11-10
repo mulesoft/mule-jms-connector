@@ -6,24 +6,17 @@
  */
 package org.mule.extensions.jms.test.connection;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.rules.ExpectedException.none;
 import static org.junit.rules.RuleChain.outerRule;
 import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
 import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JmsStory.RECONNECTION;
-import static org.mule.extensions.jms.test.JmsMessageStorage.pollMuleMessage;
-import org.mule.extensions.jms.api.exception.JmsConsumeException;
+
 import org.mule.extensions.jms.test.JmsAbstractTestCase;
 import org.mule.extensions.jms.test.JmsMessageStorage;
 import org.mule.extensions.jms.test.util.ActiveMQBroker;
-import org.mule.runtime.api.message.Message;
 import org.mule.runtime.core.api.construct.Flow;
 import org.mule.tck.junit4.rule.SystemProperty;
+import org.mule.tck.junit4.rule.SystemPropertyLambda;
 
 import io.qameta.allure.Description;
 import io.qameta.allure.Feature;
@@ -39,10 +32,6 @@ import org.junit.rules.TestRule;
 @Feature(JMS_EXTENSION)
 @Story(RECONNECTION)
 public class JmsReconnectionTestCase extends JmsAbstractTestCase {
-
-  public static final String RECONNECTED_LISTENER_FLOW = "reconnected-listener";
-
-  public static final String RECONNECTION_FAIL_LISTENER_FLOW = "fail-reconnect-listener";
 
   private static ActiveMQBroker amqBroker = new ActiveMQBroker("amqPort") {
 
@@ -62,18 +51,13 @@ public class JmsReconnectionTestCase extends JmsAbstractTestCase {
   @ClassRule
   public static TestRule chain = outerRule(amqBroker).around(amqUrl);
 
-  private final String listenerDest = newDestination("listenerDest");
-  private final String failedListenerDest = newDestination("failedListenerDest");
-  private final String publishDest = newDestination("publishDest");
+  @Rule
+  public SystemProperty listenerDestination =
+      new SystemPropertyLambda("listenerDestination", () -> newDestination("listenerDestination"));
 
   @Rule
-  public SystemProperty listenerDestProp = new SystemProperty("listenerDest", listenerDest);
-
-  @Rule
-  public SystemProperty failedListenerDestProp = new SystemProperty("failedListenerDest", failedListenerDest);
-
-  @Rule
-  public SystemProperty publishDestProp = new SystemProperty("publishDest", publishDest);
+  public SystemProperty publishDestination =
+      new SystemPropertyLambda("publishDestination", () -> newDestination("publishDestination"));
 
   @Rule
   public ExpectedException expected = none();
@@ -91,28 +75,30 @@ public class JmsReconnectionTestCase extends JmsAbstractTestCase {
   @Test
   @Description("Verifies that all consumers get connected to the JMS broker after it has been reestablished.")
   public void testReconnection() throws Exception {
-    destination = listenerDest;
-    startFlow(RECONNECTED_LISTENER_FLOW);
-    restartBroker();
-    publish(TEST_MESSAGE);
+    publish(TEST_MESSAGE, listenerDestination.getValue());
 
-    assertMessage(pollMuleMessage());
+    startFlow("reconnected-listener");
+    assertMessageOnDestination(TEST_MESSAGE, publishDestination.getValue());
+
+    restartBroker();
+    publish(TEST_MESSAGE, listenerDestination.getValue());
+
+    assertMessageOnDestination(TEST_MESSAGE, publishDestination.getValue());
   }
 
   @Test
   @Description("Verifies that consumers does not connect to the JMS after the configured number of tries has been" +
       " surpassed.")
   public void testReconnectionFail() throws Exception {
-    destination = failedListenerDest;
-    expected.expectMessage("Failed to retrieve a Message, operation timed out");
-    expected.expectCause(instanceOf(JmsConsumeException.class));
+    publish(TEST_MESSAGE, listenerDestination.getValue());
 
-    startFlow(RECONNECTION_FAIL_LISTENER_FLOW);
+    startFlow("fail-reconnect-listener");
+    assertMessageOnDestination(TEST_MESSAGE, publishDestination.getValue());
+
     restartBroker();
-    publish(TEST_MESSAGE);
+    publish(TEST_MESSAGE, listenerDestination.getValue());
 
-    destination = publishDest;
-    consume();
+    assertEmptyDestination(publishDestination.getValue());
   }
 
   @Step("Start flow")
@@ -125,14 +111,6 @@ public class JmsReconnectionTestCase extends JmsAbstractTestCase {
     amqBroker.stop();
     Thread.sleep(500);
     amqBroker.start();
-  }
-
-  @Step("Assert message")
-  private void assertMessage(Message message) {
-    assertThat(message, not(nullValue()));
-    assertThat(message.getPayload(), not(nullValue()));
-    assertThat(message.getPayload().getValue(), is(equalTo(TEST_MESSAGE)));
-    assertThat(message.getAttributes(), not(nullValue()));
   }
 
 }
