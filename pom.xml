@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.mule.extensions</groupId>
         <artifactId>mule-core-modules-parent</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -27,7 +27,7 @@
         <guavaVersion>18.0</guavaVersion>
         <springVersion>5.0.0.RELEASE</springVersion>
         <hawtbufVersion>1.1</hawtbufVersion>
-        <muleSpringModuleVersion>1.0.0-SNAPSHOT</muleSpringModuleVersion>
+        <muleSpringModuleVersion>1.0.0</muleSpringModuleVersion>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
     </properties>
 
