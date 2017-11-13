@@ -15,11 +15,12 @@ import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JmsStory.M
 
 @Feature(JMS_EXTENSION)
 @Story(MESSAGE_FILTERING)
-public class JmsMessageFilteringTestCase extends JmsAbstractMessageFilteringTestCase {
+public class JmsMessageFilteringConnectorConfigTestCase extends JmsAbstractMessageFilteringTestCase {
 
   @Override
   protected String[] getConfigFiles() {
-    return new String[] {"config/activemq/activemq-default.xml", "integration/jms-message-filtering.xml"};
+    return new String[] {"config/activemq/activemq-message-filtering.xml",
+        "integration/jms-message-filtering-connector-config.xml"};
   }
 
 }
