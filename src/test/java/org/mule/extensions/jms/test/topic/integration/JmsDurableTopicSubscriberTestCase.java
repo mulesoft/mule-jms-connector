@@ -23,7 +23,7 @@ import org.junit.Test;
 
 @Feature(JMS_EXTENSION)
 @Story(DURABLE_SUBSCRIBER)
-public class JmsDurableTopicSubscriber extends JmsAbstractTestCase {
+public class JmsDurableTopicSubscriberTestCase extends JmsAbstractTestCase {
 
   private static final String TOPIC_SUBSCRIBER_1 = "topicSubscriber1";
   private static final String TOPIC_SUBSCRIBER_2 = "topicSubscriber2";
