@@ -7,8 +7,8 @@
 package org.mule.extensions.jms.test.exception;
 
 import static java.util.Arrays.asList;
-import static org.junit.runners.Parameterized.Parameter;
-import static org.junit.runners.Parameterized.Parameters;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.awaitility.Awaitility.await;
 import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
 import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JmsStory.REDELIVERY;
 
@@ -30,36 +30,51 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameter;
+import org.junit.runners.Parameterized.Parameters;
 
 @Feature(JMS_EXTENSION)
 @Story(REDELIVERY)
 @RunnerDelegateTo(Parameterized.class)
-public class JmsRedeliveryTestCase extends JmsAbstractTestCase {
+public class JmsRedeliveryDelayTestCase extends JmsAbstractTestCase {
 
-  private static final long REDELIVERY_TIMEOUT = 90000;
-  private static final int POLL_DELAY_MILLIS = 100;
-  public static final int REDELIVERY_IGNORE = -1;
-  public static final int EXPECTED_REDELIVERS_WHEN_MAX_IGNORED = 5;
+  private static final long REDELIVERY_TIMEOUT = 1000;
+  private static final int MAX_REDELIVERY_VALUE = 2;
 
   private static int numberOfDeliveries;
 
-  @Parameter
-  public int maxRedeliveryAttempts;
+  @Parameter()
+  public int initialRedeliveryDelay;
 
-  @Parameters(name = "maxRedelivery: {0}")
+  @Parameter(1)
+  public int redeliveryDelay;
+
+  @Parameters(name = "initialRedeliveryDelay: {0} - redeliveryDelay: {1}")
   public static Collection<Object[]> data() {
-    return asList(new Object[][] {{0}, {3}, {REDELIVERY_IGNORE}});
+    return asList(new Object[][] {
+        {0, 1500},
+        {1500, 0},
+        {500, 1500}
+    });
   }
 
   @Rule
   public SystemProperty destination = new SystemProperty("destination", newDestination("destination"));
 
   @Rule
-  public SystemProperty maxRedelivery = new SystemPropertyLambda(MAX_REDELIVERY, this::getMaxRedeliveryAttempts);
+  public SystemProperty maxRedelivery = new SystemProperty(MAX_REDELIVERY, String.valueOf(MAX_REDELIVERY_VALUE));
+
+  @Rule
+  public SystemProperty initialRedeliveryDelayProp =
+      new SystemPropertyLambda("initial.redelivery.delay", () -> String.valueOf(initialRedeliveryDelay));
+
+  @Rule
+  public SystemProperty redeliveryDelayProp =
+      new SystemPropertyLambda("redelivery.delay", () -> String.valueOf(redeliveryDelay));
 
   @Override
   protected String[] getConfigFiles() {
-    return new String[] {"config/activemq/activemq-default.xml", "exception/jms-redelivery-flow.xml"};
+    return new String[] {"config/activemq/activemq-redelivery-delay.xml", "exception/jms-redelivery-delay-flow.xml"};
   }
 
   @Before
@@ -68,22 +83,12 @@ public class JmsRedeliveryTestCase extends JmsAbstractTestCase {
   }
 
   @Test
-  @Description("verifies that message redelivery attempts correspond to the configured value")
-  public void testMaxRedelivery() throws Exception {
+  @Description("Verifies that message redelivery does not take place before the redelivery delay time, but it does after")
+  public void testNoRedeliveryBeforeDelay() throws Exception {
     publish(TEST_MESSAGE);
-    validate(this::hasReachedNumberOfExpectedRedelivers, REDELIVERY_TIMEOUT, POLL_DELAY_MILLIS);
-  }
-
-  private boolean hasReachedNumberOfExpectedRedelivers() {
-    if (maxRedeliveryAttempts == REDELIVERY_IGNORE) {
-      return numberOfDeliveries > EXPECTED_REDELIVERS_WHEN_MAX_IGNORED;
-    } else {
-      return numberOfDeliveries == maxRedeliveryAttempts + 1;
-    }
-  }
-
-  private String getMaxRedeliveryAttempts() {
-    return String.valueOf(maxRedeliveryAttempts);
+    int totalDelay = initialRedeliveryDelay + redeliveryDelay;
+    await().atLeast(totalDelay, MILLISECONDS).atMost(totalDelay + REDELIVERY_TIMEOUT, MILLISECONDS)
+        .until(() -> numberOfDeliveries > MAX_REDELIVERY_VALUE);
   }
 
   public static class TestProcessor implements Processor {

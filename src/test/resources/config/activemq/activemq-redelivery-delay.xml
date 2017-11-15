@@ -5,13 +5,10 @@
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
       http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
 
-
     <jms:config name="config">
         <jms:active-mq-connection>
-            <jms:caching-strategy>
-                <jms:no-caching/>
-            </jms:caching-strategy>
-            <jms:factory-configuration maxRedelivery="${max.redelivery}"/>
+            <jms:factory-configuration maxRedelivery="${max.redelivery}" redeliveryDelay="${redelivery.delay}"
+                                       initialRedeliveryDelay="${initial.redelivery.delay}"/>
         </jms:active-mq-connection>
     </jms:config>
 

@@ -9,11 +9,14 @@
         <jms:publish config-ref="config" destination="#[vars.destination]"/>
     </flow>
 
-    <flow name="nestedTx" initialState="stopped">
-        <jms:listener config-ref="config" destination="${listenerDestination}" transactionalAction="ALWAYS_BEGIN"
-                      numberOfConsumers="1"/>
-        <try transactionalAction="ALWAYS_BEGIN">
-            <jms:publish config-ref="config" destination="${publishDestination}" transactionalAction="ALWAYS_JOIN"/>
-        </try>
+    <flow name="bridge">
+        <jms:listener config-ref="config" destination="${destination}" numberOfConsumers="1"/>
+        <logger level="DEBUG"/>
+        <jms:publish config-ref="config" destination="${finalDest}"/>
     </flow>
+
+    <flow name="consumer">
+        <jms:consume config-ref="config" destination="#[vars.destination]"/>
+    </flow>
+
 </mule>

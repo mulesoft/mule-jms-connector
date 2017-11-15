@@ -24,6 +24,11 @@ public class AllureConstants {
 
       String TRANSACTION = "Transaction";
 
+      String DURABLE_SUBSCRIBER = "Durable Subscriber";
+
+      String MESSAGE_TYPES = "Durable Subscriber";
+
+      String MESSAGE_FILTERING = "Message Filtering";
     }
 
   }
