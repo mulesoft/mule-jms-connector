@@ -24,6 +24,7 @@ import javax.jms.ConnectionFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.slf4j.Logger;
@@ -106,6 +107,8 @@ public class ActiveMQConnectionFactoryProvider {
       setMaximumRedeliveries(redeliveryPolicy);
       setInitialRedeliveryDelay(redeliveryPolicy);
       setRedeliveryDelay(redeliveryPolicy);
+      setTrustedPackages(connectionFactory);
+      setTrustAllPackages(connectionFactory);
 
     } catch (Exception e) {
       LOGGER.error("Failed to set custom ConnectionFactoryProperties for ActiveMQ RedeliveryPolicy: " + e.getMessage(), e);
@@ -134,6 +137,30 @@ public class ActiveMQConnectionFactoryProvider {
       throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
     Method setRedeliveryDelayMethod = redeliveryPolicy.getClass().getMethod("setRedeliveryDelay", Long.TYPE);
     setRedeliveryDelayMethod.invoke(redeliveryPolicy, factoryConfiguration.getRedeliveryDelay());
+  }
+
+  private void setTrustedPackages(ConnectionFactory connectionFactory) throws InvocationTargetException, IllegalAccessException {
+    try {
+      List<String> trustedPackages = factoryConfiguration.getTrustedPackages();
+      if (trustedPackages != null && !trustedPackages.isEmpty()) {
+        Method setTrustedPackages = connectionFactory.getClass().getMethod("setTrustedPackages", List.class);
+        setTrustedPackages.invoke(connectionFactory, trustedPackages);
+      }
+    } catch (NoSuchMethodException e) {
+      LOGGER.warn("Trusted Packages were tried to be configured, but the current ActiveMQ Client version doesn't support it");
+    }
+  }
+
+  private void setTrustAllPackages(ConnectionFactory connectionFactory) throws InvocationTargetException, IllegalAccessException {
+    try {
+      boolean trustAllPackages = factoryConfiguration.isTrustAllPackages();
+      if (trustAllPackages) {
+        Method setTrustedPackages = connectionFactory.getClass().getMethod("setTrustAllPackages", boolean.class);
+        setTrustedPackages.invoke(connectionFactory, trustAllPackages);
+      }
+    } catch (NoSuchMethodException e) {
+      LOGGER.warn("Trusted Packages were tried to be configured, but the current ActiveMQ Client version doesn't support it");
+    }
   }
 
   private String getFactoryClass() {
