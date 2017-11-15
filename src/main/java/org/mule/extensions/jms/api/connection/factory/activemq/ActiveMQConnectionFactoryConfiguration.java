@@ -15,10 +15,12 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
+import javax.jms.ConnectionFactory;
+
+import java.util.List;
+
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.RedeliveryPolicy;
-
-import javax.jms.ConnectionFactory;
 
 /**
  * Contains the parameters required to configure an {@link ActiveMQConnectionFactory}
@@ -75,6 +77,31 @@ public class ActiveMQConnectionFactoryConfiguration {
   @Summary("Configures the ActiveMQ 'maxRedelivery' in the consumer's RedeliveryPolicy")
   private int maxRedelivery;
 
+  /**
+   * Whitelist of packages of classes that are allowed sent and received.
+   * This property starting versions 5.12.2 and 5.13.0, ActiveMQ enforces users to explicitly whitelist packages that
+   * can be exchanged using ObjectMessages.
+   */
+  @Parameter
+  @Optional
+  @Summary("Whitelist of packages of classes that are allowed sent and received.")
+  @Expression(NOT_SUPPORTED)
+  private List<String> trustedPackages;
+
+  /**
+   * Indicates if any class from any package can be sent and received. Enabling this is unsafe as malicious payload can
+   * exploit the host system.
+   * This property starting versions 5.12.2 and 5.13.0, ActiveMQ enforces users to explicitly whitelist packages that
+   * can be exchanged using ObjectMessages.
+   */
+
+  @Parameter
+  @Optional(defaultValue = "false")
+  @Summary("Indicates whether any class from any package can be sent and received or not as a ObjectMessage." +
+      "\nEnabling this is unsafe as malicious payload can exploit the host system.")
+  @Expression(NOT_SUPPORTED)
+  private boolean trustAllPackages;
+
   public int getMaxRedelivery() {
     return maxRedelivery;
   }
@@ -93,5 +120,13 @@ public class ActiveMQConnectionFactoryConfiguration {
 
   public long getRedeliveryDelay() {
     return redeliveryDelay;
+  }
+
+  public List<String> getTrustedPackages() {
+    return trustedPackages;
+  }
+
+  public boolean isTrustAllPackages() {
+    return trustAllPackages;
   }
 }
