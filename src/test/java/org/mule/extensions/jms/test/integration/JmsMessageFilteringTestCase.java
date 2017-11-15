@@ -7,11 +7,11 @@
 
 package org.mule.extensions.jms.test.integration;
 
-import io.qameta.allure.Feature;
-import io.qameta.allure.Story;
-
 import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
 import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JmsStory.MESSAGE_FILTERING;
+
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
 
 @Feature(JMS_EXTENSION)
 @Story(MESSAGE_FILTERING)

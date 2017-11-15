@@ -6,13 +6,19 @@
  */
 package org.mule.extensions.jms.test.integration;
 
-import io.qameta.allure.Description;
-import io.qameta.allure.Step;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
+import static com.google.common.collect.ImmutableMap.of;
+import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.Assert.assertThat;
+import static org.mule.extensions.jms.api.destination.DestinationType.QUEUE;
+import static org.mule.extensions.jms.api.destination.DestinationType.TOPIC;
+import static org.mule.extensions.jms.api.exception.JmsError.TIMEOUT;
+import static org.mule.functional.junit4.matchers.MessageMatchers.hasAttributes;
+import static org.mule.functional.junit4.matchers.MessageMatchers.hasPayload;
+import static org.mule.runtime.api.metadata.MediaType.ANY;
+
 import org.mule.extensions.jms.api.destination.DestinationType;
 import org.mule.extensions.jms.api.exception.JmsConsumeException;
 import org.mule.extensions.jms.api.message.JmsAttributes;
@@ -28,18 +34,13 @@ import org.mule.test.runner.RunnerDelegateTo;
 import java.util.Collection;
 import java.util.Map;
 
-import static com.google.common.collect.ImmutableMap.of;
-import static java.util.Arrays.asList;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.Assert.assertThat;
-import static org.mule.extensions.jms.api.destination.DestinationType.QUEUE;
-import static org.mule.extensions.jms.api.destination.DestinationType.TOPIC;
-import static org.mule.extensions.jms.api.exception.JmsError.TIMEOUT;
-import static org.mule.functional.junit4.matchers.MessageMatchers.hasAttributes;
-import static org.mule.functional.junit4.matchers.MessageMatchers.hasPayload;
-import static org.mule.runtime.api.metadata.MediaType.ANY;
+import io.qameta.allure.Description;
+import io.qameta.allure.Step;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameter;
+import org.junit.runners.Parameterized.Parameters;
 
 @RunnerDelegateTo(Parameterized.class)
 public abstract class JmsAbstractMessageFilteringTestCase extends JmsAbstractTestCase {
