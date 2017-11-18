@@ -14,6 +14,7 @@ import static org.mule.extensions.jms.internal.connection.provider.activemq.Acti
 import static org.mule.extensions.jms.internal.connection.provider.activemq.ActiveMQConnectionProvider.KAHA_DB_STORE_CLASS;
 import static org.mule.runtime.api.meta.ExternalLibraryType.DEPENDENCY;
 import static org.slf4j.LoggerFactory.getLogger;
+
 import org.mule.extensions.jms.api.exception.JmsMissingLibraryException;
 import org.mule.extensions.jms.internal.connection.JmsConnection;
 import org.mule.extensions.jms.internal.connection.JmsTransactionalConnection;
@@ -28,13 +29,13 @@ import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
+
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.slf4j.Logger;
