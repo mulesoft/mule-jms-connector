@@ -23,6 +23,7 @@ import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.ExternalLib;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
+import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 
 import javax.jms.ConnectionFactory;
 
@@ -35,6 +36,7 @@ import org.slf4j.LoggerFactory;
  *
  * @since 1.0
  */
+@DisplayName("Generic Connection")
 @Alias("generic")
 @ExternalLib(name = "JMS Client", description = "Client which lets communicate with a JMS broker", type = DEPENDENCY)
 public class GenericConnectionProvider extends BaseConnectionProvider {

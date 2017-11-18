@@ -26,6 +26,7 @@ import org.mule.runtime.core.api.util.proxy.TargetInvocationHandler;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.ExternalLib;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
+import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 
 import javax.jms.Connection;
@@ -44,6 +45,7 @@ import org.slf4j.Logger;
  *
  * @since 1.0
  */
+@DisplayName("ActiveMQ Connection")
 @Alias("active-mq")
 @ExternalLib(name = "ActiveMQ Client", description = "The ActiveMQ JMS Client implementation.", type = DEPENDENCY,
     requiredClassName = CONNECTION_FACTORY_CLASS, coordinates = "org.apache.activemq:activemq-client:" + ACTIVEMQ_VERSION)
