@@ -7,6 +7,7 @@
 package org.mule.extensions.jms.internal.config;
 
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
+import static org.mule.runtime.extension.api.runtime.parameter.OutboundCorrelationStrategy.AUTO;
 import org.mule.extensions.jms.api.config.JmsConsumerConfig;
 import org.mule.extensions.jms.api.config.JmsProducerConfig;
 import org.mule.extensions.jms.internal.JmsConnector;
@@ -23,6 +24,7 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
+import org.mule.runtime.extension.api.runtime.parameter.OutboundCorrelationStrategy;
 
 import javax.jms.Message;
 import javax.jms.Queue;
@@ -71,6 +73,14 @@ public class JmsConfig {
   @Placement(tab = "Producer")
   @ParameterGroup(name = "Producer Config", showInDsl = true)
   private JmsProducerConfig producerConfig;
+
+  /**
+   * Whether to specify a correlationId when publishing messages. This applies both for custom correlation ids specifies at the
+   * operation level and for default correlation Ids taken from the current event
+   */
+  @Parameter
+  @Optional(defaultValue = "AUTO")
+  private OutboundCorrelationStrategy sendCorrelationId = AUTO;
 
   public String getContentType() {
     return contentType;

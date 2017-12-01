@@ -32,8 +32,8 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
-
-import org.slf4j.Logger;
+import org.mule.runtime.extension.api.runtime.parameter.CorrelationInfo;
+import org.mule.runtime.extension.api.runtime.parameter.OutboundCorrelationStrategy;
 
 import java.nio.charset.Charset;
 import java.util.Map;
@@ -42,6 +42,8 @@ import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
+
+import org.slf4j.Logger;
 
 /**
  * Enables the creation of an outgoing {@link Message}.
@@ -148,18 +150,23 @@ public class JmsMessageBuilder {
 
   /**
    * Creates a {@link Message} based on the provided configurations
-   * @param jmsSupport the {@link JmsSupport} used to create the JMSReplyTo {@link Destination}
-   * @param session the current {@link Session}
-   * @param config the current {@link JmsProducerConfig}
+   *
+   * @param jmsSupport                  the {@link JmsSupport} used to create the JMSReplyTo {@link Destination}
+   * @param outboundCorrelationStrategy the correlationId handling strategy
+   * @param correlationInfo             the correlation information for the current message
+   * @param session                     the current {@link Session}
+   * @param config                      the current {@link JmsProducerConfig}
    * @return the {@link Message} created by the user
    * @throws JMSException if an error occurs
    */
-  public Message build(JmsSupport jmsSupport, Session session, JmsConfig config)
+  public Message build(JmsSupport jmsSupport, OutboundCorrelationStrategy outboundCorrelationStrategy,
+                       CorrelationInfo correlationInfo,
+                       Session session, JmsConfig config)
       throws JMSException {
 
     Message message = toMessage(body, session);
 
-    setJmsCorrelationIdHeader(message);
+    setJmsCorrelationIdHeader(message, outboundCorrelationStrategy, correlationInfo);
     setJmsTypeHeader(message);
     setJmsReplyToHeader(jmsSupport, session, message, replyTo);
 
@@ -247,14 +254,16 @@ public class JmsMessageBuilder {
     }
   }
 
-  private void setJmsCorrelationIdHeader(Message message) {
-    try {
-      if (!isBlank(correlationId)) {
-        message.setJMSCorrelationID(correlationId);
+  private void setJmsCorrelationIdHeader(Message message,
+                                         OutboundCorrelationStrategy outboundCorrelationStrategy,
+                                         CorrelationInfo correlationInfo) {
+    outboundCorrelationStrategy.getOutboundCorrelationId(correlationInfo, correlationId).ifPresent(id -> {
+      try {
+        message.setJMSCorrelationID(id);
+      } catch (JMSException e) {
+        LOGGER.error("An error occurred while setting the JMSCorrelationID property: %s", e);
       }
-    } catch (JMSException e) {
-      LOGGER.error("An error occurred while setting the JMSCorrelationID property: %s", e);
-    }
+    });
   }
 
   public Object getBody() {

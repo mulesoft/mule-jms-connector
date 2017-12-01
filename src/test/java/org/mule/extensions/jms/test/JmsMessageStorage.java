@@ -24,16 +24,19 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class JmsMessageStorage implements Processor {
 
-  private static Queue<Message> messages = new ConcurrentLinkedQueue<>();
+  private static Queue<CoreEvent> EVENTS = new ConcurrentLinkedQueue<>();
+  private static Queue<Message> MESSAGES = new ConcurrentLinkedQueue<>();
 
   @Override
   public CoreEvent process(CoreEvent event) throws MuleException {
-    messages.add(event.getMessage());
+    EVENTS.add(event);
+    MESSAGES.add(event.getMessage());
     return event;
   }
 
   public static void cleanUpQueue() {
-    messages = new ConcurrentLinkedQueue<>();
+    MESSAGES = new ConcurrentLinkedQueue<>();
+    EVENTS = new ConcurrentLinkedQueue<>();
   }
 
   public static Result<TypedValue<Object>, JmsAttributes> pollMessage() {
@@ -45,11 +48,19 @@ public class JmsMessageStorage implements Processor {
   }
 
   public static Message pollMuleMessage() {
-    new PollingProber(TIMEOUT_MILLIS, POLL_DELAY_MILLIS).check(new JUnitLambdaProbe(() -> !messages.isEmpty()));
-    return messages.poll();
+    return poll(MESSAGES);
+  }
+
+  public static CoreEvent pollEvent() {
+    return poll(EVENTS);
+  }
+
+  private static <T> T poll(Queue<T> queue) {
+    new PollingProber(TIMEOUT_MILLIS, POLL_DELAY_MILLIS).check(new JUnitLambdaProbe(() -> !queue.isEmpty()));
+    return queue.poll();
   }
 
   public static int receivedMessages() {
-    return messages.size();
+    return MESSAGES.size();
   }
 }

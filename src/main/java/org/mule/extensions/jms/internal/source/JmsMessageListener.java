@@ -48,6 +48,7 @@ import org.slf4j.Logger;
 public final class JmsMessageListener implements MessageListener {
 
   private static final Logger LOGGER = getLogger(JmsMessageListener.class);
+
   private final JmsSession session;
   private final SourceCallback<Object, JmsAttributes> sourceCallback;
   private final JmsListenerLock jmsLock;
@@ -121,8 +122,21 @@ public final class JmsMessageListener implements MessageListener {
     saveReplyToDestination(message, context);
     context.addVariable(JmsListener.JMS_LOCK_VAR, jmsLock);
     context.addVariable(JmsListener.JMS_SESSION_VAR, session);
+    context.setCorrelationId(getCorrelationId(message));
     dispatchMessage(message, context, resolveEncoding(message), resolveContentType(message));
     waitForMessageToBeProcessed(jmsLock);
+  }
+
+  private String getCorrelationId(Message message) {
+    try {
+      return message.getJMSCorrelationID();
+    } catch (JMSException e) {
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug("Failed to obtain correlationId from message", e);
+      }
+
+      return null;
+    }
   }
 
   private String resolveContentType(Message message) {

@@ -21,9 +21,9 @@ import static org.mule.extensions.jms.internal.config.InternalAckMode.DUPS_OK;
 import static org.mule.extensions.jms.internal.config.InternalAckMode.IMMEDIATE;
 import static org.mule.extensions.jms.internal.config.InternalAckMode.TRANSACTED;
 import static org.mule.runtime.core.api.util.ExceptionUtils.extractConnectionException;
+import static org.mule.runtime.extension.api.runtime.parameter.OutboundCorrelationStrategy.ALWAYS;
 import static org.mule.runtime.extension.api.tx.SourceTransactionalAction.ALWAYS_BEGIN;
 import static org.slf4j.LoggerFactory.getLogger;
-
 import org.mule.extensions.jms.api.config.AckMode;
 import org.mule.extensions.jms.api.config.JmsConsumerConfig;
 import org.mule.extensions.jms.api.destination.ConsumerType;
@@ -56,10 +56,14 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.source.EmitsResponse;
+import org.mule.runtime.extension.api.runtime.parameter.CorrelationInfo;
 import org.mule.runtime.extension.api.runtime.source.Source;
 import org.mule.runtime.extension.api.runtime.source.SourceCallback;
 import org.mule.runtime.extension.api.runtime.source.SourceCallbackContext;
 import org.mule.runtime.extension.api.tx.SourceTransactionalAction;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.jms.Destination;
@@ -67,9 +71,6 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Queue;
 import javax.jms.Topic;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.slf4j.Logger;
 
@@ -240,6 +241,7 @@ public class JmsListener extends Source<Object, JmsAttributes> {
 
   @OnSuccess
   public void onSuccess(@ParameterGroup(name = "Response", showInDsl = true) JmsResponseMessageBuilder messageBuilder,
+                        CorrelationInfo correlationInfo,
                         SourceCallbackContext callbackContext) {
     callbackContext.<JmsListenerLock>getVariable(JMS_LOCK_VAR)
         .ifPresent(JmsListenerLock::unlock);
@@ -247,7 +249,7 @@ public class JmsListener extends Source<Object, JmsAttributes> {
     callbackContext.<Destination>getVariable(REPLY_TO_DESTINATION_VAR)
         .ifPresent(replyTo -> callbackContext.<JmsSession>getVariable(JMS_SESSION_VAR)
             .ifPresent(session -> doReply(messageBuilder, callbackContext, replyTo,
-                                          session)));
+                                          correlationInfo, session)));
   }
 
   @OnError
@@ -263,7 +265,9 @@ public class JmsListener extends Source<Object, JmsAttributes> {
   }
 
   private void doReply(JmsResponseMessageBuilder messageBuilder,
-                       SourceCallbackContext callbackContext, Destination replyTo, JmsSession session) {
+                       SourceCallbackContext callbackContext, Destination replyTo,
+                       CorrelationInfo correlationInfo,
+                       JmsSession session) {
     final boolean replyToTopic = replyDestinationIsTopic(replyTo);
     String destinationName;
     try {
@@ -280,7 +284,7 @@ public class JmsListener extends Source<Object, JmsAttributes> {
         LOGGER.debug(format("Begin reply to destination [%s] of type [%s]", destinationName, replyToTopic ? TOPIC : QUEUE));
       }
 
-      Message message = messageBuilder.build(connection.getJmsSupport(), session.get(), config);
+      Message message = messageBuilder.build(connection.getJmsSupport(), ALWAYS, correlationInfo, session.get(), config);
 
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug("Message built, sending message to " + destinationName);
