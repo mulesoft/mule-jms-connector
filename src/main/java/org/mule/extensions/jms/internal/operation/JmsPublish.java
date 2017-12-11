@@ -13,7 +13,6 @@ import static org.mule.extensions.jms.internal.common.JmsCommons.getDestinationT
 import static org.mule.extensions.jms.internal.common.JmsCommons.releaseResources;
 import static org.mule.extensions.jms.internal.config.InternalAckMode.AUTO;
 import static org.slf4j.LoggerFactory.getLogger;
-
 import org.mule.extensions.jms.api.config.JmsProducerConfig;
 import org.mule.extensions.jms.api.destination.DestinationType;
 import org.mule.extensions.jms.api.exception.JmsExtensionException;
@@ -30,10 +29,13 @@ import org.mule.extensions.jms.internal.publish.JmsMessageProducer;
 import org.mule.extensions.jms.internal.publish.JmsPublishParameters;
 import org.mule.runtime.extension.api.annotation.error.Throws;
 import org.mule.runtime.extension.api.annotation.param.Config;
+import org.mule.runtime.extension.api.annotation.param.ConfigOverride;
 import org.mule.runtime.extension.api.annotation.param.Connection;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
+import org.mule.runtime.extension.api.runtime.parameter.CorrelationInfo;
+import org.mule.runtime.extension.api.runtime.parameter.OutboundCorrelationStrategy;
 import org.mule.runtime.extension.api.tx.OperationTransactionalAction;
 
 import javax.inject.Inject;
@@ -66,6 +68,8 @@ public final class JmsPublish {
    * @param overrides           Parameter Group with overriding parameters from the configuration
    * @param transactionalAction Transactional Action for the operation. Indicates if the publish must be executed
    *                            or not in a transaction.
+   * @param sendCorrelationId   options on whether to include an outbound correlation id or not
+   * @param correlationInfo     the current message's correlation info
    * @throws JmsExtensionException if an error occurs trying to publish a message
    */
   @Throws(JmsPublisherErrorTypeProvider.class)
@@ -75,7 +79,9 @@ public final class JmsPublish {
                       @Summary("A builder for the message that will be published") @ParameterGroup(name = "Message",
                           showInDsl = true) JmsMessageBuilder messageBuilder,
                       @ParameterGroup(name = "Publish Configuration") JmsPublishParameters overrides,
-                      OperationTransactionalAction transactionalAction)
+                      OperationTransactionalAction transactionalAction,
+                      @ConfigOverride OutboundCorrelationStrategy sendCorrelationId,
+                      CorrelationInfo correlationInfo)
 
       throws JmsExtensionException {
 
@@ -87,7 +93,11 @@ public final class JmsPublish {
 
       JmsSession session = createJmsSession(connection, AUTO, destinationType.isTopic(), jmsSessionManager, transactionalAction);
 
-      Message message = messageBuilder.build(connection.getJmsSupport(), session.get(), config);
+      Message message = messageBuilder.build(connection.getJmsSupport(),
+                                             sendCorrelationId,
+                                             correlationInfo,
+                                             session.get(),
+                                             config);
 
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug(format("Message built, sending message to the %s: [%s] using session [%s]",

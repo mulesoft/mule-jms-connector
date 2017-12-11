@@ -41,12 +41,14 @@ import org.mule.extensions.jms.internal.support.JmsSupport;
 import org.mule.runtime.extension.api.annotation.error.Throws;
 import org.mule.runtime.extension.api.annotation.metadata.OutputResolver;
 import org.mule.runtime.extension.api.annotation.param.Config;
+import org.mule.runtime.extension.api.annotation.param.ConfigOverride;
 import org.mule.runtime.extension.api.annotation.param.Connection;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 import org.mule.runtime.extension.api.runtime.operation.Result;
-import org.slf4j.Logger;
+import org.mule.runtime.extension.api.runtime.parameter.CorrelationInfo;
+import org.mule.runtime.extension.api.runtime.parameter.OutboundCorrelationStrategy;
 
 import javax.inject.Inject;
 import javax.jms.Destination;
@@ -55,6 +57,8 @@ import javax.jms.JMSSecurityException;
 import javax.jms.Message;
 import javax.jms.Queue;
 import javax.jms.Topic;
+
+import org.slf4j.Logger;
 
 /**
  * Operation that allows the user to send a message to a JMS {@link Destination} and waits for a response
@@ -74,12 +78,14 @@ public class JmsPublishConsume {
    * Operation that allows the user to send a message to a JMS {@link Destination} and waits for a response
    * either to the provided {@code ReplyTo} destination or to a temporary {@link Destination} created dynamically
    *
-   * @param config          the current {@link JmsProducerConfig}
-   * @param connection      the current {@link JmsConnection}
-   * @param destination     the name of the {@link Destination} where the {@link Message} should be sent
-   * @param messageBuilder  the {@link JmsMessageBuilder} used to create the {@link Message} to be sent
-   * @param publishParameters       Parameter group that lets override the publish configuration
-   * @param consumeParameters       Parameter group that lets override the consume configuration
+   * @param config            the current {@link JmsProducerConfig}
+   * @param connection        the current {@link JmsConnection}
+   * @param destination       the name of the {@link Destination} where the {@link Message} should be sent
+   * @param messageBuilder    the {@link JmsMessageBuilder} used to create the {@link Message} to be sent
+   * @param publishParameters Parameter group that lets override the publish configuration
+   * @param consumeParameters Parameter group that lets override the consume configuration
+   * @param sendCorrelationId options on whether to include an outbound correlation id or not
+   * @param correlationInfo   the current message's correlation info
    * @return a {@link Result} with the reply {@link Message} content as {@link Result#getOutput} and its properties
    * and headers as {@link Result#getAttributes}
    * @throws JmsExtensionException if an error occurs
@@ -99,7 +105,9 @@ public class JmsPublishConsume {
                                                           showInDsl = true) JmsPublishParameters publishParameters,
                                                       @Placement(order = 3) @ParameterGroup(
                                                           name = "Consume Configuration",
-                                                          showInDsl = true) JmsConsumeParameters consumeParameters)
+                                                          showInDsl = true) JmsConsumeParameters consumeParameters,
+                                                      @ConfigOverride OutboundCorrelationStrategy sendCorrelationId,
+                                                      CorrelationInfo correlationInfo)
       throws JmsExtensionException {
 
     JmsSession session;
@@ -117,7 +125,7 @@ public class JmsPublishConsume {
       JmsSupport jmsSupport = connection.getJmsSupport();
       session = connection.createSession(resolvedAckMode, false);
 
-      message = messageBuilder.build(jmsSupport, session.get(), config);
+      message = messageBuilder.build(jmsSupport, sendCorrelationId, correlationInfo, session.get(), config);
       replyConsumerType = setReplyDestination(messageBuilder, session, jmsSupport, message);
 
       if (LOGGER.isDebugEnabled()) {
