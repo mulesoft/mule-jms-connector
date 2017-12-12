@@ -152,7 +152,11 @@ public abstract class JmsAbstractTestCase extends MuleArtifactFunctionalTestCase
     assertThat(headers, notNullValue());
     assertThat(headers.getJMSMessageID(), hasMessageId ? not(isEmptyOrNullString()) : nullValue());
     assertThat(headers.getJMSTimestamp(), hasTimestamp ? not(nullValue()) : nullValue());
-    assertThat(headers.getJMSCorrelationID(), equalTo(correlationId));
+    if (correlationId != null) {
+      assertThat(headers.getJMSCorrelationID(), equalTo(correlationId));
+    } else {
+      assertThat(headers.getJMSCorrelationID(), is(notNullValue()));
+    }
     assertThat(headers.getJMSDeliveryMode(), equalTo(deliveryMode));
     assertThat(headers.getJMSPriority(), equalTo(priority));
     assertThat(headers.getJMSRedelivered(), equalTo(redelivered));
