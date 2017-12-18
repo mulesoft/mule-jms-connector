@@ -24,7 +24,7 @@
         <javaxJmsApiVersion>2.0.1</javaxJmsApiVersion>
         <commonsIoVersion>2.4</commonsIoVersion>
         <commonsLangVersion>3.6</commonsLangVersion>
-        <guavaVersion>18.0</guavaVersion>
+        <guavaVersion>23.5-jre</guavaVersion>
         <springVersion>5.0.0.RELEASE</springVersion>
         <hawtbufVersion>1.1</hawtbufVersion>
         <muleSpringModuleVersion>1.1.0-SNAPSHOT</muleSpringModuleVersion>
