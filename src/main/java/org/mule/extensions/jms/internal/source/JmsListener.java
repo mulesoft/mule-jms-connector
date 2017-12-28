@@ -21,6 +21,7 @@ import static org.mule.extensions.jms.internal.config.InternalAckMode.DUPS_OK;
 import static org.mule.extensions.jms.internal.config.InternalAckMode.IMMEDIATE;
 import static org.mule.extensions.jms.internal.config.InternalAckMode.TRANSACTED;
 import static org.mule.runtime.core.api.util.ExceptionUtils.extractConnectionException;
+import static org.mule.runtime.extension.api.runtime.source.BackPressureMode.WAIT;
 import static org.mule.runtime.extension.api.tx.SourceTransactionalAction.ALWAYS_BEGIN;
 import static org.slf4j.LoggerFactory.getLogger;
 import org.mule.extensions.jms.api.config.AckMode;
@@ -54,6 +55,7 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
+import org.mule.runtime.extension.api.annotation.source.BackPressure;
 import org.mule.runtime.extension.api.annotation.source.EmitsResponse;
 import org.mule.runtime.extension.api.runtime.parameter.CorrelationInfo;
 import org.mule.runtime.extension.api.runtime.parameter.OutboundCorrelationStrategy;
@@ -83,6 +85,7 @@ import org.slf4j.Logger;
 @Alias("listener")
 @EmitsResponse
 @MetadataScope(outputResolver = JmsOutputResolver.class)
+@BackPressure(defaultMode = WAIT, supportedModes = WAIT)
 public class JmsListener extends Source<Object, JmsAttributes> {
 
   private static final Logger LOGGER = getLogger(JmsListener.class);
