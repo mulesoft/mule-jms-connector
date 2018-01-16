@@ -6,10 +6,11 @@
  */
 package org.mule.extensions.jms.internal.metadata;
 
+import static org.mule.metadata.api.model.MetadataFormat.JAVA;
+
+import org.mule.metadata.api.builder.BaseTypeBuilder;
 import org.mule.metadata.api.model.MetadataType;
-import org.mule.runtime.api.connection.ConnectionException;
-import org.mule.runtime.api.metadata.MetadataContext;
-import org.mule.runtime.api.metadata.MetadataResolvingException;
+import org.mule.runtime.api.metadata.resolving.OutputStaticTypeResolver;
 import org.mule.runtime.api.metadata.resolving.OutputTypeResolver;
 
 /**
@@ -17,7 +18,7 @@ import org.mule.runtime.api.metadata.resolving.OutputTypeResolver;
  *
  * @since 1.0
  */
-public class JmsOutputResolver implements OutputTypeResolver {
+public class JmsOutputResolver extends OutputStaticTypeResolver {
 
   @Override
   public String getCategoryName() {
@@ -25,8 +26,7 @@ public class JmsOutputResolver implements OutputTypeResolver {
   }
 
   @Override
-  public MetadataType getOutputType(MetadataContext context, Object key)
-      throws MetadataResolvingException, ConnectionException {
-    return context.getTypeBuilder().anyType().build();
+  public MetadataType getStaticMetadata() {
+    return new BaseTypeBuilder(JAVA).anyType().build();
   }
 }
