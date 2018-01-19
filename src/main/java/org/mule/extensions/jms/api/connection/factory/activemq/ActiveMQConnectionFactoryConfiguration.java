@@ -7,7 +7,6 @@
 package org.mule.extensions.jms.api.connection.factory.activemq;
 
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
-
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Optional;
@@ -15,9 +14,9 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
-import javax.jms.ConnectionFactory;
-
 import java.util.List;
+
+import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.RedeliveryPolicy;
@@ -94,7 +93,6 @@ public class ActiveMQConnectionFactoryConfiguration {
    * This property starting versions 5.12.2 and 5.13.0, ActiveMQ enforces users to explicitly whitelist packages that
    * can be exchanged using ObjectMessages.
    */
-
   @Parameter
   @Optional(defaultValue = "false")
   @Summary("Indicates whether any class from any package can be sent and received or not as a ObjectMessage." +
