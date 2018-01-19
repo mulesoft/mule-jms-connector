@@ -17,5 +17,18 @@ package org.mule.extensions.jms.api.connection;
  * @since 1.0
  */
 public enum LookupJndiDestination {
-  NEVER, ALWAYS, TRY_ALWAYS
+  /**
+   * Will never lookup for jndi destinations
+   */
+  NEVER,
+
+  /**
+   * Will always lookup the destinations through JNDI. It will fail if the destination does not exists.
+   */
+  ALWAYS,
+
+  /**
+   * Will always try to lookup the destinations through JNDI but if it does not exists it will create a new one.
+   */
+  TRY_ALWAYS
 }
