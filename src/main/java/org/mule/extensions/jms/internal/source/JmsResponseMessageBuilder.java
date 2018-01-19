@@ -24,42 +24,66 @@ import javax.jms.Message;
  */
 public class JmsResponseMessageBuilder extends JmsMessageBuilder implements PublisherParameters {
 
+  /**
+   * Whether or not the delivery should be done with a persistent configuration
+   */
   @Parameter
   @ConfigOverride
   @Summary("Whether or not the delivery should be done with a persistent configuration")
   private boolean persistentDelivery;
 
+  /**
+   * The default JMSPriority value to be used when sending the message
+   */
   @Parameter
   @ConfigOverride
   @Summary("The default JMSPriority value to be used when sending the message")
   private Integer priority;
 
+  /**
+   * Defines the default time the message will be in the broker before it expires and is discarded
+   */
   @Parameter
   @ConfigOverride
   @Summary("Defines the default time the message will be in the broker before it expires and is discarded")
   private Long timeToLive;
 
+  /**
+   * Time unit to be used in the timeToLive configurations
+   */
   @Parameter
   @ConfigOverride
   @Summary("Time unit to be used in the timeToLive configurations")
   private TimeUnit timeToLiveUnit;
 
+  /**
+   * If true; the Message will be flagged to avoid generating its MessageID
+   */
   @Parameter
   @ConfigOverride
   @Summary("If true; the Message will be flagged to avoid generating its MessageID")
   private boolean disableMessageId;
 
+  /**
+   * If true; the Message will be flagged to avoid generating its sent Timestamp
+   */
   @Parameter
   @ConfigOverride
   @Summary("If true; the Message will be flagged to avoid generating its sent Timestamp")
   private boolean disableMessageTimestamp;
 
   // JMS 2.0
+  /**
+   * Only used by JMS 2.0. Sets the delivery delay to be applied in order to postpone the Message delivery
+   */
   @Parameter
   @ConfigOverride
   @Summary("Only used by JMS 2.0. Sets the delivery delay to be applied in order to postpone the Message delivery")
   private Long deliveryDelay;
 
+  /**
+   * Time unit to be used in the deliveryDelay configurations
+   */
   @Parameter
   @ConfigOverride
   @Summary("Time unit to be used in the deliveryDelay configurations")
