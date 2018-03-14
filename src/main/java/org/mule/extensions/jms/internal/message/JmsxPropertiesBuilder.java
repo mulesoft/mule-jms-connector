@@ -8,7 +8,7 @@ package org.mule.extensions.jms.internal.message;
 
 import static java.lang.String.format;
 import static java.lang.String.join;
-import static java.lang.String.valueOf;
+import static java.util.Optional.ofNullable;
 import static org.mule.extensions.jms.internal.message.JMSXDefinedPropertiesNames.JMSXAppID;
 import static org.mule.extensions.jms.internal.message.JMSXDefinedPropertiesNames.JMSXConsumerTXID;
 import static org.mule.extensions.jms.internal.message.JMSXDefinedPropertiesNames.JMSXDeliveryCount;
@@ -36,7 +36,7 @@ import javax.jms.Message;
  *
  * @since 1.0
  */
-final class JmsxPropertiesBuilder {
+public final class JmsxPropertiesBuilder {
 
   private final Map<String, Object> properties = new HashMap<>();
 
@@ -55,13 +55,13 @@ final class JmsxPropertiesBuilder {
   }
 
   public JmsxProperties build() {
-    return new JmsxProperties(valueOf(properties.getOrDefault(JMSXUserID, "")),
-                              valueOf(properties.getOrDefault(JMSXAppID, "")),
+    return new JmsxProperties(ofNullable(properties.get(JMSXUserID)).map(String::valueOf).orElse(null),
+                              ofNullable(properties.get(JMSXAppID)).map(String::valueOf).orElse(null),
                               Integer.valueOf(properties.getOrDefault(JMSXDeliveryCount, "1").toString()),
-                              valueOf(properties.getOrDefault(JMSXGroupID, "")),
+                              ofNullable(properties.get(JMSXGroupID)).map(String::valueOf).orElse(null),
                               Integer.valueOf(properties.getOrDefault(JMSXGroupSeq, "1").toString()),
-                              valueOf(properties.getOrDefault(JMSXProducerTXID, "")),
-                              valueOf(properties.getOrDefault(JMSXConsumerTXID, "")),
-                              Long.valueOf(properties.getOrDefault(JMSXRcvTimestamp, "0").toString()));
+                              ofNullable(properties.get(JMSXProducerTXID)).map(String::valueOf).orElse(null),
+                              ofNullable(properties.get(JMSXConsumerTXID)).map(String::valueOf).orElse(null),
+                              ofNullable(properties.get(JMSXRcvTimestamp)).map(n -> Long.valueOf(n.toString())).orElse(null));
   }
 }
