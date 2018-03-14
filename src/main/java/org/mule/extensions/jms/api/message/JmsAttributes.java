@@ -6,7 +6,9 @@
  */
 package org.mule.extensions.jms.api.message;
 
-import org.mule.extensions.jms.api.config.AckMode;
+import static org.mule.runtime.api.util.Preconditions.checkArgument;
+import org.mule.runtime.extension.api.annotation.param.Optional;
+import org.mule.runtime.extension.api.annotation.param.Parameter;
 
 import java.io.Serializable;
 
@@ -19,21 +21,92 @@ import javax.jms.Message;
  *
  * @since 1.0
  */
-public interface JmsAttributes extends Serializable {
+public class JmsAttributes implements Serializable {
+
+  private static final long serialVersionUID = -8148917084189760450L;
 
   /**
-   * @return the {@link Message} properties
+   * Container element for all the properties present in a JMS Message
    */
-  JmsMessageProperties getProperties();
+  @Parameter
+  private final JmsMessageProperties properties;
 
   /**
-   * @return the {@link Message} headers
+   * All the possible headers of a JMS Message
    */
-  JmsHeaders getHeaders();
+  @Parameter
+  private final JmsHeaders headers;
 
   /**
-   * @return the session Id required to ACK a {@link Message} that was consumed using {@link AckMode#MANUAL}
+   * The session ACK ID required to ACK a the current Message if one is available, or null otherwise.
    */
-  String getAckId();
+  @Parameter
+  @Optional
+  private final String ackId;
+
+  public JmsAttributes(JmsMessageProperties properties, JmsHeaders headers, String ackId) {
+    this.properties = properties;
+    this.headers = headers;
+    this.ackId = ackId;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public JmsMessageProperties getProperties() {
+    return properties;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public JmsHeaders getHeaders() {
+    return headers;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public String getAckId() {
+    return ackId;
+  }
+
+  /**
+   * Builder implementation for creating a {@link JmsAttributes} instance
+   * @since 1.0
+   */
+  public static class Builder {
+
+    private JmsMessageProperties properties;
+    private JmsHeaders headers;
+    private String ackId;
+
+    private Builder() {}
+
+    public static JmsAttributes.Builder newInstance() {
+      return new JmsAttributes.Builder();
+    }
+
+    public JmsAttributes.Builder withProperties(JmsMessageProperties properties) {
+      this.properties = properties;
+      return this;
+    }
+
+    public JmsAttributes.Builder withHeaders(JmsHeaders headers) {
+      this.headers = headers;
+      return this;
+    }
+
+    public JmsAttributes.Builder withAckId(String ackId) {
+      this.ackId = ackId;
+      return this;
+    }
+
+    public JmsAttributes build() {
+      checkArgument(properties != null, "No JmsMessageProperties were provided, but they are required for the JmsAttributes");
+      checkArgument(headers != null, "No JmsHeaders were provided, but they are required for the JmsAttributes");
+      return new JmsAttributes(properties, headers, ackId);
+    }
+  }
 
 }
