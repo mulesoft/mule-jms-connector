@@ -36,7 +36,7 @@ import javax.jms.Message;
  *
  * @since 1.0
  */
-public final class JmsxProperties {
+public class JmsxProperties {
 
   /**
    * The identity of the user sending the message
