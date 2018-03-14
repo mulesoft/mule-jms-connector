@@ -9,6 +9,8 @@
         <jms:publish config-ref="config" destination="#[vars.destination]" destinationType="TOPIC">
             <jms:message>
                 <jms:reply-to destination="#[vars.replyToDestination]" destinationType="#[vars.replyToDestinationType]"/>
+                <jms:properties>#[{custom: 'prop'}]</jms:properties>
+                <jms:jmsx-properties jmsxUserID="TestUser01" jmsxAppID="ListenReply"/>
             </jms:message>
         </jms:publish>
     </flow>
