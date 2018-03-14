@@ -12,11 +12,14 @@ import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.mule.runtime.api.metadata.MediaTypeUtils.isStringRepresentable;
 import static org.mule.runtime.api.util.Preconditions.checkArgument;
+
 import org.mule.extensions.jms.api.connection.JmsSpecification;
 import org.mule.extensions.jms.api.exception.JmsIllegalBodyException;
 import org.mule.runtime.api.metadata.TypedValue;
-import org.mule.runtime.core.api.util.IOUtils;
+import org.mule.runtime.api.streaming.bytes.CursorStream;
+import org.mule.runtime.api.streaming.bytes.CursorStreamProvider;
 import org.mule.runtime.core.api.message.OutputHandler;
+import org.mule.runtime.core.api.util.IOUtils;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang3.ArrayUtils;
@@ -69,6 +72,18 @@ public class JmsMessageUtils {
     } else if (object instanceof Map<?, ?> && validateMapMessageType((Map<?, ?>) object)) {
       return mapToMessage((Map<?, ?>) object, session);
 
+    } else if (object instanceof CursorStreamProvider) {
+      try (CursorStream cursor = ((CursorStreamProvider) object).openCursor()) {
+        if (isStringRepresentable(typedValueObject.getDataType().getMediaType())) {
+          return stringToMessage(IOUtils.toString(cursor), session);
+        } else {
+          return byteArrayToMessage(IOUtils.toByteArray(cursor), session);
+        }
+      } catch (IOException e) {
+        throw new JmsIllegalBodyException("Message body was a 'CursorStreamProvider', but an exception was thrown when reading its cursor",
+                                          e);
+      }
+
     } else if (object instanceof InputStream) {
       if (isStringRepresentable(typedValueObject.getDataType().getMediaType())) {
         return stringToMessage(IOUtils.toString((InputStream) object), session);
@@ -88,7 +103,7 @@ public class JmsMessageUtils {
 
     } else {
       throw new JmsIllegalBodyException("Message body was not of a supported type. "
-          + "Valid types are Message, String, Map, InputStream, List, byte[], Serializable or OutputHandler, "
+          + "Valid types are Message, String, Map, InputStream, CursorStreamProvider, List, byte[], Serializable or OutputHandler, "
           + "but was " + getClassName(object));
     }
   }
