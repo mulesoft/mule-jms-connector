@@ -9,21 +9,27 @@
 
     <flow name="publish-consume-flow">
         <set-payload value="#[output application/xml --- employees: { name : &quot;foo&quot;}]"/>
-        <jms:publish-consume config-ref="config" destination="in1">
+        <jms:publish-consume config-ref="config" destination="#[vars.destination]">
         </jms:publish-consume>
     </flow>
 
     <flow name="listener-flow" >
-        <jms:listener config-ref="config" destination="in1">
+        <jms:listener config-ref="config" destination="cursor-provider">
             <jms:consumer-type >
                 <jms:queue-consumer/>
             </jms:consumer-type>
-            <jms:response>
-                <jms:reply-to destination="in1" />
-            </jms:response>
         </jms:listener>
         <!-- DON'T CHANGE THIS, WE WANT TO CREATE A CURSOR PROVIDER WITH THIS -->
         <set-payload value="#[output application/xml --- employees: { name : &quot;foo&quot;}]"/>
+    </flow>
+
+    <flow name="listener-iterator-flow" >
+        <jms:listener config-ref="config" destination="iterator">
+            <jms:consumer-type >
+                <jms:queue-consumer/>
+            </jms:consumer-type>
+        </jms:listener>
+        <set-payload value="#[[3,4,5] as Array {class : &quot;java.util.Iterator&quot;}]"/>
     </flow>
 
 

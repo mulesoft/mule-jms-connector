@@ -27,6 +27,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -84,7 +85,8 @@ public class JmsMessageUtils {
       }
     } else if (object instanceof List<?>) {
       return listToMessage((List<?>) object, session);
-
+    } else if (object instanceof Iterator) {
+      return iteratorToMessage((Iterator) object, session);
     } else if (object instanceof byte[]) {
       return byteArrayToMessage((byte[]) object, session);
     } else if (object instanceof Serializable) {
@@ -195,21 +197,35 @@ public class JmsMessageUtils {
     }
   }
 
+  private static Message iteratorToMessage(Iterator iterator, Session session) throws JMSException {
+    StreamMessage sMsg = session.createStreamMessage();
+
+    while (iterator.hasNext()) {
+      Object o = iterator.next();
+      addObjectToStreamMessage(sMsg, o);
+    }
+    return sMsg;
+  }
+
   private static Message listToMessage(List<?> value, Session session)
       throws JMSException {
     StreamMessage sMsg = session.createStreamMessage();
 
     for (Object o : value) {
-      if (validateStreamMessageType(o)) {
-        sMsg.writeObject(o);
-      } else {
-        throw new JmsIllegalBodyException(format("Invalid type passed to StreamMessage: %s . Allowed types are: "
-            + "Boolean, Byte, Short, Character, Integer, Long, Float, Double,"
-            + "String and byte[]",
-                                                 getClassName(o)));
-      }
+      addObjectToStreamMessage(sMsg, o);
     }
     return sMsg;
+  }
+
+  private static void addObjectToStreamMessage(StreamMessage sMsg, Object o) throws JMSException {
+    if (validateStreamMessageType(o)) {
+      sMsg.writeObject(o);
+    } else {
+      throw new JmsIllegalBodyException(format("Invalid type passed to StreamMessage: %s . Allowed types are: "
+          + "Boolean, Byte, Short, Character, Integer, Long, Float, Double,"
+          + "String and byte[]",
+                                               getClassName(o)));
+    }
   }
 
   private static Message byteArrayToMessage(byte[] value, Session session) throws JMSException {
