@@ -12,16 +12,13 @@ import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.mule.runtime.api.metadata.MediaTypeUtils.isStringRepresentable;
 import static org.mule.runtime.api.util.Preconditions.checkArgument;
+
 import org.mule.extensions.jms.api.connection.JmsSpecification;
 import org.mule.extensions.jms.api.exception.JmsIllegalBodyException;
 import org.mule.runtime.api.metadata.TypedValue;
-import org.mule.runtime.core.api.util.IOUtils;
+import org.mule.runtime.api.streaming.CursorProvider;
 import org.mule.runtime.core.api.message.OutputHandler;
-
-import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.apache.commons.lang3.ArrayUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.mule.runtime.core.api.util.IOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,6 +40,11 @@ import javax.jms.Session;
 import javax.jms.StreamMessage;
 import javax.jms.TextMessage;
 
+import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.commons.lang3.ArrayUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * <code>JmsMessageUtils</code> contains helper method for dealing with JMS
  * messages in Mule.
@@ -56,6 +58,11 @@ public class JmsMessageUtils {
 
   public static Message toMessage(TypedValue<Object> typedValueObject, Session session) throws JMSException {
     Object object = typedValueObject.getValue();
+
+    //TODO - Remove when JMS Min Mule Version is 4.2+ or 4.1.2+
+    if (object instanceof CursorProvider) {
+      object = ((CursorProvider) object).openCursor();
+    }
 
     if (object == null) {
       throw new JmsIllegalBodyException("Message body was 'null', which is not a value of a supported type");

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+
+      http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
+
+
+    <flow name="publish-consume-flow">
+        <set-payload value="#[output application/xml --- employees: { name : &quot;foo&quot;}]"/>
+        <jms:publish-consume config-ref="config" destination="in1">
+        </jms:publish-consume>
+    </flow>
+
+    <flow name="listener-flow" >
+        <jms:listener config-ref="config" destination="in1">
+            <jms:consumer-type >
+                <jms:queue-consumer/>
+            </jms:consumer-type>
+            <jms:response>
+                <jms:reply-to destination="in1" />
+            </jms:response>
+        </jms:listener>
+        <!-- DON'T CHANGE THIS, WE WANT TO CREATE A CURSOR PROVIDER WITH THIS -->
+        <set-payload value="#[output application/xml --- employees: { name : &quot;foo&quot;}]"/>
+    </flow>
+
+
+</mule>
