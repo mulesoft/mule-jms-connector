@@ -104,7 +104,7 @@ public class JmsMessageUtils {
           if (value != null) {
             properties.put(key, value);
           }
-        } catch (JMSException e1) {
+        } catch (JMSException | IllegalArgumentException e1) {
           if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("An error occurred while setting a JMS property: ", e1);
           }
