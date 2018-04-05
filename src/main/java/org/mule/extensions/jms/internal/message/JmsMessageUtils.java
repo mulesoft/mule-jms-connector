@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -83,8 +84,8 @@ public class JmsMessageUtils {
       } else {
         return byteArrayToMessage(IOUtils.toByteArray((InputStream) object), session);
       }
-    } else if (object instanceof List<?>) {
-      return listToMessage((List<?>) object, session);
+    } else if (object instanceof Collection<?>) {
+      return collectionToMessage((Collection<?>) object, session);
     } else if (object instanceof Iterator) {
       return iteratorToMessage((Iterator) object, session);
     } else if (object instanceof byte[]) {
@@ -207,7 +208,7 @@ public class JmsMessageUtils {
     return sMsg;
   }
 
-  private static Message listToMessage(List<?> value, Session session)
+  private static Message collectionToMessage(Collection<?> value, Session session)
       throws JMSException {
     StreamMessage sMsg = session.createStreamMessage();
 
