@@ -12,24 +12,23 @@ import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.mule.runtime.api.metadata.MediaTypeUtils.isStringRepresentable;
 import static org.mule.runtime.api.util.Preconditions.checkArgument;
+
 import org.mule.extensions.jms.api.connection.JmsSpecification;
 import org.mule.extensions.jms.api.exception.JmsIllegalBodyException;
 import org.mule.runtime.api.metadata.TypedValue;
-import org.mule.runtime.core.api.util.IOUtils;
+import org.mule.runtime.api.streaming.CursorProvider;
 import org.mule.runtime.core.api.message.OutputHandler;
-
-import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.apache.commons.lang3.ArrayUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.mule.runtime.core.api.util.IOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -42,6 +41,11 @@ import javax.jms.ObjectMessage;
 import javax.jms.Session;
 import javax.jms.StreamMessage;
 import javax.jms.TextMessage;
+
+import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.commons.lang3.ArrayUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <code>JmsMessageUtils</code> contains helper method for dealing with JMS
@@ -56,6 +60,11 @@ public class JmsMessageUtils {
 
   public static Message toMessage(TypedValue<Object> typedValueObject, Session session) throws JMSException {
     Object object = typedValueObject.getValue();
+
+    //TODO - Remove when JMS Min Mule Version is 4.2+ or 4.1.2+
+    if (object instanceof CursorProvider) {
+      object = ((CursorProvider) object).openCursor();
+    }
 
     if (object == null) {
       throw new JmsIllegalBodyException("Message body was 'null', which is not a value of a supported type");
@@ -75,9 +84,10 @@ public class JmsMessageUtils {
       } else {
         return byteArrayToMessage(IOUtils.toByteArray((InputStream) object), session);
       }
-    } else if (object instanceof List<?>) {
-      return listToMessage((List<?>) object, session);
-
+    } else if (object instanceof Collection<?>) {
+      return collectionToMessage((Collection<?>) object, session);
+    } else if (object instanceof Iterator) {
+      return iteratorToMessage((Iterator) object, session);
     } else if (object instanceof byte[]) {
       return byteArrayToMessage((byte[]) object, session);
     } else if (object instanceof Serializable) {
@@ -188,21 +198,35 @@ public class JmsMessageUtils {
     }
   }
 
-  private static Message listToMessage(List<?> value, Session session)
+  private static Message iteratorToMessage(Iterator iterator, Session session) throws JMSException {
+    StreamMessage sMsg = session.createStreamMessage();
+
+    while (iterator.hasNext()) {
+      Object o = iterator.next();
+      addObjectToStreamMessage(sMsg, o);
+    }
+    return sMsg;
+  }
+
+  private static Message collectionToMessage(Collection<?> value, Session session)
       throws JMSException {
     StreamMessage sMsg = session.createStreamMessage();
 
     for (Object o : value) {
-      if (validateStreamMessageType(o)) {
-        sMsg.writeObject(o);
-      } else {
-        throw new JmsIllegalBodyException(format("Invalid type passed to StreamMessage: %s . Allowed types are: "
-            + "Boolean, Byte, Short, Character, Integer, Long, Float, Double,"
-            + "String and byte[]",
-                                                 getClassName(o)));
-      }
+      addObjectToStreamMessage(sMsg, o);
     }
     return sMsg;
+  }
+
+  private static void addObjectToStreamMessage(StreamMessage sMsg, Object o) throws JMSException {
+    if (validateStreamMessageType(o)) {
+      sMsg.writeObject(o);
+    } else {
+      throw new JmsIllegalBodyException(format("Invalid type passed to StreamMessage: %s . Allowed types are: "
+          + "Boolean, Byte, Short, Character, Integer, Long, Float, Double,"
+          + "String and byte[]",
+                                               getClassName(o)));
+    }
   }
 
   private static Message byteArrayToMessage(byte[] value, Session session) throws JMSException {
