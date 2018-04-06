@@ -26,6 +26,7 @@
         <commonsLangVersion>3.6</commonsLangVersion>
         <guavaVersion>23.5-jre</guavaVersion>
         <springVersion>5.0.4.RELEASE</springVersion>
+        <jacksonVersion>2.9.5</jacksonVersion>
         <hawtbufVersion>1.1</hawtbufVersion>
         <muleSpringModuleVersion>1.2.0-SNAPSHOT</muleSpringModuleVersion>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
@@ -134,19 +135,19 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
-            <version>2.9.4</version>
+            <version>${jacksonVersion}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <version>2.9.4</version>
+            <version>${jacksonVersion}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.9.4</version>
+            <version>${jacksonVersion}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
