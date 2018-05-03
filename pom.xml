@@ -25,7 +25,7 @@
         <commonsIoVersion>2.4</commonsIoVersion>
         <commonsLangVersion>3.6</commonsLangVersion>
         <guavaVersion>23.5-jre</guavaVersion>
-        <springVersion>5.0.4.RELEASE</springVersion>
+        <springVersion>5.0.5.RELEASE</springVersion>
         <jacksonVersion>2.9.5</jacksonVersion>
         <hawtbufVersion>1.1</hawtbufVersion>
         <muleSpringModuleVersion>1.1.0</muleSpringModuleVersion>
