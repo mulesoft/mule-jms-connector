@@ -6,20 +6,23 @@
  */
 package org.mule.extensions.jms.test.ack;
 
-import static org.mule.extensions.jms.api.config.AckMode.MANUAL;
+import static org.mule.extensions.jms.api.ack.AckMode.MANUAL;
+import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
 import static org.mule.extensions.jms.test.JmsMessageStorage.pollMessage;
 import static org.mule.extensions.jms.test.ack.JmsAbstractAckTestCase.Actions.ACK;
 import static org.mule.extensions.jms.test.ack.JmsAbstractAckTestCase.Actions.NOTHING;
 import static org.mule.extensions.jms.test.ack.JmsAbstractAckTestCase.Actions.RECOVER;
-import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
 
-import org.mule.extensions.jms.api.config.AckMode;
+import org.mule.extensions.jms.api.ack.AckMode;
 import org.mule.extensions.jms.test.JmsMessageStorage;
+import org.mule.runtime.api.el.BindingContext;
+import org.mule.runtime.api.metadata.TypedValue;
+import org.mule.runtime.extension.api.runtime.operation.Result;
 
-import org.junit.Test;
 import io.qameta.allure.Description;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Story;
+import org.junit.Test;
 
 @Feature(JMS_EXTENSION)
 @Story("Manual Acknowledgement over sessions")
@@ -45,7 +48,11 @@ public class JmsManualAckTestCase extends JmsAbstractAckTestCase {
     publish(messageToReDeliver);
     validate(() -> JmsMessageStorage.receivedMessages() == 3, 5000, 50);
 
-    String ackId = pollMessage().getAttributes().get().getAckId();
+    Result<TypedValue<Object>, Object> message = pollMessage();
+
+    String ackId = (String) expressionManager.evaluate("#[attributes.ackId]", BindingContext.builder()
+        .addBinding("attributes", TypedValue.of(message.getAttributes().get())).build())
+        .getValue();
     JmsMessageStorage.cleanUpQueue();
     recoverSession(ackId);
     validate(() -> JmsMessageStorage.receivedMessages() == 1, 5000, 50);

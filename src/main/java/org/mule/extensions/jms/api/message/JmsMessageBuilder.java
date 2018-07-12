@@ -7,21 +7,15 @@
 package org.mule.extensions.jms.api.message;
 
 
-import static java.lang.String.format;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.mule.extensions.jms.internal.common.JmsCommons.EXAMPLE_CONTENT_TYPE;
 import static org.mule.extensions.jms.internal.common.JmsCommons.EXAMPLE_ENCODING;
-import static org.mule.extensions.jms.internal.common.JmsCommons.resolveOverride;
-import static org.mule.extensions.jms.internal.message.JMSXDefinedPropertiesNames.JMSX_NAMES;
-import static org.mule.extensions.jms.internal.message.JmsMessageUtils.encodeKey;
-import static org.mule.extensions.jms.internal.message.JmsMessageUtils.toMessage;
 import static org.slf4j.LoggerFactory.getLogger;
+
 import org.mule.extensions.jms.api.config.JmsProducerConfig;
 import org.mule.extensions.jms.api.destination.JmsDestination;
-import org.mule.extensions.jms.api.exception.DestinationNotFoundException;
-import org.mule.extensions.jms.internal.config.JmsConfig;
-import org.mule.extensions.jms.internal.support.JmsSupport;
-import org.mule.runtime.api.metadata.DataType;
+import org.mule.jms.commons.api.message.JmsMessageFactory;
+import org.mule.jms.commons.internal.config.JmsConfig;
+import org.mule.jms.commons.internal.support.JmsSupport;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
 import org.mule.runtime.extension.api.annotation.param.ConfigOverride;
@@ -35,7 +29,6 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 import org.mule.runtime.extension.api.runtime.parameter.CorrelationInfo;
 import org.mule.runtime.extension.api.runtime.parameter.OutboundCorrelationStrategy;
 
-import java.nio.charset.Charset;
 import java.util.Map;
 
 import javax.jms.Destination;
@@ -51,7 +44,7 @@ import org.slf4j.Logger;
  *
  * @since 1.0
  */
-public class JmsMessageBuilder {
+public class JmsMessageBuilder implements org.mule.jms.commons.api.message.JmsMessageBuilder<JmsDestination> {
 
   private static final Logger LOGGER = getLogger(JmsMessageBuilder.class);
   public static final String BODY_CONTENT_TYPE_JMS_PROPERTY = "MM_MESSAGE_CONTENT_TYPE";
@@ -164,109 +157,10 @@ public class JmsMessageBuilder {
                        Session session, JmsConfig config)
       throws JMSException {
 
-    Message message = toMessage(body, session);
-
-    setJmsCorrelationIdHeader(message, outboundCorrelationStrategy, correlationInfo);
-    setJmsTypeHeader(message);
-    setJmsReplyToHeader(jmsSupport, session, message, replyTo);
-
-    setJmsxProperties(message);
-    setUserProperties(message);
-
-    if (sendContentType) {
-      setContentTypeProperty(message, body.getDataType());
-    }
-    if (sendEncoding) {
-      setEncodingProperty(message, body.getDataType(), resolveOverride(config.getEncoding(), outboundEncoding));
-    }
-
-    return message;
+    return JmsMessageFactory.build(jmsSupport, outboundCorrelationStrategy, correlationInfo, session, config, this);
   }
 
-  private void setJmsReplyToHeader(JmsSupport jmsSupport, Session session, Message message, JmsDestination replyDestination) {
-    try {
-      if (replyDestination != null &&
-          !isBlank(replyDestination.getDestination())) {
-        Destination destination = jmsSupport.createDestination(session, replyDestination.getDestination(),
-                                                               replyDestination.getDestinationType().isTopic());
-        message.setJMSReplyTo(destination);
-      }
-    } catch (DestinationNotFoundException | JMSException e) {
-      LOGGER.error("Unable to set JMSReplyTo header: ", e);
-    }
-  }
-
-  private void setEncodingProperty(Message message, DataType dataType, String defaultEncoding) {
-    try {
-      message.setStringProperty(BODY_ENCODING_JMS_PROPERTY,
-                                dataType.getMediaType().getCharset().map(Charset::toString).orElse(defaultEncoding));
-    } catch (JMSException e) {
-      LOGGER.error(format("Unable to set property [%s] of type String: ", BODY_ENCODING_JMS_PROPERTY), e);
-    }
-  }
-
-  private void setContentTypeProperty(Message message, DataType dataType) {
-    try {
-      String value = isBlank(outboundContentType) ? dataType.getMediaType().toRfcString() : outboundContentType;
-      message.setStringProperty(BODY_CONTENT_TYPE_JMS_PROPERTY, value);
-    } catch (JMSException e) {
-      LOGGER.error(format("Unable to set property [%s] of type String: ", BODY_CONTENT_TYPE_JMS_PROPERTY), e);
-    }
-  }
-
-  private void setJmsxProperties(final Message message) {
-    jmsxProperties.asMap().entrySet().stream()
-        .filter(e -> e.getValue() != null)
-        .forEach(e -> setJmsPropertySanitizeKeyIfNecessary(message, e.getKey(), e.getValue()));
-  }
-
-  private void setUserProperties(final Message message) {
-    properties.keySet().stream()
-        .filter(key -> !isBlank(key) && !JMSX_NAMES.contains(key))
-        .forEach(key -> setJmsPropertySanitizeKeyIfNecessary(message, key, properties.get(key)));
-  }
-
-  private void setJmsPropertySanitizeKeyIfNecessary(Message msg, String key, Object value) {
-    try {
-      // sanitize key as JMS Property Name
-      key = encodeKey(key);
-      if (value instanceof TypedValue) {
-        value = ((TypedValue) value).getValue();
-      }
-      msg.setObjectProperty(key, value);
-    } catch (JMSException e) {
-      // Various JMS servers have slightly different rules to what
-      // can be set as an object property on the message; therefore
-      // we have to take a hit n' hope approach
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug(format("Unable to set property [%s] of type [%s]: ", key, value.getClass().getSimpleName()), e);
-      }
-    }
-  }
-
-  private void setJmsTypeHeader(Message message) {
-    try {
-      if (!isBlank(jmsType)) {
-        message.setJMSType(jmsType);
-      }
-    } catch (JMSException e) {
-      LOGGER.error("An error occurred while setting the JMSType property: %s", e);
-    }
-  }
-
-  private void setJmsCorrelationIdHeader(Message message,
-                                         OutboundCorrelationStrategy outboundCorrelationStrategy,
-                                         CorrelationInfo correlationInfo) {
-    outboundCorrelationStrategy.getOutboundCorrelationId(correlationInfo, correlationId).ifPresent(id -> {
-      try {
-        message.setJMSCorrelationID(id);
-      } catch (JMSException e) {
-        LOGGER.error("An error occurred while setting the JMSCorrelationID property: %s", e);
-      }
-    });
-  }
-
-  public Object getBody() {
+  public TypedValue<Object> getBody() {
     return body;
   }
 

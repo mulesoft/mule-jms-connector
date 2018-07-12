@@ -22,7 +22,7 @@ import javax.jms.Destination;
  *
  * @since 1.0
  */
-public class JmsDestination {
+public class JmsDestination implements org.mule.jms.commons.api.destination.JmsDestination {
 
   /**
    * The name that identifies the destination where a reply to a message should be sent

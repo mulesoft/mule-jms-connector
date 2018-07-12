@@ -20,7 +20,7 @@ import io.qameta.allure.Story;
 @RunnerDelegateTo(Parameterized.class)
 @Feature(JMS_EXTENSION)
 @Story("Generic Connection Provider Topic Bridge")
-public class GenericProviderTopicBridgeTestCase extends JmsAbstractTopicBridge {
+public class GenericProviderTopicBridgeTestCase extends JmsAbstractTopicBridgeTestCase {
 
   @Parameterized.Parameter(0)
   public String configName;

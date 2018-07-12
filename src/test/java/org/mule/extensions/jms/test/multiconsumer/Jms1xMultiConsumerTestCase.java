@@ -57,7 +57,7 @@ public class Jms1xMultiConsumerTestCase extends AbstractJmsMultiConsumerTestCase
     publishTo(NUMBER_OF_MESSAGES, destination.getValue(), QUEUE);
 
     long distinctAckIds = getMessages(NUMBER_OF_MESSAGES)
-        .map(result -> result.getAttributes().get().getAckId())
+        .map(result -> evaluate("#[payload.ackId]", result.getAttributes()))
         .distinct()
         .count();
 
@@ -69,7 +69,7 @@ public class Jms1xMultiConsumerTestCase extends AbstractJmsMultiConsumerTestCase
     publishTo(NUMBER_OF_MESSAGES, destination.getValue(), QUEUE);
 
     Map<String, List<String>> collect = getMessages(NUMBER_OF_MESSAGES)
-        .map(result -> result.getAttributes().get().getAckId())
+        .map(result -> (String) evaluate("#[payload.ackId]", result.getAttributes()))
         .collect(groupingBy(identity()));
 
     Iterator<Map.Entry<String, List<String>>> iterator = collect.entrySet().iterator();

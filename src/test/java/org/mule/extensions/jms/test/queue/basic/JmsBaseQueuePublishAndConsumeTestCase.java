@@ -17,11 +17,13 @@ import static org.mule.extensions.jms.api.destination.DestinationType.QUEUE;
 import static org.mule.functional.junit4.matchers.MessageMatchers.hasPayload;
 
 import org.mule.extensions.jms.api.destination.JmsDestination;
-import org.mule.extensions.jms.api.message.JmsAttributes;
 import org.mule.extensions.jms.test.JmsAbstractTestCase;
 import org.mule.runtime.api.message.Message;
+import org.mule.runtime.core.api.el.ExpressionManager;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 import org.junit.Test;
 
@@ -91,7 +93,7 @@ public abstract class JmsBaseQueuePublishAndConsumeTestCase extends JmsAbstractT
     publish(payload);
     Message message = consume();
     assertThat(message, hasPayload(equalTo(payload)));
-    assertHeaders((JmsAttributes) message.getAttributes().getValue(),
+    assertHeaders(message.getAttributes().getValue(),
                   new JmsDestination(destination, QUEUE), NON_PERSISTENT,
                   4, true, true, null, null, null,
                   false);

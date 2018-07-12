@@ -9,13 +9,10 @@ package org.mule.extensions.jms.test.exception;
 import static java.util.Collections.emptyMap;
 import static org.mule.extensions.jms.api.exception.JmsError.ILLEGAL_BODY;
 import static org.mule.extensions.jms.api.exception.JmsError.TIMEOUT;
-import org.mule.extensions.jms.api.exception.JmsConsumeException;
-import org.mule.extensions.jms.api.exception.JmsPublishException;
+
 import org.mule.extensions.jms.test.JmsAbstractTestCase;
-import org.mule.functional.api.exception.ExpectedError;
 
 import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
 
 public class JmsErrorTestCase extends JmsAbstractTestCase {
@@ -31,16 +28,17 @@ public class JmsErrorTestCase extends JmsAbstractTestCase {
 
   @Test
   public void nullMessageBody() throws Exception {
-    expectedError.expectError(NAMESPACE, ILLEGAL_BODY.getType(), JmsPublishException.class,
+    expectedError.expectError(NAMESPACE, ILLEGAL_BODY.getType(), Exception.class,
                               AN_ERROR_OCCURRED_WHILE_SENDING_A_MESSAGE);
     destination = newDestination(TEST_DESTINATION);
+
     publish(null);
   }
 
   @Test
   @Ignore
   public void timeout() throws Exception {
-    expectedError.expectError(NAMESPACE, TIMEOUT.getType(), JmsConsumeException.class,
+    expectedError.expectError(NAMESPACE, TIMEOUT.getType(), Exception.class,
                               AN_ERROR_OCCURRED_WHILE_CONSUMING_A_MESSAGE);
     destination = newDestination(TEST_DESTINATION);
     consume(destination, emptyMap(), 5);

@@ -18,7 +18,7 @@ import javax.jms.Queue;
  * @since 1.0
  */
 @Alias("queue-consumer")
-public class QueueConsumer implements ConsumerType {
+public class QueueConsumer extends org.mule.jms.commons.api.destination.QueueConsumer implements ConsumerType {
 
   /**
    * {@inheritDoc}

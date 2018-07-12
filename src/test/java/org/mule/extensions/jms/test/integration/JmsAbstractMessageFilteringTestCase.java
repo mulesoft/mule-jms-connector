@@ -7,21 +7,18 @@
 package org.mule.extensions.jms.test.integration;
 
 import static com.google.common.collect.ImmutableMap.of;
+import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertThat;
 import static org.mule.extensions.jms.api.destination.DestinationType.QUEUE;
 import static org.mule.extensions.jms.api.destination.DestinationType.TOPIC;
 import static org.mule.extensions.jms.api.exception.JmsError.TIMEOUT;
-import static org.mule.functional.junit4.matchers.MessageMatchers.hasAttributes;
 import static org.mule.functional.junit4.matchers.MessageMatchers.hasPayload;
 import static org.mule.runtime.api.metadata.MediaType.ANY;
 
 import org.mule.extensions.jms.api.destination.DestinationType;
-import org.mule.extensions.jms.api.exception.JmsConsumeException;
-import org.mule.extensions.jms.api.message.JmsAttributes;
 import org.mule.extensions.jms.test.JmsAbstractTestCase;
 import org.mule.extensions.jms.test.JmsMessageStorage;
 import org.mule.runtime.api.message.Message;
@@ -32,7 +29,6 @@ import org.mule.tck.junit4.rule.SystemPropertyLambda;
 import org.mule.test.runner.RunnerDelegateTo;
 
 import java.util.Collection;
-import java.util.Map;
 
 import io.qameta.allure.Description;
 import io.qameta.allure.Step;
@@ -66,8 +62,8 @@ public abstract class JmsAbstractMessageFilteringTestCase extends JmsAbstractTes
   @Test
   @Description("Verifies the filtering of messages consumed by consume operation")
   public void testMessageFilteringOnConsume() throws Exception {
-    expectedError.expectError(NAMESPACE, TIMEOUT.getType(), JmsConsumeException.class,
-                              "An error occurred while consuming a message");
+    expectedError.expectError(NAMESPACE, TIMEOUT, Exception.class,
+                              "Failed to retrieve a Message. Operation timed out after 10000 milliseconds");
 
     destination = newDestination("destination");
 
@@ -97,21 +93,18 @@ public abstract class JmsAbstractMessageFilteringTestCase extends JmsAbstractTes
   @Step("Assert Mule message")
   private void assertMuleMessage(Message message, String messagePayload, String priority) {
     assertThat(message, hasPayload(equalTo(messagePayload)));
-    assertThat(message, hasAttributes(instanceOf(JmsAttributes.class)));
-
-    JmsAttributes jmsAttributes = (JmsAttributes) message.getAttributes().getValue();
-    Map<String, Object> userProperties = jmsAttributes.getProperties().getUserProperties();
-    assertThat(userProperties.get(MESSAGE_PRIORITY_PROP), is(priority));
+    from(message.getAttributes())
+        .as("attributes")
+        .assertThat(format("#[attributes.properties.userProperties.%s]", MESSAGE_PRIORITY_PROP), is(priority));
   }
 
   @Step("Assert JmsMessageStorage message")
-  private void assertJmsMessageStorageMessage(Result<TypedValue<Object>, JmsAttributes> message, String messagePayload,
+  private void assertJmsMessageStorageMessage(Result<TypedValue<Object>, Object> message, String messagePayload,
                                               String priority) {
     assertThat(message.getOutput().getValue(), is(messagePayload));
-
-    JmsAttributes jmsAttributes = message.getAttributes().get();
-    Map<String, Object> userProperties = jmsAttributes.getProperties().getUserProperties();
-    assertThat(userProperties.get(MESSAGE_PRIORITY_PROP), is(priority));
+    from(message.getAttributes().get())
+        .as("attributes")
+        .assertThat(format("#[attributes.properties.userProperties.%s]", MESSAGE_PRIORITY_PROP), is(priority));
   }
 
 }

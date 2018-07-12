@@ -38,7 +38,7 @@ import javax.jms.Topic;
 @Configuration(name = "config")
 @Operations({JmsConsume.class, JmsPublish.class, JmsPublishConsume.class})
 @Sources({JmsListener.class})
-public class JmsConfig {
+public class JmsConfig implements org.mule.jms.commons.internal.config.JmsConfig<JmsConsumerConfig, JmsProducerConfig> {
 
   @DefaultEncoding
   private String muleEncoding;

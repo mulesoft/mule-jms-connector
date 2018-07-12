@@ -16,8 +16,8 @@ import static org.hamcrest.core.IsNull.nullValue;
 import static org.mule.functional.junit4.matchers.MessageMatchers.hasPayload;
 import static org.mule.runtime.api.metadata.MediaType.ANY;
 import org.mule.extensions.jms.api.destination.QueueConsumer;
-import org.mule.extensions.jms.api.message.JmsAttributes;
 import org.mule.extensions.jms.test.JmsAbstractTestCase;
+import org.mule.extensions.jms.test.util.ExpressionAssertion;
 import org.mule.runtime.api.message.Message;
 
 import com.google.common.collect.ImmutableMap;
@@ -97,10 +97,10 @@ public abstract class JmsBaseTopicListenResponseTestCase extends JmsAbstractTest
 
     Message reply = consume(REPLY_TO_DESTINATION_OVERRIDES, of(REPLY_CONSUMER_TYPE_VAR, new QueueConsumer()), -1);
     assertThat(reply, hasPayload(equalTo(READ_MESSAGE_PREFIX_OVERRIDE + payload)));
-    JmsAttributes attributes = (JmsAttributes) reply.getAttributes().getValue();
-    assertThat(attributes.getProperties().getUserProperties().get("flowName"), is(equalTo("listenerOverrides")));
-    assertThat(attributes.getHeaders().getJMSPriority(), is(equalTo(8)));
-    assertThat(attributes.getHeaders().getJMSDeliveryMode(), is(equalTo(DeliveryMode.PERSISTENT)));
+    ExpressionAssertion attributes = from(reply.getAttributes()).as("attributes");
+    attributes.assertThat("#[attributes.properties.userProperties.flowName]", is(equalTo("listenerOverrides")));
+    attributes.assertThat("#[attributes.headers.JMSPriority]", is(equalTo(8)));
+    attributes.assertThat("#[attributes.headers.JMSDeliveryMode]", is(equalTo(DeliveryMode.PERSISTENT)));
   }
 
 

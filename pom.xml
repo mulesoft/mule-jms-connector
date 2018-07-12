@@ -34,6 +34,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.mule.connectors</groupId>
+            <artifactId>mule-jms-client</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jms</artifactId>
             <version>${springVersion}</version>

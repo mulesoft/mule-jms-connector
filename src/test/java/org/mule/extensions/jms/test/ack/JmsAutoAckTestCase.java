@@ -6,13 +6,13 @@
  */
 package org.mule.extensions.jms.test.ack;
 
-import static org.mule.extensions.jms.api.config.AckMode.AUTO;
+import static org.mule.extensions.jms.api.ack.AckMode.AUTO;
 import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
 import static org.mule.extensions.jms.test.JmsMessageStorage.pollMessage;
 import static org.mule.extensions.jms.test.ack.JmsAbstractAckTestCase.Actions.EXPLODE;
 import static org.mule.extensions.jms.test.ack.JmsAbstractAckTestCase.Actions.NOTHING;
 
-import org.mule.extensions.jms.api.config.AckMode;
+import org.mule.extensions.jms.api.ack.AckMode;
 import org.mule.extensions.jms.test.JmsMessageStorage;
 
 import io.qameta.allure.Description;

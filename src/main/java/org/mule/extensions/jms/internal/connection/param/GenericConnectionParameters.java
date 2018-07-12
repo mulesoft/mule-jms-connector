@@ -18,7 +18,7 @@ import javax.jms.Connection;
  *
  * @since 1.0
  */
-public class GenericConnectionParameters {
+public class GenericConnectionParameters implements org.mule.jms.commons.internal.connection.param.GenericConnectionParameters {
 
   /**
    * Username to be used when providing credentials for authentication.

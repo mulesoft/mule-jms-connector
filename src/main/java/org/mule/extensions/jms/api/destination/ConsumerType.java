@@ -6,19 +6,12 @@
  */
 package org.mule.extensions.jms.api.destination;
 
-import javax.jms.Topic;
-
 /**
  * Implementations of this interface provide a way to configure custom properties for a consumer
  * based on the destination kind from which consumption will occurr
  *
  * @since 1.0
  */
-public interface ConsumerType {
-
-  /**
-   * @return {@code true} if this a consumer for {@link Topic}s
-   */
-  boolean topic();
+public interface ConsumerType extends org.mule.jms.commons.api.destination.ConsumerType {
 
 }

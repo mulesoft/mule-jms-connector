@@ -18,7 +18,7 @@ import javax.jms.DeliveryMode;
  *
  * @since 1.0
  */
-public class JmsHeaders {
+public class JmsHeaders extends org.mule.jms.commons.api.message.JmsHeaders {
 
   /**
    * The destination from which the JMS Message was received.

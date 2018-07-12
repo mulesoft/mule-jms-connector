@@ -6,20 +6,8 @@
  */
 package org.mule.extensions.jms.internal.operation;
 
-import static java.lang.String.format;
 import static org.mule.extensions.jms.internal.common.JmsCommons.EXAMPLE_CONTENT_TYPE;
 import static org.mule.extensions.jms.internal.common.JmsCommons.EXAMPLE_ENCODING;
-import static org.mule.extensions.jms.internal.common.JmsCommons.createJmsSession;
-import static org.mule.extensions.jms.internal.common.JmsCommons.evaluateMessageAck;
-import static org.mule.extensions.jms.internal.common.JmsCommons.getDestinationType;
-import static org.mule.extensions.jms.internal.common.JmsCommons.releaseResources;
-import static org.mule.extensions.jms.internal.common.JmsCommons.resolveMessageContentType;
-import static org.mule.extensions.jms.internal.common.JmsCommons.resolveMessageEncoding;
-import static org.mule.extensions.jms.internal.common.JmsCommons.resolveOverride;
-import static org.mule.extensions.jms.internal.common.JmsCommons.toInternalAckMode;
-import static org.mule.extensions.jms.internal.config.InternalAckMode.AUTO;
-import static org.mule.extensions.jms.internal.config.InternalAckMode.DUPS_OK;
-import static org.mule.extensions.jms.internal.config.InternalAckMode.IMMEDIATE;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import org.mule.extensions.jms.api.config.ConsumerAckMode;
@@ -28,18 +16,14 @@ import org.mule.extensions.jms.api.destination.ConsumerType;
 import org.mule.extensions.jms.api.exception.JmsConsumeErrorTypeProvider;
 import org.mule.extensions.jms.api.exception.JmsConsumeException;
 import org.mule.extensions.jms.api.exception.JmsExtensionException;
-import org.mule.extensions.jms.api.exception.JmsSecurityException;
-import org.mule.extensions.jms.api.message.JmsAttributes;
-import org.mule.extensions.jms.internal.config.InternalAckMode;
 import org.mule.extensions.jms.internal.config.JmsConfig;
-import org.mule.extensions.jms.internal.connection.JmsConnection;
-import org.mule.extensions.jms.internal.connection.JmsTransactionalConnection;
-import org.mule.extensions.jms.internal.connection.session.JmsSession;
 import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
-import org.mule.extensions.jms.internal.consume.JmsMessageConsumer;
-import org.mule.extensions.jms.internal.message.JmsResultFactory;
 import org.mule.extensions.jms.internal.metadata.JmsOutputResolver;
-import org.mule.extensions.jms.internal.support.JmsSupport;
+import org.mule.jms.commons.api.AttributesOutputResolver;
+import org.mule.jms.commons.internal.connection.JmsTransactionalConnection;
+import org.mule.runtime.api.lifecycle.Disposable;
+import org.mule.runtime.api.lifecycle.Initialisable;
+import org.mule.runtime.api.scheduler.SchedulerService;
 import org.mule.runtime.extension.api.annotation.error.Throws;
 import org.mule.runtime.extension.api.annotation.metadata.OutputResolver;
 import org.mule.runtime.extension.api.annotation.param.Config;
@@ -49,15 +33,15 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 import org.mule.runtime.extension.api.runtime.operation.Result;
+import org.mule.runtime.extension.api.runtime.process.CompletionCallback;
 import org.mule.runtime.extension.api.tx.OperationTransactionalAction;
+
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.jms.Destination;
-import javax.jms.JMSSecurityException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
-
-import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 
@@ -66,14 +50,17 @@ import org.slf4j.Logger;
  *
  * @since 1.0
  */
-public final class JmsConsume {
+public final class JmsConsume implements Initialisable, Disposable {
 
   private static final Logger LOGGER = getLogger(JmsConsume.class);
 
-  private final JmsResultFactory resultFactory = new JmsResultFactory();
-
   @Inject
   private JmsSessionManager sessionManager;
+
+  @Inject
+  private SchedulerService schedulerService;
+
+  private org.mule.jms.commons.internal.operation.JmsConsume jmsConsume;
 
   /**
    * Operation that allows the user to consume a single {@link Message} from a given {@link Destination}.
@@ -93,82 +80,35 @@ public final class JmsConsume {
    * and headers as {@link Result#getAttributes}
    * @throws JmsConsumeException if an error occurs
    */
-  @OutputResolver(output = JmsOutputResolver.class)
+  @OutputResolver(output = JmsOutputResolver.class, attributes = AttributesOutputResolver.class)
   @Throws(JmsConsumeErrorTypeProvider.class)
-  public Result<Object, JmsAttributes> consume(@Config JmsConfig config,
-                                               @Connection JmsTransactionalConnection connection,
-                                               @Summary("The name of the Destination from where the Message should be consumed") String destination,
-                                               @ConfigOverride @Summary("The Type of the Consumer that should be used for the provided destination") ConsumerType consumerType,
-                                               @Optional @Summary("The Session ACK mode to use when consuming a message") ConsumerAckMode ackMode,
-                                               @ConfigOverride @Summary("The JMS selector to be used for filtering incoming messages") String selector,
-                                               @Optional @Summary("The content type of the message body") @Example(EXAMPLE_CONTENT_TYPE) String contentType,
-                                               @Optional @Summary("The encoding of the message body") @Example(EXAMPLE_ENCODING) String encoding,
-                                               @Optional(
-                                                   defaultValue = "10000") @Summary("Maximum time to wait for a message to arrive before timeout") Long maximumWait,
-                                               @Optional(
-                                                   defaultValue = "MILLISECONDS") @Example("MILLISECONDS") @Summary("Time unit to be used in the maximumWaitTime configuration") TimeUnit maximumWaitUnit,
-                                               OperationTransactionalAction transactionalAction)
+  public void consume(@Config JmsConfig config,
+                      @Connection JmsTransactionalConnection connection,
+                      @Summary("The name of the Destination from where the Message should be consumed") String destination,
+                      @ConfigOverride @Summary("The Type of the Consumer that should be used for the provided destination") ConsumerType consumerType,
+                      @Optional @Summary("The Session ACK mode to use when consuming a message") ConsumerAckMode ackMode,
+                      @ConfigOverride @Summary("The JMS selector to be used for filtering incoming messages") String selector,
+                      @Optional @Summary("The content type of the message body") @Example(EXAMPLE_CONTENT_TYPE) String contentType,
+                      @Optional @Summary("The encoding of the message body") @Example(EXAMPLE_ENCODING) String encoding,
+                      @Optional(
+                          defaultValue = "10000") @Summary("Maximum time to wait for a message to arrive before timeout") Long maximumWait,
+                      @Optional(
+                          defaultValue = "MILLISECONDS") @Example("MILLISECONDS") @Summary("Time unit to be used in the maximumWaitTime configuration") TimeUnit maximumWaitUnit,
+                      OperationTransactionalAction transactionalAction,
+                      CompletionCallback<Object, Object> result)
       throws JmsExtensionException {
-
-    InternalAckMode resolvedAckMode = resolveAck(config.getConsumerConfig(), ackMode);
-
-    try {
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Begin [consume] on the " + getDestinationType(consumerType) + ": ["
-            + destination + "]");
-      }
-
-      JmsSupport jmsSupport = connection.getJmsSupport();
-      JmsSession session =
-          createJmsSession(connection, resolvedAckMode, consumerType.topic(), sessionManager, transactionalAction);
-      Destination jmsDestination = jmsSupport.createDestination(session.get(), destination, consumerType.topic());
-
-      JmsMessageConsumer consumer = connection.createConsumer(session, jmsDestination, selector, consumerType);
-
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Consuming Message from the " + getDestinationType(consumerType) + ": ["
-            + destination + "]");
-      }
-
-      Message received = consumer.consume(maximumWaitUnit.toMillis(maximumWait));
-
-      if (received == null) {
-        LOGGER.debug("Resulting JMS Message was [null], creating an empty result");
-        releaseResources(session, sessionManager, consumer);
-        return resultFactory.createEmptyResult();
-      }
-
-      // If no explicit content type was provided to the operation, fallback to the
-      // one communicated in the message properties. Finally if no property was set,
-      // use the default one provided by the config
-      String resolvedContentType = resolveOverride(resolveMessageContentType(received, config.getContentType()), contentType);
-      String resolvedEncoding = resolveOverride(resolveMessageEncoding(received, config.getEncoding()), encoding);
-
-      Result<Object, JmsAttributes> result = resultFactory.createResult(received, jmsSupport.getSpecification(),
-                                                                        resolvedContentType, resolvedEncoding,
-                                                                        session.getAckId());
-
-      evaluateMessageAck(resolvedAckMode, session, received, sessionManager, null);
-      releaseResources(session, sessionManager, consumer);
-
-      return result;
-    } catch (JMSSecurityException e) {
-      String msg = format("A security error occurred while consuming a message from the %s: [%s]: %s",
-                          getDestinationType(consumerType), destination, e.getMessage());
-      throw new JmsSecurityException(msg, e);
-    } catch (Exception e) {
-      String msg = format("An error occurred while consuming a message from the %s [%s]: %s",
-                          getDestinationType(consumerType), destination, e.getMessage());
-      throw new JmsConsumeException(msg, e);
-    }
+    jmsConsume.consume(config, connection, destination, consumerType, ackMode, selector, contentType, encoding, maximumWait,
+                       maximumWaitUnit, transactionalAction, (CompletionCallback) result);
   }
 
-  private InternalAckMode resolveAck(JmsConsumerConfig config, ConsumerAckMode ackMode) {
-    InternalAckMode fallbackAck = toInternalAckMode(config.getAckMode());
-    if (AUTO.equals(fallbackAck) || DUPS_OK.equals(fallbackAck)) {
-      fallbackAck = IMMEDIATE;
-    }
-    return resolveOverride(fallbackAck, toInternalAckMode(ackMode));
+
+  @Override
+  public void initialise() {
+    jmsConsume = new org.mule.jms.commons.internal.operation.JmsConsume(sessionManager, schedulerService);
   }
 
+  @Override
+  public void dispose() {
+    jmsConsume.dispose();
+  }
 }

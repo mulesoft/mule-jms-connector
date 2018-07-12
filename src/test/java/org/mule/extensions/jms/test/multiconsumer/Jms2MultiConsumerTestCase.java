@@ -36,7 +36,7 @@ public class Jms2MultiConsumerTestCase extends AbstractJmsMultiConsumerTestCase 
     new PollingProber(5000, 100).check(new JUnitLambdaProbe(() -> receivedMessages() == NUMBER_OF_MESSAGES));
 
     long distinctAckIds = getMessages(NUMBER_OF_MESSAGES)
-        .map(result -> result.getAttributes().get().getAckId())
+        .map(result -> evaluate("#[payload.ackId]", result.getAttributes()))
         .distinct()
         .count();
 

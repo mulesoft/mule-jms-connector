@@ -21,7 +21,7 @@ import io.qameta.allure.Story;
 @RunnerDelegateTo(Parameterized.class)
 @Feature(JMS_EXTENSION)
 @Story("ActiveMQ Connection Provider Topic Bridge")
-public class ActiveMQTopicBridgeTestCase extends JmsAbstractTopicBridge {
+public class ActiveMQTopicBridgeTestCase extends JmsAbstractTopicBridgeTestCase {
 
   @Parameterized.Parameter(0)
   public String configName;

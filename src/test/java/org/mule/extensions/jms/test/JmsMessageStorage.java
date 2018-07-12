@@ -9,7 +9,6 @@ package org.mule.extensions.jms.test;
 import static org.mule.extensions.jms.test.JmsAbstractTestCase.POLL_DELAY_MILLIS;
 import static org.mule.extensions.jms.test.JmsAbstractTestCase.TIMEOUT_MILLIS;
 
-import org.mule.extensions.jms.api.message.JmsAttributes;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.TypedValue;
@@ -28,7 +27,7 @@ public class JmsMessageStorage implements Processor {
   private static Queue<Message> MESSAGES = new ConcurrentLinkedQueue<>();
 
   @Override
-  public CoreEvent process(CoreEvent event) throws MuleException {
+  public CoreEvent process(CoreEvent event) {
     EVENTS.add(event);
     MESSAGES.add(event.getMessage());
     return event;
@@ -39,11 +38,11 @@ public class JmsMessageStorage implements Processor {
     EVENTS = new ConcurrentLinkedQueue<>();
   }
 
-  public static Result<TypedValue<Object>, JmsAttributes> pollMessage() {
+  public static Result<TypedValue<Object>, Object> pollMessage() {
     Message message = pollMuleMessage();
-    return Result.<TypedValue<Object>, JmsAttributes>builder()
+    return Result.<TypedValue<Object>, Object>builder()
         .output(message.getPayload())
-        .attributes((JmsAttributes) message.getAttributes().getValue())
+        .attributes(message.getAttributes().getValue())
         .build();
   }
 

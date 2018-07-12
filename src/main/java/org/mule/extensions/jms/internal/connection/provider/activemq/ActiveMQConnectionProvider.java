@@ -16,10 +16,10 @@ import static org.mule.runtime.api.meta.ExternalLibraryType.DEPENDENCY;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import org.mule.extensions.jms.api.exception.JmsMissingLibraryException;
-import org.mule.extensions.jms.internal.connection.JmsConnection;
-import org.mule.extensions.jms.internal.connection.JmsTransactionalConnection;
 import org.mule.extensions.jms.internal.connection.exception.ActiveMQException;
 import org.mule.extensions.jms.internal.connection.provider.BaseConnectionProvider;
+import org.mule.jms.commons.internal.connection.JmsConnection;
+import org.mule.jms.commons.internal.connection.JmsTransactionalConnection;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.connection.ConnectionProvider;
 import org.mule.runtime.core.api.util.proxy.TargetInvocationHandler;
@@ -29,13 +29,14 @@ import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.function.Supplier;
+
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
+import javax.jms.JMSException;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.slf4j.Logger;
@@ -101,7 +102,17 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider {
     return connectionFactory;
   }
 
-  private void createConnectionFactory() throws ActiveMQException {
+  @Override
+  protected boolean enableXa() {
+    return connectionFactoryProvider.getFactoryConfiguration().isEnableXA();
+  }
+
+  @Override
+  protected Supplier<ConnectionFactory> getConnectionFactorySupplier() {
+    return this::createConnectionFactory;
+  }
+
+  private ConnectionFactory createConnectionFactory() throws ActiveMQException {
     connectionFactory = connectionFactoryProvider.getConnectionFactory();
     if (connectionFactory == null) {
       if (LOGGER.isDebugEnabled()) {
@@ -117,6 +128,7 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider {
 
       connectionFactory = connectionFactoryProvider.createDefaultConnectionFactory();
     }
+    return connectionFactory;
   }
 
   @Override
