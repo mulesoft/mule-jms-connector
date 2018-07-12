@@ -19,9 +19,7 @@ import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import java.util.function.Supplier;
 
 import javax.jms.ConnectionFactory;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.jms.XAConnectionFactory;
 
 /**
  * Generic implementation of a JMS {@link ConnectionProvider}.
@@ -33,8 +31,6 @@ import org.slf4j.LoggerFactory;
 @Alias("generic")
 @ExternalLib(name = "JMS Client", description = "Client which lets communicate with a JMS broker", type = DEPENDENCY)
 public class GenericConnectionProvider extends BaseConnectionProvider {
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(BaseConnectionProvider.class);
 
   /**
    * a JMS {@link ConnectionFactory} implementation
@@ -51,7 +47,7 @@ public class GenericConnectionProvider extends BaseConnectionProvider {
 
   @Override
   protected boolean enableXa() {
-    return false;
+    return connectionFactory instanceof XAConnectionFactory;
   }
 
   @Override

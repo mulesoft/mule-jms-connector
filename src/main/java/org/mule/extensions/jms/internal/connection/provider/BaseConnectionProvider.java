@@ -17,7 +17,6 @@ import org.mule.extensions.jms.api.connection.caching.CachingStrategy;
 import org.mule.extensions.jms.api.connection.caching.DefaultCachingStrategy;
 import org.mule.extensions.jms.internal.connection.param.GenericConnectionParameters;
 import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
-import org.mule.extensions.jms.internal.support.JmsSupport;
 import org.mule.jms.commons.internal.connection.JmsConnection;
 import org.mule.jms.commons.internal.connection.JmsTransactionalConnection;
 import org.mule.jms.commons.internal.connection.provider.JmsConnectionProvider;
@@ -84,9 +83,6 @@ public abstract class BaseConnectionProvider
   /**
    * Used to ignore handling of ExceptionListener#onException when in the process of disconnecting
    */
-  private JmsSupport jmsSupport;
-  private ConnectionFactory jmsConnectionFactory;
-  private boolean isCacheEnabled = false;
   private JmsConnectionProvider jmsConnectionProvider;
 
   /**
