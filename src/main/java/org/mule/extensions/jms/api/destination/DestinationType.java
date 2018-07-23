@@ -6,6 +6,8 @@
  */
 package org.mule.extensions.jms.api.destination;
 
+import org.mule.jms.commons.api.destination.DestinationTypeDescriptor;
+
 import javax.jms.Destination;
 import javax.jms.Queue;
 import javax.jms.Topic;
@@ -15,7 +17,7 @@ import javax.jms.Topic;
  *
  * @since 1.0
  */
-public enum DestinationType {
+public enum DestinationType implements DestinationTypeDescriptor {
 
   /**
    * {@link Destination} is a {@link Queue}

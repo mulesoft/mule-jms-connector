@@ -7,7 +7,6 @@
 package org.mule.extensions.jms.test;
 
 import static org.mockito.AdditionalMatchers.aryEq;
-import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
@@ -15,24 +14,15 @@ import static org.mule.runtime.api.metadata.DataType.BYTE_ARRAY;
 import static org.mule.runtime.api.metadata.DataType.JSON_STRING;
 import static org.mule.runtime.api.metadata.DataType.OBJECT;
 import static org.mule.runtime.api.metadata.DataType.STRING;
-import org.mule.extensions.jms.api.exception.JmsIllegalBodyException;
-import org.mule.extensions.jms.internal.message.JmsMessageUtils;
+
+import org.mule.jms.commons.api.exception.JmsIllegalBodyException;
+import org.mule.jms.commons.internal.message.JmsMessageUtils;
 import org.mule.runtime.api.metadata.DataType;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-import io.qameta.allure.Feature;
-import io.qameta.allure.Story;
-
 import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +32,14 @@ import javax.jms.JMSException;
 import javax.jms.MapMessage;
 import javax.jms.Session;
 import javax.jms.StreamMessage;
+
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 @Feature(JMS_EXTENSION)
 @Story("JMS Message Utils")

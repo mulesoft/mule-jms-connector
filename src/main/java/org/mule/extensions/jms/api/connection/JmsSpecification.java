@@ -14,15 +14,19 @@ import org.mule.extensions.jms.internal.JmsConnector;
  * @since 1.0
  */
 public enum JmsSpecification {
-  JMS_1_0_2b("1.0.2b"), JMS_1_1("1.1"), JMS_2_0("2.0");
+  JMS_1_0_2b(org.mule.jms.commons.api.connection.JmsSpecification.JMS_1_0_2b),
 
-  private final String name;
+  JMS_1_1(org.mule.jms.commons.api.connection.JmsSpecification.JMS_1_1),
 
-  JmsSpecification(String s) {
-    name = s;
+  JMS_2_0(org.mule.jms.commons.api.connection.JmsSpecification.JMS_2_0);
+
+  private final org.mule.jms.commons.api.connection.JmsSpecification spec;
+
+  JmsSpecification(org.mule.jms.commons.api.connection.JmsSpecification spec) {
+    this.spec = spec;
   }
 
-  public String getName() {
-    return name;
+  public org.mule.jms.commons.api.connection.JmsSpecification getJmsSpecification() {
+    return spec;
   }
 }

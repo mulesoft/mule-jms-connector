@@ -13,9 +13,8 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
 import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JmsStory.CORRELATION_ID;
 
-import org.mule.extensions.jms.api.message.JmsAttributes;
-import org.mule.extensions.jms.api.message.JmsHeaders;
 import org.mule.extensions.jms.test.JmsAbstractTestCase;
+import org.mule.extensions.jms.test.util.ExpressionAssertion;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.TypedValue;
 
@@ -87,9 +86,9 @@ public class JmsCorrelationIdPropagationTestCase extends JmsAbstractTestCase {
     TypedValue<Object> attributes = message.getAttributes();
     assertThat(attributes, not(nullValue()));
 
-    JmsHeaders headers = ((JmsAttributes) attributes.getValue()).getHeaders();
-    assertThat(headers, not(nullValue()));
-    assertThat(headers.getJMSCorrelationID(), is(CUSTOM_CORRELATION_ID));
+    ExpressionAssertion attributesAsserter = from(attributes).as("attributes");
+    attributesAsserter.assertThat("#[attributes.headers]", not(nullValue()));
+    attributesAsserter.assertThat("#[attributes.headers.JMSCorrelationID]", is(CUSTOM_CORRELATION_ID));
   }
 
 }

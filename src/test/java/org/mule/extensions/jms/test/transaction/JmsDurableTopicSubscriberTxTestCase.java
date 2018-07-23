@@ -91,7 +91,8 @@ public class JmsDurableTopicSubscriberTxTestCase extends JmsAbstractTestCase {
       Optional<Error> error = exception.getEvent().getError();
       isEmpty = error.isPresent()
           && errorType(TIMEOUT).matches(error.get().getErrorType())
-          && both(isA(JmsConsumeException.class)).and(hasMessage(startsWith("An error occurred while consuming a message")))
+          && both(isA(Exception.class))
+              .and(hasMessage(startsWith("Failed to retrieve a Message. Operation timed out after 10000 milliseconds")))
               .matches(error.get().getCause());;
     }
     return isEmpty;

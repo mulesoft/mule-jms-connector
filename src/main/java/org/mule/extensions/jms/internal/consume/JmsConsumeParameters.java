@@ -25,7 +25,7 @@ import javax.jms.Message;
  *
  * @since 1.0
  */
-public class JmsConsumeParameters {
+public class JmsConsumeParameters implements org.mule.jms.commons.internal.consume.JmsConsumeParameters {
 
   @Parameter
   @Optional

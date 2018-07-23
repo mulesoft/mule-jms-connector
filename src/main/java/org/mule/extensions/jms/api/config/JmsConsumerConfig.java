@@ -7,6 +7,8 @@
 package org.mule.extensions.jms.api.config;
 
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
+
+import org.mule.extensions.jms.api.ack.AckMode;
 import org.mule.extensions.jms.api.destination.ConsumerType;
 import org.mule.extensions.jms.api.destination.QueueConsumer;
 import org.mule.runtime.extension.api.annotation.Expression;
@@ -23,7 +25,7 @@ import javax.jms.Message;
  *
  * @since 1.0
  */
-public final class JmsConsumerConfig {
+public final class JmsConsumerConfig implements org.mule.jms.commons.api.config.JmsConsumerConfig {
 
   /**
    * The {@link ConsumerAckMode} to use when consuming a {@link Message}

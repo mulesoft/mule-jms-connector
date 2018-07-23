@@ -6,8 +6,6 @@
  */
 package org.mule.extensions.jms.api.connection.caching;
 
-import org.mule.extensions.jms.internal.connection.JmsCachingConnectionFactory;
-
 /**
  * Provides the configuration elements required to configure a {@link JmsCachingConnectionFactory}
  *

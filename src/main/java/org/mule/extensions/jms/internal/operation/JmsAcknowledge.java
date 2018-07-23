@@ -6,25 +6,23 @@
  */
 package org.mule.extensions.jms.internal.operation;
 
-import static java.lang.String.format;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.mule.runtime.api.util.Preconditions.checkArgument;
 import static org.slf4j.LoggerFactory.getLogger;
-import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
-import org.mule.extensions.jms.api.config.AckMode;
-import org.mule.extensions.jms.internal.connection.JmsConnection;
-import org.mule.extensions.jms.internal.connection.session.JmsSession;
+
 import org.mule.extensions.jms.api.exception.JmsAckErrorTypeProvider;
 import org.mule.extensions.jms.api.exception.JmsAckException;
 import org.mule.extensions.jms.api.exception.JmsSessionRecoverErrorTypeProvider;
-import org.mule.extensions.jms.api.exception.JmsSessionRecoverException;
+import org.mule.extensions.jms.internal.connection.session.JmsSession;
+import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
+import org.mule.runtime.api.lifecycle.Initialisable;
+import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.extension.api.annotation.error.Throws;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
-
-import org.slf4j.Logger;
+import org.mule.runtime.extension.api.runtime.process.CompletionCallback;
 
 import javax.inject.Inject;
 import javax.jms.Message;
+
+import org.slf4j.Logger;
 
 
 /**
@@ -32,12 +30,13 @@ import javax.jms.Message;
  *
  * @since 1.0
  */
-public final class JmsAcknowledge {
+public final class JmsAcknowledge implements Initialisable {
 
   private static final Logger LOGGER = getLogger(JmsAcknowledge.class);
 
   @Inject
   private JmsSessionManager sessionManager;
+  private org.mule.jms.commons.internal.operation.JmsAcknowledge jmsAck;
 
   /**
    * Allows the user to perform an ACK when the {@link AckMode#MANUAL} mode is elected while consuming the {@link Message}.
@@ -49,19 +48,8 @@ public final class JmsAcknowledge {
    * to a session of the current connection
    */
   @Throws(JmsAckErrorTypeProvider.class)
-  public void ack(@Summary("The AckId of the Message to ACK") String ackId) {
-    checkArgument(!isBlank(ackId), "The AckId can not be null or empty");
-    try {
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Performing ACK on session: " + ackId);
-      }
-
-      sessionManager.ack(ackId);
-
-    } catch (Exception e) {
-      LOGGER.error(format("An error occurred while acking a message with ID [%s]: ", ackId), e);
-      throw new JmsAckException(format("An error occurred while trying to perform an ACK on Session with ID [%s]: ", ackId), e);
-    }
+  public void ack(@Summary("The AckId of the Message to ACK") String ackId, CompletionCallback<Void, Void> completionCallback) {
+    jmsAck.ack(ackId, completionCallback);
   }
 
   /**
@@ -73,20 +61,12 @@ public final class JmsAcknowledge {
    * @param ackId The AckId of the Message Session to recover
    */
   @Throws(JmsSessionRecoverErrorTypeProvider.class)
-  public void recoverSession(String ackId) {
-    checkArgument(!isBlank(ackId), "The AckId can not be null or empty");
-    try {
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Recovering session: " + ackId);
-      }
+  public void recoverSession(String ackId, CompletionCallback<Void, Void> completionCallback) {
+    jmsAck.recoverSession(ackId, completionCallback);
+  }
 
-      sessionManager.recoverSession(ackId);
-
-    } catch (Exception e) {
-      LOGGER.error(format("An error occurred while recovering the session with ID [%s]: ", ackId), e);
-      throw new JmsSessionRecoverException(format("An error occurred while trying to perform an recover on Session with ID [%s]: ",
-                                                  ackId),
-                                           e);
-    }
+  @Override
+  public void initialise() throws InitialisationException {
+    this.jmsAck = new org.mule.jms.commons.internal.operation.JmsAcknowledge(sessionManager);
   }
 }

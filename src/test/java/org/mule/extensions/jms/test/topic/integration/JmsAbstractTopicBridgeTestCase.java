@@ -6,6 +6,7 @@
  */
 package org.mule.extensions.jms.test.topic.integration;
 
+import static java.lang.String.format;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -13,16 +14,15 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mule.extensions.jms.test.JmsMessageStorage.pollMuleMessage;
 
-import org.mule.extensions.jms.api.message.JmsAttributes;
-import org.mule.extensions.jms.api.message.JmsMessageProperties;
 import org.mule.extensions.jms.test.JmsAbstractTestCase;
+import org.mule.extensions.jms.test.util.ExpressionAssertion;
 import org.mule.runtime.api.message.Message;
 import org.mule.tck.junit4.rule.SystemProperty;
 
 import org.junit.Rule;
 import org.junit.Test;
 
-public abstract class JmsAbstractTopicBridge extends JmsAbstractTestCase {
+public abstract class JmsAbstractTopicBridgeTestCase extends JmsAbstractTestCase {
 
   private static final String FIRST_MESSAGE = "My First Message";
   private static final String BRIDGED_PREFIX = "bridged_";
@@ -52,9 +52,11 @@ public abstract class JmsAbstractTopicBridge extends JmsAbstractTestCase {
     assertThat(message.getPayload().getValue(), is(equalTo(BRIDGED_PREFIX + FIRST_MESSAGE)));
     assertThat(message.getAttributes(), not(nullValue()));
 
-    JmsMessageProperties properties = ((JmsAttributes) message.getAttributes().getValue()).getProperties();
-    assertThat(properties, not(nullValue()));
-    assertThat(properties.getUserProperties().get(PROPERTY_KEY_VALUE), is(equalTo(PROPERTY_VALUE_VALUE)));
+    ExpressionAssertion attributes = from(message.getAttributes())
+        .as("attributes");
+    ExpressionAssertion properties = attributes.andFrom("#[attributes.properties]").as("properties");
+    properties.assertThat("#[properties]", not(nullValue()));
+    properties.assertThat(format("#[properties.userProperties.%s]", PROPERTY_KEY_VALUE), is(equalTo(PROPERTY_VALUE_VALUE)));
   }
 
   private void sendMessage() throws Exception {

@@ -6,15 +6,16 @@
  */
 package org.mule.extensions.jms.test.queue.integration;
 
+import static java.lang.String.format;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mule.functional.junit4.matchers.MessageMatchers.hasPayload;
-import org.mule.extensions.jms.api.message.JmsAttributes;
-import org.mule.extensions.jms.api.message.JmsMessageProperties;
+
 import org.mule.extensions.jms.test.JmsAbstractTestCase;
+import org.mule.extensions.jms.test.util.ExpressionAssertion;
 import org.mule.runtime.api.message.Message;
 
 import org.junit.Test;
@@ -59,9 +60,10 @@ public abstract class JmsAbstractQueueBridge extends JmsAbstractTestCase {
     assertThat(message, hasPayload(equalTo(BRIDGED_PREFIX + FIRST_MESSAGE)));
     assertThat(message.getAttributes(), not(nullValue()));
 
-    JmsMessageProperties properties = ((JmsAttributes) message.getAttributes().getValue()).getProperties();
-    assertThat(properties, not(nullValue()));
-    assertThat(properties.getUserProperties().get(PROPERTY_KEY_VALUE), is(equalTo(PROPERTY_VALUE_VALUE)));
+    ExpressionAssertion attributes = from(message.getAttributes()).as("attributes");
+    attributes.assertThat("#[attributes.properties]", not(nullValue()));
+    attributes.assertThat(format("#[attributes.properties.userProperties.%s]", PROPERTY_KEY_VALUE),
+                          is(equalTo(PROPERTY_VALUE_VALUE)));
   }
 
   protected Message receiveMessageFromBridgeTarget() throws Exception {

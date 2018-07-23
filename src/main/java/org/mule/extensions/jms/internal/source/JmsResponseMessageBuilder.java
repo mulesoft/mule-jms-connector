@@ -6,8 +6,8 @@
  */
 package org.mule.extensions.jms.internal.source;
 
+import org.mule.extensions.jms.api.destination.JmsDestination;
 import org.mule.extensions.jms.api.message.JmsMessageBuilder;
-import org.mule.extensions.jms.internal.publish.PublisherParameters;
 import org.mule.runtime.extension.api.annotation.param.ConfigOverride;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
@@ -22,7 +22,8 @@ import javax.jms.Message;
  *
  * @since 1.0
  */
-public class JmsResponseMessageBuilder extends JmsMessageBuilder implements PublisherParameters {
+public class JmsResponseMessageBuilder extends JmsMessageBuilder
+    implements org.mule.jms.commons.internal.source.JmsResponseMessageBuilder<JmsDestination> {
 
   /**
    * Whether or not the delivery should be done with a persistent configuration

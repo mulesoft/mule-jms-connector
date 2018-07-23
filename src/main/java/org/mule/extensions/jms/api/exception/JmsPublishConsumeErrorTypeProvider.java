@@ -15,7 +15,6 @@ import static org.mule.extensions.jms.api.exception.JmsError.SECURITY;
 import static org.mule.extensions.jms.api.exception.JmsError.TIMEOUT;
 import org.mule.extensions.jms.api.message.JmsMessageBuilder;
 import org.mule.extensions.jms.internal.config.JmsConfig;
-import org.mule.extensions.jms.internal.connection.JmsConnection;
 import org.mule.extensions.jms.internal.consume.JmsConsumeParameters;
 import org.mule.extensions.jms.internal.operation.JmsPublishConsume;
 import org.mule.extensions.jms.internal.publish.JmsPublishParameters;

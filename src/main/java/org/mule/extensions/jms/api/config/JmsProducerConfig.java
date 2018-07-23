@@ -14,17 +14,17 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
+import java.util.concurrent.TimeUnit;
+
 import javax.jms.DeliveryMode;
 import javax.jms.Message;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * Configuration parameters for sending messages to a JMS Queue or Topic
  *
  * @since 1.0
  */
-public final class JmsProducerConfig {
+public final class JmsProducerConfig implements org.mule.jms.commons.api.config.JmsProducerConfig {
 
   /**
    * Sets the default value for the {@link Message#getJMSDeliveryMode}.

@@ -6,7 +6,7 @@
  */
 package org.mule.extensions.jms.test.ack;
 
-import org.mule.extensions.jms.api.config.AckMode;
+import org.mule.extensions.jms.api.ack.AckMode;
 import org.mule.extensions.jms.test.JmsAbstractTestCase;
 import org.mule.extensions.jms.test.JmsMessageStorage;
 import org.mule.tck.junit4.rule.SystemProperty;

@@ -6,13 +6,6 @@
  */
 package org.mule.extensions.jms.api.message;
 
-import static com.google.common.collect.ImmutableMap.copyOf;
-import static org.mule.extensions.jms.internal.message.JMSXDefinedPropertiesNames.JMSX_NAMES;
-import static org.mule.runtime.api.util.Preconditions.checkArgument;
-import org.mule.extensions.jms.internal.message.JmsxPropertiesBuilder;
-import org.mule.runtime.extension.api.annotation.param.Parameter;
-
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.jms.Message;
@@ -28,81 +21,9 @@ import javax.jms.Message;
  *
  * @since 1.0
  */
-public class JmsMessageProperties {
-
-  private static final String JMSX_PREFIX = "JMSX";
-  private static final String JMS_PREFIX = "JMS";
-
-  /**
-   * All the properties of the JMS message as a flattened map
-   */
-  @Parameter
-  private final Map<String, Object> all;
-
-  /**
-   * The user provided properties of the JMS Message
-   */
-  @Parameter
-  private final Map<String, Object> userProperties = new HashMap<>();
-
-  /**
-   * The broker and provider specific of the JMS Message
-   */
-  @Parameter
-  private final Map<String, Object> jmsProperties = new HashMap<>();
-
-  /**
-   * The JMSX properties of the JMS Message
-   */
-  @Parameter
-  private JmsxProperties jmsxProperties;
+public class JmsMessageProperties extends org.mule.jms.commons.api.message.JmsMessageProperties {
 
   public JmsMessageProperties(Map<String, Object> messageProperties) {
-    checkArgument(messageProperties != null, "Initializer properties Map expected, but it was null");
-
-    all = copyOf(messageProperties);
-    JmsxPropertiesBuilder jmsxPropertiesBuilder = JmsxPropertiesBuilder.create();
-
-    all.entrySet().forEach(e -> {
-      String key = e.getKey();
-      if (key.startsWith(JMSX_PREFIX) && JMSX_NAMES.contains(key)) {
-        jmsxPropertiesBuilder.add(key, e.getValue());
-
-      } else if (key.startsWith(JMS_PREFIX)) {
-        jmsProperties.put(key, e.getValue());
-
-      } else {
-        userProperties.put(key, e.getValue());
-      }
-    });
-
-    jmsxProperties = jmsxPropertiesBuilder.build();
+    super(messageProperties);
   }
-
-  public Map<String, Object> asMap() {
-    return copyOf(all);
-  }
-
-  public Map<String, Object> getUserProperties() {
-    return copyOf(userProperties);
-  }
-
-  public Map<String, Object> getJmsProperties() {
-    return copyOf(jmsProperties);
-  }
-
-  public JmsxProperties getJmsxProperties() {
-    return jmsxProperties;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    return all.equals(o);
-  }
-
-  @Override
-  public int hashCode() {
-    return all.hashCode();
-  }
-
 }

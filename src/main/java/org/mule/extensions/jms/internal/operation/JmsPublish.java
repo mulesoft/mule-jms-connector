@@ -6,27 +6,22 @@
  */
 package org.mule.extensions.jms.internal.operation;
 
-import static java.lang.String.format;
 import static org.mule.extensions.jms.internal.common.JmsCommons.QUEUE;
-import static org.mule.extensions.jms.internal.common.JmsCommons.createJmsSession;
-import static org.mule.extensions.jms.internal.common.JmsCommons.getDestinationType;
-import static org.mule.extensions.jms.internal.common.JmsCommons.releaseResources;
-import static org.mule.extensions.jms.internal.config.InternalAckMode.AUTO;
 import static org.slf4j.LoggerFactory.getLogger;
+
 import org.mule.extensions.jms.api.config.JmsProducerConfig;
 import org.mule.extensions.jms.api.destination.DestinationType;
 import org.mule.extensions.jms.api.exception.JmsExtensionException;
-import org.mule.extensions.jms.api.exception.JmsPublishException;
 import org.mule.extensions.jms.api.exception.JmsPublisherErrorTypeProvider;
-import org.mule.extensions.jms.api.exception.JmsSecurityException;
 import org.mule.extensions.jms.api.message.JmsMessageBuilder;
 import org.mule.extensions.jms.internal.config.JmsConfig;
-import org.mule.extensions.jms.internal.connection.JmsConnection;
-import org.mule.extensions.jms.internal.connection.JmsTransactionalConnection;
-import org.mule.extensions.jms.internal.connection.session.JmsSession;
 import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
-import org.mule.extensions.jms.internal.publish.JmsMessageProducer;
 import org.mule.extensions.jms.internal.publish.JmsPublishParameters;
+import org.mule.jms.commons.internal.connection.JmsConnection;
+import org.mule.jms.commons.internal.connection.JmsTransactionalConnection;
+import org.mule.runtime.api.lifecycle.Disposable;
+import org.mule.runtime.api.lifecycle.Initialisable;
+import org.mule.runtime.api.scheduler.SchedulerService;
 import org.mule.runtime.extension.api.annotation.error.Throws;
 import org.mule.runtime.extension.api.annotation.param.Config;
 import org.mule.runtime.extension.api.annotation.param.ConfigOverride;
@@ -36,11 +31,11 @@ import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 import org.mule.runtime.extension.api.runtime.parameter.CorrelationInfo;
 import org.mule.runtime.extension.api.runtime.parameter.OutboundCorrelationStrategy;
+import org.mule.runtime.extension.api.runtime.process.CompletionCallback;
 import org.mule.runtime.extension.api.tx.OperationTransactionalAction;
 
 import javax.inject.Inject;
 import javax.jms.Destination;
-import javax.jms.JMSSecurityException;
 import javax.jms.Message;
 
 import org.slf4j.Logger;
@@ -50,12 +45,17 @@ import org.slf4j.Logger;
  *
  * @since 1.0
  */
-public final class JmsPublish {
+public final class JmsPublish implements Initialisable, Disposable {
 
   private static final Logger LOGGER = getLogger(JmsPublish.class);
 
   @Inject
   private JmsSessionManager jmsSessionManager;
+
+  @Inject
+  private SchedulerService schedulerService;
+
+  private org.mule.jms.commons.internal.operation.JmsPublish jmsPublish;
 
   /**
    * Operation that allows the user to send a {@link Message} to a JMS {@link Destination}
@@ -81,51 +81,24 @@ public final class JmsPublish {
                       @ParameterGroup(name = "Publish Configuration") JmsPublishParameters overrides,
                       OperationTransactionalAction transactionalAction,
                       @ConfigOverride OutboundCorrelationStrategy sendCorrelationId,
-                      CorrelationInfo correlationInfo)
+                      CorrelationInfo correlationInfo,
+                      CompletionCallback<Void, Void> completionCallback)
 
       throws JmsExtensionException {
+    jmsPublish.publish(config, connection, destination, destinationType, messageBuilder, overrides, transactionalAction,
+                       sendCorrelationId, correlationInfo, completionCallback);
+  }
 
-    try {
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Begin [publish] on " + getDestinationType(destinationType) + ": ["
-            + destination + "]");
-      }
 
-      JmsSession session = createJmsSession(connection, AUTO, destinationType.isTopic(), jmsSessionManager, transactionalAction);
-
-      Message message = messageBuilder.build(connection.getJmsSupport(),
-                                             sendCorrelationId,
-                                             correlationInfo,
-                                             session.get(),
-                                             config);
-
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug(format("Message built, sending message to the %s: [%s] using session [%s]",
-                            getDestinationType(destinationType), destination, session.get()));
-      }
-
-      Destination jmsDestination = connection.getJmsSupport()
-          .createDestination(session.get(), destination, destinationType.isTopic());
-
-      JmsMessageProducer producer = connection.createProducer(session, jmsDestination, destinationType.isTopic());
-      producer
-          .publish(message, overrides);
-
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug(format("Finished [publish] to the %s: [%s] using session [%s]",
-                            getDestinationType(destinationType), destination, session.get()));
-      }
-
-      releaseResources(session, jmsSessionManager, producer);
-
-    } catch (JMSSecurityException e) {
-      String msg = format("A security error occurred while sending a message to the %s: [%s]: %s",
-                          getDestinationType(destinationType), destination, e.getMessage());
-      throw new JmsSecurityException(msg, e);
-    } catch (Exception e) {
-      String msg = format("An error occurred while sending a message to the %s: [%s]: %s",
-                          getDestinationType(destinationType), destination, e.getMessage());
-      throw new JmsPublishException(msg, e);
+  @Override
+  public void dispose() {
+    if (jmsPublish != null) {
+      jmsPublish.dispose();
     }
+  }
+
+  @Override
+  public void initialise() {
+    this.jmsPublish = new org.mule.jms.commons.internal.operation.JmsPublish(jmsSessionManager, schedulerService);
   }
 }

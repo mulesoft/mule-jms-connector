@@ -23,16 +23,17 @@ import static org.mule.functional.junit4.matchers.MessageMatchers.hasPayload;
 import static org.mule.runtime.api.metadata.MediaType.ANY;
 import static org.mule.tck.junit4.matcher.ErrorTypeMatcher.errorType;
 
-import org.mule.extensions.jms.api.destination.JmsDestination;
-import org.mule.extensions.jms.api.message.JmsAttributes;
-import org.mule.extensions.jms.api.message.JmsHeaders;
+import org.mule.extensions.jms.test.util.ExpressionAssertion;
 import org.mule.functional.api.exception.ExpectedError;
 import org.mule.functional.api.flow.FlowRunner;
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
+import org.mule.runtime.api.el.BindingContext;
 import org.mule.runtime.api.message.Error;
 import org.mule.runtime.api.message.Message;
+import org.mule.runtime.api.metadata.DataType;
 import org.mule.runtime.api.metadata.MediaType;
 import org.mule.runtime.api.metadata.TypedValue;
+import org.mule.runtime.core.api.el.ExpressionManager;
 import org.mule.runtime.core.api.util.func.CheckedSupplier;
 import org.mule.runtime.core.privileged.exception.EventProcessingException;
 import org.mule.runtime.extension.api.runtime.operation.Result;
@@ -43,15 +44,21 @@ import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+
+import javax.inject.Inject;
 
 import io.qameta.allure.Feature;
 import io.qameta.allure.Step;
+import org.hamcrest.Matcher;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Rule;
 
 @Feature(JMS_EXTENSION)
 @ArtifactClassLoaderRunnerConfig(
-    testInclusions = {"org.apache.activemq:artemis-jms-client"},
+    testInclusions = {"org.apache.activemq:artemis-jms-client", "org.mule.connectors:mule-jms-client"},
     applicationSharedRuntimeLibs = {"org.apache.activemq:activemq-client",
         "org.apache.activemq:activemq-broker", "org.apache.activemq:activemq-kahadb-store", "org.fusesource.hawtbuf:hawtbuf",
         "org.apache.activemq.protobuf:activemq-protobuf", "org.mule.tests:mule-tests-model"})
@@ -70,6 +77,9 @@ public abstract class JmsAbstractTestCase extends MuleArtifactFunctionalTestCase
   protected static final String MAX_REDELIVERY = "max.redelivery";
   protected String destination;
   protected long maximumWait = 10000;
+
+  @Inject
+  public ExpressionManager expressionManager;
 
   @Rule
   public ExpectedError expectedError = ExpectedError.none();
@@ -130,6 +140,10 @@ public abstract class JmsAbstractTestCase extends MuleArtifactFunctionalTestCase
     return consume(destination, emptyMap(), maximumWait);
   }
 
+  protected Message consume(String destination, long maximumWait) throws Exception {
+    return consume(destination, emptyMap(), maximumWait);
+  }
+
   protected Message consume(String destination, Map<String, Object> flowVars) throws Exception {
     return consume(destination, flowVars, maximumWait);
   }
@@ -144,42 +158,49 @@ public abstract class JmsAbstractTestCase extends MuleArtifactFunctionalTestCase
   }
 
   @Step("Assert message headers")
-  protected void assertHeaders(JmsAttributes attributes, JmsDestination destination, Integer deliveryMode,
+  protected void assertHeaders(Object attributes, Object destination, Integer deliveryMode,
                                Integer priority, boolean hasMessageId, boolean hasTimestamp, String correlationId,
-                               JmsDestination replyTo, String type, Boolean redelivered) {
+                               Object replyTo, String type, Boolean redelivered) {
 
-    JmsHeaders headers = attributes.getHeaders();
-    assertThat(headers, notNullValue());
-    assertThat(headers.getJMSMessageID(), hasMessageId ? not(isEmptyOrNullString()) : nullValue());
-    assertThat(headers.getJMSTimestamp(), hasTimestamp ? not(nullValue()) : nullValue());
+    ExpressionAssertion attributesAsserter = from(attributes).as("attributes");
+    attributesAsserter.assertThat("#[attributes.headers]", notNullValue());
+
+    ExpressionAssertion headers = attributesAsserter.andFrom("#[attributes.headers]").as("headers");
+    headers.assertThat("#[headers.JMSMessageID]", hasMessageId ? not(isEmptyOrNullString()) : nullValue());
+    headers.assertThat("#[headers.JMSTimestamp]", hasTimestamp ? not(nullValue()) : nullValue());
     if (correlationId != null) {
-      assertThat(headers.getJMSCorrelationID(), equalTo(correlationId));
+      headers.assertThat("#[headers.JMSCorrelationID]", equalTo(correlationId));
     } else {
-      assertThat(headers.getJMSCorrelationID(), is(notNullValue()));
+      headers.assertThat("#[headers.JMSCorrelationID]", is(notNullValue()));
     }
-    assertThat(headers.getJMSDeliveryMode(), equalTo(deliveryMode));
-    assertThat(headers.getJMSPriority(), equalTo(priority));
-    assertThat(headers.getJMSRedelivered(), equalTo(redelivered));
-    assertThat(headers.getJMSType(), equalTo(type));
+    headers.assertThat("#[headers.JMSDeliveryMode]", equalTo(deliveryMode));
+    headers.assertThat("#[headers.JMSPriority]", equalTo(priority));
+    headers.assertThat("#[headers.JMSRedelivered]", equalTo(redelivered));
+    headers.assertThat("#[headers.JMSType]", equalTo(type));
 
-    assertDestination(headers.getJMSDestination(), destination);
+    assertDestination(headers.andFrom("#[headers.JMSDestination]"), destination);
 
     if (replyTo == null) {
-      assertThat(headers.getJMSReplyTo(), nullValue());
+      headers.assertThat("#[headers.JMSReplyTo]", nullValue());
     } else {
-      assertDestination(headers.getJMSReplyTo(), destination);
+      assertDestination(headers.andFrom("#[headers.getJMSReplyTo]"), destination);
     }
   }
 
   @Step("Assert destination")
-  private void assertDestination(JmsDestination actual, JmsDestination expected) {
-    assertThat(actual.getDestination(), equalTo(expected.getDestination()));
-    assertThat(actual.getDestinationType(), equalTo(expected.getDestinationType()));
+  private void assertDestination(ExpressionAssertion actualDestination, Object expected) {
+    actualDestination.as("actual");
+    actualDestination.assertThat("#[actual.destination]")
+        .comparedTo(expected)
+        .is(Matchers::equalTo, "#[payload.destination]");
+    actualDestination.assertThat("#[actual.destinationType as String]")
+        .comparedTo(expected)
+        .is(Matchers::equalTo, "#[payload.destinationType as String]");
   }
 
   @Step("Get reply destination")
   protected String getReplyDestination(Message firstMessage) {
-    return ((JmsAttributes) firstMessage.getAttributes().getValue()).getHeaders().getJMSReplyTo().getDestination();
+    return (String) evaluate("#[payload.headers.JMSReplyTo.destination]", firstMessage.getAttributes());
   }
 
   @Step("Polling probe validation")
@@ -198,19 +219,20 @@ public abstract class JmsAbstractTestCase extends MuleArtifactFunctionalTestCase
   }
 
   @Step("Assert JMS message")
-  protected void assertJmsMessage(Result<TypedValue<Object>, JmsAttributes> message, String jmsMessage, boolean isRedelivered) {
-    Object value = message.getOutput().getValue();
+  protected void assertJmsMessage(Result message, String jmsMessage, boolean isRedelivered) {
+    Object value = ((TypedValue) message.getOutput()).getValue();
     assertThat(value, is(jmsMessage));
 
-    JmsAttributes attributes = message.getAttributes().get();
-    assertThat(attributes.getHeaders().getJMSRedelivered(), is(isRedelivered));
+    from(message.getAttributes())
+        .as("attributes")
+        .assertThat("#[attributes.headers.JMSRedelivered]", is(isRedelivered));
   }
 
   @Step("Check for no messages on dest: {destination}")
   protected void assertEmptyDestination(String destination) throws Exception {
     boolean emptyDestination = false;
     try {
-      consume(destination);
+      consume(destination, 2000);
     } catch (EventProcessingException exception) {
       Optional<Error> error = exception.getEvent().getError();
       if (error.isPresent() && errorType(TIMEOUT).matches(error.get().getErrorType())) {
@@ -228,5 +250,22 @@ public abstract class JmsAbstractTestCase extends MuleArtifactFunctionalTestCase
   @Step("Check for message on dest: {destination}")
   protected void assertMessageOnDestination(String message, String destination) throws Exception {
     assertThat(consume(destination), hasPayload(equalTo(message)));
+  }
+
+  public Object evaluate(String expression, Object object) {
+    TypedValue typedValue;
+
+    if (object instanceof TypedValue) {
+      typedValue = (TypedValue) object;
+    } else {
+      typedValue = new TypedValue<>(object, DataType.OBJECT);
+    }
+
+    return expressionManager.evaluate(expression, BindingContext.builder().addBinding("payload", typedValue).build())
+        .getValue();
+  }
+
+  public ExpressionAssertion from(Object object) {
+    return new ExpressionAssertion(object, expressionManager);
   }
 }

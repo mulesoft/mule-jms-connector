@@ -11,18 +11,18 @@ import static org.mule.extensions.jms.api.exception.JmsError.CONSUMING;
 import static org.mule.extensions.jms.api.exception.JmsError.DESTINATION_NOT_FOUND;
 import static org.mule.extensions.jms.api.exception.JmsError.SECURITY;
 import static org.mule.extensions.jms.api.exception.JmsError.TIMEOUT;
+
 import org.mule.extensions.jms.api.config.ConsumerAckMode;
-import org.mule.extensions.jms.internal.config.JmsConfig;
-import org.mule.extensions.jms.internal.connection.JmsTransactionalConnection;
 import org.mule.extensions.jms.api.destination.ConsumerType;
+import org.mule.extensions.jms.internal.config.JmsConfig;
 import org.mule.extensions.jms.internal.operation.JmsConsume;
 import org.mule.runtime.extension.api.annotation.error.ErrorTypeProvider;
 import org.mule.runtime.extension.api.error.ErrorTypeDefinition;
 
-import com.google.common.collect.ImmutableSet;
-
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Errors that can be thrown in the

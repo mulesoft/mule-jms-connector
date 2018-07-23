@@ -6,7 +6,6 @@
  */
 package org.mule.extensions.jms.internal.connection.exception;
 
-import org.mule.extensions.jms.internal.connection.JmsConnection;
 import org.mule.extensions.jms.internal.source.JmsListener;
 
 import javax.jms.ExceptionListener;

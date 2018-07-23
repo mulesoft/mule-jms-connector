@@ -6,13 +6,7 @@
  */
 package org.mule.extensions.jms.api.connection.caching;
 
-import static java.util.Optional.empty;
-
 import org.mule.runtime.extension.api.annotation.Alias;
-
-import java.util.Optional;
-
-import javax.jms.ConnectionFactory;
 
 /**
  * Implementation of {@link CachingConfiguration} that <b>disables</b> session caching This {@link CachingConfiguration} is the
@@ -22,21 +16,6 @@ import javax.jms.ConnectionFactory;
  * @since 4,0
  */
 @Alias("no-caching")
-public class NoCachingConfiguration implements CachingStrategy {
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public boolean appliesTo(ConnectionFactory target) {
-    return false;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public Optional<CachingConfiguration> strategyConfiguration() {
-    return empty();
-  }
+public class NoCachingConfiguration extends org.mule.jms.commons.api.connection.caching.NoCachingConfiguration
+    implements CachingStrategy {
 }

@@ -6,22 +6,8 @@
  */
 package org.mule.extensions.jms.internal.message;
 
-import static java.lang.String.format;
-import static java.lang.String.join;
-import static java.util.Optional.ofNullable;
-import static org.mule.extensions.jms.internal.message.JMSXDefinedPropertiesNames.JMSXAppID;
-import static org.mule.extensions.jms.internal.message.JMSXDefinedPropertiesNames.JMSXConsumerTXID;
-import static org.mule.extensions.jms.internal.message.JMSXDefinedPropertiesNames.JMSXDeliveryCount;
-import static org.mule.extensions.jms.internal.message.JMSXDefinedPropertiesNames.JMSXGroupID;
-import static org.mule.extensions.jms.internal.message.JMSXDefinedPropertiesNames.JMSXGroupSeq;
-import static org.mule.extensions.jms.internal.message.JMSXDefinedPropertiesNames.JMSXProducerTXID;
-import static org.mule.extensions.jms.internal.message.JMSXDefinedPropertiesNames.JMSXRcvTimestamp;
-import static org.mule.extensions.jms.internal.message.JMSXDefinedPropertiesNames.JMSXUserID;
-import static org.mule.extensions.jms.internal.message.JMSXDefinedPropertiesNames.JMSX_NAMES;
-import static org.mule.runtime.api.util.Preconditions.checkArgument;
 import org.mule.extensions.jms.api.message.JmsxProperties;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.jms.Message;
@@ -36,32 +22,5 @@ import javax.jms.Message;
  *
  * @since 1.0
  */
-public final class JmsxPropertiesBuilder {
-
-  private final Map<String, Object> properties = new HashMap<>();
-
-  private JmsxPropertiesBuilder() {}
-
-  public static JmsxPropertiesBuilder create() {
-    return new JmsxPropertiesBuilder();
-  }
-
-  public JmsxPropertiesBuilder add(String key, Object value) {
-    checkArgument(JMSX_NAMES.contains(key),
-                  format("Invalid key [%s], supported keys for JMSXProperties are [%s]", key, join(", ", JMSX_NAMES)));
-
-    properties.put(key, value);
-    return this;
-  }
-
-  public JmsxProperties build() {
-    return new JmsxProperties(ofNullable(properties.get(JMSXUserID)).map(String::valueOf).orElse(null),
-                              ofNullable(properties.get(JMSXAppID)).map(String::valueOf).orElse(null),
-                              Integer.valueOf(properties.getOrDefault(JMSXDeliveryCount, "1").toString()),
-                              ofNullable(properties.get(JMSXGroupID)).map(String::valueOf).orElse(null),
-                              Integer.valueOf(properties.getOrDefault(JMSXGroupSeq, "1").toString()),
-                              ofNullable(properties.get(JMSXProducerTXID)).map(String::valueOf).orElse(null),
-                              ofNullable(properties.get(JMSXConsumerTXID)).map(String::valueOf).orElse(null),
-                              ofNullable(properties.get(JMSXRcvTimestamp)).map(n -> Long.valueOf(n.toString())).orElse(null));
-  }
+public final class JmsxPropertiesBuilder extends org.mule.jms.commons.api.message.JmsxProperties {
 }

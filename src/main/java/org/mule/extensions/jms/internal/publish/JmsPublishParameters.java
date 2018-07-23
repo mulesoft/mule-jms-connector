@@ -6,6 +6,7 @@
  */
 package org.mule.extensions.jms.internal.publish;
 
+import org.mule.jms.commons.internal.publish.PublisherParameters;
 import org.mule.runtime.extension.api.annotation.param.ConfigOverride;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
