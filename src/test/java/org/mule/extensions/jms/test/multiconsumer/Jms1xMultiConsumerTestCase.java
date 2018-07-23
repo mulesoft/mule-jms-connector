@@ -7,6 +7,7 @@
 package org.mule.extensions.jms.test.multiconsumer;
 
 import static java.lang.Long.parseLong;
+import static java.lang.String.format;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.groupingBy;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -84,7 +85,11 @@ public class Jms1xMultiConsumerTestCase extends AbstractJmsMultiConsumerTestCase
     }
     ackMessage(ackId);
 
-    new PollingProber(5000, 100).check(new JUnitLambdaProbe(() -> receivedMessages() == NUMBER_OF_MESSAGES - messagesToAck));
+    new PollingProber(5000, 100).check(new JUnitLambdaProbe(() -> receivedMessages() == NUMBER_OF_MESSAGES - messagesToAck,
+                                                            () -> format("The listener should have received %s messages, but received %s",
+                                                                         NUMBER_OF_MESSAGES
+                                                                             - messagesToAck,
+                                                                         receivedMessages())));
   }
 
   @Test

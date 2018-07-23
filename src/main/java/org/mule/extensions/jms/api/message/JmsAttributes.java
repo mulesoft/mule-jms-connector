@@ -18,7 +18,7 @@ import javax.jms.Message;
  *
  * @since 1.0
  */
-public class JmsAttributes extends org.mule.jms.commons.api.message.JmsAttributes {
+public class JmsAttributes implements org.mule.jms.commons.api.message.JmsAttributes {
 
   private static final long serialVersionUID = -8148917084189760450L;
 
@@ -42,9 +42,23 @@ public class JmsAttributes extends org.mule.jms.commons.api.message.JmsAttribute
   private final String ackId;
 
   public JmsAttributes(JmsMessageProperties properties, JmsHeaders headers, String ackId) {
-    super(properties, headers, ackId);
     this.properties = properties;
     this.headers = headers;
     this.ackId = ackId;
+  }
+
+  @Override
+  public JmsMessageProperties getProperties() {
+    return properties;
+  }
+
+  @Override
+  public JmsHeaders getHeaders() {
+    return headers;
+  }
+
+  @Override
+  public String getAckId() {
+    return ackId;
   }
 }

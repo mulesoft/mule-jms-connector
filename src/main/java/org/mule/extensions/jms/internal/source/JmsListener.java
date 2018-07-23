@@ -8,9 +8,7 @@ package org.mule.extensions.jms.internal.source;
 
 import static org.mule.extensions.jms.internal.common.JmsCommons.EXAMPLE_CONTENT_TYPE;
 import static org.mule.extensions.jms.internal.common.JmsCommons.EXAMPLE_ENCODING;
-import static org.mule.runtime.core.api.util.ExceptionUtils.extractConnectionException;
 import static org.mule.runtime.extension.api.annotation.source.SourceClusterSupport.DEFAULT_PRIMARY_NODE_ONLY;
-import static org.slf4j.LoggerFactory.getLogger;
 
 import org.mule.extensions.jms.api.ack.AckMode;
 import org.mule.extensions.jms.api.destination.ConsumerType;
@@ -55,8 +53,6 @@ import javax.inject.Inject;
 import javax.jms.Destination;
 import javax.jms.Message;
 
-import org.slf4j.Logger;
-
 /**
  * JMS Subscriber for {@link Destination}s, allows to listen
  * for incoming {@link Message}s
@@ -68,19 +64,6 @@ import org.slf4j.Logger;
 @ClusterSupport(value = DEFAULT_PRIMARY_NODE_ONLY)
 @MetadataScope(outputResolver = JmsOutputResolver.class, attributesResolver = AttributesOutputResolver.class)
 public class JmsListener extends Source<Object, Object> {
-
-  private static final Logger LOGGER = getLogger(JmsListener.class);
-  static final String REPLY_TO_DESTINATION_VAR = "REPLY_TO_DESTINATION";
-  static final String JMS_LOCK_VAR = "JMS_LOCK";
-  static final String JMS_SESSION_VAR = "JMS_SESSION";
-
-  static void notifyIfConnectionProblem(SourceCallbackContext callbackContext, Exception e) {
-    notifyIfConnectionProblem(callbackContext.getSourceCallback(), e);
-  }
-
-  static void notifyIfConnectionProblem(SourceCallback callback, Exception e) {
-    extractConnectionException(e).ifPresent(ce -> callback.onConnectionException(ce));
-  }
 
   @Inject
   private JmsSessionManager sessionManager;

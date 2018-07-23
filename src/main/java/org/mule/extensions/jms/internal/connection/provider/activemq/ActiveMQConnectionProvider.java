@@ -65,7 +65,7 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider {
   static final String CONNECTION_FACTORY_CLASS = "org.apache.activemq.ActiveMQConnectionFactory";
   static final String BROKER_CLASS = "org.apache.activemq.broker.Broker";
   static final String KAHA_DB_STORE_CLASS = "org.apache.activemq.store.kahadb.KahaDBPersistenceAdapter";
-  static final String ACTIVEMQ_VERSION = "5.14.5";
+  static final String ACTIVEMQ_VERSION = "5.15.4";
   static final String BROKER_GA = "org.apache.activemq:activemq-broker";
   static final String KAHA_DB_GA = "org.apache.activemq:activemq-kahadb-store";
 

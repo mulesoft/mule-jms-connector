@@ -6,7 +6,8 @@
  */
 package org.mule.extensions.jms.api.message;
 
-import org.mule.extensions.jms.api.destination.JmsDestination;
+import org.mule.jms.commons.api.destination.JmsDestination;
+import org.mule.jms.commons.api.message.JmsHeadersBuilder;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 
@@ -177,7 +178,7 @@ public class JmsHeaders extends org.mule.jms.commons.api.message.JmsHeaders {
     return priority;
   }
 
-  public static class Builder {
+  public static class Builder implements JmsHeadersBuilder {
 
     private JmsHeaders jmsHeaders = new JmsHeaders();
 
