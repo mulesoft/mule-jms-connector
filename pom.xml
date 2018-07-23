@@ -44,7 +44,7 @@
             <artifactId>commons-io</artifactId>
             <version>${commonsIoVersion}</version>
         </dependency>
-        <dependency>s
+        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>${commonsLangVersion}</version>
