@@ -30,20 +30,21 @@
         <hawtbufVersion>1.1</hawtbufVersion>
         <muleSpringModuleVersion>1.2.0-SNAPSHOT</muleSpringModuleVersion>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
+        <muleJmsClientVersion>1.0.1-SNAPSHOT</muleJmsClientVersion>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.mule.connectors</groupId>
             <artifactId>mule-jms-client</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
+            <version>${muleJmsClientVersion}</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>${commonsIoVersion}</version>
         </dependency>
-        <dependency>
+        <dependency>s
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>${commonsLangVersion}</version>
