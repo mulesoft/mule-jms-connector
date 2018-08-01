@@ -29,14 +29,14 @@ public class JmsAttributesSerializationTestCase {
 
   @Test
   public void serializeJmsAttributes() throws IOException, ClassNotFoundException {
-    JmsHeaders.Builder attributesBuilder = new JmsHeaders.Builder();
-    attributesBuilder.setDestination(new JmsDestination("name", DestinationType.QUEUE));
+    JmsHeaders.Builder headersBuilder = new JmsHeaders.Builder();
+    headersBuilder.setDestination(new JmsDestination("name", DestinationType.QUEUE));
     HashMap<String, Object> properties = new HashMap<>();
     properties.put("123", 123);
 
     JmsAttributes jmsAttributes = new JmsConnectorAttributeBuilder()
         .withAckId("123")
-        .withHeaders(attributesBuilder.build())
+        .withHeaders(headersBuilder.build())
         .withProperties(properties)
         .build();
 
