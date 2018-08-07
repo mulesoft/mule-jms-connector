@@ -14,6 +14,7 @@ import static org.mule.extensions.jms.api.destination.DestinationType.QUEUE;
 import static org.mule.extensions.jms.api.destination.DestinationType.TOPIC;
 import static org.mule.extensions.jms.internal.message.JmsMessageUtils.getPropertiesMap;
 import static org.mule.extensions.jms.internal.message.JmsMessageUtils.toObject;
+
 import org.mule.extensions.jms.api.connection.JmsSpecification;
 import org.mule.extensions.jms.api.destination.JmsDestination;
 import org.mule.extensions.jms.api.message.JmsAttributes;
@@ -216,9 +217,13 @@ public class JmsResultFactory {
   }
 
   private JmsDestination getDestination(Destination value) throws JMSException {
-    return value instanceof Queue
-        ? new JmsDestination(((Queue) value).getQueueName(), QUEUE)
-        : new JmsDestination(((Topic) value).getTopicName(), TOPIC);
+    JmsDestination jmsDestination = null;
+    if (value instanceof Queue) {
+      jmsDestination = new JmsDestination(((Queue) value).getQueueName(), QUEUE);
+    } else if (value instanceof Topic) {
+      jmsDestination = new JmsDestination(((Topic) value).getTopicName(), TOPIC);
+    }
+    return jmsDestination;
   }
 
   private interface JmsHeaderValueSupplier<T> {

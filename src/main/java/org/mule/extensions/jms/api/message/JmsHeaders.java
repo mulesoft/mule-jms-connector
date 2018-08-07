@@ -24,6 +24,7 @@ public class JmsHeaders {
    * The destination from which the JMS Message was received.
    */
   @Parameter
+  @Optional
   private JmsDestination destination;
 
   /**
@@ -105,6 +106,7 @@ public class JmsHeaders {
    * A message type identifier supplied by a client when a message is sent.
    */
   @Parameter
+  @Optional
   private String type;
 
   /**
