@@ -17,12 +17,30 @@
         </jms:publish>
     </flow>
 
+    <flow name="publisherWithCustomCorrelationReplyTo">
+        <set-variable variableName="destination" value="#[uuid()]"/>
+        <jms:publish config-ref="config" destination="${destination}">
+            <jms:message correlationId="myCorrelationId" >
+                <jms:reply-to destination="#[vars.destination]" />
+            </jms:message>
+        </jms:publish>
+        <jms:consume destination="#[vars.destination]"/>
+    </flow>
+
+
     <flow name="neverSendCorrelationId">
         <jms:publish config-ref="config" destination="${destination}" sendCorrelationId="NEVER"/>
     </flow>
 
-    <flow name="listener">
+    <flow name="listener" initialState="stopped">
         <jms:listener config-ref="config" destination="${destination}" numberOfConsumers="1"/>
+        <custom-processor class="org.mule.extensions.jms.test.JmsMessageStorage"/>
+    </flow>
+
+    <flow name="neverSendCorrelationIdListener" initialState="stopped">
+        <jms:listener config-ref="config" destination="${destination}" numberOfConsumers="1">
+            <jms:response sendCorrelationId="NEVER"/>
+        </jms:listener>
         <custom-processor class="org.mule.extensions.jms.test.JmsMessageStorage"/>
     </flow>
 

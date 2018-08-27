@@ -10,7 +10,10 @@ import org.mule.extensions.jms.api.destination.JmsDestination;
 import org.mule.extensions.jms.api.message.JmsMessageBuilder;
 import org.mule.runtime.extension.api.annotation.param.ConfigOverride;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
+import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
+import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
+import org.mule.runtime.extension.api.runtime.parameter.OutboundCorrelationStrategy;
 
 import java.util.concurrent.TimeUnit;
 
@@ -61,6 +64,7 @@ public class JmsResponseMessageBuilder extends JmsMessageBuilder
    * If true; the Message will be flagged to avoid generating its MessageID
    */
   @Parameter
+  @DisplayName("Disable Message ID")
   @ConfigOverride
   @Summary("If true; the Message will be flagged to avoid generating its MessageID")
   private boolean disableMessageId;
@@ -70,6 +74,7 @@ public class JmsResponseMessageBuilder extends JmsMessageBuilder
    */
   @Parameter
   @ConfigOverride
+  @DisplayName("Disable Message Timestamp")
   @Summary("If true; the Message will be flagged to avoid generating its sent Timestamp")
   private boolean disableMessageTimestamp;
 
@@ -89,6 +94,18 @@ public class JmsResponseMessageBuilder extends JmsMessageBuilder
   @ConfigOverride
   @Summary("Time unit to be used in the deliveryDelay configurations")
   private TimeUnit deliveryDelayUnit;
+
+  /**
+   * Options on whether to include an outbound correlation id or not
+   *
+   * @since 1.3.0
+   */
+  @Parameter
+  @DisplayName("Send Correlation ID")
+  @ConfigOverride
+  @Placement(order = 15)
+  @Summary("Options on whether to include an outbound correlation id or not")
+  private OutboundCorrelationStrategy sendCorrelationId;
 
   public boolean isPersistentDelivery() {
     return persistentDelivery;
@@ -120,5 +137,9 @@ public class JmsResponseMessageBuilder extends JmsMessageBuilder
 
   public TimeUnit getDeliveryDelayUnit() {
     return deliveryDelayUnit;
+  }
+
+  public OutboundCorrelationStrategy getSendCorrelationId() {
+    return sendCorrelationId;
   }
 }
