@@ -65,6 +65,7 @@ public class JmsMessageBuilder implements org.mule.jms.commons.api.message.JmsMe
   @Parameter
   @ConfigOverride
   @Summary("The JMSType identifier header of the Message")
+  @DisplayName("JMS Type")
   private String jmsType;
 
   /**
@@ -73,6 +74,7 @@ public class JmsMessageBuilder implements org.mule.jms.commons.api.message.JmsMe
   @Parameter
   @Optional
   @Summary("The JMSCorrelationID header of the Message")
+  @DisplayName("Correlation ID")
   private String correlationId;
 
   /**
@@ -81,6 +83,7 @@ public class JmsMessageBuilder implements org.mule.jms.commons.api.message.JmsMe
   @Parameter
   @Optional(defaultValue = "true")
   @Summary("Whether or not the body content type should be sent as a property")
+  @DisplayName("Send Content-Type")
   private boolean sendContentType;
 
   /**
@@ -88,7 +91,7 @@ public class JmsMessageBuilder implements org.mule.jms.commons.api.message.JmsMe
    */
   @Parameter
   @Optional
-  @DisplayName("ContentType")
+  @DisplayName("Content-Type")
   @Example(EXAMPLE_CONTENT_TYPE)
   @Summary("The content type of the message's body")
   private String outboundContentType;
@@ -98,6 +101,7 @@ public class JmsMessageBuilder implements org.mule.jms.commons.api.message.JmsMe
    */
   @Parameter
   @Optional(defaultValue = "true")
+  @DisplayName("Send Encoding")
   @Summary("Whether or not the body outboundEncoding should be sent as a Message property")
   private boolean sendEncoding;
 
@@ -117,6 +121,7 @@ public class JmsMessageBuilder implements org.mule.jms.commons.api.message.JmsMe
    */
   @Parameter
   @Optional
+  @DisplayName("Reply To")
   @Summary("The destination where a reply to this Message should be sent")
   private JmsDestination replyTo;
 

@@ -44,6 +44,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.source.ClusterSupport;
 import org.mule.runtime.extension.api.annotation.source.EmitsResponse;
 import org.mule.runtime.extension.api.runtime.parameter.CorrelationInfo;
+import org.mule.runtime.extension.api.runtime.parameter.OutboundCorrelationStrategy;
 import org.mule.runtime.extension.api.runtime.source.Source;
 import org.mule.runtime.extension.api.runtime.source.SourceCallback;
 import org.mule.runtime.extension.api.runtime.source.SourceCallbackContext;
@@ -111,6 +112,7 @@ public class JmsListener extends Source<Object, Object> {
    * The Session ACK mode to use when consuming a message
    */
   @Parameter
+  @DisplayName("Acknowledge Mode")
   @Optional
   private AckMode ackMode;
 
@@ -125,6 +127,7 @@ public class JmsListener extends Source<Object, Object> {
    * The content type of the message body
    */
   @Parameter
+  @DisplayName("Inbound Content-Type")
   @Optional
   @Example(EXAMPLE_CONTENT_TYPE)
   private String inboundContentType;
@@ -133,6 +136,7 @@ public class JmsListener extends Source<Object, Object> {
    * The inboundEncoding of the message body
    */
   @Parameter
+  @DisplayName("Inbound Encoding")
   @Optional
   @Example(EXAMPLE_ENCODING)
   private String inboundEncoding;

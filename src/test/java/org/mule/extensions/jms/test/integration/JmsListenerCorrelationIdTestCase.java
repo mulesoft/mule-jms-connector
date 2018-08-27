@@ -13,8 +13,13 @@ import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENS
 import static org.mule.extensions.jms.test.JmsMessageStorage.cleanUpQueue;
 import static org.mule.extensions.jms.test.JmsMessageStorage.pollEvent;
 import org.mule.extensions.jms.test.JmsAbstractTestCase;
+import org.mule.runtime.core.api.construct.Flow;
 import org.mule.runtime.core.api.event.CoreEvent;
 import org.mule.tck.junit4.rule.SystemProperty;
+
+import java.util.UUID;
+
+import javax.inject.Inject;
 
 import io.qameta.allure.Description;
 import io.qameta.allure.Feature;
@@ -31,6 +36,13 @@ public class JmsListenerCorrelationIdTestCase extends JmsAbstractTestCase {
 
   @Rule
   public SystemProperty destination = new SystemProperty("destination", newDestination("destination"));
+
+  @Inject
+  Flow listener;
+
+  @Inject
+  Flow neverSendCorrelationIdListener;
+
 
   @Override
   protected String[] getConfigFiles() {
@@ -52,6 +64,7 @@ public class JmsListenerCorrelationIdTestCase extends JmsAbstractTestCase {
   @Description("Verifies that messages are published by default with the correlationId as the current event and the listener "
       + "sets that correlationId")
   public void publishWithDefaultCorrelationId() throws Exception {
+    listener.start();
     flowRunner("publisher")
         .withSourceCorrelationId(MY_CORRELATION_ID)
         .withPayload(MY_PAYLOAD)
@@ -65,6 +78,7 @@ public class JmsListenerCorrelationIdTestCase extends JmsAbstractTestCase {
   @Test
   @Description("Verifies that messages are published with a custom correlationId and the listener sets that correlationId")
   public void publishWithCustomCorrelationId() throws Exception {
+    listener.start();
     flowRunner("publisherWithCustomCorrelation").withPayload(MY_PAYLOAD).run();
 
     CoreEvent event = pollEvent();
@@ -75,6 +89,7 @@ public class JmsListenerCorrelationIdTestCase extends JmsAbstractTestCase {
   @Test
   @Description("Verifies that messages sending of correlationId can be disabled")
   public void neverSendCorrelationId() throws Exception {
+    listener.start();
     flowRunner("neverSendCorrelationId")
         .withSourceCorrelationId(MY_CORRELATION_ID)
         .withPayload(MY_PAYLOAD)
@@ -83,6 +98,23 @@ public class JmsListenerCorrelationIdTestCase extends JmsAbstractTestCase {
     CoreEvent event = pollEvent();
     assertThat(event.getMessage().getPayload().getValue(), equalTo(MY_PAYLOAD));
     assertThat(event.getCorrelationId(), not(equalTo(MY_CORRELATION_ID)));
+  }
+
+  @Test
+  @Description("Verifies that the sending of correlation id from listener reply can be disabled")
+  public void neverReplySendCorrelationIdListener() throws Exception {
+    neverSendCorrelationIdListener.start();
+    String payload = UUID.randomUUID().toString();
+    CoreEvent replyTo = flowRunner("publisherWithCustomCorrelationReplyTo")
+        .withPayload(payload)
+        .run();
+    CoreEvent listenerEvent = pollEvent();
+
+    assertThat(listenerEvent.getCorrelationId(), equalTo(MY_CORRELATION_ID));
+    assertThat(listenerEvent.getMessage().getPayload().getValue(), equalTo(payload));
+
+    assertThat(replyTo.getCorrelationId(), not(equalTo(MY_CORRELATION_ID)));
+    assertThat(replyTo.getMessage().getPayload().getValue(), equalTo(payload));
   }
 
 }
