@@ -105,7 +105,7 @@ public class JmsResponseMessageBuilder extends JmsMessageBuilder
   @ConfigOverride
   @Placement(order = 15)
   @Summary("Options on whether to include an outbound correlation id or not")
-  OutboundCorrelationStrategy sendCorrelationId;
+  private OutboundCorrelationStrategy sendCorrelationId;
 
   public boolean isPersistentDelivery() {
     return persistentDelivery;
