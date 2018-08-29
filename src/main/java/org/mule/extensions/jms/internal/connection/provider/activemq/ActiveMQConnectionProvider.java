@@ -12,6 +12,7 @@ import static org.mule.extensions.jms.internal.connection.provider.activemq.Acti
 import static org.mule.extensions.jms.internal.connection.provider.activemq.ActiveMQConnectionProvider.BROKER_GA;
 import static org.mule.extensions.jms.internal.connection.provider.activemq.ActiveMQConnectionProvider.CONNECTION_FACTORY_CLASS;
 import static org.mule.extensions.jms.internal.connection.provider.activemq.ActiveMQConnectionProvider.KAHA_DB_STORE_CLASS;
+import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import static org.mule.runtime.api.meta.ExternalLibraryType.DEPENDENCY;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -22,9 +23,11 @@ import org.mule.jms.commons.internal.connection.JmsConnection;
 import org.mule.jms.commons.internal.connection.JmsTransactionalConnection;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.connection.ConnectionProvider;
+import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.api.tls.TlsContextFactory;
 import org.mule.runtime.core.api.util.proxy.TargetInvocationHandler;
 import org.mule.runtime.extension.api.annotation.Alias;
+import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.ExternalLib;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
@@ -90,9 +93,10 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider {
    * @since 1.3.0
    */
   @Parameter
+  @Optional
   @Placement(tab = "TLS/SSL")
   @DisplayName("TLS Configuration")
-  @Optional
+  @Expression(NOT_SUPPORTED)
   @Summary("TLS/SSL Configuration to be able to create Secure and Encrypted ActiveMQ Connections")
   private TlsContextFactory tlsConfiguration;
 
