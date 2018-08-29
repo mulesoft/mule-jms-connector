@@ -12,6 +12,7 @@ import static org.mule.extensions.jms.internal.connection.provider.activemq.Acti
 import static org.mule.extensions.jms.internal.connection.provider.activemq.ActiveMQConnectionProvider.BROKER_GA;
 import static org.mule.extensions.jms.internal.connection.provider.activemq.ActiveMQConnectionProvider.CONNECTION_FACTORY_CLASS;
 import static org.mule.extensions.jms.internal.connection.provider.activemq.ActiveMQConnectionProvider.KAHA_DB_STORE_CLASS;
+import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import static org.mule.runtime.api.meta.ExternalLibraryType.DEPENDENCY;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -22,23 +23,33 @@ import org.mule.jms.commons.internal.connection.JmsConnection;
 import org.mule.jms.commons.internal.connection.JmsTransactionalConnection;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.connection.ConnectionProvider;
+import org.mule.runtime.api.meta.ExpressionSupport;
+import org.mule.runtime.api.tls.TlsContextFactory;
 import org.mule.runtime.core.api.util.proxy.TargetInvocationHandler;
 import org.mule.runtime.extension.api.annotation.Alias;
+import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.ExternalLib;
+import org.mule.runtime.extension.api.annotation.param.Optional;
+import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
+import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.function.Supplier;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
+import javax.net.ssl.SSLContext;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.broker.SslContext;
 import org.slf4j.Logger;
 
 /**
@@ -76,11 +87,28 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider {
   @Placement(order = 1)
   private ActiveMQConnectionFactoryProvider connectionFactoryProvider;
 
+  /**
+   * TLS/SSL Configuration to be able to create Secure and Encrypted ActiveMQ Connections
+   *
+   * @since 1.3.0
+   */
+  @Parameter
+  @Optional
+  @Placement(tab = "TLS/SSL")
+  @DisplayName("TLS Configuration")
+  @Expression(NOT_SUPPORTED)
+  @Summary("TLS/SSL Configuration to be able to create Secure and Encrypted ActiveMQ Connections")
+  private TlsContextFactory tlsConfiguration;
+
   private ConnectionFactory connectionFactory;
 
   @Override
   public JmsTransactionalConnection connect() throws ConnectionException {
     try {
+      //This is required here, because ActiveMQ saves the SSL Context on a ThreadLocal variable
+      if (shouldUseSsl()) {
+        configureSSLContext();
+      }
       return super.connect();
     } catch (ConnectionException e) {
       Throwable cause = e.getCause();
@@ -126,7 +154,7 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider {
                                         + " Default ActiveMQConnectionFactory implementation provides support only for JMS 1.1 and 1.0.2b versions");
       }
 
-      connectionFactory = connectionFactoryProvider.createDefaultConnectionFactory();
+      connectionFactory = connectionFactoryProvider.createDefaultConnectionFactory(shouldUseSsl());
     }
     return connectionFactory;
   }
@@ -194,7 +222,7 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider {
         + "]";
   }
 
-  void checkMissingPersistenceLib(ConnectionException e) {
+  private void checkMissingPersistenceLib(ConnectionException e) {
     boolean unableToCreatePersistenceAdapter =
         e.getMessage().contains("Class 'org.apache.activemq.store.kahadb.KahaDBPersistenceAdapter' not found in classloader");
     if (unableToCreatePersistenceAdapter) {
@@ -204,12 +232,28 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider {
     }
   }
 
-  void checkMissingBrokerLib(ConnectionException e) {
+  private void checkMissingBrokerLib(ConnectionException e) {
     boolean unableToCreateInVMTransport = e.getMessage().contains("Transport scheme NOT recognized: [vm]");
     if (unableToCreateInVMTransport) {
       throw new JmsMissingLibraryException(new ConnectionException(e),
                                            "Unable to create a connection to a broker based on the VM Transport. "
                                                + getAdviceMessage(BROKER_GA));
+    }
+  }
+
+  private boolean shouldUseSsl() {
+    return tlsConfiguration != null
+        && (tlsConfiguration.isKeyStoreConfigured() || tlsConfiguration.isTrustStoreConfigured());
+  }
+
+  private void configureSSLContext() throws ConnectionException {
+    try {
+      SSLContext sslContext = tlsConfiguration.createSslContext();
+      SslContext activeMQSslContext = new SslContext();
+      activeMQSslContext.setSSLContext(sslContext);
+      SslContext.setCurrentSslContext(activeMQSslContext);
+    } catch (KeyManagementException | NoSuchAlgorithmException e) {
+      throw new ConnectionException("A problem occurred trying to configure SSL Options on ActiveMQ Connection", e);
     }
   }
 
