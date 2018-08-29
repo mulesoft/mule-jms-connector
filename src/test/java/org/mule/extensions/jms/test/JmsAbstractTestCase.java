@@ -44,14 +44,11 @@ import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 
 import javax.inject.Inject;
 
 import io.qameta.allure.Feature;
 import io.qameta.allure.Step;
-import org.hamcrest.Matcher;
-import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Rule;

@@ -44,7 +44,9 @@ public class ActiveMQConnectionFactoryProvider {
   private static final Logger LOGGER = LoggerFactory.getLogger(ActiveMQConnectionFactoryProvider.class);
 
   private static final String ACTIVEMQ_CONNECTION_FACTORY_CLASS = "org.apache.activemq.ActiveMQConnectionFactory";
+  private static final String ACTIVEMQ_SSL_CONNECTION_FACTORY_CLASS = "org.apache.activemq.ActiveMQSslConnectionFactory";
   private static final String ACTIVEMQ_XA_CONNECTION_FACTORY_CLASS = "org.apache.activemq.ActiveMQXAConnectionFactory";
+  private static final String ACTIVEMQ_XA_SSL_CONNECTION_FACTORY_CLASS = "org.apache.activemq.ActiveMQXASslConnectionFactory";
   private static final int REDELIVERY_IGNORE = -1;
 
   /**
@@ -74,14 +76,15 @@ public class ActiveMQConnectionFactoryProvider {
     return factoryConfiguration;
   }
 
-  ConnectionFactory createDefaultConnectionFactory() throws ActiveMQException {
+  ConnectionFactory createDefaultConnectionFactory(boolean useSsl) throws ActiveMQException {
+    String factoryClass = getFactoryClass(useSsl);
 
     try {
       if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug(format("Creating new [%s]", getFactoryClass()));
+        LOGGER.debug(format("Creating new [%s]", factoryClass));
       }
 
-      this.connectionFactory = (ConnectionFactory) instantiateClass(getFactoryClass(), factoryConfiguration.getBrokerUrl());
+      this.connectionFactory = (ConnectionFactory) instantiateClass(factoryClass, factoryConfiguration.getBrokerUrl());
       applyVendorSpecificConnectionFactoryProperties(connectionFactory);
       return connectionFactory;
     } catch (ClassNotFoundException e) {
@@ -89,12 +92,12 @@ public class ActiveMQConnectionFactoryProvider {
           format("Failed to create a default Connection Factory for ActiveMQ using the [%s] implementation because the Class was not found. \n "
               +
               "Please verify that you have configured the ActiveMQ Client Dependency as a Shared Library of your application.",
-                 getFactoryClass());
+                 factoryClass);
       LOGGER.error(message, e);
       throw new JmsMissingLibraryException(e, message);
     } catch (Exception e) {
       String message = format("Failed to create a default Connection Factory for ActiveMQ using the [%s] implementation: %s",
-                              getFactoryClass(), e.getMessage());
+                              factoryClass, e.getMessage());
       LOGGER.error(message, e);
       throw new ActiveMQException(message, e);
     }
@@ -158,9 +161,22 @@ public class ActiveMQConnectionFactoryProvider {
     }
   }
 
-  private String getFactoryClass() {
-    return factoryConfiguration.isEnableXA()
-        ? ACTIVEMQ_XA_CONNECTION_FACTORY_CLASS : ACTIVEMQ_CONNECTION_FACTORY_CLASS;
+  private String getFactoryClass(boolean useSsl) {
+    String factoryClass;
+    if (factoryConfiguration.isEnableXA()) {
+      if (useSsl) {
+        factoryClass = ACTIVEMQ_XA_SSL_CONNECTION_FACTORY_CLASS;
+      } else {
+        factoryClass = ACTIVEMQ_XA_CONNECTION_FACTORY_CLASS;
+      }
+    } else {
+      if (useSsl) {
+        factoryClass = ACTIVEMQ_SSL_CONNECTION_FACTORY_CLASS;
+      } else {
+        factoryClass = ACTIVEMQ_CONNECTION_FACTORY_CLASS;
+      }
+    }
+    return factoryClass;
   }
 
 }
