@@ -28,9 +28,9 @@
         <springVersion>5.0.5.RELEASE</springVersion>
         <jacksonVersion>2.9.6</jacksonVersion>
         <hawtbufVersion>1.1</hawtbufVersion>
-        <muleSpringModuleVersion>1.2.0-SNAPSHOT</muleSpringModuleVersion>
+        <muleSpringModuleVersion>1.2.0</muleSpringModuleVersion>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
-        <muleJmsClientVersion>1.0.1-SNAPSHOT</muleJmsClientVersion>
+        <muleJmsClientVersion>1.1.0</muleJmsClientVersion>
     </properties>
 
     <dependencies>
