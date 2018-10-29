@@ -16,18 +16,18 @@ import org.apache.activemq.broker.BrokerService;
  */
 public class ActiveMQSSLServer {
 
+  private static final String ACTIVEMQ_PORT = "activemq.port";
   private static BrokerService brokerService;
   private static boolean started = false;
 
   public static void start(String port) throws Exception {
     if (!started) {
-      String propertyKey = "activemq.port";
-      System.setProperty(propertyKey, port);
+      System.setProperty(ACTIVEMQ_PORT, port);
       try {
         brokerService = BrokerFactory.createBroker(new URI("xbean:activemq.xml"));
         brokerService.start();
       } finally {
-        System.clearProperty(propertyKey);
+        System.clearProperty(ACTIVEMQ_PORT);
       }
       started = true;
     }
