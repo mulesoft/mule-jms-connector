@@ -16,6 +16,7 @@ import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import static org.mule.runtime.api.meta.ExternalLibraryType.DEPENDENCY;
 import static org.slf4j.LoggerFactory.getLogger;
 
+import org.mule.extensions.jms.api.exception.JmsExtensionException;
 import org.mule.extensions.jms.api.exception.JmsMissingLibraryException;
 import org.mule.extensions.jms.internal.connection.exception.ActiveMQException;
 import org.mule.extensions.jms.internal.connection.provider.BaseConnectionProvider;
@@ -23,8 +24,10 @@ import org.mule.jms.commons.internal.connection.JmsConnection;
 import org.mule.jms.commons.internal.connection.JmsTransactionalConnection;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.connection.ConnectionProvider;
-import org.mule.runtime.api.meta.ExpressionSupport;
+import org.mule.runtime.api.lifecycle.Initialisable;
+import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.api.tls.TlsContextFactory;
+import org.mule.runtime.core.api.lifecycle.LifecycleUtils;
 import org.mule.runtime.core.api.util.proxy.TargetInvocationHandler;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.Expression;
@@ -70,7 +73,7 @@ import org.slf4j.Logger;
     type = DEPENDENCY, requiredClassName = KAHA_DB_STORE_CLASS,
     coordinates = ActiveMQConnectionProvider.KAHA_DB_GA + ":" + ACTIVEMQ_VERSION,
     optional = true)
-public class ActiveMQConnectionProvider extends BaseConnectionProvider {
+public class ActiveMQConnectionProvider extends BaseConnectionProvider implements Initialisable {
 
   private static final Logger LOGGER = getLogger(ActiveMQConnectionProvider.class);
   static final String CONNECTION_FACTORY_CLASS = "org.apache.activemq.ActiveMQConnectionFactory";
@@ -104,11 +107,11 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider {
 
   @Override
   public JmsTransactionalConnection connect() throws ConnectionException {
+    if (shouldUseSsl()) {
+      configureSSLContext();
+    }
+
     try {
-      //This is required here, because ActiveMQ saves the SSL Context on a ThreadLocal variable
-      if (shouldUseSsl()) {
-        configureSSLContext();
-      }
       return super.connect();
     } catch (ConnectionException e) {
       Throwable cause = e.getCause();
@@ -246,18 +249,24 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider {
         && (tlsConfiguration.isKeyStoreConfigured() || tlsConfiguration.isTrustStoreConfigured());
   }
 
-  private void configureSSLContext() throws ConnectionException {
+  private void configureSSLContext() {
     try {
       SSLContext sslContext = tlsConfiguration.createSslContext();
       SslContext activeMQSslContext = new SslContext();
       activeMQSslContext.setSSLContext(sslContext);
       SslContext.setCurrentSslContext(activeMQSslContext);
     } catch (KeyManagementException | NoSuchAlgorithmException e) {
-      throw new ConnectionException("A problem occurred trying to configure SSL Options on ActiveMQ Connection", e);
+      throw new JmsExtensionException("A problem occurred trying to configure SSL Options on ActiveMQ Connection", e);
     }
   }
 
   public ActiveMQConnectionFactoryProvider getConnectionFactoryProvider() {
     return connectionFactoryProvider;
+  }
+
+  @Override
+  public void initialise() throws InitialisationException {
+    super.initialise();
+    LifecycleUtils.initialiseIfNeeded(tlsConfiguration);
   }
 }
