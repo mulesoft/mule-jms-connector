@@ -23,9 +23,12 @@ public class ActiveMQSSLServer {
     if (!started) {
       String propertyKey = "activemq.port";
       System.setProperty(propertyKey, port);
-      brokerService = BrokerFactory.createBroker(new URI("xbean:activemq.xml"));
-      brokerService.start();
-      System.clearProperty(propertyKey);
+      try {
+        brokerService = BrokerFactory.createBroker(new URI("xbean:activemq.xml"));
+        brokerService.start();
+      } finally {
+        System.clearProperty(propertyKey);
+      }
       started = true;
     }
   }
