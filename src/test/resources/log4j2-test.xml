@@ -23,10 +23,8 @@
         <!--<AsyncLogger name="org.mule.test.runner" level="DEBUG"/>-->
         <AsyncLogger name="com.mulesoft" level="WARN"/>
 
-        <!--<AsyncLogger name="org.mule.extensions.jms" level="DEBUG"/>
-        <AsyncLogger name="org.mule.extensions.jms.test" level="DEBUG"/>
-        <AsyncLogger name="org.mule.jms.commons" level="DEBUG"/>-->
-
+        <!--<AsyncLogger name="org.mule.extensions.jms" level="DEBUG"/>-->
+        <!-- <AsyncLogger name="org.mule.extensions.jms.test" level="DEBUG"/>-->
 
         <AsyncRoot level="INFO">
             <AppenderRef ref="Console"/>
