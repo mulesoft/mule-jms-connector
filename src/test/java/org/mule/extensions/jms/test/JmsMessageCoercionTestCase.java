@@ -6,20 +6,22 @@
  */
 package org.mule.extensions.jms.test;
 
+import static java.lang.System.lineSeparator;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JMS_EXTENSION;
 import static org.mule.runtime.api.metadata.MediaType.ANY;
 import static org.mule.runtime.api.metadata.MediaType.TEXT;
+
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.tck.junit4.rule.SystemProperty;
 
-import org.junit.Rule;
-import org.junit.Test;
+import java.io.ByteArrayInputStream;
+
 import io.qameta.allure.Feature;
 import io.qameta.allure.Story;
-
-import java.io.ByteArrayInputStream;
+import org.junit.Rule;
+import org.junit.Test;
 
 @Feature(JMS_EXTENSION)
 @Story("Coercion of the input body to a JMS Message")
@@ -55,7 +57,7 @@ public class JmsMessageCoercionTestCase extends JmsAbstractTestCase {
     TypedValue evaluate = muleContext.getExpressionManager().evaluate("output application/csv --- [{col1 : 1}, {col1: 2}]");
     publish(evaluate.getValue(), evaluate.getDataType().getMediaType());
     TypedValue payload = consume().getPayload();
-    assertThat(payload.getValue(), is("col1\n1\n2\n"));
+    assertThat(payload.getValue(), is("col1" + lineSeparator() + "1" + lineSeparator() + "2" + lineSeparator()));
   }
 
   @Test

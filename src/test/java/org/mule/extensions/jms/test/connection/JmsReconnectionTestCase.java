@@ -109,7 +109,7 @@ public class JmsReconnectionTestCase extends JmsAbstractTestCase {
   @Step("Restart JMS broker")
   private void restartBroker() throws InterruptedException {
     amqBroker.stop();
-    Thread.sleep(500);
+    Thread.sleep(3000);
     amqBroker.start();
   }
 
