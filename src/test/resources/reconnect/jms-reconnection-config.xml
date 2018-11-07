@@ -11,7 +11,7 @@
 
     <flow name="reconnected-listener" initialState="stopped">
         <jms:listener config-ref="config" destination="${listenerDestination}" numberOfConsumers="1">
-            <reconnect frequency="100" count="10"/>
+            <reconnect frequency="1000" count="10"/>
         </jms:listener>
         <logger level="DEBUG" message="#[payload]"/>
         <jms:publish config-ref="config" destination="${publishDestination}"/>
