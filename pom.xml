@@ -30,13 +30,14 @@
         <hawtbufVersion>1.1</hawtbufVersion>
         <muleSpringModuleVersion>1.2.0</muleSpringModuleVersion>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
-        <muleJmsClientVersion>1.1.0</muleJmsClientVersion>
+        <muleJmsClientVersion>1.1.2-SNAPSHOT</muleJmsClientVersion>
 
         <!-- Remove when a new parent version with MTF is available -->
         <munit.input.directory>src/test/munit</munit.input.directory>
         <munit.output.directory>${basedir}/target/test-mule/munit</munit.output.directory>
         <munit.extensions.maven.plugin.version>1.0.0-BETA</munit.extensions.maven.plugin.version>
         <munit.version>2.2.0-BETA</munit.version>
+        <mtf-tools.version>1.0.0-BETA</mtf-tools.version>
         <mavenResources.version>3.0.2</mavenResources.version>
     </properties>
 
@@ -240,6 +241,12 @@
                         <groupId>org.mule.module</groupId>
                         <artifactId>mule-java-module</artifactId>
                         <version>1.2.0</version>
+                        <classifier>mule-plugin</classifier>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.mulesoft.munit</groupId>
+                        <artifactId>mtf-tools</artifactId>
+                        <version>${mtf-tools.version}</version>
                         <classifier>mule-plugin</classifier>
                     </dependency>
                 </dependencies>
