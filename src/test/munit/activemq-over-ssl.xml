@@ -16,7 +16,7 @@
 
     <munit:dynamic-port propertyName="activemq.port"/>
 
-    <jms:config name="config">
+    <jms:config name="config-with-ssl">
         <jms:active-mq-connection>
             <tls:context >
                 <tls:trust-store insecure="true" />
@@ -39,12 +39,12 @@
     <munit:test name="send-message-through-SSL">
         <munit:execution>
             <set-variable variableName="message" value="#[&quot;I'm a secure message&quot;]"/>
-            <jms:publish config-ref="config" destination="someDest">
+            <jms:publish config-ref="config-with-ssl" destination="someDest">
                 <jms:message>
                     <jms:body>#[vars.message]</jms:body>
                 </jms:message>
             </jms:publish>
-            <jms:consume config-ref="config" destination="someDest"/>
+            <jms:consume config-ref="config-with-ssl" destination="someDest"/>
         </munit:execution>
         <munit:validation>
             <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo(vars.message)]"/>
