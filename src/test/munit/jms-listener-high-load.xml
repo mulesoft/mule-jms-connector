@@ -39,7 +39,7 @@
                         <jms:body>#[payload as String]</jms:body>
                     </jms:message>
                 </jms:publish>
-                <logger message="Published : #[payload]" level="DEBUG"/>
+                <logger message="#[payload]" level="DEBUG"/>
             </foreach>
         </munit:execution>
         <munit:validation>
