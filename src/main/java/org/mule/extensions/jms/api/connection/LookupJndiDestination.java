@@ -6,6 +6,8 @@
  */
 package org.mule.extensions.jms.api.connection;
 
+import org.mule.extensions.jms.api.exception.JmsExtensionException;
+
 /**
  * Defines the behaviours that are supported when looking for a destination based
  * on its name while using a JNDI name resolver.
@@ -30,5 +32,18 @@ public enum LookupJndiDestination {
   /**
    * Will always try to lookup the destinations through JNDI but if it does not exists it will create a new one.
    */
-  TRY_ALWAYS
+  TRY_ALWAYS;
+
+  public org.mule.jms.commons.api.connection.LookupJndiDestination getJmsClientLookupJndiDestination() {
+    switch (this) {
+      case NEVER:
+        return org.mule.jms.commons.api.connection.LookupJndiDestination.NEVER;
+      case ALWAYS:
+        return org.mule.jms.commons.api.connection.LookupJndiDestination.ALWAYS;
+      case TRY_ALWAYS:
+        return org.mule.jms.commons.api.connection.LookupJndiDestination.TRY_ALWAYS;
+      default:
+        throw new JmsExtensionException("Missing lookup configuration.");
+    }
+  }
 }
