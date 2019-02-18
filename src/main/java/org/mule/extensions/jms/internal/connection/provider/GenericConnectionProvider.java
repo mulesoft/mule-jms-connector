@@ -9,6 +9,9 @@ package org.mule.extensions.jms.internal.connection.provider;
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import static org.mule.runtime.api.meta.ExternalLibraryType.DEPENDENCY;
 
+import org.mule.extensions.jms.api.connection.factory.jndi.JndiConnectionFactory;
+import org.mule.jms.commons.api.connection.LookupJndiDestination;
+import org.mule.jms.commons.internal.support.*;
 import org.mule.runtime.api.connection.ConnectionProvider;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.Expression;
@@ -53,5 +56,35 @@ public class GenericConnectionProvider extends BaseConnectionProvider {
   @Override
   protected Supplier<ConnectionFactory> getConnectionFactorySupplier() {
     return this::getConnectionFactory;
+  }
+
+  @Override
+  protected JmsSupportFactory getJmsSupportFactory() {
+    ConnectionFactory connectionFactory = this.getConnectionFactorySupplier().get();
+    if (!(connectionFactory instanceof JndiConnectionFactory)) {
+      return super.getJmsSupportFactory();
+    }
+
+    JndiConnectionFactory jndiConnectionFactory = (JndiConnectionFactory) connectionFactory;
+    LookupJndiDestination lookupJndiDestination =
+        jndiConnectionFactory.getLookupDestination().getJmsClientLookupJndiDestination();
+
+    return new JmsSupportFactory() {
+
+      @Override
+      public JmsSupport create11Support() {
+        return new Jms11Support(lookupJndiDestination, jndiConnectionFactory::getJndiDestination);
+      }
+
+      @Override
+      public JmsSupport create20Support() {
+        return new Jms20Support(lookupJndiDestination, jndiConnectionFactory::getJndiDestination);
+      }
+
+      @Override
+      public JmsSupport create102bSupport() {
+        return new Jms102bSupport(lookupJndiDestination, jndiConnectionFactory::getJndiDestination);
+      }
+    };
   }
 }

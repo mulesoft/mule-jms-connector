@@ -20,6 +20,7 @@ import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
 import org.mule.jms.commons.internal.connection.JmsConnection;
 import org.mule.jms.commons.internal.connection.JmsTransactionalConnection;
 import org.mule.jms.commons.internal.connection.provider.JmsConnectionProvider;
+import org.mule.jms.commons.internal.support.JmsSupportFactory;
 import org.mule.runtime.api.connection.CachedConnectionProvider;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.connection.ConnectionValidationResult;
@@ -96,7 +97,12 @@ public abstract class BaseConnectionProvider
   public void initialise() throws InitialisationException {
     jmsConnectionProvider =
         new JmsConnectionProvider(jmsSessionManager, getConnectionFactorySupplier(), specification.getJmsSpecification(),
-                                  connectionParameters, cachingStrategy, enableXa());
+                                  connectionParameters, cachingStrategy, enableXa(), getJmsSupportFactory());
+  }
+
+  // TODO (EE-6615): JmsSupportyFactory is not part of jms-client API.
+  protected JmsSupportFactory getJmsSupportFactory() {
+    return JmsSupportFactory.DEFAULT;
   }
 
   protected abstract boolean enableXa();
