@@ -215,6 +215,10 @@
                             <groupId>org.apache.activemq</groupId>
                             <artifactId>activemq-all</artifactId>
                         </sharedLibrary>
+                        <sharedLibrary>
+                            <groupId>org.mule.connectors</groupId>
+                            <artifactId>mule-jms-client</artifactId>
+                        </sharedLibrary>
                     </sharedLibraries>
                     <runtimeConfiguration>
                         <discoverRuntimes>
