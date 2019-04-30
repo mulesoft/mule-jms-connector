@@ -142,8 +142,8 @@ public class JmsListener extends Source<Object, Object> {
   private String inboundEncoding;
 
   /**
-   * The number of concurrent consumers that will be used to receive JMS Messages. The default number of consumers is the
-   * available processors of the runtime environemnt.
+   * The number of concurrent consumers that will be used to receive JMS Messages. If not set, the number will depend on the
+   * processing capacity of the runtime environment.
    */
   @Parameter
   @Optional
