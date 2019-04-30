@@ -142,11 +142,12 @@ public class JmsListener extends Source<Object, Object> {
   private String inboundEncoding;
 
   /**
-   * The number of concurrent consumers that will be used to receive JMS Messages
+   * The number of concurrent consumers that will be used to receive JMS Messages. The default number of consumers is the
+   * available processors of the runtime environemnt.
    */
   @Parameter
-  @Optional(defaultValue = "4")
-  private int numberOfConsumers;
+  @Optional
+  private Integer numberOfConsumers;
 
   @Inject
   SchedulerService schedulerService;
@@ -155,6 +156,11 @@ public class JmsListener extends Source<Object, Object> {
 
   @Override
   public void onStart(SourceCallback<Object, Object> sourceCallback) throws MuleException {
+
+    if (numberOfConsumers == null) {
+      numberOfConsumers = Runtime.getRuntime().availableProcessors();
+    }
+
     jmsListener = new org.mule.jms.commons.internal.source.JmsListener(sessionManager, config, connectionProvider, destination,
                                                                        consumerType, ackMode,
                                                                        selector, inboundContentType, inboundEncoding,

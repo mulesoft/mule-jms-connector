@@ -17,52 +17,27 @@ import static org.mule.extensions.jms.api.destination.DestinationType.QUEUE;
 import static org.mule.extensions.jms.test.JmsMessageStorage.cleanUpQueue;
 import static org.mule.extensions.jms.test.JmsMessageStorage.receivedMessages;
 
-import org.mule.runtime.core.api.construct.Flow;
-import org.mule.runtime.core.api.retry.policy.RetryPolicyExhaustedException;
-import org.mule.tck.junit4.rule.SystemProperty;
-import org.mule.tck.probe.JUnitLambdaProbe;
-import org.mule.tck.probe.PollingProber;
-import org.mule.test.runner.RunnerDelegateTo;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import org.junit.Test;
+import org.mule.runtime.core.api.retry.policy.RetryPolicyExhaustedException;
+import org.mule.tck.probe.JUnitLambdaProbe;
+import org.mule.tck.probe.PollingProber;
+import org.mule.test.runner.RunnerDelegateTo;
 
 import io.qameta.allure.Feature;
 import io.qameta.allure.Story;
-import org.junit.Rule;
-import org.junit.Test;
 
 @Feature("JMS Extension")
 @Story("Multi Consumers - JMS 1.x")
 @RunnerDelegateTo()
-public class Jms1xMultiConsumerTestCase extends AbstractJmsMultiConsumerTestCase {
-
-  @Rule
-  public SystemProperty maxRedelivery = new SystemProperty(MAX_REDELIVERY, "1");
-
-  @Inject
-  @Named("topicListener")
-  private Flow topicListenerFlow;
+public class Jms1xMultiConsumerTestCase extends AbstractParalellMultiConsumerTestCase {
 
   @Override
   protected String[] getConfigFiles() {
     return new String[] {"multiconsumer/jms-1.x-multi-consumers.xml", "config/activemq/activemq-default.xml"};
-  }
-
-  @Test
-  public void multiConsumersConsumeMessagesInParallel() throws Exception {
-    publishTo(NUMBER_OF_MESSAGES, destination.getValue(), QUEUE);
-
-    long distinctAckIds = getMessages(NUMBER_OF_MESSAGES)
-        .map(result -> evaluate("#[payload.ackId]", result.getAttributes()))
-        .distinct()
-        .count();
-
-    assertThat(distinctAckIds, is(parseLong(NUMBER_OF_CONSUMERS)));
   }
 
   @Test
@@ -99,5 +74,10 @@ public class Jms1xMultiConsumerTestCase extends AbstractJmsMultiConsumerTestCase
     } catch (RetryPolicyExhaustedException e) {
       assertThat(e.getCause().getCause(), is(instanceOf(IllegalArgumentException.class)));
     }
+  }
+
+  @Override
+  long getExpectedNumberOfConsumers() {
+    return parseLong(NUMBER_OF_CONSUMERS);
   }
 }
