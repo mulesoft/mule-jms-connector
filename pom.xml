@@ -31,7 +31,7 @@
         <muleSpringModuleVersion>1.2.0</muleSpringModuleVersion>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
         <muleJmsClientVersion>1.1.11-SNAPSHOT</muleJmsClientVersion>
-
+<!--  -->
         <!-- Remove when a new parent version with MTF is available -->
         <munit.input.directory>src/test/munit</munit.input.directory>
         <munit.output.directory>${basedir}/target/test-mule/munit</munit.output.directory>
