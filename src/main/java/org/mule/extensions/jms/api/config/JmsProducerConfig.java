@@ -33,7 +33,7 @@ public final class JmsProducerConfig implements org.mule.jms.commons.api.config.
    * is not lost in transit due to a JMS provider failure.
    */
   @Parameter
-  @Optional(defaultValue = "false")
+  @Optional(defaultValue = "true")
   @Expression(NOT_SUPPORTED)
   @Summary("If true, the Message will be sent using the PERSISTENT JMSDeliveryMode")
   private boolean persistentDelivery;
