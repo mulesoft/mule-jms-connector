@@ -27,6 +27,7 @@ import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.message.Error;
 import org.mule.runtime.api.scheduler.SchedulerService;
 import org.mule.runtime.api.tx.TransactionType;
+import org.mule.runtime.core.api.MuleContext;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
 import org.mule.runtime.extension.api.annotation.execution.OnError;
@@ -89,6 +90,9 @@ public class JmsListener extends Source<Object, Object> {
   private InternalAckMode resolvedAckMode;
 
   private ComponentLocation componentLocation;
+
+  @Inject
+  private MuleContext muleContext;
 
   /**
    * List to save all the created {@link JmsSession} and {@link JmsListenerLock} by this listener.
@@ -162,7 +166,7 @@ public class JmsListener extends Source<Object, Object> {
                                                                        new SourceConfiguration(transactionalAction,
                                                                                                transactionType, componentLocation,
                                                                                                configName),
-                                                                       schedulerService);
+                                                                       schedulerService, muleContext);
     jmsListener.onStart(sourceCallback);
   }
 
