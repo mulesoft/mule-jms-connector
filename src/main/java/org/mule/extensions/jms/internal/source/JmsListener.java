@@ -91,9 +91,6 @@ public class JmsListener extends Source<Object, Object> {
 
   private ComponentLocation componentLocation;
 
-  @Inject
-  private MuleContext muleContext;
-
   /**
    * List to save all the created {@link JmsSession} and {@link JmsListenerLock} by this listener.
    */
@@ -166,7 +163,7 @@ public class JmsListener extends Source<Object, Object> {
                                                                        new SourceConfiguration(transactionalAction,
                                                                                                transactionType, componentLocation,
                                                                                                configName),
-                                                                       schedulerService, muleContext);
+                                                                       schedulerService);
     jmsListener.onStart(sourceCallback);
   }
 
