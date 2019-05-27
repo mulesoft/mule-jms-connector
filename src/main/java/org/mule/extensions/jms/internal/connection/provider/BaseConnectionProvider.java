@@ -19,8 +19,10 @@ import org.mule.extensions.jms.internal.connection.param.GenericConnectionParame
 import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
 import org.mule.jms.commons.internal.connection.JmsConnection;
 import org.mule.jms.commons.internal.connection.JmsTransactionalConnection;
+import org.mule.jms.commons.internal.connection.provider.ConnectionFactoryDecoratorFactory;
 import org.mule.jms.commons.internal.connection.provider.JmsConnectionProvider;
 import org.mule.jms.commons.internal.support.JmsSupportFactory;
+import org.mule.runtime.api.artifact.Registry;
 import org.mule.runtime.api.connection.CachedConnectionProvider;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.connection.ConnectionValidationResult;
@@ -28,12 +30,14 @@ import org.mule.runtime.api.connection.PoolingConnectionProvider;
 import org.mule.runtime.api.lifecycle.Disposable;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
+import org.mule.runtime.core.api.MuleContext;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
 import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
+import org.mule.runtime.extension.api.annotation.param.RefName;
 
 import java.util.function.Supplier;
 
@@ -81,6 +85,15 @@ public abstract class BaseConnectionProvider
   @Inject
   JmsSessionManager jmsSessionManager;
 
+  @Inject
+  private MuleContext muleContext;
+
+  @Inject
+  private Registry registry;
+
+  @RefName
+  String configName;
+
   /**
    * Used to ignore handling of ExceptionListener#onException when in the process of disconnecting
    */
@@ -97,7 +110,9 @@ public abstract class BaseConnectionProvider
   public void initialise() throws InitialisationException {
     jmsConnectionProvider =
         new JmsConnectionProvider(jmsSessionManager, getConnectionFactorySupplier(), specification.getJmsSpecification(),
-                                  connectionParameters, cachingStrategy, enableXa(), getJmsSupportFactory());
+                                  connectionParameters, cachingStrategy, enableXa(), getJmsSupportFactory(),
+                                  new ConnectionFactoryDecoratorFactory(muleContext, registry),
+                                  configName);
   }
 
   // TODO (EE-6615): JmsSupportyFactory is not part of jms-client API.
