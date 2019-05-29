@@ -15,6 +15,12 @@ import org.mule.extensions.jms.internal.operation.JmsConsume;
 import org.mule.extensions.jms.internal.operation.JmsPublish;
 import org.mule.extensions.jms.internal.operation.JmsPublishConsume;
 import org.mule.extensions.jms.internal.source.JmsListener;
+import org.mule.runtime.api.lifecycle.Disposable;
+import org.mule.runtime.api.lifecycle.Initialisable;
+import org.mule.runtime.api.lifecycle.InitialisationException;
+import org.mule.runtime.api.scheduler.Scheduler;
+import org.mule.runtime.api.scheduler.SchedulerConfig;
+import org.mule.runtime.api.scheduler.SchedulerService;
 import org.mule.runtime.extension.api.annotation.Configuration;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.Operations;
@@ -26,6 +32,7 @@ import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.runtime.parameter.OutboundCorrelationStrategy;
 
+import javax.inject.Inject;
 import javax.jms.Message;
 import javax.jms.Queue;
 import javax.jms.Topic;
@@ -38,7 +45,13 @@ import javax.jms.Topic;
 @Configuration(name = "config")
 @Operations({JmsConsume.class, JmsPublish.class, JmsPublishConsume.class})
 @Sources({JmsListener.class})
-public class JmsConfig implements org.mule.jms.commons.internal.config.JmsConfig<JmsConsumerConfig, JmsProducerConfig> {
+public class JmsConfig
+    implements org.mule.jms.commons.internal.config.JmsConfig<JmsConsumerConfig, JmsProducerConfig>, Initialisable, Disposable {
+
+  @Inject
+  SchedulerService schedulerService;
+
+  private Scheduler scheduler;
 
   @DefaultEncoding
   private String muleEncoding;
@@ -98,4 +111,23 @@ public class JmsConfig implements org.mule.jms.commons.internal.config.JmsConfig
     return producerConfig;
   }
 
+  public Scheduler getResourceReleaserScheduler() {
+    return scheduler;
+  }
+
+  @Override
+  public void dispose() {
+    if (scheduler != null) {
+      scheduler.stop();
+    }
+  }
+
+  @Override
+  public void initialise() throws InitialisationException {
+    scheduler = schedulerService.customScheduler(SchedulerConfig
+        .config()
+        .withMaxConcurrentTasks(1)
+        .withWaitAllowed(true)
+        .withName("jms-connector-resource-releaser"));
+  }
 }
