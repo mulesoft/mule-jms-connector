@@ -6,7 +6,7 @@
       http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
 
     <flow name="publisher">
-        <jms:publish config-ref="config" destination="#[vars.destination]" persistentDelivery="false"/>
+        <jms:publish config-ref="config" destination="#[vars.destination]"/>
     </flow>
 
     <flow name="consumer">
