@@ -16,6 +16,7 @@ import org.mule.extensions.jms.api.connection.JmsSpecification;
 import org.mule.extensions.jms.api.connection.caching.CachingStrategy;
 import org.mule.extensions.jms.api.connection.caching.DefaultCachingStrategy;
 import org.mule.extensions.jms.internal.connection.param.GenericConnectionParameters;
+import org.mule.extensions.jms.internal.connection.param.XaPoolParameters;
 import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
 import org.mule.jms.commons.internal.connection.JmsConnection;
 import org.mule.jms.commons.internal.connection.JmsTransactionalConnection;
@@ -72,6 +73,9 @@ public abstract class BaseConnectionProvider
   @ParameterGroup(name = CONNECTION)
   private GenericConnectionParameters connectionParameters;
 
+  @ParameterGroup(name = "XA Connection Pool", showInDsl = true)
+  private XaPoolParameters xaPoolParameters;
+
   /**
    * the strategy to be used for caching of {@link Session}s and {@link Connection}s
    */
@@ -109,8 +113,14 @@ public abstract class BaseConnectionProvider
   @Override
   public void initialise() throws InitialisationException {
     jmsConnectionProvider =
-        new JmsConnectionProvider(jmsSessionManager, getConnectionFactorySupplier(), specification.getJmsSpecification(),
-                                  connectionParameters, cachingStrategy, enableXa(), getJmsSupportFactory(),
+        new JmsConnectionProvider(jmsSessionManager,
+                                  getConnectionFactorySupplier(),
+                                  specification.getJmsSpecification(),
+                                  connectionParameters,
+                                  xaPoolParameters,
+                                  cachingStrategy,
+                                  enableXa(),
+                                  getJmsSupportFactory(),
                                   new ConnectionFactoryDecoratorFactory(muleContext, registry),
                                   configName);
   }
