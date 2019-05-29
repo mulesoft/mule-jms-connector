@@ -59,6 +59,6 @@ public class XaPoolParameters implements org.mule.jms.commons.internal.connectio
 
   @Override
   public int getMaxIdleTime() {
-    return 60;
+    return maxIdleSeconds;
   }
 }
