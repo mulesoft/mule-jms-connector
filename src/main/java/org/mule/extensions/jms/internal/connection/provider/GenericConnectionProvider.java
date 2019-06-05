@@ -42,7 +42,6 @@ public class GenericConnectionProvider extends BaseConnectionProvider {
   @Expression(NOT_SUPPORTED)
   private ConnectionFactory connectionFactory;
 
-
   @Override
   public ConnectionFactory getConnectionFactory() {
     return connectionFactory;
