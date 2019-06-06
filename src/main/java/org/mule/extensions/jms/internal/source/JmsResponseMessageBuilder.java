@@ -109,10 +109,18 @@ public class JmsResponseMessageBuilder extends JmsMessageBuilder
   @Summary("Options on whether to include an outbound correlation id or not")
   private OutboundCorrelationStrategy sendCorrelationId;
 
+  /**
+   * Indicates which Request Reply Pattern to use.
+   * By default uses the Correlation ID of the incoming message to do the Reply-To.
+   * In case of configuring the Message ID pattern, the ReplyTo will be performed using the message ID of the incoming message.
+   * If NONE is selected, not correlation ID will be configured automatically.
+   *
+   * @since 1.6.0
+   */
   @Parameter
   @Optional(defaultValue = "CORRELATION_ID")
   @DisplayName("Request Reply Pattern")
-  private RequestReplyPattern requestReplyPattern;
+  private org.mule.extensions.jms.api.RequestReplyPattern requestReplyPattern;
 
   public boolean isPersistentDelivery() {
     return persistentDelivery;
@@ -151,6 +159,6 @@ public class JmsResponseMessageBuilder extends JmsMessageBuilder
   }
 
   public RequestReplyPattern getRequestReplyPattern() {
-    return requestReplyPattern;
+    return requestReplyPattern.get();
   }
 }
