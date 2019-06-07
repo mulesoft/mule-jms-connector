@@ -128,6 +128,6 @@ public class JmsConfig
         .config()
         .withMaxConcurrentTasks(1)
         .withWaitAllowed(true)
-        .withName("jms-connector-resource-releaser"));
+        .withName("jms-connector-resource-releaser"), 1000);
   }
 }
