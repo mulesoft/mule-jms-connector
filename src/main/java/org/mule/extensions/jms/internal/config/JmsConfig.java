@@ -124,10 +124,6 @@ public class JmsConfig
 
   @Override
   public void initialise() throws InitialisationException {
-    scheduler = schedulerService.customScheduler(SchedulerConfig
-        .config()
-        .withMaxConcurrentTasks(1)
-        .withWaitAllowed(true)
-        .withName("jms-connector-resource-releaser"), 1000);
+    scheduler = schedulerService.ioScheduler();
   }
 }
