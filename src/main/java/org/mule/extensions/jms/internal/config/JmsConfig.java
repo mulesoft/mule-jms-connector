@@ -123,11 +123,15 @@ public class JmsConfig
   }
 
   @Override
-  public void initialise() throws InitialisationException {
-    scheduler = schedulerService.customScheduler(SchedulerConfig
-        .config()
-        .withMaxConcurrentTasks(1)
-        .withWaitAllowed(true)
-        .withName("jms-connector-resource-releaser"));
+  public void initialise() {
+    //TODO - MULE-16982 : This code is required until the Connector reaches Min Mule version 4.3
+    try {
+      scheduler = schedulerService.customScheduler(SchedulerConfig.config()
+          .withMaxConcurrentTasks(1)
+          .withWaitAllowed(true)
+          .withName("jms-connector-resource-releaser"), 10000);
+    } catch (Exception e) {
+      scheduler = schedulerService.ioScheduler();
+    }
   }
 }
