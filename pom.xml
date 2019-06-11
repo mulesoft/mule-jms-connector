@@ -210,6 +210,11 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <argLines>
+                        <argLine>
+                            -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco.exec
+                        </argLine>
+                    </argLines>
                     <sharedLibraries>
                         <sharedLibrary>
                             <groupId>org.apache.activemq</groupId>
