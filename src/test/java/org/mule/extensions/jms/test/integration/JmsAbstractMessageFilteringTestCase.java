@@ -63,15 +63,15 @@ public abstract class JmsAbstractMessageFilteringTestCase extends JmsAbstractTes
   @Description("Verifies the filtering of messages consumed by consume operation")
   public void testMessageFilteringOnConsume() throws Exception {
     expectedError.expectError(NAMESPACE, TIMEOUT, Exception.class,
-                              "Failed to retrieve a Message. Operation timed out after 10000 milliseconds");
+                              "Failed to retrieve a Message. Operation timed out after 2000 milliseconds");
 
     destination = newDestination("destination");
 
     publishMessage(MESSAGE_BODY_2, destination, "2", destinationType);
     publishMessage(MESSAGE_BODY_1, destination, "1", destinationType);
 
-    assertMuleMessage(consume(destination, of(DESTINATION_TYPE_PROP, destinationType)), MESSAGE_BODY_1, "1");
-    consume(destination, of(DESTINATION_TYPE_PROP, destinationType));
+    assertMuleMessage(consume(destination, of(DESTINATION_TYPE_PROP, destinationType), 2000), MESSAGE_BODY_1, "1");
+    consume(destination, of(DESTINATION_TYPE_PROP, destinationType), 2000);
   }
 
   @Test
