@@ -20,6 +20,7 @@ public class JmsErrorTestCase extends JmsAbstractTestCase {
   public static final String TEST_DESTINATION = "test";
   public static final String AN_ERROR_OCCURRED_WHILE_SENDING_A_MESSAGE = "An error occurred while sending a message";
   public static final String AN_ERROR_OCCURRED_WHILE_CONSUMING_A_MESSAGE = "An error occurred while consuming a message";
+  public static final String NULL_BODY = "Message body was 'null', which is not a value of a supported type";
 
   @Override
   protected String[] getConfigFiles() {
@@ -28,8 +29,7 @@ public class JmsErrorTestCase extends JmsAbstractTestCase {
 
   @Test
   public void nullMessageBody() throws Exception {
-    expectedError.expectError(NAMESPACE, ILLEGAL_BODY.getType(), Exception.class,
-                              AN_ERROR_OCCURRED_WHILE_SENDING_A_MESSAGE);
+    expectedError.expectError(NAMESPACE, ILLEGAL_BODY.getType(), Exception.class, NULL_BODY);
     destination = newDestination(TEST_DESTINATION);
 
     publish(null);
