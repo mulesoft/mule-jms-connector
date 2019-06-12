@@ -17,6 +17,7 @@ import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
 import org.mule.extensions.jms.internal.consume.JmsConsumeParameters;
 import org.mule.extensions.jms.internal.metadata.JmsOutputResolver;
 import org.mule.jms.commons.api.AttributesOutputResolver;
+import org.mule.jms.commons.api.RequestReplyPattern;
 import org.mule.jms.commons.internal.connection.JmsConnection;
 import org.mule.jms.commons.internal.publish.JmsPublishParameters;
 import org.mule.runtime.api.lifecycle.Disposable;
@@ -95,7 +96,8 @@ public class JmsPublishConsume implements Initialisable, Disposable {
                              CompletionCallback<Object, Object> completionCallback)
       throws JmsExtensionException {
     jmsPublishConsume.publishConsume(config, connection, destination, messageBuilder, publishParameters, consumeParameters,
-                                     sendCorrelationId, correlationInfo, (CompletionCallback) completionCallback);
+                                     sendCorrelationId, correlationInfo, RequestReplyPattern.NONE,
+                                     (CompletionCallback) completionCallback);
   }
 
   @Override

@@ -8,6 +8,7 @@ package org.mule.extensions.jms.internal.source;
 
 import org.mule.extensions.jms.api.destination.JmsDestination;
 import org.mule.extensions.jms.api.message.JmsMessageBuilder;
+import org.mule.jms.commons.api.RequestReplyPattern;
 import org.mule.runtime.extension.api.annotation.param.ConfigOverride;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
@@ -141,5 +142,10 @@ public class JmsResponseMessageBuilder extends JmsMessageBuilder
 
   public OutboundCorrelationStrategy getSendCorrelationId() {
     return sendCorrelationId;
+  }
+
+  @Override
+  public RequestReplyPattern getRequestReplyPattern() {
+    return RequestReplyPattern.NONE;
   }
 }
