@@ -6,7 +6,7 @@
       http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
 
     <flow name="request-reply-explicit-destination">
-        <jms:publish-consume config-ref="config" destination="#[vars.destination]">
+        <jms:publish-consume config-ref="config" destination="#[vars.destination]" requestReplyPattern="NONE">
             <jms:message>
                 <jms:reply-to destination="#[vars.replyToDestination]" destinationType="QUEUE"/>
             </jms:message>
@@ -14,7 +14,7 @@
     </flow>
 
     <flow name="request-reply-temp-destination">
-        <jms:publish-consume config-ref="config" destination="#[vars.destination]"/>
+        <jms:publish-consume config-ref="config" destination="#[vars.destination]" requestReplyPattern="NONE"/>
     </flow>
 
 </mule>

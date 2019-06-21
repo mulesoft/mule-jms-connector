@@ -17,6 +17,14 @@
 
         <!-- Reduce startup noise -->
         <AsyncLogger name="org.springframework.beans.factory" level="WARN"/>
+        <AsyncLogger name="org.quartz.impl.StdSchedulerFactory" level="ERROR"/>
+        <AsyncLogger name="org.quartz.core.QuartzScheduler" level="ERROR"/>
+        <AsyncLogger name="org.quartz.core.SchedulerSignalerImpl" level="ERROR"/>
+        <AsyncLogger name="com.mulesoft.mule.runtime.module.cluster.internal.HazelcastClusterCoreExtension" level="ERROR"/>
+        <AsyncLogger name="org.mule.runtime.deployment.model.internal.application.ApplicationClassLoaderBuilder" level="ERROR"/>
+        <AsyncLogger name="com.mulesoft.mule.runtime.gw.client.provider.ApiPlatformClientProvider" level="ERROR"/>
+        <AsyncLogger name="bitronix.tm.BitronixTransactionManager" level="ERROR"/>
+        <AsyncLogger name="org.quartz.simpl.RAMJobStore" level="ERROR"/>
 
         <!-- Mule classes -->
         <AsyncLogger name="org.mule" level="WARN"/>

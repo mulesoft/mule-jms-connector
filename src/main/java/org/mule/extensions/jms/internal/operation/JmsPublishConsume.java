@@ -8,6 +8,7 @@ package org.mule.extensions.jms.internal.operation;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
+import org.mule.extensions.jms.api.RequestReplyPattern;
 import org.mule.extensions.jms.api.config.JmsProducerConfig;
 import org.mule.extensions.jms.api.exception.JmsExtensionException;
 import org.mule.extensions.jms.api.exception.JmsPublishConsumeErrorTypeProvider;
@@ -27,7 +28,9 @@ import org.mule.runtime.extension.api.annotation.metadata.OutputResolver;
 import org.mule.runtime.extension.api.annotation.param.Config;
 import org.mule.runtime.extension.api.annotation.param.ConfigOverride;
 import org.mule.runtime.extension.api.annotation.param.Connection;
+import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
+import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 import org.mule.runtime.extension.api.runtime.operation.Result;
@@ -90,12 +93,15 @@ public class JmsPublishConsume implements Initialisable, Disposable {
                              @Placement(order = 3) @ParameterGroup(
                                  name = "Consume Configuration",
                                  showInDsl = true) JmsConsumeParameters consumeParameters,
-                             @ConfigOverride OutboundCorrelationStrategy sendCorrelationId,
+                             @Optional(
+                                 defaultValue = "CORRELATION_ID") @DisplayName("Request-Reply Pattern") RequestReplyPattern requestReplyPattern,
+                             @ConfigOverride @DisplayName("Send Correlation ID") OutboundCorrelationStrategy sendCorrelationId,
                              CorrelationInfo correlationInfo,
                              CompletionCallback<Object, Object> completionCallback)
       throws JmsExtensionException {
     jmsPublishConsume.publishConsume(config, connection, destination, messageBuilder, publishParameters, consumeParameters,
-                                     sendCorrelationId, correlationInfo, (CompletionCallback) completionCallback);
+                                     sendCorrelationId, correlationInfo, requestReplyPattern.get(),
+                                     (CompletionCallback) completionCallback);
   }
 
   @Override
