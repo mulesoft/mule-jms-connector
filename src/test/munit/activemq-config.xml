@@ -13,8 +13,8 @@
       http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd">
 
     <jms:config name="config">
-        <jms:active-mq-connection>
-            <jms:factory-configuration maxRedelivery="${max.redelivery}"/>
+        <jms:active-mq-connection >
+            <jms:factory-configuration maxRedelivery="${max.redelivery}" trustAllPackages="true"/>
         </jms:active-mq-connection>
     </jms:config>
 
@@ -23,7 +23,7 @@
             <jms:caching-strategy>
                 <jms:no-caching/>
             </jms:caching-strategy>
-            <jms:factory-configuration maxRedelivery="${max.redelivery}"/>
+            <jms:factory-configuration maxRedelivery="${max.redelivery}" trustAllPackages="true"/>
         </jms:active-mq-connection>
     </jms:config>
 
