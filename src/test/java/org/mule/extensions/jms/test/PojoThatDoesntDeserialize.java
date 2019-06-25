@@ -33,7 +33,6 @@ public class PojoThatDoesntDeserialize implements Serializable {
       throws IOException, ClassNotFoundException {
     times = times + 1;
     if (times < 5) {
-      System.out.println(times);
       throw new RuntimeException();
     }
     in.defaultReadObject();
