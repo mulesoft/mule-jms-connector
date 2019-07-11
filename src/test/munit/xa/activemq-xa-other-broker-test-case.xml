@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:mtf="http://www.mulesoft.org/schema/mule/mtf"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+      http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+      http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+      http://www.mulesoft.org/schema/mule/mtf http://www.mulesoft.org/schema/mule/mtf/current/mule-mtf.xsd">
+
+    <!--  Is required a 4.1.5 min mule version to prevent a bug on the lazy init on Bitronix -->
+    <munit:config name="activemq-xa-other-broker-test-cases.xml" minMuleVersion="4.1.5"/>
+
+    <munit:test name="consume-xa-message">
+        <munit:execution>
+            <set-payload value="someValue"/>
+            <jms:publish config-ref="JMS_Config_XA_MAX_DOCKER_BROKER" destination="someDest">
+                <jms:message>
+                    <jms:body>#[payload]</jms:body>
+                </jms:message>
+            </jms:publish>
+        </munit:execution>
+        <munit:validation>
+            <set-variable variableName="message" value="#[payload]"/>
+                <try transactionalAction="ALWAYS_BEGIN" transactionType="XA">
+                    <jms:consume config-ref="JMS_Config_XA_MAX_DOCKER_BROKER" destination="someDest"/>
+                </try>
+                <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo('someValue')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="rollback-all">
+        <munit:execution>
+            <set-payload value="someValue"/>
+            <try>
+                <try transactionType="XA" transactionalAction="ALWAYS_BEGIN">
+                    <flow-ref name="publish-on-docker-broker"/>
+                    <flow-ref name="publish-on-memory"/>
+                    <raise-error type="APP:SOME"/>
+                    <error-handler>
+                        <on-error-propagate/>
+                    </error-handler>
+                </try>
+                <error-handler>
+                    <on-error-continue/>
+                </error-handler>
+            </try>
+        </munit:execution>
+        <munit:validation>
+            <try>
+                <jms:consume config-ref="JMS_Config_XA_MAX_DOCKER_BROKER" destination="someDest"/>
+                <munit-tools:fail message="Operation should have been rolled back"/>
+                <error-handler>
+                    <on-error-continue type="JMS:TIMEOUT"/>
+                </error-handler>
+            </try>
+            <try>
+                <jms:consume config-ref="JMS_Config_XA" destination="someOtherDest"/>
+                <munit-tools:fail message="Operation should have been rolled back"/>
+                <error-handler>
+                    <on-error-continue type="JMS:TIMEOUT"/>
+                </error-handler>
+            </try>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="commit-all">
+        <munit:execution>
+            <try>
+                <try transactionType="XA" transactionalAction="ALWAYS_BEGIN">
+                    <set-payload value="first"/>
+                    <flow-ref name="publish-on-docker-broker"/>
+                    <set-payload value="second"/>
+                    <flow-ref name="publish-on-memory"/>
+                    <raise-error type="APP:SOME"/>
+                    <error-handler>
+                        <on-error-continue/>
+                    </error-handler>
+                </try>
+                <error-handler>
+                    <on-error-continue/>
+                </error-handler>
+            </try>
+        </munit:execution>
+        <munit:validation>
+            <jms:consume config-ref="JMS_Config_XA_MAX_DOCKER_BROKER" destination="someDest"/>
+            <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo('first')]"/>
+            <jms:consume config-ref="JMS_Config_XA" destination="someOtherDest"/>
+            <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo('second')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="second-operation-fails">
+        <munit:execution>
+            <try>
+                <try transactionType="XA" transactionalAction="ALWAYS_BEGIN">
+                    <set-payload value="first"/>
+                    <flow-ref name="publish-on-memory"/>
+                    <set-payload value="second"/>
+                    <flow-ref name="publish-on-docker-broker-illegal-body"/>
+                    <error-handler>
+                        <on-error-continue type="JMS:ILLEGAL_BODY"/>
+                    </error-handler>
+                </try>
+                <error-handler>
+                    <on-error-continue/>
+                </error-handler>
+            </try>
+        </munit:execution>
+        <munit:validation>
+            <jms:consume config-ref="JMS_Config_XA" destination="someOtherDest"/>
+            <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo('first')]"/>
+            <try>
+                <jms:consume config-ref="JMS_Config_XA_MAX_DOCKER_BROKER" destination="someDest"/>
+                <munit-tools:fail message="Operation should have been rolled back"/>
+                <error-handler>
+                    <on-error-continue type="JMS:TIMEOUT"/>
+                </error-handler>
+            </try>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="multiple-operation-then-fails">
+        <munit:execution>
+            <try>
+                <try transactionType="XA" transactionalAction="ALWAYS_BEGIN">
+                    <set-payload value="first"/>
+                    <flow-ref name="publish-on-memory"/>
+                    <set-payload value="second"/>
+                    <flow-ref name="publish-on-docker-broker"/>
+                    <set-payload value="third"/>
+                    <flow-ref name="publish-on-memory"/>
+                    <set-payload value="fourth"/>
+                    <flow-ref name="publish-on-memory"/>
+                    <flow-ref name="publish-on-docker-broker-illegal-body"/>
+                </try>
+                <error-handler>
+                    <on-error-continue type="JMS:ILLEGAL_BODY"/>
+                </error-handler>
+            </try>
+        </munit:execution>
+        <munit:validation>
+            <try>
+                <jms:consume config-ref="JMS_Config_XA_MAX_DOCKER_BROKER" destination="someDest"/>
+                <munit-tools:fail message="Operation should have been rolled back"/>
+                <error-handler>
+                    <on-error-continue type="JMS:TIMEOUT"/>
+                </error-handler>
+            </try>
+            <try>
+                <jms:consume config-ref="JMS_Config_XA" destination="someOtherDest"/>
+                <munit-tools:fail message="Operation should have been rolled back"/>
+                <error-handler>
+                    <on-error-continue type="JMS:TIMEOUT"/>
+                </error-handler>
+            </try>
+        </munit:validation>
+    </munit:test>
+
+
+
+    <flow name="publish-on-memory">
+        <jms:publish config-ref="JMS_Config_XA" destination="someOtherDest">
+            <jms:message>
+                <jms:body>#[payload]</jms:body>
+            </jms:message>
+        </jms:publish>
+    </flow>
+
+    <flow name="publish-on-docker-broker">
+        <jms:publish config-ref="JMS_Config_XA_MAX_DOCKER_BROKER" destination="someDest">
+            <jms:message>
+                <jms:body>#[payload]</jms:body>
+            </jms:message>
+        </jms:publish>
+    </flow>
+
+    <flow name="publish-on-docker-broker-illegal-body">
+        <jms:publish config-ref="JMS_Config_XA_MAX_DOCKER_BROKER" destination="someDest">
+            <jms:message>
+                <jms:body>#[null]</jms:body>
+            </jms:message>
+        </jms:publish>
+    </flow>
+
+</mule>
