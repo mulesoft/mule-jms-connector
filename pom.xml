@@ -313,10 +313,6 @@
                                 <image>
                                     <name>rmohr/activemq</name>
                                     <run>
-                                        <env>
-                                            <LICENSE>accept</LICENSE>
-                                            <MQ_QMGR_NAME>QM1</MQ_QMGR_NAME>
-                                        </env>
                                         <ports>
                                             <port>${activemq.listener.port}:61616</port>
                                             <port>${activemq.web_console.port}:8161</port>

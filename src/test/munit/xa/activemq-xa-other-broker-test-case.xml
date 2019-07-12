@@ -16,24 +16,26 @@
     <munit:config name="activemq-xa-other-broker-test-cases.xml" minMuleVersion="4.1.6"/>
 
     <munit:test name="consume-xa-message">
+        <!-- Checks happy path using two different brokers -->
         <munit:execution>
             <set-payload value="someValue"/>
-            <jms:publish config-ref="JMS_Config_XA_OTHER_BROKER" destination="someDest">
-                <jms:message>
-                    <jms:body>#[payload]</jms:body>
-                </jms:message>
-            </jms:publish>
+            <flow-ref name="publish-on-other-broker"/>
+            <flow-ref name="publish-on-memory"/>
         </munit:execution>
         <munit:validation>
-            <set-variable variableName="message" value="#[payload]"/>
                 <try transactionalAction="ALWAYS_BEGIN" transactionType="XA">
                     <jms:consume config-ref="JMS_Config_XA_OTHER_BROKER" destination="someDest"/>
+                    <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo('someValue')]"/>
+                    <jms:consume config-ref="JMS_Config_XA" destination="someOtherDest"/>
+                    <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo('someValue')]"/>
                 </try>
-                <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo('someValue')]"/>
+
         </munit:validation>
     </munit:test>
 
     <munit:test name="rollback-all">
+        <!--    When error happens after operations, and error is handled by an on-error-propagate, operations
+                must be rolled back -->
         <munit:execution>
             <set-payload value="someValue"/>
             <try>
@@ -69,6 +71,8 @@
     </munit:test>
 
     <munit:test name="commit-all">
+        <!--    When error happens after operations, and error is handled by an on-error-continue, operations
+                must be committed -->
         <munit:execution>
             <try>
                 <try transactionType="XA" transactionalAction="ALWAYS_BEGIN">
@@ -95,6 +99,8 @@
     </munit:test>
 
     <munit:test name="second-operation-fails">
+        <!--    When error happens during an operation, and error is handled by an on-error-continue, the first
+                operation must be committed -->
         <munit:execution>
             <try>
                 <try transactionType="XA" transactionalAction="ALWAYS_BEGIN">
@@ -125,6 +131,8 @@
     </munit:test>
 
     <munit:test name="multiple-operation-then-fails-and-rollback">
+        <!--    When error happens after multiple operations, during a new operation, and error is handled by an
+                on-error-propagate, the operations applied before must be rolled back -->
         <munit:execution>
             <try>
                 <try transactionType="XA" transactionalAction="ALWAYS_BEGIN">
@@ -163,6 +171,8 @@
 
 
     <munit:test name="multiple-operation-then-fails-and-commit">
+        <!--    When error happens after multiple operations, during a new operation, and error is handled by an
+                on-error-continue, the operations applied before must be committed -->
         <munit:execution>
             <try transactionType="XA" transactionalAction="ALWAYS_BEGIN">
                 <set-payload value="first"/>
