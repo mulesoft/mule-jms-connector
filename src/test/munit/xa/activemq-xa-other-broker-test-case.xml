@@ -7,7 +7,7 @@
       xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
       xmlns:mtf="http://www.mulesoft.org/schema/mule/mtf"
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+      http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
       http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
       http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
       http://www.mulesoft.org/schema/mule/mtf http://www.mulesoft.org/schema/mule/mtf/current/mule-mtf.xsd">
@@ -124,7 +124,7 @@ http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/
         </munit:validation>
     </munit:test>
 
-    <munit:test name="multiple-operation-then-fails">
+    <munit:test name="multiple-operation-then-fails-and-rollback">
         <munit:execution>
             <try>
                 <try transactionType="XA" transactionalAction="ALWAYS_BEGIN">
@@ -162,6 +162,41 @@ http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/
     </munit:test>
 
 
+    <munit:test name="multiple-operation-then-fails-and-commit">
+        <munit:execution>
+            <try transactionType="XA" transactionalAction="ALWAYS_BEGIN">
+                <set-payload value="first"/>
+                <flow-ref name="publish-on-memory"/>
+                <set-payload value="second"/>
+                <flow-ref name="publish-on-docker-broker"/>
+                <set-payload value="third"/>
+                <flow-ref name="publish-on-memory"/>
+                <set-payload value="fourth"/>
+                <flow-ref name="publish-on-memory"/>
+                <flow-ref name="publish-on-docker-broker-illegal-body"/>
+                <error-handler>
+                    <on-error-continue type="JMS:ILLEGAL_BODY"/>
+                </error-handler>
+            </try>
+        </munit:execution>
+        <munit:validation>
+            <jms:consume config-ref="JMS_Config_XA" destination="someOtherDest"/>
+            <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo('first')]"/>
+            <jms:consume config-ref="JMS_Config_XA_MAX_DOCKER_BROKER" destination="someDest"/>
+            <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo('second')]"/>
+            <jms:consume config-ref="JMS_Config_XA" destination="someOtherDest"/>
+            <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo('third')]"/>
+            <jms:consume config-ref="JMS_Config_XA" destination="someOtherDest"/>
+            <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo('fourth')]"/>
+            <try>
+                <jms:consume config-ref="JMS_Config_XA_MAX_DOCKER_BROKER" destination="someDest"/>
+                <munit-tools:fail message="Operation should have been rolled back"/>
+                <error-handler>
+                    <on-error-continue type="JMS:TIMEOUT"/>
+                </error-handler>
+            </try>
+        </munit:validation>
+    </munit:test>
 
     <flow name="publish-on-memory">
         <jms:publish config-ref="JMS_Config_XA" destination="someOtherDest">
