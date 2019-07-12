@@ -23,7 +23,7 @@ http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/
         </jms:active-mq-connection>
     </jms:config>
 
-    <jms:config name="JMS_Config_XA_MAX_DOCKER_BROKER">
+    <jms:config name="JMS_Config_XA_OTHER_BROKER">
         <jms:active-mq-connection >
             <jms:caching-strategy >
                 <jms:no-caching />
