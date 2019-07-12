@@ -192,7 +192,6 @@
                         <configuration>
                             <portNames>
                                 <portName>activemq.listener.port</portName>
-                                <portName>activemq.listener.port.incorrect</portName>
                                 <portName>activemq.web_console.port</portName>
                             </portNames>
                         </configuration>
