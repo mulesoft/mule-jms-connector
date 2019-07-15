@@ -15,7 +15,7 @@
     <!-- Is required a 4.1.6 min mule version to prevent after fixing some scenarios which appeared in 4.1.5 -->
     <munit:config name="activemq-xa-other-broker-test-cases.xml" minMuleVersion="4.1.6"/>
 
-    <munit:test name="consume-xa-message" description="Checks happy path using two different brokers">
+    <munit:test name="xa-happy-path" description="Checks happy path using two different brokers">
         <munit:execution>
             <set-payload value="someValue"/>
             <flow-ref name="publish-on-other-broker"/>
