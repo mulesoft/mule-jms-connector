@@ -137,7 +137,8 @@ http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/
 
     <!-- Ignored until MULE-17186 is fixed -->
     <munit:test name="rollback-xa-message-published" description="Consuming from one broker, publishing in another one
-    and then raising error must rollback the entire operation" ignore="true">
+    inside a nested tx, and then raising error (outside the nested tx) must rollback the consumption but not the
+    publishing" ignore="true">
         <munit:enable-flow-sources>
             <munit:enable-flow-source value="xaListenerOtherListenerBroker"/>
         </munit:enable-flow-sources>
