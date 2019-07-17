@@ -19,7 +19,7 @@ public class BadProxy {
   public static void generateConnectivityIssue(String realPort, String proxyPort) throws IOException {
     brokerProxy = client.getProxyOrNull(proxyPort + "-" + realPort);
     if (brokerProxy == null) {
-      brokerProxy = client.createProxy(proxyPort + "-" + realPort, "0.0.0.0:" + proxyPort, "0.0.0.0:" + realPort);
+      brokerProxy = client.createProxy(proxyPort + "-" + realPort, "0.0.0.0:" + proxyPort, "activemq:" + "61616");
     }
     brokerProxy.disable();
   }
