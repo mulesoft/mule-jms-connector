@@ -324,6 +324,7 @@
                             <images>
                                 <image>
                                     <name>rmohr/activemq</name>
+                                    <alias>activemq</alias>
                                     <run>
                                         <ports>
                                             <port>${activemq.listener.port}:61616</port>
@@ -343,6 +344,20 @@
                                             <log>ActiveMQ Jolokia REST API available</log>
                                             <time>500000</time>
                                         </wait>
+                                    </run>
+                                </image>
+                                <image>
+                                    <name>shopify/toxiproxy</name>
+                                    <alias>toxiproxy</alias>
+                                    <run>
+                                        <ports>
+                                            <port>8474:8474</port>
+                                            <port>${connection.lost.port}:${connection.lost.port}</port>
+                                            <port>${connection.broken.port}:${connection.broken.port}</port>
+                                        </ports>
+                                        <links>
+                                            <link>activemq</link>
+                                        </links>
                                     </run>
                                 </image>
                             </images>
