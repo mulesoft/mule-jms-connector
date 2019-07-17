@@ -202,6 +202,67 @@
         </munit:validation>
     </munit:test>
 
+    <munit:test name="nested-xa-tx-with-error-inside" description="If nested XA tx is rolled back, other operations
+        can be executed correctly (committing)">
+        <munit:execution>
+            <try transactionType="XA" transactionalAction="ALWAYS_BEGIN">
+                <set-payload value="first"/>
+                <flow-ref name="publish-on-memory"/>
+                <try>
+                    <try transactionType="XA" transactionalAction="ALWAYS_BEGIN">
+                        <flow-ref name="publish-on-other-broker"/>
+                        <raise-error type="APP:SOME"/>
+                    </try>
+                    <error-handler>
+                        <on-error-continue type="APP:SOME"/>
+                    </error-handler>
+                </try>
+            </try>
+        </munit:execution>
+        <munit:validation>
+            <jms:consume config-ref="JMS_Config_XA" destination="destination_2" maximumWait="1000"/>
+            <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo('first')]"/>
+            <try>
+                <jms:consume config-ref="JMS_Config_XA_OTHER_BROKER" destination="destination_1" maximumWait="1000"/>
+                <munit-tools:fail message="Operation should have been rolled back"/>
+                <error-handler>
+                    <on-error-continue type="JMS:TIMEOUT"/>
+                </error-handler>
+            </try>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="nested-xa-tx-with-error-outside" description="If parent XA tx is rolled back, child tx commits
+    anyways">
+        <munit:execution>
+            <try>
+                <try transactionType="XA" transactionalAction="ALWAYS_BEGIN">
+                    <set-payload value="first"/>
+                    <flow-ref name="publish-on-memory"/>
+                    <try transactionType="XA" transactionalAction="ALWAYS_BEGIN">
+                        <set-payload value="second"/>
+                        <flow-ref name="publish-on-other-broker"/>
+                    </try>
+                    <raise-error type="APP:SOME"/>
+                </try>
+                <error-handler>
+                    <on-error-continue type="APP:SOME"/>
+                </error-handler>
+            </try>
+        </munit:execution>
+        <munit:validation>
+            <try>
+                <jms:consume config-ref="JMS_Config_XA" destination="destination_2" maximumWait="1000"/>
+                <munit-tools:fail message="Operation should have been rolled back"/>
+                <error-handler>
+                    <on-error-continue type="JMS:TIMEOUT"/>
+                </error-handler>
+            </try>
+            <jms:consume config-ref="JMS_Config_XA_OTHER_BROKER" destination="destination_1" maximumWait="1000"/>
+            <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo('second')]"/>
+        </munit:validation>
+    </munit:test>
+
     <flow name="publish-on-memory">
         <jms:publish config-ref="JMS_Config_XA" destination="destination_2">
             <jms:message>
