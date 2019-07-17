@@ -16,10 +16,12 @@ public class BadProxy {
   private final static ToxiproxyClient client = new ToxiproxyClient();
   private static Proxy brokerProxy;
 
-  public static void generateConnectivityIssue(String realPort, String proxyPort) throws IOException {
+  public static void generateConnectivityIssue(String realPort, String realHost, String proxyPort) throws IOException {
+    // Creates a proxy to create the same effect as a server having connectivity issues
+    System.out.println("Creating proxy from 0.0.0.0:" + proxyPort + " to " + realHost + ":" + realPort);
     brokerProxy = client.getProxyOrNull(proxyPort + "-" + realPort);
     if (brokerProxy == null) {
-      brokerProxy = client.createProxy(proxyPort + "-" + realPort, "0.0.0.0:" + proxyPort, "activemq:" + "61616");
+      brokerProxy = client.createProxy(proxyPort + "-" + realPort, "0.0.0.0:" + proxyPort, realHost + ":" + realPort);
     }
     brokerProxy.disable();
   }

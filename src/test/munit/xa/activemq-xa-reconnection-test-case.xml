@@ -19,9 +19,9 @@
 
     <munit:test name="connection-lost-and-recovered">
         <munit:behavior>
-            <java:invoke-static class="org.mule.extensions.jms.test.util.BadProxy" method="generateConnectivityIssue(String, String)">
+            <java:invoke-static class="org.mule.extensions.jms.test.util.BadProxy" method="generateConnectivityIssue(String, String, String)">
                 <java:args>
-                    #[{arg0: ${activemq.listener.port}, arg1: ${connection.lost.port}}]
+                    #[{arg0: "61616", arg1: "activemq", arg2: ${connection.lost.port}}]
                 </java:args>
             </java:invoke-static>
         </munit:behavior>
@@ -51,9 +51,9 @@
 
     <munit:test name="connection-lost-and-never-recover">
         <munit:behavior>
-            <java:invoke-static class="org.mule.extensions.jms.test.util.BadProxy" method="generateConnectivityIssue(String, String)">
+            <java:invoke-static class="org.mule.extensions.jms.test.util.BadProxy" method="generateConnectivityIssue(String, String, String)">
                 <java:args>
-                    #[{arg0: ${activemq.listener.port}, arg1: ${connection.broken.port}}]
+                    #[{arg0: "61616", arg1: "activemq", arg2: ${connection.broken.port}}]
                 </java:args>
             </java:invoke-static>
         </munit:behavior>
