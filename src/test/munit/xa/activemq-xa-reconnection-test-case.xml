@@ -63,14 +63,15 @@
                     <set-payload value="#[1]"/>
                     <flow-ref name="publish-on-memory"/>
                     <set-payload value="#[2]"/>
-                    <until-successful maxRetries="1" millisBetweenRetries="1000">
-                        <flow-ref name="publish-on-broken-broker"/>
+                    <until-successful maxRetries="3" millisBetweenRetries="1000">
+                        <flow-ref name="publish-on-other-broker"/>
                     </until-successful>
                 </try>
                 <error-handler>
                     <on-error-continue/>
                 </error-handler>
             </try>
+            <java:invoke-static class="org.mule.extensions.jms.test.util.BadProxy" method="resolveConnectivityIssue()"/>
         </munit:execution>
         <munit:validation>
             <try>
@@ -93,14 +94,6 @@
 
     <flow name="publish-on-other-broker">
         <jms:publish config-ref="JMS_Config_XA_UNSTABLE_CONNECTION" destination="destination_1">
-            <jms:message>
-                <jms:body>#[payload]</jms:body>
-            </jms:message>
-        </jms:publish>
-    </flow>
-
-    <flow name="publish-on-broken-broker">
-        <jms:publish config-ref="JMS_Config_XA_BROKEN_CONNECTION" destination="destination_1">
             <jms:message>
                 <jms:body>#[payload]</jms:body>
             </jms:message>

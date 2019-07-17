@@ -34,19 +34,13 @@ http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/
 
     <jms:config name="JMS_Config_XA_UNSTABLE_CONNECTION">
         <jms:active-mq-connection >
+            <reconnection>
+                <reconnect-forever frequency="500"/>
+            </reconnection>
             <jms:caching-strategy >
                 <jms:no-caching />
             </jms:caching-strategy>
             <jms:factory-configuration brokerUrl="tcp://0.0.0.0:${connection.lost.port}" enable-xa="true" maxRedelivery="-1" trustAllPackages="true"/>
-        </jms:active-mq-connection>
-    </jms:config>
-
-    <jms:config name="JMS_Config_XA_BROKEN_CONNECTION">
-        <jms:active-mq-connection >
-            <jms:caching-strategy >
-                <jms:no-caching />
-            </jms:caching-strategy>
-            <jms:factory-configuration brokerUrl="tcp://0.0.0.0:${connection.broken.port}" enable-xa="true" maxRedelivery="-1" trustAllPackages="true"/>
         </jms:active-mq-connection>
     </jms:config>
 
