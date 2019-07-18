@@ -16,46 +16,26 @@
 
     <!--  Is required a 4.1.5 min mule version to prevent a bug on the lazy init on Bitronix -->
     <munit:config name="activemq-xa-reconnection-test-case.xml" minMuleVersion="4.1.6"/>
-
-    <munit:test name="connection-lost-and-recovered">
-        <munit:behavior>
-            <java:invoke-static class="org.mule.extensions.jms.test.util.BadProxy" method="generateConnectivityIssue(String, String, String)">
-                <java:args>
-                    #[{arg0: "61616", arg1: "activemq", arg2: ${connection.lost.port}}]
-                </java:args>
-            </java:invoke-static>
-        </munit:behavior>
+    
+    <munit:test name="connection-lost-and-recovered-several-times">
         <munit:execution>
             <try transactionType="XA" transactionalAction="ALWAYS_BEGIN">
-                <try>
-                    <set-payload value="#[1]"/>
-                    <flow-ref name="publish-each"/>
-                    <error-handler>
-                        <on-error-continue type="JMS:CONNECTIVITY"/>
-                    </error-handler>
-                </try>
-                <java:invoke-static class="org.mule.extensions.jms.test.util.BadProxy" method="resolveConnectivityIssue()"/>
-                <set-payload value="#[3]"/>
-                <flow-ref name="publish-each"/>
+                <foreach collection="(1 to 3) as Array">
+                    <flow-ref name="try-with-connectivity-error"/>
+                </foreach>
             </try>
         </munit:execution>
         <munit:validation>
-            <jms:consume config-ref="JMS_Config_XA" destination="destination_2"/>
-            <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo(1)]"/>
-            <jms:consume config-ref="JMS_Config_XA" destination="destination_2"/>
-            <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo(3)]"/>
-            <jms:consume config-ref="JMS_Config_XA_UNSTABLE_CONNECTION" destination="destination_1"/>
-            <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo(4)]"/>
+            <foreach collection="(1 to 3) as Array">
+                <flow-ref name="validate-connectivity-error"/>
+                <logger message="#[ import * from dw::Runtime --- '' wait 1000]"/>
+            </foreach>
         </munit:validation>
     </munit:test>
 
     <munit:test name="connection-lost-and-never-recover">
         <munit:behavior>
-            <java:invoke-static class="org.mule.extensions.jms.test.util.BadProxy" method="generateConnectivityIssue(String, String, String)">
-                <java:args>
-                    #[{arg0: "61616", arg1: "activemq", arg2: ${connection.broken.port}}]
-                </java:args>
-            </java:invoke-static>
+            <flow-ref name="disconnect"/>
         </munit:behavior>
         <munit:execution>
             <try>
@@ -105,5 +85,36 @@
         <flow-ref name="publish-on-memory"/>
         <set-payload value="#[payload + 1]"/>
         <flow-ref name="publish-on-other-broker"/>
+    </flow>
+
+    <flow name="disconnect">
+        <java:invoke-static class="org.mule.extensions.jms.test.util.BadProxy" method="generateConnectivityIssue(String, String, String)">
+            <java:args>
+                #[{arg0: "61616", arg1: "activemq", arg2: ${connection.lost.port}}]
+            </java:args>
+        </java:invoke-static>
+    </flow>
+
+    <flow name="try-with-connectivity-error">
+        <flow-ref name="disconnect"/>
+        <try>
+            <set-payload value="#[1]"/>
+            <flow-ref name="publish-each"/>
+            <error-handler>
+                <on-error-continue type="JMS:CONNECTIVITY"/>
+            </error-handler>
+        </try>
+        <java:invoke-static class="org.mule.extensions.jms.test.util.BadProxy" method="resolveConnectivityIssue()"/>
+        <set-payload value="#[3]"/>
+        <flow-ref name="publish-each"/>
+    </flow>
+
+    <flow name="validate-connectivity-error">
+        <jms:consume config-ref="JMS_Config_XA" destination="destination_2"/>
+        <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo(1)]"/>
+        <jms:consume config-ref="JMS_Config_XA" destination="destination_2"/>
+        <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo(3)]"/>
+        <jms:consume config-ref="JMS_Config_XA_UNSTABLE_CONNECTION" destination="destination_1"/>
+        <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo(4)]"/>
     </flow>
 </mule>
