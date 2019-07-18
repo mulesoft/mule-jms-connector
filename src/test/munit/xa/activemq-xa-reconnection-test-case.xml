@@ -17,7 +17,7 @@
     <!--  Is required a 4.1.5 min mule version to prevent a bug on the lazy init on Bitronix -->
     <munit:config name="activemq-xa-reconnection-test-case.xml" minMuleVersion="4.1.6"/>
 
-    <!-- Ignored until MULE-17221 is fixed --> 
+    <!-- Ignored until MULE-17221 is fixed -->
     <munit:test name="connection-lost-and-recovered-several-times" ignore="true">
         <munit:execution>
             <try transactionType="XA" transactionalAction="ALWAYS_BEGIN">
@@ -43,7 +43,7 @@
             <set-payload value="Al tok perro"/>
             <try transactionType="XA" transactionalAction="ALWAYS_BEGIN">
                 <until-successful maxRetries="10" millisBetweenRetries="500">
-                    <flow-ref name="publish-on-other-broker"/>
+                    <flow-ref name="publish-on-unstable-broker"/>
                 </until-successful>
                 <flow-ref name="publish-on-memory"/>
             </try>
@@ -67,7 +67,7 @@
                     <flow-ref name="publish-on-memory"/>
                     <set-payload value="#[2]"/>
                     <until-successful maxRetries="3" millisBetweenRetries="1000">
-                        <flow-ref name="publish-on-other-broker"/>
+                        <flow-ref name="publish-on-unstable-broker"/>
                     </until-successful>
                 </try>
                 <error-handler>
@@ -87,15 +87,7 @@
         </munit:validation>
     </munit:test>
 
-    <flow name="publish-on-memory">
-        <jms:publish config-ref="JMS_Config_XA" destination="destination_2">
-            <jms:message>
-                <jms:body>#[payload]</jms:body>
-            </jms:message>
-        </jms:publish>
-    </flow>
-
-    <flow name="publish-on-other-broker">
+    <flow name="publish-on-unstable-broker">
         <jms:publish config-ref="JMS_Config_XA_UNSTABLE_CONNECTION" destination="destination_1">
             <jms:message>
                 <jms:body>#[payload]</jms:body>
@@ -107,7 +99,7 @@
         <set-payload value="#[payload]"/>
         <flow-ref name="publish-on-memory"/>
         <set-payload value="#[payload + 1]"/>
-        <flow-ref name="publish-on-other-broker"/>
+        <flow-ref name="publish-on-unstable-broker"/>
     </flow>
 
     <flow name="disconnect">
