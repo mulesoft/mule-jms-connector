@@ -17,6 +17,7 @@
     <!--  Is required a 4.1.5 min mule version to prevent a bug on the lazy init on Bitronix -->
     <munit:config name="activemq-xa-reconnection-test-case.xml" minMuleVersion="4.1.6"/>
 
+    <!-- Ignored until MULE-17221 is fixed --> 
     <munit:test name="connection-lost-and-recovered-several-times" ignore="true">
         <munit:execution>
             <try transactionType="XA" transactionalAction="ALWAYS_BEGIN">
