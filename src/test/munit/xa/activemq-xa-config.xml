@@ -35,7 +35,7 @@ http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/
     <jms:config name="JMS_Config_XA_UNSTABLE_CONNECTION">
         <jms:active-mq-connection >
             <reconnection>
-                <reconnect-forever frequency="250"/>
+                <reconnect-forever frequency="500"/>
             </reconnection>
             <jms:caching-strategy >
                 <jms:no-caching />

@@ -16,8 +16,8 @@
 
     <!--  Is required a 4.1.5 min mule version to prevent a bug on the lazy init on Bitronix -->
     <munit:config name="activemq-xa-reconnection-test-case.xml" minMuleVersion="4.1.6"/>
-    
-    <munit:test name="connection-lost-and-recovered-several-times">
+
+    <munit:test name="connection-lost-and-recovered-several-times" ignore="true">
         <munit:execution>
             <try transactionType="XA" transactionalAction="ALWAYS_BEGIN">
                 <foreach collection="(1 to 3) as Array">
@@ -28,8 +28,30 @@
         <munit:validation>
             <foreach collection="(1 to 3) as Array">
                 <flow-ref name="validate-connectivity-error"/>
-                <logger message="#[ import * from dw::Runtime --- '' wait 1000]"/>
             </foreach>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="connection-lost-and-eventually-recovered">
+        <munit:execution>
+            <flow-ref name="disconnect"/>
+            <async>
+                <logger message="#[ import * from dw::Runtime --- '' wait 1000]"/>
+                <java:invoke-static class="org.mule.extensions.jms.test.util.BadProxy" method="resolveConnectivityIssue()"/>
+            </async>
+            <set-payload value="Al tok perro"/>
+            <try transactionType="XA" transactionalAction="ALWAYS_BEGIN">
+                <until-successful maxRetries="10" millisBetweenRetries="500">
+                    <flow-ref name="publish-on-other-broker"/>
+                </until-successful>
+                <flow-ref name="publish-on-memory"/>
+            </try>
+        </munit:execution>
+        <munit:validation>
+            <jms:consume config-ref="JMS_Config_XA" destination="destination_2"/>
+            <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo('Al tok perro')]"/>
+            <jms:consume config-ref="JMS_Config_XA_UNSTABLE_CONNECTION" destination="destination_1"/>
+            <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo('Al tok perro')]"/>
         </munit:validation>
     </munit:test>
 
@@ -97,15 +119,17 @@
 
     <flow name="try-with-connectivity-error">
         <flow-ref name="disconnect"/>
+        <logger message="#[ import * from dw::Runtime --- '' wait 500]"/>
         <try>
             <set-payload value="#[1]"/>
             <flow-ref name="publish-each"/>
             <error-handler>
-                <on-error-continue type="JMS:CONNECTIVITY"/>
+                <on-error-continue/>
             </error-handler>
         </try>
         <java:invoke-static class="org.mule.extensions.jms.test.util.BadProxy" method="resolveConnectivityIssue()"/>
         <set-payload value="#[3]"/>
+        <logger message="#[ import * from dw::Runtime --- '' wait 1000]"/>
         <flow-ref name="publish-each"/>
     </flow>
 
