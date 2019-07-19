@@ -33,7 +33,7 @@
         </munit:validation>
     </munit:test>
 
-    <munit:test name="connection-lost-and-eventually-recovered">
+    <munit:test name="connection-lost-and-eventually-recovered" ignore="#[Munit::muleVersionEqualTo('4.2.0')]">
         <munit:execution>
             <flow-ref name="disconnect"/>
             <async>
@@ -56,7 +56,7 @@
         </munit:validation>
     </munit:test>
 
-    <munit:test name="connection-lost-and-never-recover">
+    <munit:test name="connection-lost-and-never-recover" ignore="#[Munit::muleVersionEqualTo('4.2.0')]">
         <munit:behavior>
             <flow-ref name="disconnect"/>
         </munit:behavior>
