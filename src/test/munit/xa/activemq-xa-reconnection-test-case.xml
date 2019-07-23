@@ -3,19 +3,23 @@
 <mule xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xmlns:connection-test="http://www.mulesoft.org/schema/mule/connection-test"
       xmlns="http://www.mulesoft.org/schema/mule/core"
       xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
-      xmlns:java="http://www.mulesoft.org/schema/mule/java"
       xmlns:mtf="http://www.mulesoft.org/schema/mule/mtf"
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
       http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
       http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
       http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
-      http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd
+      http://www.mulesoft.org/schema/mule/connection-test http://www.mulesoft.org/schema/mule/connection-test/current/mule-connection-test.xsd
       http://www.mulesoft.org/schema/mule/mtf http://www.mulesoft.org/schema/mule/mtf/current/mule-mtf.xsd">
 
     <!--  Is required a 4.1.5 min mule version to prevent a bug on the lazy init on Bitronix -->
     <munit:config name="activemq-xa-reconnection-test-case.xml" minMuleVersion="4.1.6"/>
+
+    <munit:before-suite name="proxySetup">
+        <connection-test:create-proxy realPort="61616" realHost="activemq" proxyPort="${connection.lost.port}"/>
+    </munit:before-suite>
 
     <!-- Ignored until MULE-17221 is fixed -->
     <munit:test name="connection-lost-and-recovered-several-times" ignore="true">
@@ -35,10 +39,10 @@
 
     <munit:test name="connection-lost-and-eventually-recovered" ignore="#[Munit::muleVersionEqualTo('4.2.0')]">
         <munit:execution>
-            <flow-ref name="disconnect"/>
+            <connection-test:disconnect-proxy proxyPort="${connection.lost.port}"/>
             <async>
                 <logger message="#[ import * from dw::Runtime --- '' wait 1000]"/>
-                <java:invoke-static class="org.mule.extensions.jms.test.util.BadProxy" method="resolveConnectivityIssue()"/>
+                <connection-test:reconnect-proxy proxyPort="${connection.lost.port}"/>
             </async>
             <set-payload value="Al tok perro"/>
             <try transactionType="XA" transactionalAction="ALWAYS_BEGIN">
@@ -58,7 +62,7 @@
 
     <munit:test name="connection-lost-and-never-recover" ignore="#[Munit::muleVersionEqualTo('4.2.0')]">
         <munit:behavior>
-            <flow-ref name="disconnect"/>
+            <connection-test:disconnect-proxy proxyPort="${connection.lost.port}"/>
         </munit:behavior>
         <munit:execution>
             <try>
@@ -74,7 +78,7 @@
                     <on-error-continue/>
                 </error-handler>
             </try>
-            <java:invoke-static class="org.mule.extensions.jms.test.util.BadProxy" method="resolveConnectivityIssue()"/>
+            <connection-test:reconnect-proxy proxyPort="${connection.lost.port}"/>
         </munit:execution>
         <munit:validation>
             <try>
@@ -102,16 +106,8 @@
         <flow-ref name="publish-on-unstable-broker"/>
     </flow>
 
-    <flow name="disconnect">
-        <java:invoke-static class="org.mule.extensions.jms.test.util.BadProxy" method="generateConnectivityIssue(String, String, String)">
-            <java:args>
-                #[{arg0: "61616", arg1: "activemq", arg2: ${connection.lost.port}}]
-            </java:args>
-        </java:invoke-static>
-    </flow>
-
     <flow name="try-with-connectivity-error">
-        <flow-ref name="disconnect"/>
+        <connection-test:disconnect-proxy proxyPort="${connection.lost.port}"/>
         <logger message="#[ import * from dw::Runtime --- '' wait 500]"/>
         <try>
             <set-payload value="#[1]"/>
@@ -120,10 +116,18 @@
                 <on-error-continue/>
             </error-handler>
         </try>
-        <java:invoke-static class="org.mule.extensions.jms.test.util.BadProxy" method="resolveConnectivityIssue()"/>
+        <connection-test:reconnect-proxy proxyPort="${connection.lost.port}"/>
         <set-payload value="#[3]"/>
         <logger message="#[ import * from dw::Runtime --- '' wait 1000]"/>
         <flow-ref name="publish-each"/>
+    </flow>
+
+    <flow name="publish-on-memory">
+        <jms:publish config-ref="JMS_Config_XA" destination="destination_2">
+            <jms:message>
+                <jms:body>#[payload]</jms:body>
+            </jms:message>
+        </jms:publish>
     </flow>
 
     <flow name="validate-connectivity-error">
