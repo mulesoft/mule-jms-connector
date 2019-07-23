@@ -49,7 +49,7 @@
                 <until-successful maxRetries="10" millisBetweenRetries="500">
                     <flow-ref name="publish-on-unstable-broker"/>
                 </until-successful>
-                <flow-ref name="publish-on-memory"/>
+                <flow-ref name="publish-on-memory-broker"/>
             </try>
         </munit:execution>
         <munit:validation>
@@ -68,7 +68,7 @@
             <try>
                 <try transactionType="XA" transactionalAction="ALWAYS_BEGIN">
                     <set-payload value="#[1]"/>
-                    <flow-ref name="publish-on-memory"/>
+                    <flow-ref name="publish-on-memory-broker"/>
                     <set-payload value="#[2]"/>
                     <until-successful maxRetries="3" millisBetweenRetries="1000">
                         <flow-ref name="publish-on-unstable-broker"/>
@@ -101,7 +101,7 @@
 
     <flow name="publish-each">
         <set-payload value="#[payload]"/>
-        <flow-ref name="publish-on-memory"/>
+        <flow-ref name="publish-on-memory-broker"/>
         <set-payload value="#[payload + 1]"/>
         <flow-ref name="publish-on-unstable-broker"/>
     </flow>
@@ -122,7 +122,7 @@
         <flow-ref name="publish-each"/>
     </flow>
 
-    <flow name="publish-on-memory">
+    <flow name="publish-on-memory-broker">
         <jms:publish config-ref="JMS_Config_XA" destination="destination_2">
             <jms:message>
                 <jms:body>#[payload]</jms:body>
