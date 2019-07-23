@@ -193,6 +193,8 @@
                             <portNames>
                                 <portName>activemq.listener.port</portName>
                                 <portName>activemq.web_console.port</portName>
+                                <portName>connection.lost.port</portName>
+                                <portName>connection.broken.port</portName>
                             </portNames>
                         </configuration>
                     </execution>
@@ -290,6 +292,12 @@
                         <version>${mtf-tools.version}</version>
                         <classifier>mule-plugin</classifier>
                     </dependency>
+                    <dependency>
+                        <groupId>org.mule.modules</groupId>
+                        <artifactId>mule-connection-test-module</artifactId>
+                        <version>1.0.0-SNAPSHOT</version>
+                        <classifier>mule-plugin</classifier>
+                    </dependency>
                 </dependencies>
             </plugin>
         </plugins>
@@ -311,6 +319,7 @@
                             <images>
                                 <image>
                                     <name>rmohr/activemq</name>
+                                    <alias>activemq</alias>
                                     <run>
                                         <ports>
                                             <port>${activemq.listener.port}:61616</port>
@@ -330,6 +339,20 @@
                                             <log>ActiveMQ Jolokia REST API available</log>
                                             <time>500000</time>
                                         </wait>
+                                    </run>
+                                </image>
+                                <image>
+                                    <name>shopify/toxiproxy</name>
+                                    <alias>toxiproxy</alias>
+                                    <run>
+                                        <ports>
+                                            <port>8474:8474</port>
+                                            <port>${connection.lost.port}:${connection.lost.port}</port>
+                                            <port>${connection.broken.port}:${connection.broken.port}</port>
+                                        </ports>
+                                        <links>
+                                            <link>activemq</link>
+                                        </links>
                                     </run>
                                 </image>
                             </images>
