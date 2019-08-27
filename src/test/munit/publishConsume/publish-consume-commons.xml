@@ -19,6 +19,7 @@
         correlationId : payload.correlationId
         }]"/>
     </flow>
+
     <flow name="pc-message-id-on-new-message">
         <jms:listener config-ref="${config}" destination="someDest">
             <jms:response requestReplyPattern="MESSAGE_ID"/>

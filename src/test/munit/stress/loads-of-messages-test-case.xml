@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+                          http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+                          http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+                          http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd">
+
+     <munit:config name="connector-stressing"/>
+
+    <munit:after-test name="afterTest-loads-of-messages-test-case" description="after test">
+        <set-variable variableName="brokerName" value="localhost"/>
+        <set-variable variableName="destinationName" value="DEV.QUEUE.1"/>
+        <flow-ref name="purgeQueue"/>
+    </munit:after-test>
+
+    <munit:test name="multipleMessagesOnListener">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="listenerFlow"/>
+        </munit:enable-flow-sources>
+        <munit:execution>
+            <set-variable value="#[2000]" variableName="numberOfMessages"/>
+            <foreach collection="#[1 to vars.numberOfMessages]">
+                <set-payload value="#['message number $(payload)']"/>
+                <jms:publish config-ref="config-no-caching" destination="DEV.QUEUE.1"/>
+            </foreach>
+        </munit:execution>
+        <munit:validation>
+            <try>
+                <until-successful maxRetries="10" millisBetweenRetries="1000">
+                    <munit-tools:assert-that expression="#[MunitTools::queueSize()]" is="#[MunitTools::equalTo(vars.numberOfMessages)]"/>
+                </until-successful>
+                <error-handler>
+                    <on-error-propagate type="ANY">
+                        <munit-tools:fail message="#['Stressed listener should have received $(vars.numberOfMessages) messages but received $(MunitTools::queueSize())']"/>
+                    </on-error-propagate>
+                </error-handler>
+            </try>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="multipleMessagesOnListenerWithLocalTransactions">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="listenerFlowWithLocalTransactions"/>
+        </munit:enable-flow-sources>
+        <munit:execution>
+            <set-variable value="#[2000]" variableName="numberOfMessages"/>
+            <foreach collection="#[1 to vars.numberOfMessages]">
+                <set-payload value="#['message number $(payload)']"/>
+                <jms:publish config-ref="config-no-caching" destination="DEV.QUEUE.1"/>
+            </foreach>
+        </munit:execution>
+        <munit:validation>
+            <try>
+                <until-successful maxRetries="10" millisBetweenRetries="1000">
+                    <munit-tools:assert-that expression="#[MunitTools::queueSize()]" is="#[MunitTools::equalTo(vars.numberOfMessages)]"/>
+                </until-successful>
+                <error-handler>
+                    <on-error-propagate type="ANY">
+                        <munit-tools:fail message="#['Stressed listener should have received $(vars.numberOfMessages) messages but received $(MunitTools::queueSize())']"/>
+                    </on-error-propagate>
+                </error-handler>
+            </try>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="multipleMessagesOnListenerWithXATransactions">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="listenerFlowWithXA"/>
+        </munit:enable-flow-sources>
+        <munit:execution>
+            <set-variable value="#[2000]" variableName="numberOfMessages"/>
+            <foreach collection="#[1 to vars.numberOfMessages]">
+                <set-payload value="#['message number $(payload)']"/>
+                <jms:publish config-ref="config-no-caching" destination="DEV.QUEUE.1"/>
+            </foreach>
+        </munit:execution>
+        <munit:validation>
+            <try>
+                <until-successful maxRetries="40" millisBetweenRetries="500">
+                    <munit-tools:assert-that expression="#[MunitTools::queueSize()]" is="#[MunitTools::equalTo(vars.numberOfMessages)]"/>
+                </until-successful>
+                <error-handler>
+                    <on-error-propagate type="ANY">
+                        <munit-tools:fail message="#['Stressed listener should have received $(vars.numberOfMessages) messages but received $(MunitTools::queueSize())']"/>
+                    </on-error-propagate>
+                </error-handler>
+            </try>
+        </munit:validation>
+    </munit:test>
+
+    <flow name="listenerFlow">
+        <jms:listener config-ref="config-no-caching" destination="DEV.QUEUE.1" ackMode="IMMEDIATE"/>
+        <logger message="#['Listener : $(payload)']" level="DEBUG"/>
+        <munit-tools:queue/>
+    </flow>
+
+    <flow name="listenerFlowWithLocalTransactions">
+        <jms:listener config-ref="config-no-caching" destination="DEV.QUEUE.1" ackMode="AUTO" transactionalAction="ALWAYS_BEGIN"/>
+        <logger message="#['Listener : $(payload)']" level="DEBUG"/>
+        <munit-tools:queue/>
+    </flow>
+
+    <flow name="listenerFlowWithXA">
+        <jms:listener config-ref="JMS_Config_XA" destination="DEV.QUEUE.1" ackMode="AUTO" transactionalAction="ALWAYS_BEGIN" transactionType="XA"/>
+        <logger message="#['Listener : $(payload)']" level="DEBUG"/>
+        <munit-tools:queue/>
+    </flow>
+
+</mule>

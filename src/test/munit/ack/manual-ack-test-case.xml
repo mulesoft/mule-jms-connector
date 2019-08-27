@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xmlns:mule="http://www.mulesoft.org/schema/mule/core"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+                          http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+                          http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+                          http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd">
+
+    <munit:config name="manual-ack"/>
+
+    <munit:after-test name="afterTest-manual-ack-test-case" description="after test">
+        <set-variable variableName="brokerName" value="localhost"/>
+        <set-variable variableName="destinationName" value="DEV.QUEUE.1"/>
+        <flow-ref name="purgeQueue"/>
+        <set-variable variableName="destinationName" value="DEV.QUEUE.2"/>
+        <flow-ref name="purgeQueue"/>
+    </munit:after-test>
+
+    <munit:test name="ackSessionManually">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="manualAckListener"/>
+        </munit:enable-flow-sources>
+        <munit:behavior>
+            <foreach collection="#[1 to 10]">
+                <jms:publish config-ref="config-no-caching" destination="DEV.QUEUE.2"/>
+            </foreach>
+        </munit:behavior>
+        <munit:validation>
+            <until-successful maxRetries="5" millisBetweenRetries="1000">
+                <munit-tools:assert-that expression="#[MunitTools::queueSize()]" is="#[MunitTools::equalTo(10)]"/>
+            </until-successful>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="recoverSessionManually">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="manualRecoverListener"/>
+        </munit:enable-flow-sources>
+        <munit:behavior>
+            <munit-tools:sleep time="2000"/>
+            <foreach collection="#[1 to 10]">
+                <jms:publish config-ref="config-no-caching" destination="DEV.QUEUE.2"/>
+            </foreach>
+        </munit:behavior>
+        <munit:validation>
+            <until-successful maxRetries="5" millisBetweenRetries="2000">
+                <munit-tools:assert-that expression="#[MunitTools::queueSize()]" is="#[MunitTools::equalTo(20)]"/>
+            </until-successful>
+        </munit:validation>
+    </munit:test>
+
+    <flow name="manualAckListener">
+        <jms:listener config-ref="config-no-caching" destination="DEV.QUEUE.2" ackMode="MANUAL"/>
+        <munit-tools:queue/>
+        <jms:ack ackId="#[attributes.ackId]"/>
+    </flow>
+
+    <flow name="manualRecoverListener">
+        <jms:listener config-ref="config-no-caching" destination="DEV.QUEUE.2" ackMode="MANUAL"/>
+        <munit-tools:queue/>
+        <choice>
+            <when expression="#[attributes.properties.jmsxProperties.jmsxDeliveryCount > 1]">
+                <jms:ack ackId="#[attributes.ackId]"/>
+            </when>
+            <otherwise>
+                <jms:recover-session ackId="#[attributes.ackId]"/>
+            </otherwise>
+        </choice>
+    </flow>
+</mule>
