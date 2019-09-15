@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.mule.extensions</groupId>
         <artifactId>mule-core-modules-parent</artifactId>
-        <version>1.1.2</version>
+        <version>1.1.6</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -80,7 +80,7 @@
             <version>${hawtbufVersion}</version>
             <scope>provided</scope>
         </dependency>
-        
+
         <!-- Used for in memory broker -->
         <dependency>
             <groupId>org.apache.activemq</groupId>
