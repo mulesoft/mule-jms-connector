@@ -195,6 +195,7 @@
                                 <portName>activemq.web_console.port</portName>
                                 <portName>connection.lost.port</portName>
                                 <portName>connection.broken.port</portName>
+                                <portName>toxiproxy.port</portName>
                             </portNames>
                         </configuration>
                     </execution>
@@ -346,7 +347,7 @@
                                     <alias>toxiproxy</alias>
                                     <run>
                                         <ports>
-                                            <port>8474:8474</port>
+                                            <port>${toxiproxy.port}:8474</port>
                                             <port>${connection.lost.port}:${connection.lost.port}</port>
                                             <port>${connection.broken.port}:${connection.broken.port}</port>
                                         </ports>
