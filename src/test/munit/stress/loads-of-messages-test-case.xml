@@ -80,7 +80,7 @@
         </munit:execution>
         <munit:validation>
             <try>
-                <until-successful maxRetries="40" millisBetweenRetries="500">
+                <until-successful maxRetries="100" millisBetweenRetries="500">
                     <munit-tools:assert-that expression="#[MunitTools::queueSize()]" is="#[MunitTools::equalTo(vars.numberOfMessages)]"/>
                 </until-successful>
                 <error-handler>

@@ -22,7 +22,7 @@
             </foreach>
         </munit:execution>
         <munit:validation>
-            <until-successful maxRetries="50" millisBetweenRetries="100">
+            <until-successful maxRetries="100" millisBetweenRetries="2000">
                 <munit-tools:assert-that expression="#[MunitTools::queueSize('listener1')]" is="#[MunitTools::equalTo(3)]"/>
             </until-successful>
         </munit:validation>
