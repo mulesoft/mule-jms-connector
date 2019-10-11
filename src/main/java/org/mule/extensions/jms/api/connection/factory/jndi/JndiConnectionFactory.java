@@ -65,6 +65,7 @@ public class JndiConnectionFactory extends DelegatingConnectionFactory implement
 
 
   private JndiNameResolver nameResolver;
+  private ConnectionFactory connectionFactory;
 
 
   public java.util.Optional<Destination> getJndiDestination(String name) {
@@ -89,10 +90,14 @@ public class JndiConnectionFactory extends DelegatingConnectionFactory implement
 
   @Override
   public ConnectionFactory getTargetConnectionFactory() {
+    if (connectionFactory != null) {
+      return connectionFactory;
+    }
+
     try {
       Object temp = getJndiNameResolver().lookup(connectionFactoryJndiName);
       if (temp instanceof ConnectionFactory) {
-        return (ConnectionFactory) temp;
+        return connectionFactory = (ConnectionFactory) temp;
       }
     } catch (Exception e) {
       throw new JmsExtensionException(e.getMessage(), e);
