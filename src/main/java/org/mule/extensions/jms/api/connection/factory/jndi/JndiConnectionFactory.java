@@ -15,6 +15,8 @@ import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.startIfNeeded;
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.stopIfNeeded;
 
 import org.mule.extensions.jms.api.connection.LookupJndiDestination;
+import org.mule.extensions.jms.api.exception.JmsExtensionException;
+import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.api.lifecycle.Lifecycle;
@@ -63,6 +65,7 @@ public class JndiConnectionFactory extends DelegatingConnectionFactory implement
 
 
   private JndiNameResolver nameResolver;
+  private ConnectionFactory connectionFactory;
 
 
   public java.util.Optional<Destination> getJndiDestination(String name) {
@@ -85,25 +88,26 @@ public class JndiConnectionFactory extends DelegatingConnectionFactory implement
     }
   }
 
+  @Override
+  public ConnectionFactory getTargetConnectionFactory() {
+    if (connectionFactory != null) {
+      return connectionFactory;
+    }
+
+    try {
+      Object temp = getJndiNameResolver().lookup(connectionFactoryJndiName);
+      if (temp instanceof ConnectionFactory) {
+        return connectionFactory = (ConnectionFactory) temp;
+      }
+    } catch (Exception e) {
+      throw new JmsExtensionException(e.getMessage(), e);
+    }
+    throw new JmsExtensionException("No valid ConnectionFactory was provided.");
+  }
 
   @Override
   public void initialise() throws InitialisationException {
-
-    try {
-      setupNameResolver();
-
-      Object temp = getJndiNameResolver().lookup(connectionFactoryJndiName);
-      if (temp instanceof ConnectionFactory) {
-        this.setTargetConnectionFactory((ConnectionFactory) temp);
-      } else {
-        throw new IllegalArgumentException("No valid ConnectionFactory was provided. Unable to initialise.");
-      }
-    } catch (NamingException e) {
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Failed to initialise the Connection factory: ", e);
-      }
-      throw new InitialisationException(e, this);
-    }
+    setupNameResolver();
   }
 
   @Override
