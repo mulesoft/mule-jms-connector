@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+                          http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
+
+    <flow name="publisher">
+        <jms:publish config-ref="config" destination="#[vars.destination]" destinationType="TOPIC"/>
+    </flow>
+
+    <flow name="consumer">
+        <jms:consume config-ref="config" destination="#[vars.destination]" maximumWait="#[vars.maximumWait]"/>
+    </flow>
+
+    <flow name="topicSubscriber1" initialState="stopped">
+        <jms:listener config-ref="config" destination="${topicDest}" numberOfConsumers="1">
+            <jms:consumer-type>
+                <jms:topic-consumer durable="true" subscriptionName="subscriber1"/>
+            </jms:consumer-type>
+        </jms:listener>
+        <logger level="DEBUG"/>
+        <jms:publish config-ref="config" destination="${subscriberFinalDest1}"/>
+    </flow>
+
+    <flow name="topicSubscriber2" initialState="stopped">
+        <jms:listener config-ref="config" destination="${topicDest}" numberOfConsumers="1">
+            <jms:consumer-type>
+                <jms:topic-consumer durable="true" subscriptionName="subscriber2"/>
+            </jms:consumer-type>
+        </jms:listener>
+        <logger level="DEBUG"/>
+        <jms:publish config-ref="config" destination="${subscriberFinalDest2}"/>
+    </flow>
+
+</mule>
