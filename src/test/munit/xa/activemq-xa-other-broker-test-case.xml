@@ -15,14 +15,6 @@
     <!-- Is required a 4.1.6 min mule version to prevent after fixing some scenarios which appeared in 4.1.5 -->
     <munit:config name="activemq-xa-other-broker-test-cases.xml" minMuleVersion="4.1.6"/>
 
-    <munit:after-test name="afterTest2" description="after test">
-        <set-variable variableName="brokerName" value="localhost"/>
-        <set-variable variableName="destinationName" value="destination_1"/>
-        <flow-ref name="purgeQueue"/>
-        <set-variable variableName="destinationName" value="destination_2"/>
-        <flow-ref name="purgeQueue"/>
-    </munit:after-test>
-
     <munit:test name="xa-happy-path" description="Checks happy path using two different brokers">
         <munit:execution>
             <set-payload value="someValue"/>
