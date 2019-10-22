@@ -30,7 +30,7 @@
             </foreach>
         </munit:behavior>
         <munit:validation>
-            <until-successful maxRetries="5" millisBetweenRetries="1000">
+            <until-successful maxRetries="10" millisBetweenRetries="1000">
                 <munit-tools:assert-that expression="#[MunitTools::queueSize()]" is="#[MunitTools::equalTo(10)]"/>
             </until-successful>
         </munit:validation>
@@ -47,7 +47,7 @@
             </foreach>
         </munit:behavior>
         <munit:validation>
-            <until-successful maxRetries="5" millisBetweenRetries="2000">
+            <until-successful maxRetries="10" millisBetweenRetries="2000">
                 <munit-tools:assert-that expression="#[MunitTools::queueSize()]" is="#[MunitTools::equalTo(20)]"/>
             </until-successful>
         </munit:validation>
