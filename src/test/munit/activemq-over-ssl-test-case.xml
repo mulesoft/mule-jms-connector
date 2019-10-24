@@ -3,16 +3,17 @@
       xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
       xmlns:java="http://www.mulesoft.org/schema/mule/java"
       xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
-      xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
       xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-      http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
-      http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
-      http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
-      http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd
-      http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd">
+                          http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+                          http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
+                          http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+                          http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd
+                          http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd">
 
-    <munit:config name="ssl.xml"/>
+    <munit:config name="activemq-over-ssl-test-case"/>
 
     <munit:dynamic-port propertyName="activemq.port"/>
 
@@ -27,14 +28,20 @@
     </jms:config>
 
     <munit:before-suite name="setUpServer">
-        <java:invoke-static class="org.mule.extensions.jms.test.ssl.ActiveMQSSLServer" method="start(String)">
+        <java:invoke-static class="org.mule.extensions.jms.test.ActiveMQSSLServer" method="start(String)">
             <java:args >#[{ port : p('activemq.port') }]</java:args>
         </java:invoke-static>
     </munit:before-suite>
 
     <munit:after-suite name="tearDown">
-        <java:invoke-static class="org.mule.extensions.jms.test.ssl.ActiveMQSSLServer" method="stop()"/>
+        <java:invoke-static class="org.mule.extensions.jms.test.ActiveMQSSLServer" method="stop()"/>
     </munit:after-suite>
+
+    <munit:after-test name="afterTest-activemq-over-ssl-test-case" description="after test">
+        <set-variable variableName="brokerName" value="localhost"/>
+        <set-variable variableName="destinationName" value="someDest"/>
+        <flow-ref name="purgeQueue"/>
+    </munit:after-test>
 
     <munit:test name="send-message-through-SSL">
         <munit:execution>

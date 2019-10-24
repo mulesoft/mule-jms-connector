@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+                         http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+                         http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+                         http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd">
+
+     <munit:config name="topic-shared-subscriptions"/>
+
+    <!-- This should be enabled once JMS 2.0 is enabled for testing -->
+    <munit:test name="topicListenerSupportsManyConsumers" ignore="true">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="topicListener"/>
+        </munit:enable-flow-sources>
+        <munit:execution>
+            <set-variable value="#[1000]" variableName="numberOfMessages"/>
+            <foreach collection="#[1 to vars.numberOfMessages]">
+                <set-payload value="this is a message"/>
+                <jms:publish destination="topicDest/" destinationType="TOPIC" config-ref="config-no-caching"/>
+            </foreach>
+        </munit:execution>
+        <munit:validation>
+            <until-successful maxRetries="10" millisBetweenRetries="1000">
+                <munit-tools:assert-that expression="#[MunitTools::queueSize()]" is="#[MunitTools::equalTo(vars.numberOfMessages)]"/>
+            </until-successful>
+        </munit:validation>
+    </munit:test>
+
+    <!-- This should be enabled once JMS 2.0 is enabled for testing -->
+    <munit:test name="sharedTopicBetweenTwoListeners" ignore="true">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="topicListener"/>
+            <munit:enable-flow-source value="topicListener2"/>
+        </munit:enable-flow-sources>
+        <munit:execution>
+            <set-variable value="#[1000]" variableName="numberOfMessages"/>
+            <foreach collection="#[1 to vars.numberOfMessages]">
+                <set-payload value="#['message number $(payload)']"/>
+                <jms:publish config-ref="config-no-caching" destination="topicDest/" destinationType="TOPIC"/>
+            </foreach>
+        </munit:execution>
+        <munit:validation>
+            <until-successful maxRetries="10" millisBetweenRetries="1000">
+                <munit-tools:assert-that expression="#[MunitTools::queueSize()]" is="#[MunitTools::equalTo(vars.numberOfMessages)]"/>
+            </until-successful>
+        </munit:validation>
+    </munit:test>
+
+    <flow name="topicListener">
+        <jms:listener config-ref="config-no-caching" destination="topicDest/" numberOfConsumers="4">
+            <jms:consumer-type>
+                <jms:topic-consumer shared="true" subscriptionName="subscriptionName"/>
+            </jms:consumer-type>
+        </jms:listener>
+        <logger message="#['Lisntener 1: $(payload)']" level="DEBUG"/>
+        <munit-tools:queue/>
+    </flow>
+
+    <flow name="topicListener2">
+        <jms:listener config-ref="config-no-caching" destination="topicDest/" numberOfConsumers="4">
+            <jms:consumer-type>
+                <jms:topic-consumer shared="true" subscriptionName="subscriptionName"/>
+            </jms:consumer-type>
+        </jms:listener>
+        <logger message="#['Listener 2: $(payload)']" level="DEBUG"/>
+        <munit-tools:queue/>
+    </flow>
+
+</mule>

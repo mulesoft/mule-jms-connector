@@ -203,7 +203,7 @@
     </munit:test>
 
     <munit:test name="nested-xa-tx-with-error-inside" description="If nested XA tx is rolled back, other operations
-        can be executed correctly (committing)">
+        can be executed correctly (committing)" ignore="#[Munit::muleVersionEqualTo('4.1.7-SNAPSHOT')]" >
         <munit:execution>
             <try transactionType="XA" transactionalAction="ALWAYS_BEGIN">
                 <set-payload value="first"/>

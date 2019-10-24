@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xmlns:mule="http://www.mulesoft.org/schema/mule/core"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+                          http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+                          http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+                          http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd">
+
+    <munit:config name="auto-ack"/>
+
+    <munit:after-test name="afterTest-auto-ack-test-case" description="after test">
+        <set-variable variableName="brokerName" value="localhost"/>
+        <set-variable variableName="destinationName" value="DEV.QUEUE.1"/>
+        <flow-ref name="purgeQueue"/>
+    </munit:after-test>
+
+    <munit:test name="sessionIsAutomaticallyAckOnSuccessFlow" >
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="ackListener"/>
+        </munit:enable-flow-sources>
+        <munit:behavior>
+            <foreach collection="#[1 to 10]">
+                <jms:publish config-ref="config-no-caching" destination="DEV.QUEUE.1"/>
+            </foreach>
+        </munit:behavior>
+        <munit:validation>
+            <until-successful maxRetries="5" millisBetweenRetries="1000">
+                <munit-tools:assert-that expression="#[MunitTools::queueSize()]" is="#[MunitTools::equalTo(10)]"/>
+            </until-successful>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="sessionIsAutomaticallyRecoverOnErrorFlow">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="recoverListener"/>
+        </munit:enable-flow-sources>
+        <munit:behavior>
+            <set-payload value="#['message']"/>
+            <jms:publish config-ref="config-no-caching" destination="DEV.QUEUE.1"/>
+        </munit:behavior>
+        <munit:validation>
+            <until-successful maxRetries="5" millisBetweenRetries="1000">
+                <munit-tools:assert-that expression="#[MunitTools::queueSize()]" is="#[MunitTools::equalTo(2)]"/>
+            </until-successful>
+            <munit-tools:dequeue/>
+            <munit-tools:assert-that expression="#[payload.payload]" is="#[MunitTools::equalTo('message')]"/>
+            <munit-tools:assert-that expression="#[payload.attributes.properties.jmsxProperties.jmsxDeliveryCount]" is="#[MunitTools::equalTo(1)]"/>
+            <munit-tools:dequeue/>
+            <munit-tools:assert-that expression="#[payload.payload]" is="#[MunitTools::equalTo('message')]"/>
+            <munit-tools:assert-that expression="#[payload.attributes.properties.jmsxProperties.jmsxDeliveryCount]" is="#[MunitTools::equalTo(2)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <flow name="ackListener">
+        <jms:listener config-ref="config-no-caching" destination="DEV.QUEUE.1"/>
+        <logger message="Received: #[payload]" level="DEBUG"/>
+        <munit-tools:queue/>
+    </flow>
+
+    <flow name="recoverListener">
+        <jms:listener config-ref="config-no-caching" destination="DEV.QUEUE.1"/>
+        <munit-tools:queue>
+            <munit-tools:value>
+                #[message]
+            </munit-tools:value>
+        </munit-tools:queue>
+        <choice>
+            <when expression="#[attributes.properties.jmsxProperties.jmsxDeliveryCount > 1]">
+                <logger message="keep going"/>
+            </when>
+            <otherwise>
+                <raise-error type="MULE:ROUTING"/>
+            </otherwise>
+        </choice>
+    </flow>
+</mule>

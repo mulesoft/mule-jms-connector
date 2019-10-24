@@ -21,6 +21,14 @@
         <connection-test:create-proxy realPort="61616" realHost="activemq" proxyPort="${connection.lost.port}"/>
     </munit:before-suite>
 
+    <munit:after-test name="afterTest-activemq-xa-reconnection-test-case" description="after test">
+        <set-variable variableName="brokerName" value="localhost"/>
+        <set-variable variableName="destinationName" value="destination_1"/>
+        <flow-ref name="purgeQueue"/>
+        <set-variable variableName="destinationName" value="destination_2"/>
+        <flow-ref name="purgeQueue"/>
+    </munit:after-test>
+
     <!-- Ignored until MULE-17221 is fixed -->
     <munit:test name="connection-lost-and-recovered-several-times" ignore="true">
         <munit:execution>

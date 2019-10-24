@@ -11,7 +11,7 @@
       http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
       http://www.mulesoft.org/schema/mule/mtf http://www.mulesoft.org/schema/mule/mtf/current/mule-mtf.xsd">
 
-    <munit:config name="jms-listener-high-load.xml">
+    <munit:config name="jms-listener-high-load-test-case">
         <munit:parameterizations>
             <munit:parameterization name="default">
                 <munit:parameters>
@@ -27,6 +27,12 @@
             </munit:parameterization>
         </munit:parameterizations>
     </munit:config>
+
+    <munit:after-test name="afterTest-jms-listener-high-load-test-case" description="after test">
+        <set-variable variableName="brokerName" value="localhost"/>
+        <set-variable variableName="destinationName" value="someDest"/>
+        <flow-ref name="purgeQueue"/>
+    </munit:after-test>
 
     <munit:test name="consume-multiple-messages" >
         <munit:enable-flow-sources>

@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xmlns:mule="http://www.mulesoft.org/schema/mule/core"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+                          http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+                          http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+                          http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd">
+
+    <munit:config name="topic-test-case"/>
+
+    <munit:test name="receiveMessagesOnTopic">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="simpleTopicListener"/>
+        </munit:enable-flow-sources>
+        <munit:execution>
+            <foreach collection="#[1 to 3]">
+                <jms:publish config-ref="config-no-caching" destination="simple.topic" destinationType="TOPIC"/>
+            </foreach>
+        </munit:execution>
+        <munit:validation>
+            <until-successful maxRetries="100" millisBetweenRetries="2000">
+                <munit-tools:assert-that expression="#[MunitTools::queueSize('listener1')]" is="#[MunitTools::equalTo(3)]"/>
+            </until-successful>
+        </munit:validation>
+    </munit:test>
+
+    <!-- This should be enabled once JMS 2.0 is enabled for testing -->
+    <munit:test name="receiveMessagesOnSharedTopic" ignore="true">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="sharedTopicListener1"/>
+            <munit:enable-flow-source value="sharedTopicListener2"/>
+        </munit:enable-flow-sources>
+        <munit:execution>
+            <async>
+                <foreach collection="#[1 to 100]">
+                    <jms:publish config-ref="config-no-caching" destination="shared.topic" destinationType="TOPIC"/>
+                </foreach>
+            </async>
+            <async>
+                <foreach collection="#[101 to 200]">
+                    <jms:publish config-ref="config-no-caching" destination="shared.topic" destinationType="TOPIC"/>
+                </foreach>
+            </async>
+        </munit:execution>
+        <munit:validation>
+            <until-successful maxRetries="50" millisBetweenRetries="100">
+                <munit-tools:assert-that expression="#[MunitTools::queueSize('listener1') + MunitTools::queueSize('listener2')]" is="#[MunitTools::equalTo(200)]"/>
+            </until-successful>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="receiveMessagesOnNonSharedTopic">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="simpleTopicListener1"/>
+            <munit:enable-flow-source value="simpleTopicListener2"/>
+        </munit:enable-flow-sources>
+        <munit:execution>
+                <munit-tools:sleep time="2000"/>
+                <foreach collection="#[1 to 50]">
+                    <jms:publish config-ref="config-no-caching" destination="some.topic" destinationType="TOPIC"/>
+                </foreach>
+        </munit:execution>
+        <munit:validation>
+            <try>
+                <until-successful maxRetries="5" millisBetweenRetries="2000">
+                    <munit-tools:assert-that expression="#[MunitTools::queueSize('listener1')]" is="#[MunitTools::equalTo(50)]"/>
+                    <munit-tools:assert-that expression="#[MunitTools::queueSize('listener2')]" is="#[MunitTools::equalTo(50)]"/>
+                </until-successful>
+                <error-handler>
+                    <on-error-propagate type="ANY">
+                        <logger level="ERROR" message="Queues Content:"/>
+                        <set-variable variableName="queueName" value="listener1"/>
+                        <flow-ref name="queueToList" target="listener1"/>
+                        <set-variable variableName="queueName" value="listener2"/>
+                        <flow-ref name="queueToList" target="listener2"/>
+                        <logger level="ERROR" message="Listener 1: #[vars.listener1]"/>
+                        <logger level="ERROR" message="Listener 2: #[vars.listener2]"/>
+                        <raise-error type="ANY" description="#['Both listeners should have received 100 messages but received $(sizeOf(vars.listener1) + sizeOf(vars.listener2))']"/>
+                    </on-error-propagate>
+                </error-handler>
+            </try>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="topicWithWildcards">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="wildcard-topic-listener-all-countries"/>
+            <munit:enable-flow-source value="wildcard-topic-listener-only-buenos-aires"/>
+        </munit:enable-flow-sources>
+        <munit:execution>
+            <munit-tools:sleep time="2000"/>
+            <jms:publish config-ref="config-no-caching" destination="countries.Argentina.BuenosAires" destinationType="TOPIC"/>
+            <jms:publish config-ref="config-no-caching" destination="countries.Argentina.Rosario" destinationType="TOPIC"/>
+            <jms:publish config-ref="config-no-caching" destination="countries.Brazil.RioDeJainero" destinationType="TOPIC"/>
+            <jms:publish config-ref="config-no-caching" destination="countries.Colombia.BuenosAires" destinationType="TOPIC"/>
+        </munit:execution>
+        <munit:validation>
+            <try>
+                <until-successful maxRetries="5" millisBetweenRetries="2000">
+                    <munit-tools:assert-that expression="#[MunitTools::queueSize('all')]" is="#[MunitTools::equalTo(4)]"/>
+                    <munit-tools:assert-that expression="#[MunitTools::queueSize('buenosaires')]" is="#[MunitTools::equalTo(2)]"/>
+                </until-successful>
+                <error-handler>
+                    <on-error-propagate type="ANY"/>
+                </error-handler>
+            </try>
+
+            <mule:set-variable variableName="queueName" value="#['all']"/>
+            <flow-ref name="queueToList"/>
+            <flow-ref name="attributesToDestinations"/>
+            <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::allOf([
+             MunitTools::hasItem(MunitTools::containsString('countries.Argentina.BuenosAires')),
+             MunitTools::hasItem(MunitTools::containsString('countries.Argentina.Rosario')),
+             MunitTools::hasItem(MunitTools::containsString('countries.Brazil.RioDeJainero')),
+             MunitTools::hasItem(MunitTools::containsString('countries.Colombia.BuenosAires'))])]"/>
+
+            <mule:set-variable variableName="queueName" value="#['buenosaires']"/>
+            <flow-ref name="queueToList"/>
+            <flow-ref name="attributesToDestinations"/>
+            <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::allOf([
+             MunitTools::hasItem(MunitTools::containsString('countries.Argentina.BuenosAires')),
+             MunitTools::hasItem(MunitTools::containsString('countries.Colombia.BuenosAires'))])]"/>
+        </munit:validation>
+    </munit:test>
+
+    <flow name="simpleTopicListener">
+        <jms:listener config-ref="config-no-caching" destination="simple.topic" numberOfConsumers="1">
+            <jms:consumer-type>
+                <jms:topic-consumer />
+            </jms:consumer-type>
+        </jms:listener>
+
+        <logger level="DEBUG" message="Non Shared Listener 1: #[payload]"/>
+        <munit-tools:queue queueName="listener1"/>
+    </flow>
+
+    <flow name="simpleTopicListener1">
+        <jms:listener config-ref="config-no-caching" destination="some.topic" numberOfConsumers="1">
+            <jms:consumer-type>
+                <jms:topic-consumer />
+            </jms:consumer-type>
+        </jms:listener>
+
+        <logger level="DEBUG" message="Non Shared Listener 1: #[payload]"/>
+        <munit-tools:queue queueName="listener1"/>
+    </flow>
+
+    <flow name="simpleTopicListener2">
+        <jms:listener config-ref="config-no-caching" destination="some.topic" numberOfConsumers="1">
+            <jms:consumer-type>
+                <jms:topic-consumer />
+            </jms:consumer-type>
+        </jms:listener>
+
+        <logger level="DEBUG" message="Non Shared Listener 2 : #[payload]"/>
+        <munit-tools:queue queueName="listener2"/>
+    </flow>
+
+    <flow name="sharedTopicListener1">
+        <jms:listener config-ref="config-no-caching" destination="shared.topic" numberOfConsumers="1">
+            <jms:consumer-type>
+                <jms:topic-consumer shared="true" subscriptionName="JMS-TEST" />
+            </jms:consumer-type>
+        </jms:listener>
+
+        <logger level="DEBUG" message="Shared Listener 1 : #[payload]"/>
+        <munit-tools:queue queueName="listener1"/>
+    </flow>
+
+    <flow name="sharedTopicListener2">
+        <jms:listener config-ref="config-no-caching" destination="shared.topic" numberOfConsumers="1">
+            <jms:consumer-type>
+                <jms:topic-consumer shared="true" subscriptionName="JMS-TEST" />
+            </jms:consumer-type>
+        </jms:listener>
+        <logger level="DEBUG" message="Shared Listener 2 : #[payload]"/>
+        <munit-tools:queue queueName="listener2"/>
+    </flow>
+
+    <flow name="wildcard-topic-listener-all-countries">
+        <jms:listener config-ref="config-no-caching" destination="countries.>" numberOfConsumers="1">
+            <jms:consumer-type >
+                <jms:topic-consumer />
+            </jms:consumer-type>
+        </jms:listener>
+        <logger level="DEBUG" message="All: #[attributes.headers.destination.destination]"/>
+        <munit-tools:queue queueName="all">
+            <munit-tools:value>#[attributes]</munit-tools:value>
+        </munit-tools:queue>
+    </flow>
+
+    <flow name="wildcard-topic-listener-only-buenos-aires">
+        <jms:listener config-ref="config-no-caching" destination="countries.*.BuenosAires" numberOfConsumers="1">
+            <jms:consumer-type >
+                <jms:topic-consumer />
+            </jms:consumer-type>
+        </jms:listener>
+        <logger level="DEBUG" message="BuenosAires : #[attributes.headers.destination.destination]"/>
+        <munit-tools:queue queueName="buenosaires">
+            <munit-tools:value>#[attributes]</munit-tools:value>
+        </munit-tools:queue>
+    </flow>
+
+    <flow name="attributesToDestinations">
+        <set-payload value="#[payload map $.headers.destination.destination]"/>
+    </flow>
+
+</mule>

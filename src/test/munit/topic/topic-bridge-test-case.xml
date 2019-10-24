@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:jms="http://www.mulesoft.org/schema/mule/jms" xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+       xmlns:mule="http://www.mulesoft.org/schema/mule/core"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+      http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+      
+http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd">
+
+    <munit:config name="bridge-topic-test-case"/>
+
+    <munit:test name="bridgeOverTopic">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="topicOriginBridgeListener"/>
+            <munit:enable-flow-source value="topicDestinyBridgeListener"/>
+        </munit:enable-flow-sources>
+        <munit:execution>
+            <munit-tools:sleep time="2000"/>
+            <jms:publish config-ref="config-no-caching" destination="/origin/topic" destinationType="TOPIC">
+                <jms:message>
+                    <jms:body>#['text']</jms:body>
+                    <jms:reply-to destination="/destiny/topic" destinationType="TOPIC"/>
+                    <jms:properties>
+                        #[{ 'CUSTOM_PROP': 'PROP_VALUE'}]
+                    </jms:properties>
+                </jms:message>
+            </jms:publish>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:dequeue/>
+            <munit-tools:assert-that expression="#[payload.payload]" is="#[MunitTools::equalTo('bridged_text')]"/>
+            <munit-tools:assert-that expression="#[payload.attributes.properties.userProperties.'MULE_IBM_MQ_BRIDGED']" is="#[MunitTools::equalTo(true)]"/>
+            <munit-tools:assert-that expression="#[payload.attributes.properties.userProperties.'CUSTOM_PROP']" is="#[MunitTools::equalTo('PROP_VALUE')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <flow name="topicOriginBridgeListener">
+        <jms:listener config-ref="config-no-caching" destination="/origin/topic" numberOfConsumers="1">
+            <jms:consumer-type>
+                <jms:topic-consumer/>
+            </jms:consumer-type>
+            <jms:response>
+                <jms:body>#["bridged_" ++ payload]</jms:body>
+                <jms:properties>#[attributes.properties.userProperties ++ {'MULE_IBM_MQ_BRIDGED': true}]</jms:properties>
+            </jms:response>
+        </jms:listener>
+        <logger level="DEBUG" message="Received on /origin/topic: #[payload]"/>
+    </flow>
+
+    <flow name="topicDestinyBridgeListener">
+        <jms:listener config-ref="config-no-caching" destination="/destiny/topic" numberOfConsumers="1">
+            <jms:consumer-type>
+                <jms:topic-consumer/>
+            </jms:consumer-type>
+        </jms:listener>
+        <logger level="DEBUG" message="Received on /destiny/topic: #[payload]"/>
+        <munit-tools:queue>
+            <munit-tools:value>#[message]</munit-tools:value>
+        </munit-tools:queue>
+    </flow>
+
+
+</mule>

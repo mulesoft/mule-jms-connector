@@ -28,6 +28,14 @@
         </munit:parameterizations>
     </munit:config>
 
+    <munit:after-test name="afterTest-message-id-pattern" description="after test">
+        <set-variable variableName="brokerName" value="localhost"/>
+        <set-variable variableName="destinationName" value="someDest"/>
+        <flow-ref name="purgeQueue"/>
+        <set-variable variableName="destinationName" value="reply-queue"/>
+        <flow-ref name="purgeQueue"/>
+    </munit:after-test>
+
     <munit:test name="message-id-pattern-temp-queue">
         <munit:enable-flow-sources>
             <munit:enable-flow-source value="pc-message-id-on-new-message"/>
