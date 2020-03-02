@@ -26,11 +26,11 @@
         <commonsLangVersion>3.9</commonsLangVersion>
         <guavaVersion>25.1-jre</guavaVersion>
         <springVersion>5.1.6.RELEASE</springVersion>
-        <jacksonVersion>2.10.1</jacksonVersion>
+        <jacksonVersion>2.10.2</jacksonVersion>
         <hawtbufVersion>1.1</hawtbufVersion>
         <muleSpringModuleVersion>1.2.0</muleSpringModuleVersion>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
-        <muleJmsClientVersion>1.7.0-SNAPSHOT</muleJmsClientVersion>
+        <muleJmsClientVersion>1.8.0-SNAPSHOT</muleJmsClientVersion>
         <mule.http.connector.version>1.5.11</mule.http.connector.version>
 
         <!-- Remove when a new parent version with MTF is available -->
@@ -456,11 +456,6 @@
             <id>mule</id>
             <name>Mule Repository</name>
             <url>https://repository.mulesoft.org/nexus/content/repositories/public/</url>
-        </repository>
-        <repository>
-            <id>spring-snapshot</id>
-            <name>Spring Snapshot Repository</name>
-            <url>http://repo.spring.io/snapshot/</url>
         </repository>
     </repositories>
 
