@@ -116,13 +116,6 @@ public class JmsListener extends Source<Object, Object> {
   @Optional
   private AckMode ackMode;
 
-
-  @Parameter
-  @DisplayName("Ignore replyTo")
-  @Optional
-  private boolean ignoreReplyTo = false;
-
-
   /**
    * JMS selector to be used for filtering incoming messages
    */
@@ -154,6 +147,12 @@ public class JmsListener extends Source<Object, Object> {
   @Parameter
   @Optional(defaultValue = "4")
   private int numberOfConsumers;
+
+  @Parameter
+  @DisplayName("Ignore replyTo Header")
+  @Optional(defaultValue = "false")
+  private boolean ignoreReplyTo = false;
+
 
   @Inject
   SchedulerService schedulerService;
