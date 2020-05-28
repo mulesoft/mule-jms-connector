@@ -158,7 +158,6 @@ public class JmsListener extends Source<Object, Object> {
   @Optional(defaultValue = "false")
   private boolean ignoreReplyTo = false;
 
-
   @Inject
   SchedulerService schedulerService;
 
@@ -166,20 +165,24 @@ public class JmsListener extends Source<Object, Object> {
 
   @Override
   public void onStart(SourceCallback<Object, Object> sourceCallback) throws MuleException {
-    jmsListener = new org.mule.jms.commons.internal.source.JmsListener(sessionManager, config, connectionProvider, destination,
-                                                                       consumerType, ackMode,
-                                                                       selector, inboundContentType, inboundEncoding,
-                                                                       numberOfConsumers,
-                                                                       ignoreReplyTo,
-                                                                       new SourceConfiguration(transactionalAction,
-                                                                                               transactionType, componentLocation,
-                                                                                               configName),
-                                                                       schedulerService,
-                                                                       new DefaultJmsConnectionExceptionResolver(),
-                                                                       new DefaultJmsResourceReleaser(),
-                                                                       JmsListenerLockFactory.newDefault(),
-                                                                       empty(),
-                                                                       new DefaultReconnectionManagerProvider());
+    jmsListener = new org.mule.jms.commons.internal.source.JmsListener.Builder(
+                                                                               sessionManager, config, connectionProvider,
+                                                                               destination,
+                                                                               consumerType, ackMode,
+                                                                               selector, inboundContentType, inboundEncoding,
+                                                                               numberOfConsumers,
+                                                                               new SourceConfiguration(transactionalAction,
+                                                                                                       transactionType,
+                                                                                                       componentLocation,
+                                                                                                       configName),
+                                                                               schedulerService)
+                                                                                   .setExceptionResolver(new DefaultJmsConnectionExceptionResolver())
+                                                                                   .setResourceReleaser(new DefaultJmsResourceReleaser())
+                                                                                   .setListenerLockFactory(JmsListenerLockFactory
+                                                                                       .newDefault())
+                                                                                   .setReconnectionManager(new DefaultReconnectionManagerProvider())
+                                                                                   .setIgnoreReplyTo(ignoreReplyTo)
+                                                                                   .build();
     jmsListener.onStart(sourceCallback);
   }
 
