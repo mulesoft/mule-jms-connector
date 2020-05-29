@@ -51,7 +51,7 @@
         <munit:execution>
             <connection-test:disconnect-proxy proxyPort="${connection.lost.port}"/>
             <async>
-                <logger message="#[ import * from dw::Runtime - - - '' wait 1000]"/>
+                <logger message="#[ import * from dw::Runtime --- '' wait 1000]"/>
                 <connection-test:reconnect-proxy proxyPort="${connection.lost.port}"/>
             </async>
             <set-payload value="Al tok perro"/>
