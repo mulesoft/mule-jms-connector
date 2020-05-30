@@ -6,6 +6,7 @@
  */
 package org.mule.extensions.jms.internal.source;
 
+import static java.util.Optional.empty;
 import static org.mule.extensions.jms.internal.common.JmsCommons.EXAMPLE_CONTENT_TYPE;
 import static org.mule.extensions.jms.internal.common.JmsCommons.EXAMPLE_ENCODING;
 import static org.mule.runtime.extension.api.annotation.source.SourceClusterSupport.DEFAULT_PRIMARY_NODE_ONLY;
@@ -18,7 +19,11 @@ import org.mule.extensions.jms.internal.connection.session.JmsSession;
 import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
 import org.mule.extensions.jms.internal.metadata.JmsOutputResolver;
 import org.mule.jms.commons.api.AttributesOutputResolver;
+import org.mule.jms.commons.api.connection.DefaultReconnectionManagerProvider;
+import org.mule.jms.commons.api.lock.JmsListenerLockFactory;
 import org.mule.jms.commons.internal.connection.JmsTransactionalConnection;
+import org.mule.jms.commons.internal.source.DefaultJmsConnectionExceptionResolver;
+import org.mule.jms.commons.internal.source.DefaultJmsResourceReleaser;
 import org.mule.jms.commons.internal.source.SourceConfiguration;
 import org.mule.jms.commons.internal.support.JmsSupport;
 import org.mule.runtime.api.component.location.ComponentLocation;
@@ -148,6 +153,11 @@ public class JmsListener extends Source<Object, Object> {
   @Optional(defaultValue = "4")
   private int numberOfConsumers;
 
+  @Parameter
+  @DisplayName("Ignore replyTo Header")
+  @Optional(defaultValue = "false")
+  private boolean ignoreReplyTo = false;
+
   @Inject
   SchedulerService schedulerService;
 
@@ -155,14 +165,24 @@ public class JmsListener extends Source<Object, Object> {
 
   @Override
   public void onStart(SourceCallback<Object, Object> sourceCallback) throws MuleException {
-    jmsListener = new org.mule.jms.commons.internal.source.JmsListener(sessionManager, config, connectionProvider, destination,
-                                                                       consumerType, ackMode,
-                                                                       selector, inboundContentType, inboundEncoding,
-                                                                       numberOfConsumers,
-                                                                       new SourceConfiguration(transactionalAction,
-                                                                                               transactionType, componentLocation,
-                                                                                               configName),
-                                                                       schedulerService);
+    jmsListener = new org.mule.jms.commons.internal.source.JmsListener.Builder(
+                                                                               sessionManager, config, connectionProvider,
+                                                                               destination,
+                                                                               consumerType, ackMode,
+                                                                               selector, inboundContentType, inboundEncoding,
+                                                                               numberOfConsumers,
+                                                                               new SourceConfiguration(transactionalAction,
+                                                                                                       transactionType,
+                                                                                                       componentLocation,
+                                                                                                       configName),
+                                                                               schedulerService)
+                                                                                   .setExceptionResolver(new DefaultJmsConnectionExceptionResolver())
+                                                                                   .setResourceReleaser(new DefaultJmsResourceReleaser())
+                                                                                   .setListenerLockFactory(JmsListenerLockFactory
+                                                                                       .newDefault())
+                                                                                   .setReconnectionManager(new DefaultReconnectionManagerProvider())
+                                                                                   .setIgnoreReplyTo(ignoreReplyTo)
+                                                                                   .build();
     jmsListener.onStart(sourceCallback);
   }
 
