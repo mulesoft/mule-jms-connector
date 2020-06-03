@@ -122,6 +122,13 @@ public class JmsResponseMessageBuilder extends JmsMessageBuilder
   @DisplayName("Request Reply Pattern")
   private org.mule.extensions.jms.api.RequestReplyPattern requestReplyPattern;
 
+
+  @Parameter
+  @DisplayName("Ignore Jms replyTo Header")
+  @Placement(order = 1)
+  @Summary("If true, no automatic response will be sent in case of Jms replyTo header presence.")
+  private boolean ignoreReplyTo;
+
   public boolean isPersistentDelivery() {
     return persistentDelivery;
   }
@@ -161,4 +168,9 @@ public class JmsResponseMessageBuilder extends JmsMessageBuilder
   public RequestReplyPattern getRequestReplyPattern() {
     return requestReplyPattern.get();
   }
+
+  public boolean isReplyToIgnored() {
+    return ignoreReplyTo;
+  }
+
 }

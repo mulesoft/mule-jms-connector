@@ -153,11 +153,6 @@ public class JmsListener extends Source<Object, Object> {
   @Optional(defaultValue = "4")
   private int numberOfConsumers;
 
-  @Parameter
-  @DisplayName("Ignore replyTo Header")
-  @Optional(defaultValue = "false")
-  private boolean ignoreReplyTo = false;
-
   @Inject
   SchedulerService schedulerService;
 
@@ -181,7 +176,6 @@ public class JmsListener extends Source<Object, Object> {
                                                                                    .setListenerLockFactory(JmsListenerLockFactory
                                                                                        .newDefault())
                                                                                    .setReconnectionManager(new DefaultReconnectionManagerProvider())
-                                                                                   .setIgnoreReplyTo(ignoreReplyTo)
                                                                                    .build();
     jmsListener.onStart(sourceCallback);
   }
