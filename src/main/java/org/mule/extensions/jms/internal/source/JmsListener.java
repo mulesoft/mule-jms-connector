@@ -6,7 +6,6 @@
  */
 package org.mule.extensions.jms.internal.source;
 
-import static java.util.Optional.empty;
 import static org.mule.extensions.jms.internal.common.JmsCommons.EXAMPLE_CONTENT_TYPE;
 import static org.mule.extensions.jms.internal.common.JmsCommons.EXAMPLE_ENCODING;
 import static org.mule.runtime.extension.api.annotation.source.SourceClusterSupport.DEFAULT_PRIMARY_NODE_ONLY;
@@ -49,7 +48,6 @@ import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.source.ClusterSupport;
 import org.mule.runtime.extension.api.annotation.source.EmitsResponse;
 import org.mule.runtime.extension.api.runtime.parameter.CorrelationInfo;
-import org.mule.runtime.extension.api.runtime.parameter.OutboundCorrelationStrategy;
 import org.mule.runtime.extension.api.runtime.source.Source;
 import org.mule.runtime.extension.api.runtime.source.SourceCallback;
 import org.mule.runtime.extension.api.runtime.source.SourceCallbackContext;
@@ -66,6 +64,7 @@ import javax.jms.Message;
  * @since 1.0
  */
 @Alias("listener")
+@DisplayName("On New Message")
 @EmitsResponse
 @ClusterSupport(value = DEFAULT_PRIMARY_NODE_ONLY)
 @MetadataScope(outputResolver = JmsOutputResolver.class, attributesResolver = AttributesOutputResolver.class)
