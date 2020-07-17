@@ -20,7 +20,7 @@
 
     <properties>
         <activemq.version>5.14.5</activemq.version>
-        <artemisVersion>2.13.0</artemisVersion>
+        <artemisVersion>2.14.0</artemisVersion>
         <javaxJmsApiVersion>2.0.1</javaxJmsApiVersion>
         <commonsIoVersion>2.7</commonsIoVersion>
         <commonsLangVersion>3.10</commonsLangVersion>
