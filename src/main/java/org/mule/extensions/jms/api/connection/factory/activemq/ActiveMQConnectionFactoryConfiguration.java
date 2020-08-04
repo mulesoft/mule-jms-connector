@@ -15,6 +15,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.jms.ConnectionFactory;
 
@@ -126,5 +127,27 @@ public class ActiveMQConnectionFactoryConfiguration {
 
   public boolean isTrustAllPackages() {
     return trustAllPackages;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o)
+      return true;
+    if (o == null || getClass() != o.getClass())
+      return false;
+    ActiveMQConnectionFactoryConfiguration that = (ActiveMQConnectionFactoryConfiguration) o;
+    return enableXA == that.enableXA &&
+        initialRedeliveryDelay == that.initialRedeliveryDelay &&
+        redeliveryDelay == that.redeliveryDelay &&
+        maxRedelivery == that.maxRedelivery &&
+        trustAllPackages == that.trustAllPackages &&
+        Objects.equals(brokerUrl, that.brokerUrl) &&
+        Objects.equals(trustedPackages, that.trustedPackages);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(brokerUrl, enableXA, initialRedeliveryDelay, redeliveryDelay, maxRedelivery, trustedPackages,
+                        trustAllPackages);
   }
 }
