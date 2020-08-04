@@ -12,6 +12,8 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
+import java.util.Objects;
+
 /**
  * Allows parametrization of the Bitronix connection pool that is created when XA is enabled.
  *
@@ -60,5 +62,22 @@ public class XaPoolParameters implements org.mule.jms.commons.internal.connectio
   @Override
   public int getMaxIdleTime() {
     return maxIdleSeconds;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o)
+      return true;
+    if (o == null || getClass() != o.getClass())
+      return false;
+    XaPoolParameters that = (XaPoolParameters) o;
+    return minPoolSize == that.minPoolSize &&
+        maxPoolSize == that.maxPoolSize &&
+        maxIdleSeconds == that.maxIdleSeconds;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(minPoolSize, maxPoolSize, maxIdleSeconds);
   }
 }

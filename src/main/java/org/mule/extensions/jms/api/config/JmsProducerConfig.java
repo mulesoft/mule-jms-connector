@@ -14,6 +14,7 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import javax.jms.DeliveryMode;
@@ -158,4 +159,27 @@ public final class JmsProducerConfig implements org.mule.jms.commons.api.config.
     return jmsType;
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o)
+      return true;
+    if (o == null || getClass() != o.getClass())
+      return false;
+    JmsProducerConfig that = (JmsProducerConfig) o;
+    return persistentDelivery == that.persistentDelivery &&
+        priority == that.priority &&
+        timeToLive == that.timeToLive &&
+        disableMessageId == that.disableMessageId &&
+        disableMessageTimestamp == that.disableMessageTimestamp &&
+        timeToLiveUnit == that.timeToLiveUnit &&
+        Objects.equals(deliveryDelay, that.deliveryDelay) &&
+        deliveryDelayUnit == that.deliveryDelayUnit &&
+        Objects.equals(jmsType, that.jmsType);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(persistentDelivery, priority, timeToLive, timeToLiveUnit, disableMessageId, disableMessageTimestamp,
+                        deliveryDelay, deliveryDelayUnit, jmsType);
+  }
 }
