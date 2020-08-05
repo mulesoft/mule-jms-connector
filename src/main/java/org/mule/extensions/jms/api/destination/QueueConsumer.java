@@ -27,4 +27,14 @@ public class QueueConsumer extends org.mule.jms.commons.api.destination.QueueCon
   public boolean topic() {
     return false;
   }
+
+  @Override
+  public int hashCode() {
+    return QueueConsumer.class.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return obj != null && obj.getClass() == QueueConsumer.class;
+  }
 }

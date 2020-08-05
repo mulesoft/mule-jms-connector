@@ -18,6 +18,8 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
+import java.util.Objects;
+
 import javax.jms.Message;
 
 /**
@@ -85,4 +87,21 @@ public final class JmsConsumerConfig implements org.mule.jms.commons.api.config.
     return ackMode;
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o)
+      return true;
+    if (o == null || getClass() != o.getClass())
+      return false;
+    JmsConsumerConfig that = (JmsConsumerConfig) o;
+    return maxRedelivery == that.maxRedelivery &&
+        ackMode == that.ackMode &&
+        Objects.equals(consumerType, that.consumerType) &&
+        Objects.equals(selector, that.selector);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(ackMode, consumerType, selector, maxRedelivery);
+  }
 }

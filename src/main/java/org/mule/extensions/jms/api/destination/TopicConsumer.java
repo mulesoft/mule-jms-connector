@@ -21,4 +21,13 @@ import javax.jms.Topic;
 @Alias("topic-consumer")
 public class TopicConsumer extends org.mule.jms.commons.api.destination.TopicConsumer implements Initialisable, ConsumerType {
 
+  @Override
+  public int hashCode() {
+    return TopicConsumer.class.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return obj != null && obj.getClass() == TopicConsumer.class;
+  }
 }
