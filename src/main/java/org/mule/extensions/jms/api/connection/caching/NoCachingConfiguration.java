@@ -13,9 +13,19 @@ import org.mule.runtime.extension.api.annotation.Alias;
  * recommended only if an external {@code CachingConnectionFactory} is already being parameterized or if this extension is being
  * used in the context of a Java EE web or EJB application.
  *
- * @since 4,0
+ * @since 1.0
  */
 @Alias("no-caching")
 public class NoCachingConfiguration extends org.mule.jms.commons.api.connection.caching.NoCachingConfiguration
     implements CachingStrategy {
+
+  @Override
+  public int hashCode() {
+    return NoCachingConfiguration.class.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return obj != null && obj.getClass() == NoCachingConfiguration.class;
+  }
 }

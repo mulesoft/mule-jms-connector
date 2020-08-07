@@ -17,4 +17,14 @@ import org.mule.runtime.extension.api.annotation.Alias;
 @Alias("default-caching")
 public class DefaultCachingStrategy extends org.mule.jms.commons.api.connection.caching.DefaultCachingStrategy
     implements CachingStrategy {
+
+  @Override
+  public int hashCode() {
+    return DefaultCachingStrategy.class.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return obj != null && obj.getClass() == DefaultCachingStrategy.class;
+  }
 }
