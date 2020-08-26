@@ -23,7 +23,7 @@
         <artemisVersion>2.14.0</artemisVersion>
         <javaxJmsApiVersion>2.0.1</javaxJmsApiVersion>
         <commonsIoVersion>2.7</commonsIoVersion>
-        <commonsLangVersion>3.10</commonsLangVersion>
+        <commonsLangVersion>3.11</commonsLangVersion>
         <guavaVersion>25.1-jre</guavaVersion>
         <springVersion>5.1.6.RELEASE</springVersion>
         <jacksonVersion>2.11.2</jacksonVersion>
