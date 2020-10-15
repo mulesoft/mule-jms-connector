@@ -29,7 +29,7 @@
         <hawtbufVersion>1.1</hawtbufVersion>
         <muleSpringModuleVersion>1.3.4</muleSpringModuleVersion>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
-        <muleJmsClientVersion>1.11.0-SNAPSHOT</muleJmsClientVersion>
+        <muleJmsClientVersion>1.11.0</muleJmsClientVersion>
         <mule.http.connector.version>1.5.22</mule.http.connector.version>
 
         <!-- Remove when a new parent version with MTF is available -->
