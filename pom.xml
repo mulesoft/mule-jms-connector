@@ -25,21 +25,21 @@
         <commonsIoVersion>2.8.0</commonsIoVersion>
         <commonsLangVersion>3.11</commonsLangVersion>
         <guavaVersion>25.1-jre</guavaVersion>
-        <jacksonVersion>2.11.2</jacksonVersion>
+        <jacksonVersion>2.11.3</jacksonVersion>
         <hawtbufVersion>1.1</hawtbufVersion>
         <muleSpringModuleVersion>1.3.4</muleSpringModuleVersion>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
         <muleJmsClientVersion>1.11.0-SNAPSHOT</muleJmsClientVersion>
-        <mule.http.connector.version>1.5.21</mule.http.connector.version>
+        <mule.http.connector.version>1.5.22</mule.http.connector.version>
 
         <!-- Remove when a new parent version with MTF is available -->
         <munit.input.directory>src/test/munit</munit.input.directory>
         <munit.output.directory>${basedir}/target/test-mule/munit</munit.output.directory>
         <munit.extensions.maven.plugin.version>1.0.0</munit.extensions.maven.plugin.version>
-        <munit.version>2.3.0</munit.version>
+        <munit.version>2.3.1</munit.version>
         <mtf-tools.version>1.0.0</mtf-tools.version>
         <mavenResources.version>3.0.2</mavenResources.version>
-        <docker.maven.plugin.version>0.34.0</docker.maven.plugin.version>
+        <docker.maven.plugin.version>0.34.1</docker.maven.plugin.version>
         <maven.helper.plugin.version>3.2.0</maven.helper.plugin.version>
         <docker.skip>${skipTests}</docker.skip>
     </properties>
