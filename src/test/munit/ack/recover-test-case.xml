@@ -23,7 +23,13 @@
             <munit:enable-flow-source value="listener"/>
         </munit:enable-flow-sources>
         <munit:behavior>
-            <foreach collection="#[1 to 2]">
+            <foreach collection="#[1 to 1]">
+                <jms:publish config-ref="config-no-caching" destination="DEV.QUEUE.1"/>
+            </foreach>
+            <until-successful maxRetries="5" millisBetweenRetries="1000">
+                <munit-tools:assert-that expression="#[MunitTools::queueSize()]" is="#[MunitTools::equalTo(0)]"/>
+            </until-successful>
+            <foreach collection="#[1 to 1]">
                 <jms:publish config-ref="config-no-caching" destination="DEV.QUEUE.1"/>
             </foreach>
         </munit:behavior>
@@ -38,18 +44,26 @@
         <jms:listener config-ref="config-no-caching" destination="DEV.QUEUE.1" ackMode="MANUAL"/>
         <munit-tools:queue/>
         <logger level="INFO" message="listener Flow"/>
-        <raise-error type="MULE:ROUTING"/>
+        <flow-ref name="errorSub_Flow" />
     </flow>
 
-    <error-handler name="global_error_handler">
-        <on-error-propagate logException="true" >
-            <logger level="INFO" message="Default Flow"/>
-            <flow-ref name="errorSub_Flow" />
+    <sub-flow name="errorSub_Flow">
+        <raise-error type="MULE:ROUTING"/>
+    </sub-flow>
+
+    <error-handler>
+        <on-error-propagate logException="true">
+            <choice>
+                <when expression="#[attributes.properties.jmsxProperties.jmsxDeliveryCount &gt;= 2]" >
+                    <jms:ack ackId="#[attributes.ackId]"/>
+                </when>
+                <otherwise>
+                    <jms:recover-session ackId="#[attributes.ackId]"/>
+                </otherwise>
+            </choice>
         </on-error-propagate>
     </error-handler>
 
-    <sub-flow name="errorSub_Flow">
-        <jms:recover-session  ackId="#[attributes.ackId]"/>
-    </sub-flow>
+
 
 </mule>
