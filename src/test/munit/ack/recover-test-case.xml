@@ -11,7 +11,7 @@
 
     <munit:config name="session-recover"/>
 
-    <munit:after-test name="afterTest-immediate-ack-test-case" description="after test">
+    <munit:after-test name="afterTest-session-recover-test-case" description="after test">
         <set-variable variableName="brokerName" value="localhost"/>
         <set-variable variableName="destinationName" value="DEV.QUEUE.1"/>
         <flow-ref name="purgeQueue"/>
