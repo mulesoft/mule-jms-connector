@@ -22,7 +22,7 @@
         <activemq.version>5.14.5</activemq.version>
         <artemisVersion>2.16.0</artemisVersion>
         <javaxJmsApiVersion>2.0.1</javaxJmsApiVersion>
-        <commonsIoVersion>2.8.0</commonsIoVersion>
+        <commonsIoVersion>20030203.000550</commonsIoVersion>
         <commonsLangVersion>3.11</commonsLangVersion>
         <guavaVersion>25.1-jre</guavaVersion>
         <jacksonVersion>2.11.3</jacksonVersion>
