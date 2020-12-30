@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xmlns:connection-test="http://www.mulesoft.org/schema/mule/connection-test"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:mtf="http://www.mulesoft.org/schema/mule/mtf"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+      http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+      http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+      http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+      http://www.mulesoft.org/schema/mule/connection-test http://www.mulesoft.org/schema/mule/connection-test/current/mule-connection-test.xsd
+      http://www.mulesoft.org/schema/mule/mtf http://www.mulesoft.org/schema/mule/mtf/current/mule-mtf.xsd">
+
+    <munit:config name="reconnection-publish-test-case.xml"  minMuleVersion="4.3.0"/>
+
+    <munit:test name="publish-with-reconnection">
+        <munit:execution>
+            <flow-ref name="publish-reconnection-flow"/>
+        </munit:execution>
+        <munit:validation>
+            <jms:consume config-ref="JMS_CONNECTION_TOXI" destination="destination_2"/>
+            <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo('1')]"/>
+            <jms:consume config-ref="JMS_CONNECTION_TOXI" destination="destination_2"/>
+            <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo('2')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <flow name="publish-reconnection-flow">
+        <connection-test:define-proxy-server-port serverPort="${toxiproxy.port}"/>
+        <connection-test:create-proxy realPort="61616" realHost="activemq" proxyPort="${connection.lost.port}"/>
+        <jms:publish config-ref="JMS_CONNECTION_TOXI" destination="destination_2">
+            <jms:message>
+                <jms:body>1</jms:body>
+            </jms:message>
+        </jms:publish>
+        <connection-test:disconnect-proxy proxyPort="${connection.lost.port}"/>
+        <munit-tools:sleep time="500"/>
+        <connection-test:reconnect-proxy proxyPort="${connection.lost.port}"/>
+        <munit-tools:sleep time="500"/>
+        <jms:publish config-ref="JMS_CONNECTION_TOXI" destination="destination_2">
+            <jms:message>
+                <jms:body>2</jms:body>
+            </jms:message>
+        </jms:publish>
+
+    </flow>
+
+
+
+</mule>
