@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+                          http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+                          http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+                          http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd">
+
+    <munit:config name="session-recover"/>
+
+    <munit:after-test name="afterTest-session-recover-test-case" description="after test">
+        <set-variable variableName="brokerName" value="localhost"/>
+        <set-variable variableName="destinationName" value="DEV.QUEUE.1"/>
+        <flow-ref name="purgeQueue"/>
+    </munit:after-test>
+
+    <munit:test name="recoverSessionManuallyConcurrent">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="listener"/>
+        </munit:enable-flow-sources>
+        <munit:behavior>
+            <foreach collection="#[1 to 10]">
+                <jms:publish config-ref="config-no-caching" destination="DEV.QUEUE.1"/>
+            </foreach>
+        </munit:behavior>
+        <munit:validation>
+            <!-- For every message that we send, the listener will receive this message and
+            the the one that recover-session generate -->
+            <until-successful maxRetries="10" millisBetweenRetries="1000">
+                <munit-tools:assert-that expression="#[MunitTools::queueSize()]" is="#[MunitTools::equalTo(20)]"/>
+            </until-successful>
+        </munit:validation>
+    </munit:test>
+
+    <flow name="listener">
+        <jms:listener config-ref="config-no-caching" destination="DEV.QUEUE.1" ackMode="MANUAL" numberOfConsumers="2"/>
+        <munit-tools:queue/>
+        <flow-ref name="errorConcurrentSub_Flow" />
+        <error-handler name="errorError_Handler" >
+            <on-error-propagate logException="true">
+                <choice>
+                    <when expression="#[attributes.properties.jmsxProperties.jmsxDeliveryCount > 1]" >
+                        <jms:ack ackId="#[attributes.ackId]"/>
+                    </when>
+                    <otherwise>
+                        <jms:recover-session ackId="#[attributes.ackId]"/>
+                    </otherwise>
+                </choice>
+            </on-error-propagate>
+        </error-handler>
+
+    </flow>
+
+    <flow name="errorConcurrentSub_Flow">
+        <raise-error type="MULE:ROUTING"/>
+    </flow>
+
+
+</mule>
