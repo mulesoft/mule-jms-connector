@@ -17,30 +17,32 @@
         <flow-ref name="purgeQueue"/>
     </munit:after-test>
 
-    <munit:test name="sessionRecover">
+    <munit:test name="recoverSessionManuallyConcurrent">
         <munit:enable-flow-sources>
             <munit:enable-flow-source value="listener"/>
         </munit:enable-flow-sources>
         <munit:behavior>
-            <foreach collection="#[1 to 2]">
+            <foreach collection="#[1 to 10]">
                 <jms:publish config-ref="config-no-caching" destination="DEV.QUEUE.1"/>
             </foreach>
         </munit:behavior>
         <munit:validation>
-            <until-successful maxRetries="5" millisBetweenRetries="1000">
-                <munit-tools:assert-that expression="#[MunitTools::queueSize()]" is="#[MunitTools::equalTo(4)]"/>
+            <!-- For every message that we send, the listener will receive this message and
+            the the one that recover-session generate -->
+            <until-successful maxRetries="10" millisBetweenRetries="1000">
+                <munit-tools:assert-that expression="#[MunitTools::queueSize()]" is="#[MunitTools::equalTo(20)]"/>
             </until-successful>
         </munit:validation>
     </munit:test>
 
     <flow name="listener">
-        <jms:listener config-ref="config-no-caching" destination="DEV.QUEUE.1" ackMode="MANUAL"/>
+        <jms:listener config-ref="config-no-caching" destination="DEV.QUEUE.1" ackMode="MANUAL" numberOfConsumers="2"/>
         <munit-tools:queue/>
-        <flow-ref name="errorSub_Flow" />
-        <error-handler>
+        <flow-ref name="errorConcurrentSub_Flow" />
+        <error-handler name="errorError_Handler" >
             <on-error-propagate logException="true">
                 <choice>
-                    <when expression="#[attributes.properties.jmsxProperties.jmsxDeliveryCount &gt;= 2]" >
+                    <when expression="#[attributes.properties.jmsxProperties.jmsxDeliveryCount > 1]" >
                         <jms:ack ackId="#[attributes.ackId]"/>
                     </when>
                     <otherwise>
@@ -49,10 +51,12 @@
                 </choice>
             </on-error-propagate>
         </error-handler>
+
     </flow>
 
-    <sub-flow name="errorSub_Flow">
+    <flow name="errorConcurrentSub_Flow">
         <raise-error type="MULE:ROUTING"/>
-    </sub-flow>
+    </flow>
+
 
 </mule>
