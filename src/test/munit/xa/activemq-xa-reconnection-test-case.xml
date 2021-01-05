@@ -18,6 +18,7 @@
     <munit:config name="activemq-xa-reconnection-test-case.xml" minMuleVersion="4.1.6"/>
 
     <munit:before-suite name="proxySetup">
+        <connection-test:define-proxy-server-port serverPort="${toxiproxy.port}"/>
         <connection-test:create-proxy realPort="61616" realHost="activemq" proxyPort="${connection.lost.port}"/>
     </munit:before-suite>
 
