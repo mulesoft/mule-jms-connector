@@ -26,9 +26,11 @@
         <commonsLangVersion>3.11</commonsLangVersion>
         <guavaVersion>30.1-jre</guavaVersion>
         <jacksonVersion>2.12.0</jacksonVersion>
-        <activemq-protobufVersion>1.1</activemq-protobufVersion>
+
         <hawtbufVersion>1.11</hawtbufVersion>
-        <muleSpringModuleVersion>1.3.5</muleSpringModuleVersion>
+        <activemq-protobufVersion>1.1</activemq-protobufVersion>
+        <muleSpringModuleVersion>1.4.0-SNAPSHOT</muleSpringModuleVersion>
+
         <formatterConfigPath>formatter.xml</formatterConfigPath>
         <muleJmsClientVersion>1.11.2</muleJmsClientVersion>
         <mule.http.connector.version>1.5.23</mule.http.connector.version>
