@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:bti="http://www.mulesoft.org/schema/mule/ee/bti"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+                          http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+                          http://www.mulesoft.org/schema/mule/ee/bti http://www.mulesoft.org/schema/mule/ee/bti/current/mule-bti-ee.xsd">
+
+<jms:config name="JMS_CONNECTION_TOXI">
+
+    <jms:active-mq-connection>
+        <reconnection >
+            <reconnect-forever frequency="5000"/>
+        </reconnection>
+        <jms:caching-strategy >
+            <jms:no-caching />
+        </jms:caching-strategy>
+        <!--<jms:xa-connection-pool minPoolSize="5" />-->
+        <!--<jms:factory-configuration enable-xa="true" brokerUrl="tcp://0.0.0.0:${connection.lost.port}" maxRedelivery="1"/>-->
+        <jms:factory-configuration brokerUrl="tcp://0.0.0.0:${connection.lost.port}"/>
+    </jms:active-mq-connection>
+
+</jms:config>
+
+</mule>
