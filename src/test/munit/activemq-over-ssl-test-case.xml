@@ -13,7 +13,7 @@
                           http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd
                           http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd">
 
-    <munit:config name="activemq-over-ssl-test-case"/>
+    <munit:config name="activemq-over-ssl-test-case" minMuleVersion="4.3.0"/>
 
     <munit:dynamic-port propertyName="activemq.port"/>
 
