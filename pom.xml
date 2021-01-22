@@ -33,7 +33,7 @@
 
         <formatterConfigPath>formatter.xml</formatterConfigPath>
         <muleJmsClientVersion>1.12.0-SNAPSHOT</muleJmsClientVersion>
-        <mule.http.connector.version>1.5.23</mule.http.connector.version>
+        <mule.http.connector.version>1.6.20-MULTIMAP</mule.http.connector.version>
 
         <!-- Remove when a new parent version with MTF is available -->
         <munit.input.directory>src/test/munit</munit.input.directory>
