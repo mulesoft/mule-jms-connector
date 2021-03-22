@@ -97,7 +97,7 @@ public class Jms1xMultiConsumerTestCase extends AbstractJmsMultiConsumerTestCase
     try {
       topicListenerFlow.start();
     } catch (RetryPolicyExhaustedException e) {
-      assertThat(e.getCause().getCause(), is(instanceOf(IllegalArgumentException.class)));
+      assertThat(e.getCause().getCause().getCause(), is(instanceOf(IllegalArgumentException.class)));
     }
   }
 }
