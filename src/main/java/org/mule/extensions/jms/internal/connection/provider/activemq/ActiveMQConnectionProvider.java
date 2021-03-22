@@ -117,7 +117,7 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider implement
         }
 
         try {
-          return super.connect();
+          return jmsConnectionProvider.connect();
         } catch (ConnectionException e) {
           Throwable cause = e.getCause();
           if (cause instanceof JMSException) {

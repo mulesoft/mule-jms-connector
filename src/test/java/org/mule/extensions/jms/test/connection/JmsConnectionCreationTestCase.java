@@ -22,6 +22,8 @@ import io.qameta.allure.Issue;
 import io.qameta.allure.Story;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mule.extensions.jms.internal.connection.provider.BaseConnectionProvider;
+import org.mule.extensions.jms.internal.connection.provider.GenericConnectionProvider;
 import org.mule.extensions.jms.internal.connection.provider.activemq.ActiveMQConnectionProvider;
 import org.mule.extensions.jms.internal.source.JmsListener;
 import org.mule.jms.commons.internal.connection.provider.JmsConnectionProvider;
@@ -54,6 +56,24 @@ public class JmsConnectionCreationTestCase {
     }).when(jmsConnectionProvider).connect();
 
     activeMQConnectionProvider.connect();
+    verifyCreationInThread(atomicReference);
+  }
+
+  @Test
+  public void genericConnectionCreation() throws Exception {
+    AtomicReference<String> atomicReference = new AtomicReference<>();
+
+    GenericConnectionProvider genericConnectionProvider = new GenericConnectionProvider();
+    JmsConnectionProvider jmsConnectionProvider = mock(JmsConnectionProvider.class);
+    setField(genericConnectionProvider, genericConnectionProvider.getClass().getSuperclass(), "jmsConnectionProvider",
+             jmsConnectionProvider);
+
+    doAnswer(invocationOnMock -> {
+      atomicReference.set(currentThread().getThreadGroup().getName());
+      return null;
+    }).when(jmsConnectionProvider).connect();
+
+    genericConnectionProvider.connect();
     verifyCreationInThread(atomicReference);
   }
 

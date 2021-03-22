@@ -7,6 +7,7 @@
 package org.mule.extensions.jms.internal.connection.provider;
 
 import static java.lang.String.format;
+import static org.mule.extensions.jms.internal.common.JmsCommons.createWithJmsThreadGroup;
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.disposeIfNeeded;
 import static org.mule.runtime.extension.api.annotation.param.ParameterGroup.CONNECTION;
@@ -28,6 +29,7 @@ import org.mule.runtime.api.connection.CachedConnectionProvider;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.connection.ConnectionValidationResult;
 import org.mule.runtime.api.connection.PoolingConnectionProvider;
+import org.mule.runtime.api.exception.MuleRuntimeException;
 import org.mule.runtime.api.lifecycle.Disposable;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
@@ -40,6 +42,7 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.RefName;
 
+import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
 
 import javax.inject.Inject;
@@ -101,7 +104,7 @@ public abstract class BaseConnectionProvider
   /**
    * Used to ignore handling of ExceptionListener#onException when in the process of disconnecting
    */
-  private JmsConnectionProvider jmsConnectionProvider;
+  protected JmsConnectionProvider jmsConnectionProvider;
 
   /**
    * Template method for obtaining the {@link ConnectionFactory} to be used for creating the {@link JmsConnection}s
@@ -136,7 +139,15 @@ public abstract class BaseConnectionProvider
 
   @Override
   public JmsTransactionalConnection connect() throws ConnectionException {
-    return jmsConnectionProvider.connect();
+    try {
+      return createWithJmsThreadGroup(jmsConnectionProvider::connect);
+    } catch (Exception e) {
+      if (e.getCause() instanceof ConnectionException) {
+        throw (ConnectionException) e.getCause();
+      } else {
+        throw new MuleRuntimeException(e.getCause());
+      }
+    }
   }
 
   @Override
