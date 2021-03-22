@@ -19,7 +19,6 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 import org.mule.extensions.jms.api.exception.JmsExtensionException;
 import org.mule.extensions.jms.api.exception.JmsMissingLibraryException;
-import org.mule.extensions.jms.internal.common.JmsCommons;
 import org.mule.extensions.jms.internal.connection.exception.ActiveMQException;
 import org.mule.extensions.jms.internal.connection.provider.BaseConnectionProvider;
 import org.mule.jms.commons.internal.connection.JmsConnection;
@@ -47,7 +46,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
-import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
 
 import javax.jms.Connection;
