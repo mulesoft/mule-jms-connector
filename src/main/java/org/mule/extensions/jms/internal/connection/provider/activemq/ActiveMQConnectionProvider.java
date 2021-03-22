@@ -7,6 +7,7 @@
 package org.mule.extensions.jms.internal.connection.provider.activemq;
 
 import static org.mule.extensions.jms.api.connection.JmsSpecification.JMS_2_0;
+import static org.mule.extensions.jms.internal.common.JmsCommons.createWithJmsThreadGroup;
 import static org.mule.extensions.jms.internal.connection.provider.activemq.ActiveMQConnectionProvider.ACTIVEMQ_VERSION;
 import static org.mule.extensions.jms.internal.connection.provider.activemq.ActiveMQConnectionProvider.BROKER_CLASS;
 import static org.mule.extensions.jms.internal.connection.provider.activemq.ActiveMQConnectionProvider.BROKER_GA;
@@ -18,12 +19,14 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 import org.mule.extensions.jms.api.exception.JmsExtensionException;
 import org.mule.extensions.jms.api.exception.JmsMissingLibraryException;
+import org.mule.extensions.jms.internal.common.JmsCommons;
 import org.mule.extensions.jms.internal.connection.exception.ActiveMQException;
 import org.mule.extensions.jms.internal.connection.provider.BaseConnectionProvider;
 import org.mule.jms.commons.internal.connection.JmsConnection;
 import org.mule.jms.commons.internal.connection.JmsTransactionalConnection;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.connection.ConnectionProvider;
+import org.mule.runtime.api.exception.MuleRuntimeException;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.api.tls.TlsContextFactory;
@@ -44,6 +47,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
 
 import javax.jms.Connection;
@@ -107,21 +111,33 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider implement
 
   @Override
   public JmsTransactionalConnection connect() throws ConnectionException {
-    if (shouldUseSsl()) {
-      configureSSLContext();
-    }
 
     try {
-      return super.connect();
-    } catch (ConnectionException e) {
-      Throwable cause = e.getCause();
-      if (cause instanceof JMSException) {
-        checkMissingBrokerLib(e);
-        checkMissingPersistenceLib(e);
+      return createWithJmsThreadGroup(() -> {
+        if (shouldUseSsl()) {
+          configureSSLContext();
+        }
+
+        try {
+          return super.connect();
+        } catch (ConnectionException e) {
+          Throwable cause = e.getCause();
+          if (cause instanceof JMSException) {
+            checkMissingBrokerLib(e);
+            checkMissingPersistenceLib(e);
+          }
+          throw e;
+        }
+      });
+    } catch (Exception e) {
+      if (e.getCause() instanceof ConnectionException) {
+        throw (ConnectionException) e.getCause();
+      } else {
+        throw new MuleRuntimeException(e.getCause());
       }
-      throw e;
     }
   }
+
 
   @Override
   public ConnectionFactory getConnectionFactory() throws ActiveMQException {
