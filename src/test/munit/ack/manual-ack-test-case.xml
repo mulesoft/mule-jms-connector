@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xmlns:mule="http://www.mulesoft.org/schema/mule/core"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+                          http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+                          http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+                          http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd">
+
+    <munit:config name="manual-ack"/>
+
+
+    <munit:test name="consumerIsKeptOpenUntilMessageIsAcknowledged" >
+        <munit:behavior>
+            <set-variable variableName="numberOfMessages" value="#[5]" />
+            <set-variable variableName="message" value="The ducks in St James's Park are so used to being fed bread by secret agents meeting clandestinely that they have developed their own Pavlovian reaction." />
+        </munit:behavior>
+        <munit:execution>
+            <foreach collection="#[1 to vars.numberOfMessages]">
+                <jms:publish config-ref="config" destination="DEV.QUEUE.1">
+                    <jms:message>
+                        <jms:body>#[vars.message]
+                        </jms:body>
+                    </jms:message>
+                </jms:publish>
+            </foreach>
+        </munit:execution>
+        <munit:validation>
+            <foreach collection="#[1 to vars.numberOfMessages]">
+                <jms:consume config-ref="config" destination="DEV.QUEUE.1" ackMode="MANUAL" maximumWait="30000" >
+                    <reconnect-forever />
+                    <jms:consumer-type >
+                        <jms:queue-consumer />
+                    </jms:consumer-type>
+                </jms:consume>
+                <munit-tools:sleep time="2000"/>
+                <jms:ack ackId="#[attributes.ackId]"/>
+                <logger level="INFO" message="Message ACKed!" />
+                <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo(vars.message)]"/>
+            </foreach>
+        </munit:validation>
+    </munit:test>
+
+
+</mule>

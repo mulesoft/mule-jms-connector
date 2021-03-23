@@ -20,4 +20,11 @@
         </jms:active-mq-connection>
     </jms:config>
 
+    <jms:config name="config-manual-ack">
+        <jms:active-mq-connection >
+            <jms:factory-configuration maxRedelivery="${max.redelivery}" trustAllPackages="true"/>
+        </jms:active-mq-connection>
+        <jms:consumer-config ackMode="MANUAL" />
+    </jms:config>
+
 </mule>
