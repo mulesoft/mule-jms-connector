@@ -42,7 +42,6 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.RefName;
 
-import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
 
 import javax.inject.Inject;

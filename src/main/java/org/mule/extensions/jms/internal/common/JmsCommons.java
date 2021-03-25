@@ -9,13 +9,9 @@ package org.mule.extensions.jms.internal.common;
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
 import static org.slf4j.LoggerFactory.getLogger;
 
-import org.mule.runtime.api.connection.ConnectionException;
-import org.mule.runtime.api.exception.MuleException;
-import org.mule.runtime.api.exception.MuleRuntimeException;
 import org.mule.runtime.core.api.util.func.CheckedSupplier;
 import org.slf4j.Logger;
 
-import javax.jms.JMSException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
