@@ -22,7 +22,6 @@ import io.qameta.allure.Issue;
 import io.qameta.allure.Story;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mule.extensions.jms.internal.connection.provider.BaseConnectionProvider;
 import org.mule.extensions.jms.internal.connection.provider.GenericConnectionProvider;
 import org.mule.extensions.jms.internal.connection.provider.activemq.ActiveMQConnectionProvider;
 import org.mule.extensions.jms.internal.source.JmsListener;

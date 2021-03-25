@@ -104,7 +104,7 @@ public abstract class BaseConnectionProvider
   /**
    * Used to ignore handling of ExceptionListener#onException when in the process of disconnecting
    */
-  protected JmsConnectionProvider jmsConnectionProvider;
+  private JmsConnectionProvider jmsConnectionProvider;
 
   /**
    * Template method for obtaining the {@link ConnectionFactory} to be used for creating the {@link JmsConnection}s
@@ -148,6 +148,10 @@ public abstract class BaseConnectionProvider
         throw new MuleRuntimeException(e.getCause());
       }
     }
+  }
+
+  protected JmsTransactionalConnection connectOnSameThread() throws ConnectionException {
+    return jmsConnectionProvider.connect();
   }
 
   @Override
