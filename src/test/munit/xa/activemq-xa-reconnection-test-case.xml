@@ -70,7 +70,9 @@
             <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo('Al tok perro')]"/>
         </munit:validation>
     </munit:test>
-    <munit:test name="connection-lost-and-never-recover" ignore="#[Munit::muleVersionEqualTo('4.2.0')]">
+
+    <!--EE-7710. Should be ignore="#[Munit::muleVersionEqualTo('4.2.0')]"-->
+    <munit:test name="connection-lost-and-never-recover" ignore="true" >
         <munit:behavior>
             <connection-test:disconnect-proxy proxyPort="${connection.lost.port}"/>
         </munit:behavior>
