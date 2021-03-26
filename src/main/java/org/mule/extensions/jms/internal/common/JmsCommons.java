@@ -6,9 +6,15 @@
  */
 package org.mule.extensions.jms.internal.common;
 
+import static java.util.concurrent.Executors.newSingleThreadExecutor;
 import static org.slf4j.LoggerFactory.getLogger;
 
+import org.mule.runtime.core.api.util.func.CheckedSupplier;
 import org.slf4j.Logger;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 /**
  * Utility class to reuse logic for JMS Extension
@@ -19,9 +25,23 @@ public final class JmsCommons {
 
   private static final Logger LOGGER = getLogger(JmsCommons.class);
 
+  public static final String JMS_THREAD_GROUP_NAME = "JMS-CLIENT-LISTENER";
+  private static final ThreadGroup JMS_THREAD_GROUP = new ThreadGroup(JMS_THREAD_GROUP_NAME);
+
   public static final String TOPIC = "TOPIC";
   public static final String QUEUE = "QUEUE";
   public static final String EXAMPLE_ENCODING = "UTF-8";
   public static final String EXAMPLE_CONTENT_TYPE = "application/json";
+
+
+  public static <T> T createWithJmsThreadGroup(CheckedSupplier<T> function) throws ExecutionException, InterruptedException {
+    ExecutorService executorService = newSingleThreadExecutor(runnable -> new Thread(JMS_THREAD_GROUP, runnable));
+    try {
+      Future<T> futureResult = executorService.submit(function::get);
+      return futureResult.get();
+    } finally {
+      executorService.shutdown();
+    }
+  }
 
 }

@@ -8,6 +8,7 @@ package org.mule.extensions.jms.internal.source;
 
 import static org.mule.extensions.jms.internal.common.JmsCommons.EXAMPLE_CONTENT_TYPE;
 import static org.mule.extensions.jms.internal.common.JmsCommons.EXAMPLE_ENCODING;
+import static org.mule.extensions.jms.internal.common.JmsCommons.createWithJmsThreadGroup;
 import static org.mule.runtime.extension.api.annotation.source.SourceClusterSupport.DEFAULT_PRIMARY_NODE_ONLY;
 
 import org.mule.extensions.jms.api.ack.AckMode;
@@ -28,6 +29,7 @@ import org.mule.jms.commons.internal.support.JmsSupport;
 import org.mule.runtime.api.component.location.ComponentLocation;
 import org.mule.runtime.api.connection.ConnectionProvider;
 import org.mule.runtime.api.exception.MuleException;
+import org.mule.runtime.api.exception.MuleRuntimeException;
 import org.mule.runtime.api.message.Error;
 import org.mule.runtime.api.scheduler.SchedulerService;
 import org.mule.runtime.api.tx.TransactionType;
@@ -176,7 +178,19 @@ public class JmsListener extends Source<Object, Object> {
                                                                                        .newDefault())
                                                                                    .setReconnectionManager(new DefaultReconnectionManagerProvider())
                                                                                    .build();
-    jmsListener.onStart(sourceCallback);
+
+    try {
+      createWithJmsThreadGroup(() -> {
+        jmsListener.onStart(sourceCallback);
+        return null;
+      });
+    } catch (Exception e) {
+      if (e.getCause() instanceof MuleException) {
+        throw (MuleException) e.getCause();
+      } else {
+        throw new MuleRuntimeException(e.getCause());
+      }
+    }
   }
 
   @Override
