@@ -6,9 +6,11 @@
  */
 package org.mule.extensions.jms.api.connection.factory.jndi;
 
+import static java.util.Arrays.asList;
 import static java.lang.String.format;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
+import static java.util.Objects.hash;
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.disposeIfNeeded;
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.initialiseIfNeeded;
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.startIfNeeded;
@@ -186,6 +188,28 @@ public class JndiConnectionFactory extends DelegatingConnectionFactory implement
 
   public JndiNameResolverProvider getNameResolverProvider() {
     return nameResolverProvider;
+  }
+
+  @Override
+  public int hashCode() {
+    return hash(connectionFactoryJndiName, lookupDestination, nameResolverProvider, nameResolver, connectionFactory);
+  }
+
+  @Override
+  public boolean equals(Object other) {
+    if (!(other instanceof JndiConnectionFactory)) {
+      return false;
+    }
+
+    JndiConnectionFactory otherFactory = (JndiConnectionFactory) other;
+
+    boolean equalNames = connectionFactoryJndiName.equals(otherFactory.connectionFactoryJndiName);
+    boolean equalLookupDst = lookupDestination.equals(otherFactory.lookupDestination);
+    boolean equalNameProvider = nameResolverProvider.equals(otherFactory.nameResolverProvider);
+    boolean equalNameResolver = nameResolver.equals(otherFactory.nameResolver);
+    boolean equalConnFactory = connectionFactory.equals(otherFactory.connectionFactory);
+
+    return equalNames && equalLookupDst && equalNameProvider && equalNameResolver && equalConnFactory;
   }
 
 }

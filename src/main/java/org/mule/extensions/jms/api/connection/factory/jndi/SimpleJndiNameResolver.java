@@ -6,6 +6,8 @@
  */
 package org.mule.extensions.jms.api.connection.factory.jndi;
 
+import static java.util.Objects.hash;
+
 import org.mule.runtime.api.lifecycle.InitialisationException;
 
 import javax.naming.CommunicationException;
@@ -59,5 +61,10 @@ public class SimpleJndiNameResolver extends AbstractJndiNameResolver {
 
   private Object doLookUp(String name) throws NamingException {
     return jndiContext.lookup(name);
+  }
+
+  @Override
+  public int hashCode() {
+    return hash(jndiContext);
   }
 }

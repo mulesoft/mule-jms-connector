@@ -6,6 +6,7 @@
  */
 package org.mule.extensions.jms.api.connection.factory.jndi;
 
+import static java.util.Objects.hash;
 import static java.lang.String.format;
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import org.mule.runtime.api.lifecycle.InitialisationException;
@@ -66,5 +67,10 @@ public final class JndiNameResolverProvider {
     nameResolver.setJndiProviderProperties(nameResolverBuilder.getProviderProperties());
 
     return nameResolver;
+  }
+
+  @Override
+  public int hashCode() {
+    return hash(customJndiNameResolver);
   }
 }
