@@ -9,6 +9,8 @@ package org.mule.extensions.jms.api.connection.factory.jndi;
 import static java.util.Objects.hash;
 import static java.lang.String.format;
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.ExclusiveOptionals;
@@ -72,5 +74,23 @@ public final class JndiNameResolverProvider {
   @Override
   public int hashCode() {
     return hash(customJndiNameResolver);
+  }
+
+  @Override
+  public boolean equals(Object other) {
+    if (other == null) {
+      return false;
+    }
+
+    if (!(other instanceof JndiNameResolverProvider)) {
+      return false;
+    }
+
+    JndiNameResolverProvider otherJndiNameResolverProvider = (JndiNameResolverProvider) other;
+
+    return new EqualsBuilder()
+        .append(customJndiNameResolver, otherJndiNameResolverProvider.customJndiNameResolver)
+        .append(nameResolverBuilder, otherJndiNameResolverProvider.nameResolverBuilder)
+        .isEquals();
   }
 }

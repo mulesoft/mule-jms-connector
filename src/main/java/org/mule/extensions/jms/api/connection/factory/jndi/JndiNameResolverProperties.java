@@ -6,6 +6,7 @@
  */
 package org.mule.extensions.jms.api.connection.factory.jndi;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
@@ -54,6 +55,29 @@ public class JndiNameResolverProperties {
 
   public String getJndiProviderUrl() {
     return jndiProviderUrl;
+  }
+
+  @Override
+  public boolean equals(Object other) {
+    if (other == null) {
+      return false;
+    }
+
+    if (this == other) {
+      return true;
+    }
+
+    if (!(other instanceof JndiNameResolverProperties)) {
+      return false;
+    }
+
+    JndiNameResolverProperties otherJndiNameResolverProps = (JndiNameResolverProperties) other;
+
+    return new EqualsBuilder()
+        .append(jndiInitialContextFactory, otherJndiNameResolverProps.jndiInitialContextFactory)
+        .append(jndiProviderUrl, otherJndiNameResolverProps.jndiProviderUrl)
+        .append(providerProperties, otherJndiNameResolverProps.providerProperties)
+        .isEquals();
   }
 
 }
