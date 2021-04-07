@@ -6,17 +6,19 @@
  */
 package org.mule.extensions.jms.api.connection.factory.jndi;
 
+import static java.util.Arrays.asList;
 import static java.lang.String.format;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
+import static java.util.Objects.hash;
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.disposeIfNeeded;
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.initialiseIfNeeded;
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.startIfNeeded;
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.stopIfNeeded;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.mule.extensions.jms.api.connection.LookupJndiDestination;
 import org.mule.extensions.jms.api.exception.JmsExtensionException;
-import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.api.lifecycle.Lifecycle;
@@ -186,6 +188,43 @@ public class JndiConnectionFactory extends DelegatingConnectionFactory implement
 
   public JndiNameResolverProvider getNameResolverProvider() {
     return nameResolverProvider;
+  }
+
+  @Override
+  public int hashCode() {
+    return hash(connectionFactoryJndiName, lookupDestination, nameResolverProvider, nameResolver, connectionFactory);
+  }
+
+  @Override
+  public boolean equals(Object other) {
+    if (other == null) {
+      return false;
+    }
+
+    if (this == other) {
+      return true;
+    }
+
+    if (!(other instanceof JndiConnectionFactory)) {
+      return false;
+    }
+
+    JndiConnectionFactory otherFactory = (JndiConnectionFactory) other;
+
+    EqualsBuilder equalsBuilder = new EqualsBuilder().append(connectionFactoryJndiName, otherFactory.connectionFactoryJndiName)
+        .append(lookupDestination, otherFactory.lookupDestination);
+
+    if (nameResolver != null) {
+      equalsBuilder.append(nameResolver, otherFactory.nameResolver);
+
+      if (connectionFactory != null) {
+        equalsBuilder.append(connectionFactory, otherFactory.connectionFactory);
+      }
+    } else {
+      equalsBuilder.append(nameResolverProvider, otherFactory.nameResolverProvider);
+    }
+
+    return equalsBuilder.isEquals();
   }
 
 }

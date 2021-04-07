@@ -6,8 +6,11 @@
  */
 package org.mule.extensions.jms.api.connection.factory.jndi;
 
+import static java.util.Objects.hash;
 import static org.mule.runtime.api.util.Preconditions.checkArgument;
 import static org.slf4j.LoggerFactory.getLogger;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 
@@ -119,5 +122,34 @@ abstract class AbstractJndiNameResolver implements JndiNameResolver {
   @Override
   public void stop() throws MuleException {
     // Does nothing
+  }
+
+  @Override
+  public int hashCode() {
+    return hash(contextFactory, jndiProviderUrl, jndiInitialFactory, jndiProviderProperties);
+  }
+
+  @Override
+  public boolean equals(Object other) {
+    if (other == null) {
+      return false;
+    }
+
+    if (this == other) {
+      return true;
+    }
+
+    if (!(other instanceof AbstractJndiNameResolver)) {
+      return false;
+    }
+
+    AbstractJndiNameResolver otherJndiNameResolver = (AbstractJndiNameResolver) other;
+
+    return new EqualsBuilder()
+        .append(contextFactory, otherJndiNameResolver.contextFactory)
+        .append(jndiProviderUrl, otherJndiNameResolver.jndiProviderUrl)
+        .append(jndiInitialFactory, otherJndiNameResolver.jndiInitialFactory)
+        .append(jndiProviderProperties, otherJndiNameResolver.jndiProviderProperties)
+        .isEquals();
   }
 }
