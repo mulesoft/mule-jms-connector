@@ -6,11 +6,15 @@
  */
 package org.mule.extensions.jms.api.connection.factory.jndi;
 
+import static java.util.Objects.hash;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 
 import javax.naming.CommunicationException;
 import javax.naming.Context;
 import javax.naming.NamingException;
+import java.util.Objects;
 
 /**
  * Defines a simple {@link JndiNameResolver} that maintains a {@link Context}
@@ -59,5 +63,41 @@ public class SimpleJndiNameResolver extends AbstractJndiNameResolver {
 
   private Object doLookUp(String name) throws NamingException {
     return jndiContext.lookup(name);
+  }
+
+  @Override
+  public int hashCode() {
+    int result = super.hashCode();
+    if (jndiContext != null) {
+      result = 31 * result + hash(jndiContext);
+    }
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object other) {
+    if (other == null) {
+      return false;
+    }
+
+    if (this == other) {
+      return true;
+    }
+
+    if (!(other instanceof SimpleJndiNameResolver)) {
+      return false;
+    }
+
+    SimpleJndiNameResolver otherJndiNameResolver = (SimpleJndiNameResolver) other;
+
+    if (!super.equals(otherJndiNameResolver)) {
+      return false;
+    }
+
+    if (jndiContext != null) {
+      return Objects.equals(this.jndiContext, otherJndiNameResolver.jndiContext);
+    }
+
+    return true;
   }
 }

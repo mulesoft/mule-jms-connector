@@ -7,9 +7,12 @@
 package org.mule.extensions.jms.api.connection.factory.jndi;
 
 import static java.lang.String.format;
+import static java.util.Objects.hash;
+
 import org.mule.runtime.api.exception.MuleException;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.naming.Context;
@@ -80,5 +83,32 @@ public class CachedJndiNameResolver extends AbstractJndiNameResolver {
   @Override
   public void stop() throws MuleException {
     cache.clear();
+  }
+
+  @Override
+  public int hashCode() {
+    return hash(cache);
+  }
+
+  public boolean equals(Object other) {
+    if (other == null) {
+      return false;
+    }
+
+    if (this == other) {
+      return true;
+    }
+
+    if (!(other instanceof CachedJndiNameResolver)) {
+      return false;
+    }
+
+    CachedJndiNameResolver otherJndiNameResolver = (CachedJndiNameResolver) other;
+
+    if (!super.equals(otherJndiNameResolver)) {
+      return false;
+    }
+
+    return Objects.equals(this.cache, otherJndiNameResolver.cache);
   }
 }
