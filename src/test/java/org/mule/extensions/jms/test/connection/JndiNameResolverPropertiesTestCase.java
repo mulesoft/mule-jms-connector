@@ -14,7 +14,6 @@ import static org.mule.extensions.jms.test.TestUtils.setField;
 import org.junit.Test;
 import org.mule.extensions.jms.api.connection.factory.jndi.JndiConnectionFactory;
 import org.mule.extensions.jms.api.connection.factory.jndi.JndiNameResolverProperties;
-import org.mule.extensions.jms.api.connection.factory.jndi.SimpleJndiNameResolver;
 
 import java.util.HashMap;
 import java.util.Map;
