@@ -14,6 +14,7 @@ import org.mule.runtime.api.lifecycle.InitialisationException;
 import javax.naming.CommunicationException;
 import javax.naming.Context;
 import javax.naming.NamingException;
+import java.util.Objects;
 
 /**
  * Defines a simple {@link JndiNameResolver} that maintains a {@link Context}
@@ -66,7 +67,11 @@ public class SimpleJndiNameResolver extends AbstractJndiNameResolver {
 
   @Override
   public int hashCode() {
-    return hash(jndiContext);
+    int result = super.hashCode();
+    if (jndiContext != null) {
+      result = 31 * result + hash(jndiContext);
+    }
+    return result;
   }
 
   @Override
@@ -85,6 +90,14 @@ public class SimpleJndiNameResolver extends AbstractJndiNameResolver {
 
     SimpleJndiNameResolver otherJndiNameResolver = (SimpleJndiNameResolver) other;
 
-    return super.equals(otherJndiNameResolver);
+    if (!super.equals(otherJndiNameResolver)) {
+      return false;
+    }
+
+    if (jndiContext != null) {
+      return Objects.equals(this.jndiContext, otherJndiNameResolver.jndiContext);
+    }
+
+    return true;
   }
 }

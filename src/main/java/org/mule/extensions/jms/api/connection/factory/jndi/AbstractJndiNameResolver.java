@@ -6,6 +6,7 @@
  */
 package org.mule.extensions.jms.api.connection.factory.jndi;
 
+import static java.util.Objects.hash;
 import static org.mule.runtime.api.util.Preconditions.checkArgument;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -121,6 +122,11 @@ abstract class AbstractJndiNameResolver implements JndiNameResolver {
   @Override
   public void stop() throws MuleException {
     // Does nothing
+  }
+
+  @Override
+  public int hashCode() {
+    return hash(contextFactory, jndiProviderUrl, jndiInitialFactory, jndiProviderProperties);
   }
 
   @Override

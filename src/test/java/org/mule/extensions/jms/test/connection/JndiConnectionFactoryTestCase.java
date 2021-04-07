@@ -10,6 +10,8 @@ import static org.mockito.Mockito.mock;
 import static org.mule.extensions.jms.api.connection.LookupJndiDestination.ALWAYS;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
+import static org.mule.extensions.jms.test.TestUtils.setField;
 
 import org.junit.Test;
 import org.mule.extensions.jms.api.connection.factory.jndi.JndiConnectionFactory;
@@ -20,54 +22,77 @@ import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSContext;
 import javax.jms.JMSException;
-import java.lang.reflect.Field;
 
 public class JndiConnectionFactoryTestCase {
 
-  //@Test
-  //public void equalJndiConnectionFactoryGenerateSameHashCode() {
-
-  //}
+  private static String CONNECTION_FACTORY_NAME_FIELD = "connectionFactoryJndiName";
+  private static String LOOKUP_DESTINATION_FIELD = "lookupDestination";
+  private static String NAME_RESOLVER_PROVIDER_FIELD = "nameResolverProvider";
+  private static String NAME_RESOLVER_FIELD = "nameResolver";
+  private static String CONNECTION_FACTORY_FIELD = "connectionFactory";
 
   @Test
-  public void equalJndiConnectionFactoryGenerateEqualMethodReturnsTrue() throws NoSuchFieldException, IllegalAccessException {
-    JndiConnectionFactory jndiConnectionFactory = new JndiConnectionFactory();
-    JndiNameResolverProvider nameResolverProvider = new JndiNameResolverProvider();
+  public void equalJndiConnectionFactoriesGenerateSameHashCode() throws NoSuchFieldException, IllegalAccessException {
     MyCustomConnectionFactory connFactory = new MyCustomConnectionFactory();
-    SimpleJndiNameResolver nameResolver = new SimpleJndiNameResolver();
+    JndiConnectionFactory jndiConnectionFactory = createFullJndiConnectionFactory(connFactory);
 
-    setField(jndiConnectionFactory, jndiConnectionFactory.getClass(), "connectionFactoryJndiName",
-            "myJndiConnFactory");
-    setField(jndiConnectionFactory, jndiConnectionFactory.getClass(), "lookupDestination", ALWAYS);
-    setField(jndiConnectionFactory, jndiConnectionFactory.getClass(), "nameResolver",
-            nameResolver);
-    setField(jndiConnectionFactory, jndiConnectionFactory.getClass(), "nameResolverProvider",
-            nameResolverProvider);
-    setField(jndiConnectionFactory, jndiConnectionFactory.getClass(), "connectionFactory",
-            connFactory);
+    assertThat(jndiConnectionFactory.hashCode(), equalTo(jndiConnectionFactory.hashCode()));
 
-    JndiConnectionFactory otherJndiConnectionFactory = new JndiConnectionFactory();
+    JndiConnectionFactory otherJndiConnectionFactory = createFullJndiConnectionFactory(connFactory);
 
-    setField(otherJndiConnectionFactory, otherJndiConnectionFactory.getClass(), "connectionFactoryJndiName",
-            "myJndiConnFactory");
-    setField(otherJndiConnectionFactory, otherJndiConnectionFactory.getClass(), "lookupDestination", ALWAYS);
-    setField(otherJndiConnectionFactory, otherJndiConnectionFactory.getClass(), "nameResolver",
-            nameResolver);
-    setField(otherJndiConnectionFactory, otherJndiConnectionFactory.getClass(), "nameResolverProvider",
-            nameResolverProvider);
-    setField(otherJndiConnectionFactory, otherJndiConnectionFactory.getClass(), "connectionFactory",
-            connFactory);
-
-    assertThat(jndiConnectionFactory, equalTo(jndiConnectionFactory));
-
-    assertThat(jndiConnectionFactory, equalTo(otherJndiConnectionFactory));
+    assertThat(jndiConnectionFactory.hashCode(), equalTo(otherJndiConnectionFactory.hashCode()));
   }
 
-  private void setField(Object cc, Class objectClass, String field, Object value)
+  @Test
+  public void equalsMethodReturnsFalse() {
+    JndiConnectionFactory jndiConnectionFactory = new JndiConnectionFactory();
+
+    assertThat(jndiConnectionFactory, not(equalTo(null)));
+
+    MyCustomConnectionFactory anObjectOfADifferentClass = new MyCustomConnectionFactory();
+    assertThat(jndiConnectionFactory, not(equalTo(anObjectOfADifferentClass)));
+  }
+
+  @Test
+  public void equalsMethodReturnsTrue() throws NoSuchFieldException, IllegalAccessException {
+    MyCustomConnectionFactory connFactory = new MyCustomConnectionFactory();
+    JndiConnectionFactory jndiConnectionFactory = createSimpleJndiConnectionFactory();
+    JndiConnectionFactory otherJndiConnectionFactory = createSimpleJndiConnectionFactory();
+
+    assertThat(jndiConnectionFactory, equalTo(otherJndiConnectionFactory));
+
+    jndiConnectionFactory = createFullJndiConnectionFactory(connFactory);
+    otherJndiConnectionFactory = createFullJndiConnectionFactory(connFactory);
+
+    assertThat(jndiConnectionFactory, equalTo(otherJndiConnectionFactory));
+
+    //object is equal to itself
+    assertThat(jndiConnectionFactory, equalTo(jndiConnectionFactory));
+  }
+
+  private JndiConnectionFactory createSimpleJndiConnectionFactory() throws NoSuchFieldException, IllegalAccessException {
+    JndiConnectionFactory jndiConnectionFactory = new JndiConnectionFactory();
+
+    setField(jndiConnectionFactory, jndiConnectionFactory.getClass(), CONNECTION_FACTORY_NAME_FIELD,
+             "myJndiConnFactory");
+    setField(jndiConnectionFactory, jndiConnectionFactory.getClass(), LOOKUP_DESTINATION_FIELD, ALWAYS);
+
+    return jndiConnectionFactory;
+  }
+
+  private JndiConnectionFactory createFullJndiConnectionFactory(MyCustomConnectionFactory connFactory)
       throws NoSuchFieldException, IllegalAccessException {
-    Field f1 = objectClass.getDeclaredField(field);
-    f1.setAccessible(true);
-    f1.set(cc, value);
+    JndiConnectionFactory jndiConnectionFactory = createSimpleJndiConnectionFactory();
+    setField(jndiConnectionFactory, jndiConnectionFactory.getClass(), NAME_RESOLVER_PROVIDER_FIELD,
+             new JndiNameResolverProvider());
+
+    setField(jndiConnectionFactory, jndiConnectionFactory.getClass(), NAME_RESOLVER_FIELD,
+             new SimpleJndiNameResolver());
+
+    setField(jndiConnectionFactory, jndiConnectionFactory.getClass(), CONNECTION_FACTORY_FIELD,
+             connFactory);
+
+    return jndiConnectionFactory;
   }
 
   private class MyCustomConnectionFactory implements ConnectionFactory {

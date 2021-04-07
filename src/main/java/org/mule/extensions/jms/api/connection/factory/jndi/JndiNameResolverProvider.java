@@ -73,7 +73,7 @@ public final class JndiNameResolverProvider {
 
   @Override
   public int hashCode() {
-    return hash(customJndiNameResolver);
+    return hash(customJndiNameResolver, nameResolverBuilder);
   }
 
   @Override

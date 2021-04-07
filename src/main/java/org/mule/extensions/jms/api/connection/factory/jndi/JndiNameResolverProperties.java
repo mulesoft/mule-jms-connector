@@ -15,6 +15,8 @@ import java.util.Map;
 
 import javax.naming.InitialContext;
 
+import static java.util.Objects.hash;
+
 /**
  * Declares the properties required to create a {@link JndiNameResolver}
  *
@@ -55,6 +57,11 @@ public class JndiNameResolverProperties {
 
   public String getJndiProviderUrl() {
     return jndiProviderUrl;
+  }
+
+  @Override
+  public int hashCode() {
+    return hash(jndiProviderUrl, providerProperties, jndiInitialContextFactory);
   }
 
   @Override
