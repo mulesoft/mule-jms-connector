@@ -190,6 +190,12 @@
             <version>2.0.9</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.spotify</groupId>
+            <artifactId>docker-client</artifactId>
+            <version>8.16.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
