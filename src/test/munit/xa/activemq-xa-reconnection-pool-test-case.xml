@@ -17,7 +17,7 @@
     <!--  Is required a 4.1.5 min mule version to prevent a bug on the lazy init on Bitronix -->
     <munit:config name="activemq-xa-reconnection-pool-test-case.xml" minMuleVersion="4.1.6"/>
 
-    <munit:after-test name="afterTest-activemq-xa-reconnection-test-case" description="after test">
+    <munit:after-test name="after-test-activemq-xa-reconnection-test-case" description="after test">
         <!-- Takes a while for jolokia rest api to get back up-->
         <until-successful maxRetries="50" millisBetweenRetries="1000">
             <set-variable variableName="brokerName" value="localhost"/>
