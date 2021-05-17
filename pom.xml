@@ -196,6 +196,12 @@
             <artifactId>docker-client</artifactId>
             <version>${dockerClientVersion}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.bouncycastle</groupId>
+                    <artifactId>bcpkix-jdk15on</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
