@@ -26,7 +26,7 @@
         </until-successful>
     </munit:after-test>
 
-    <munit:test name="connection-lost-and-eventually-recovered-with-pool" ignore="#[Munit::muleVersionPriorTo('4.3.0')]">
+    <munit:test name="connection-lost-and-eventually-recovered-with-pool" ignore="#[Munit::muleVersionPriorTo('4.3.0') or Munit::muleVersionEqualTo('4.3.0')]">
         <munit:behavior>
             <set-variable variableName="containerName" value="activemq"/>
             <set-variable variableName="message" value="Tartan is stylish"/>
