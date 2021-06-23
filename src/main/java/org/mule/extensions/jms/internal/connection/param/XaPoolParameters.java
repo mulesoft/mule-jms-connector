@@ -11,6 +11,7 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
+import org.mule.sdk.api.annotation.semantics.connectivity.ExcludeFromConnectivitySchema;
 
 import java.util.Objects;
 
@@ -28,6 +29,7 @@ public class XaPoolParameters implements org.mule.jms.commons.internal.connectio
   @Optional(defaultValue = "4")
   @Summary("The minimum size of the XA connection pool.")
   @Placement(tab = ADVANCED_TAB)
+  @ExcludeFromConnectivitySchema
   private int minPoolSize = 4;
 
   /**
@@ -37,6 +39,7 @@ public class XaPoolParameters implements org.mule.jms.commons.internal.connectio
   @Optional(defaultValue = "32")
   @Summary("The maximum size of the XA connection pool.")
   @Placement(tab = ADVANCED_TAB)
+  @ExcludeFromConnectivitySchema
   private int maxPoolSize = 32;
 
   /**
@@ -47,6 +50,7 @@ public class XaPoolParameters implements org.mule.jms.commons.internal.connectio
   @Optional(defaultValue = "60")
   @Summary("How many seconds can an XA transaction remain idle before its eligible for eviction.")
   @Placement(tab = ADVANCED_TAB)
+  @ExcludeFromConnectivitySchema
   private int maxIdleSeconds = 60;
 
   @Override

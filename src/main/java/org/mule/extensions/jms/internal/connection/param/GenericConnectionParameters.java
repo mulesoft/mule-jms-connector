@@ -10,6 +10,8 @@ import org.mule.extensions.jms.internal.connection.provider.BaseConnectionProvid
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Password;
+import org.mule.sdk.api.annotation.semantics.security.ClientId;
+import org.mule.sdk.api.annotation.semantics.security.Username;
 
 import javax.jms.Connection;
 
@@ -25,6 +27,7 @@ public class GenericConnectionParameters implements org.mule.jms.commons.interna
    */
   @Parameter
   @Optional
+  @Username
   private String username;
 
   /**
@@ -48,6 +51,7 @@ public class GenericConnectionParameters implements org.mule.jms.commons.interna
    */
   @Parameter
   @Optional
+  @ClientId
   private String clientId;
 
 
