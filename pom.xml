@@ -34,6 +34,7 @@
 
         <formatterConfigPath>formatter.xml</formatterConfigPath>
         <muleJmsClientVersion>1.12.0-SNAPSHOT</muleJmsClientVersion>
+        <muleSdkApiVersion>0.3.0</muleSdkApiVersion>
         <mule.http.connector.version>1.5.23</mule.http.connector.version>
 
         <!-- Remove when a new parent version with MTF is available -->
@@ -49,6 +50,11 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.mule.sdk</groupId>
+            <artifactId>mule-sdk-api</artifactId>
+            <version>${muleSdkApiVersion}</version>
+        </dependency>
         <dependency>
             <groupId>org.mule.connectors</groupId>
             <artifactId>mule-jms-client</artifactId>

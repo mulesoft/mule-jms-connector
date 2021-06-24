@@ -13,6 +13,8 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
+import org.mule.sdk.api.annotation.semantics.connectivity.ExcludeFromConnectivitySchema;
+import org.mule.sdk.api.annotation.semantics.connectivity.Url;
 
 import java.util.List;
 import java.util.Objects;
@@ -38,6 +40,7 @@ public class ActiveMQConnectionFactoryConfiguration {
   @Optional(defaultValue = DEFAULT_BROKER_URL)
   @Expression(NOT_SUPPORTED)
   @Example("tcp://localhost:61616")
+  @Url
   private String brokerUrl;
 
   /**
@@ -56,6 +59,7 @@ public class ActiveMQConnectionFactoryConfiguration {
   @Optional(defaultValue = "1000")
   @Expression(NOT_SUPPORTED)
   @Summary("Configures the ActiveMQ 'initialRedeliveryDelay' in the consumer's RedeliveryPolicy")
+  @ExcludeFromConnectivitySchema
   private long initialRedeliveryDelay;
 
   /**
@@ -65,6 +69,7 @@ public class ActiveMQConnectionFactoryConfiguration {
   @Optional(defaultValue = "1000")
   @Expression(NOT_SUPPORTED)
   @Summary("Configures the ActiveMQ 'redeliveryDelay' in the consumer's RedeliveryPolicy")
+  @ExcludeFromConnectivitySchema
   private long redeliveryDelay;
 
   /**
@@ -75,6 +80,7 @@ public class ActiveMQConnectionFactoryConfiguration {
   @Optional(defaultValue = "0")
   @Expression(NOT_SUPPORTED)
   @Summary("Configures the ActiveMQ 'maxRedelivery' in the consumer's RedeliveryPolicy")
+  @ExcludeFromConnectivitySchema
   private int maxRedelivery;
 
   /**
@@ -86,6 +92,7 @@ public class ActiveMQConnectionFactoryConfiguration {
   @Optional
   @Summary("Whitelist of packages of classes that are allowed sent and received.")
   @Expression(NOT_SUPPORTED)
+  @ExcludeFromConnectivitySchema
   private List<String> trustedPackages;
 
   /**
@@ -99,6 +106,7 @@ public class ActiveMQConnectionFactoryConfiguration {
   @Summary("Indicates whether any class from any package can be sent and received or not as a ObjectMessage." +
       "\nEnabling this is unsafe as malicious payload can exploit the host system.")
   @Expression(NOT_SUPPORTED)
+  @ExcludeFromConnectivitySchema
   private boolean trustAllPackages;
 
   public int getMaxRedelivery() {
