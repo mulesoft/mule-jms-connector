@@ -44,7 +44,7 @@
         <munit.version>2.3.5</munit.version>
         <mtf-tools.version>1.1.0</mtf-tools.version>
         <mavenResources.version>3.2.0</mavenResources.version>
-        <docker.maven.plugin.version>0.36.0</docker.maven.plugin.version>
+        <docker.maven.plugin.version>0.36.1</docker.maven.plugin.version>
         <maven.helper.plugin.version>3.2.0</maven.helper.plugin.version>
         <docker.skip>${skipTests}</docker.skip>
     </properties>
