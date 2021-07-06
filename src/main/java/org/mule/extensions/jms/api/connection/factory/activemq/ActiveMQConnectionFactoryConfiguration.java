@@ -84,9 +84,8 @@ public class ActiveMQConnectionFactoryConfiguration {
   private int maxRedelivery;
 
   /**
-   * Whitelist of packages of classes that are allowed sent and received.
-   * This property starting versions 5.12.2 and 5.13.0, ActiveMQ enforces users to explicitly whitelist packages that
-   * can be exchanged using ObjectMessages.
+   * Allowed packages of classes to send and receive.
+   * ActiveMQ requires you to explicitly allow packages that can be exchanged using ObjectMessages.
    */
   @Parameter
   @Optional
@@ -96,10 +95,8 @@ public class ActiveMQConnectionFactoryConfiguration {
   private List<String> trustedPackages;
 
   /**
-   * Indicates if any class from any package can be sent and received. Enabling this is unsafe as malicious payload can
-   * exploit the host system.
-   * This property starting versions 5.12.2 and 5.13.0, ActiveMQ enforces users to explicitly whitelist packages that
-   * can be exchanged using ObjectMessages.
+   * Indicates if any class from any package can be sent and received. Enabling this parameter is unsafe as malicious payload can exploit the host system.
+   * ActiveMQ requires you to explicitly allow packages that can be exchanged using ObjectMessages.
    */
   @Parameter
   @Optional(defaultValue = "false")
