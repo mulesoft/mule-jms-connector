@@ -85,7 +85,7 @@ public class ActiveMQConnectionFactoryConfiguration {
 
   /**
    * Allowed packages of classes to send and receive.
-   * ActiveMQ requires you to explicitly allow packages that can be exchanged using ObjectMessages.
+   * tarting with versions 5.12.2 and 5.13.0, ActiveMQ requires you to explicitly allow packages that can be exchanged using ObjectMessages.
    */
   @Parameter
   @Optional
@@ -95,8 +95,8 @@ public class ActiveMQConnectionFactoryConfiguration {
   private List<String> trustedPackages;
 
   /**
-   * Indicates if any class from any package can be sent and received. Enabling this parameter is unsafe as malicious payload can exploit the host system.
-   * ActiveMQ requires you to explicitly allow packages that can be exchanged using ObjectMessages.
+   * Indicates if any class from any package can be sent and received. Enabling this parameter is unsafe, as a malicious payload can exploit the host system.
+   * Starting with versions 5.12.2 and 5.13.0, ActiveMQ requires you to explicitly allow packages that can be exchanged using ObjectMessages.
    */
   @Parameter
   @Optional(defaultValue = "false")
