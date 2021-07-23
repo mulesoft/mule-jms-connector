@@ -12,6 +12,7 @@ package org.mule.extensions.jms.api.connection.caching;
  * @since 1.0
  */
 public interface CachingConfiguration {
+
   /**
    * Gets the size of the session cache
    */
