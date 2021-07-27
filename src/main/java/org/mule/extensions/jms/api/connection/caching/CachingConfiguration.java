@@ -13,9 +13,18 @@ package org.mule.extensions.jms.api.connection.caching;
  */
 public interface CachingConfiguration {
 
+  /**
+   * Gets the size of the session cache
+   */
   int getSessionCacheSize();
 
+  /**
+   * Indicates if producers are cached
+   */
   boolean isProducersCache();
 
+  /**
+   * Indicates if consumers are cached
+   */
   boolean isConsumersCache();
 }
