@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+                          http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+                          http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+                          http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+
+    <http:request-config name="HTTP_Request_configuration" basePath="/api/jolokia/exec">
+        <http:request-connection host="localhost" port="${activemq.web_console.port}">
+            <http:authentication >
+                <http:basic-authentication username="admin" password="admin" />
+            </http:authentication>
+        </http:request-connection>
+    </http:request-config>
+
+    <flow name="queueToList">
+        <set-variable variableName="queue" value="#[[]]"/>
+        <foreach collection="#[1 to (MunitTools::queueSize(vars.queueName))]">
+            <munit-tools:dequeue queueName="#[vars.queueName]"/>
+            <set-variable variableName="queue" value="#[vars.queue + payload]"/>
+        </foreach>
+        <set-payload value="#[vars.queue]"/>
+    </flow>
+
+    <flow name="purgeQueue" >
+        <http:request method="POST"
+                      config-ref="HTTP_Request_configuration"
+                      path="#['/org.apache.activemq:type=Broker,brokerName=' ++ vars.brokerName ++ ',destinationType=Queue,destinationName=' ++ vars.destinationName ++'/purge']"/>
+    </flow>
+
+</mule>

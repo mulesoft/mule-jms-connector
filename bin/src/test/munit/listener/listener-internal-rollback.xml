@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:jms="http://www.mulesoft.org/schema/mule/jms" xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xmlns:mule="http://www.mulesoft.org/schema/mule/core"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+      http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd">
+
+    <munit:config name="listener-internal-rollback">
+            <munit:parameterizations>
+                <munit:parameterization name="default">
+                    <munit:parameters>
+                        <munit:parameter propertyName="source" value="mqListenerRollback"/>
+                    </munit:parameters>
+                </munit:parameterization>
+                <munit:parameterization name="tx">
+                    <munit:parameters>
+                        <munit:parameter propertyName="source" value="mqListenerRollbackTx"/>
+                    </munit:parameters>
+                </munit:parameterization>
+            </munit:parameterizations>
+    </munit:config>
+
+    <munit:after-test name="afterTest-listener-internal-rollback" description="after test">
+        <set-variable variableName="brokerName" value="localhost"/>
+        <set-variable variableName="destinationName" value="DEV.QUEUE.1"/>
+        <flow-ref name="purgeQueue"/>
+    </munit:after-test>
+
+    <munit:test name="messageIsReturnedToQueue">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="${source}"/>
+        </munit:enable-flow-sources>
+        <munit:execution>
+            <set-payload value="#[java!org::mule::extensions::jms::test::PojoThatDoesntDeserialize::new('bla')]"/>
+            <jms:publish config-ref="config-no-caching" destination="DEV.QUEUE.1"/>
+        </munit:execution>
+        <munit:validation>
+            <until-successful millisBetweenRetries="100" maxRetries="1000">
+                <munit-tools:assert-that expression="#[MunitTools::queueSize()]" is="#[MunitTools::equalTo(1)]"/>
+                <munit-tools:assert-that expression="#[java!org::mule::extensions::jms::test::PojoThatDoesntDeserialize::getCount()]" is="#[MunitTools::equalTo(5)]"/>
+            </until-successful>
+        </munit:validation>
+    </munit:test>
+
+    <flow name="mqListenerRollback">
+        <jms:listener config-ref="config-no-caching" destination="DEV.QUEUE.1"/>
+        <munit-tools:queue/>
+    </flow>
+
+    <flow name="mqListenerRollbackTx">
+        <jms:listener config-ref="config-no-caching" destination="DEV.QUEUE.1" transactionalAction="ALWAYS_BEGIN"/>
+        <munit-tools:queue/>
+    </flow>
+
+    <munit:before-test name="setUp">
+        <logger level="DEBUG" message="#[java!org::mule::extensions::jms::test::PojoThatDoesntDeserialize::reset()]"/>
+    </munit:before-test>
+
+
+</mule>

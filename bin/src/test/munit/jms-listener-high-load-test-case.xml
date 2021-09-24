@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:mtf="http://www.mulesoft.org/schema/mule/mtf"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+      http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+      http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+      http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+      http://www.mulesoft.org/schema/mule/mtf http://www.mulesoft.org/schema/mule/mtf/current/mule-mtf.xsd">
+
+    <munit:config name="jms-listener-high-load-test-case">
+        <munit:parameterizations>
+            <munit:parameterization name="default">
+                <munit:parameters>
+                    <munit:parameter propertyName="config" value="config"/>
+                    <munit:parameter propertyName="max.redelivery" value="100"/>
+                </munit:parameters>
+            </munit:parameterization>
+            <munit:parameterization name="no-caching">
+                <munit:parameters>
+                    <munit:parameter propertyName="config" value="config-no-caching"/>
+                    <munit:parameter propertyName="max.redelivery" value="100"/>
+                </munit:parameters>
+            </munit:parameterization>
+        </munit:parameterizations>
+    </munit:config>
+
+    <munit:after-test name="afterTest-jms-listener-high-load-test-case" description="after test">
+        <set-variable variableName="brokerName" value="localhost"/>
+        <set-variable variableName="destinationName" value="someDest"/>
+        <flow-ref name="purgeQueue"/>
+    </munit:after-test>
+
+    <munit:test name="consume-multiple-messages" >
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="on-new-message"/>
+        </munit:enable-flow-sources>
+        <munit:execution>
+            <foreach collection="#[1 to 10000]">
+                <jms:publish config-ref="${config}" destination="someDest">
+                    <jms:message>
+                        <jms:body>#[payload as String]</jms:body>
+                    </jms:message>
+                </jms:publish>
+                <logger message="#[payload]" level="DEBUG"/>
+            </foreach>
+        </munit:execution>
+        <munit:validation>
+            <try>
+                <until-successful maxRetries="500" millisBetweenRetries="100">
+                    <munit-tools:assert-that expression="#[MunitTools::queueSize()]" is="#[MunitTools::equalTo(10000)]"/>
+                </until-successful>
+                <error-handler>
+                    <on-error-propagate type="ANY">
+                        <logger level="ERROR" message="#['Size should be 10000 but was: ' ++ MunitTools::queueSize()]"/>
+                    </on-error-propagate>
+                </error-handler>
+            </try>
+        </munit:validation>
+    </munit:test>
+
+    <flow name="on-new-message">
+        <jms:listener config-ref="${config}" destination="someDest"/>
+        <logger message="#[payload]" level="DEBUG"/>
+        <munit-tools:queue/>
+    </flow>
+
+</mule>

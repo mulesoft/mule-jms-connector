@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xmlns:mule="http://www.mulesoft.org/schema/mule/core"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+                          http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+                          http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+                          http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd">
+
+     <munit:config name="queue-reply-test-case"/>
+
+    <munit:after-test name="afterTest-queue-reply-test-case" description="after test">
+        <set-variable variableName="brokerName" value="localhost"/>
+        <set-variable variableName="destinationName" value="DEV.QUEUE.1"/>
+        <flow-ref name="purgeQueue"/>
+        <set-variable variableName="destinationName" value="DEV.QUEUE.2"/>
+        <flow-ref name="purgeQueue"/>
+        <set-variable variableName="destinationName" value="DEV.QUEUE.3"/>
+        <flow-ref name="purgeQueue"/>
+    </munit:after-test>
+
+    <munit:test name="publishAndThenConsumeExplicitReplyDestination">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="replyListener"/>
+        </munit:enable-flow-sources>
+        <munit:execution>
+            <jms:publish config-ref="config-no-caching" destination="DEV.QUEUE.1">
+                <jms:message>
+                    <jms:body>#['ping']</jms:body>
+                    <jms:reply-to destination="DEV.QUEUE.2"/>
+                </jms:message>
+            </jms:publish>
+        </munit:execution>
+        <munit:validation>
+            <jms:consume config-ref="config-no-caching" destination="DEV.QUEUE.2"/>
+            <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo('ping pong')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="publishConsumeTemporaryReplyDestination">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="replyListener"/>
+        </munit:enable-flow-sources>
+        <munit:execution>
+            <jms:publish-consume config-ref="config-no-caching" destination="DEV.QUEUE.1">
+                <jms:message>
+                    <jms:body>#['ping']</jms:body>
+                </jms:message>
+            </jms:publish-consume>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo('ping pong')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="publishConsumeExplicitReplyDestination">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="replyListener"/>
+        </munit:enable-flow-sources>
+        <munit:execution>
+            <jms:publish-consume config-ref="config-no-caching" destination="DEV.QUEUE.1">
+                <jms:message>
+                    <jms:body>#['ping']</jms:body>
+                    <jms:reply-to destination="DEV.QUEUE.2"/>
+                </jms:message>
+            </jms:publish-consume>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo('ping pong')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="requestReplyExplicitPreSentReply">
+        <munit:execution>
+            <jms:publish config-ref="config-no-caching" destination="DEV.QUEUE.1">
+                <jms:message>
+                    <jms:body>#['MESSAGE1']</jms:body>
+                    <jms:reply-to destination="DEV.QUEUE.2"/>
+                </jms:message>
+            </jms:publish>
+            <jms:publish config-ref="config-no-caching" destination="DEV.QUEUE.1">
+                <jms:message>
+                    <jms:body>#['MESSAGE2']</jms:body>
+                    <jms:reply-to destination="DEV.QUEUE.3"/>
+                </jms:message>
+            </jms:publish>
+        </munit:execution>
+        <munit:validation>
+            <flow-ref name="proxyConsume"/>
+            <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo('MESSAGE1')]"/>
+            <munit-tools:assert-that expression="#[attributes.headers.JMSReplyTo.destination]" is="#[MunitTools::containsString('DEV.QUEUE.2')]"/>
+
+            <flow-ref name="proxyConsume"/>
+            <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo('MESSAGE2')]"/>
+            <munit-tools:assert-that expression="#[attributes.headers.JMSReplyTo.destination]" is="#[MunitTools::containsString('DEV.QUEUE.3')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!--Simplify when MU-1421 is fixed-->
+    <flow name="proxyConsume">
+        <!-- <async> -->
+            <jms:consume config-ref="config-no-caching" destination="DEV.QUEUE.1"/>
+<!--             <munit-tools:queue>
+                <munit-tools:value>#[message]</munit-tools:value>
+            </munit-tools:queue>
+        </async>
+        <munit-tools:dequeue/> -->
+    </flow>
+
+    <flow name="replyListener">
+        <jms:listener config-ref="config-no-caching" destination="DEV.QUEUE.1"/>
+        <logger level="DEBUG" message="Received #[payload]"/>
+        <set-payload value="#[payload ++ ' pong']"/>
+    </flow>
+
+</mule>

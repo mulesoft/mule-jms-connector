@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+      xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+      http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+      http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd">
+
+    <jms:config name="config">
+        <jms:active-mq-connection>
+            <tls:context >
+                <tls:trust-store insecure="true" />
+                <tls:key-store type="jks" path="/usr/local/Cellar/activemq/5.15.5/libexec/conf/client.ks" keyPassword="password" password="password" algorithm="PKIX"/>
+            </tls:context>
+            <jms:factory-configuration brokerUrl="ssl://0.0.0.0:61714" />
+        </jms:active-mq-connection>
+    </jms:config>
+
+    <flow name="sendMessage">
+        <jms:publish config-ref="config" destination="someDest"/>
+        <jms:consume config-ref="config" destination="someDest"/>
+    </flow>
+
+</mule>

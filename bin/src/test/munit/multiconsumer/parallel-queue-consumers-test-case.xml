@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+                          http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+                          http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+                          http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd">
+
+     <munit:config name="parallel-queue-consumers"/>
+
+    <munit:after-test name="afterTest-parallel-queue-consumers-test-case" description="after test">
+        <set-variable variableName="brokerName" value="localhost"/>
+        <set-variable variableName="destinationName" value="DEV.QUEUE.2"/>
+        <flow-ref name="purgeQueue"/>
+    </munit:after-test>
+
+    <munit:test name="queueListenerOnParallel">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="parallelQueueListener1"/>
+            <munit:enable-flow-source value="parallelQueueListener2"/>
+        </munit:enable-flow-sources>
+        <munit:execution>
+            <set-variable value="#[300]" variableName="numberOfMessages"/>
+            <foreach collection="#[1 to vars.numberOfMessages]">
+                <set-payload value="#['message number $(payload)']"/>
+                <jms:publish config-ref="config-no-caching" destination="DEV.QUEUE.2"/>
+            </foreach>
+        </munit:execution>
+        <munit:validation>
+            <try>
+                <until-successful maxRetries="400" millisBetweenRetries="100">
+                    <munit-tools:assert-that expression="#[MunitTools::queueSize()]" is="#[MunitTools::equalTo(vars.numberOfMessages)]"/>
+                </until-successful>
+                <error-handler>
+                    <on-error-propagate type="ANY">
+                        <munit-tools:fail message="#['Both listeners should have received $(vars.numberOfMessages) messages but received $(MunitTools::queueSize())']"/>
+                    </on-error-propagate>
+                </error-handler>
+            </try>
+        </munit:validation>
+    </munit:test>
+
+    <flow name="parallelQueueListener1">
+        <jms:listener config-ref="config-no-caching" destination="DEV.QUEUE.2" ackMode="IMMEDIATE"/>
+        <logger message="#['Listener 1: $(payload)']" level="DEBUG"/>
+        <munit-tools:queue/>
+    </flow>
+
+    <flow name="parallelQueueListener2">
+        <jms:listener config-ref="config-no-caching" destination="DEV.QUEUE.2" ackMode="IMMEDIATE"/>
+        <logger message="#['Listener 2: $(payload)']" level="DEBUG"/>
+        <munit-tools:queue/>
+    </flow>
+
+
+</mule>

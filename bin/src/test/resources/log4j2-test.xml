@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration shutdownHook="disable">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%-5p %d [%t] %c: %m%n"/>
+        </Console>
+    </Appenders>
+
+    <Loggers>
+
+        <!-- CXF is used heavily by Mule for web services -->
+        <AsyncLogger name="org.apache.cxf" level="WARN"/>
+
+        <!-- Apache Commons tend to make a lot of noise which can clutter the log-->
+        <AsyncLogger name="org.apache" level="WARN"/>
+        <AsyncLogger name="org.apache.activemq.broker.BrokerService" level="ERROR"/>
+
+        <!-- Reduce startup noise -->
+        <AsyncLogger name="org.springframework.beans.factory" level="WARN"/>
+        <AsyncLogger name="org.quartz.impl.StdSchedulerFactory" level="ERROR"/>
+        <AsyncLogger name="org.quartz.core.QuartzScheduler" level="ERROR"/>
+        <AsyncLogger name="org.quartz.core.SchedulerSignalerImpl" level="ERROR"/>
+        <AsyncLogger name="com.mulesoft.mule.runtime.module.cluster.internal.HazelcastClusterCoreExtension" level="ERROR"/>
+        <AsyncLogger name="org.mule.runtime.deployment.model.internal.application.ApplicationClassLoaderBuilder" level="ERROR"/>
+        <AsyncLogger name="com.mulesoft.mule.runtime.gw.client.provider.ApiPlatformClientProvider" level="ERROR"/>
+        <AsyncLogger name="bitronix.tm.BitronixTransactionManager" level="ERROR"/>
+        <AsyncLogger name="org.quartz.simpl.RAMJobStore" level="ERROR"/>
+
+        <!-- Mule classes -->
+        <AsyncLogger name="org.mule" level="WARN"/>
+        <!--<AsyncLogger name="org.mule.test.runner" level="DEBUG"/>-->
+        <AsyncLogger name="com.mulesoft" level="WARN"/>
+
+        <!--<AsyncLogger name="org.mule.extensions.jms" level="DEBUG"/>-->
+        <!--<AsyncLogger name="org.mule.extensions.jms.test" level="DEBUG"/>-->
+
+        <AsyncRoot level="INFO">
+            <AppenderRef ref="Console"/>
+        </AsyncRoot>
+    </Loggers>
+
+</Configuration>

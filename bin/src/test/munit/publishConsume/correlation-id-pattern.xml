@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:mtf="http://www.mulesoft.org/schema/mule/mtf"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+      http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+      http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+      http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+      http://www.mulesoft.org/schema/mule/mtf http://www.mulesoft.org/schema/mule/mtf/current/mule-mtf.xsd">
+
+    <munit:config name="correlation-id-pattern.xml">
+        <munit:parameterizations>
+            <munit:parameterization name="default">
+                <munit:parameters>
+                    <munit:parameter propertyName="config" value="config"/>
+                    <munit:parameter propertyName="max.redelivery" value="100"/>
+                </munit:parameters>
+            </munit:parameterization>
+            <munit:parameterization name="no-caching">
+                <munit:parameters>
+                    <munit:parameter propertyName="config" value="config-no-caching"/>
+                    <munit:parameter propertyName="max.redelivery" value="100"/>
+                </munit:parameters>
+            </munit:parameterization>
+        </munit:parameterizations>
+    </munit:config>
+
+    <munit:after-test name="afterTest-correlation-id-pattern" description="after test">
+        <set-variable variableName="brokerName" value="localhost"/>
+        <set-variable variableName="destinationName" value="someDest"/>
+        <flow-ref name="purgeQueue"/>
+        <set-variable variableName="destinationName" value="reply-queue"/>
+        <flow-ref name="purgeQueue"/>
+    </munit:after-test>
+
+    <munit:test name="correlation-id-pattern-temp-queue">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="pc-on-new-message"/>
+        </munit:enable-flow-sources>
+        <munit:execution>
+            <set-variable variableName="messages" value="#[Utils::createMessages(1000, () -> {message : 'ping ', correlationId : uuid()})]"/>
+            <foreach collection="#[vars.messages]">
+                <jms:publish-consume config-ref="${config}" destination="someDest" requestReplyPattern="CORRELATION_ID">
+                    <jms:message correlationId="#[payload.correlationId]">
+                        <jms:body>#[payload]</jms:body>
+                    </jms:message>
+                </jms:publish-consume>
+                <munit-tools:queue/>
+            </foreach>
+        </munit:execution>
+        <munit:validation>
+            <foreach collection="#[vars.messages]">
+                <munit-tools:dequeue target="dequeued"/>
+                <munit-tools:assert-that expression="#[vars.dequeued.message]" is="#[MunitTools::equalTo('ping pong')]"/>
+                <munit-tools:assert-that expression="#[vars.dequeued.correlationId]" is="#[MunitTools::equalTo(payload.correlationId)]"/>
+            </foreach>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="correlation-id-pattern-fixed-queue">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="pc-on-new-message"/>
+        </munit:enable-flow-sources>
+        <munit:execution>
+            <set-variable variableName="messages"
+                          value="#[Utils::createMessages(1000, () -> {message : 'ping ', correlationId : uuid()})]"/>
+            <foreach collection="#[vars.messages]">
+                <jms:publish-consume config-ref="${config}" destination="someDest" requestReplyPattern="CORRELATION_ID">
+                    <jms:message correlationId="#[payload.correlationId]">
+                        <jms:body>#[payload]</jms:body>
+                        <jms:reply-to destination="reply-queue"/>
+                    </jms:message>
+                </jms:publish-consume>
+                <munit-tools:queue/>
+            </foreach>
+        </munit:execution>
+        <munit:validation>
+            <foreach collection="#[vars.messages]">
+                <munit-tools:dequeue target="dequeued"/>
+                <munit-tools:assert-that expression="#[vars.dequeued.message]"
+                                         is="#[MunitTools::equalTo('ping pong')]"/>
+                <munit-tools:assert-that expression="#[vars.dequeued.correlationId]"
+                                         is="#[MunitTools::equalTo(payload.correlationId)]"/>
+            </foreach>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="correlation-id-pattern-fixed-queue-pre-loaded">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="pc-on-new-message"/>
+        </munit:enable-flow-sources>
+        <munit:execution>
+            <!-- Pre load messages to Reply queue to show that the Correlation ID pattern avoids taking these messages-->
+            <foreach collection="#[Utils::createMessages(1, 'invalid')]">
+                <set-variable variableName="uuid" value="#[uuid()]"/>
+                <jms:publish destination="reply-queue" config-ref="${config}">
+                    <jms:message correlationId="#[vars.uuid]">
+                        <jms:body>#[{
+                            message : payload,
+                            correlationId : vars.uuid
+                            }]
+                        </jms:body>
+                        <jms:reply-to destination="reply-queue"/>
+                    </jms:message>
+                </jms:publish>
+            </foreach>
+
+            <set-variable variableName="messages" value="#[Utils::createMessages(1000, () -> { message : 'ping ', correlationId : uuid() })]"/>
+
+            <foreach collection="#[vars.messages]">
+                <jms:publish-consume config-ref="${config}" destination="someDest" requestReplyPattern="CORRELATION_ID">
+                    <jms:message correlationId="#[payload.correlationId]">
+                        <jms:body>#[payload]</jms:body>
+                        <jms:reply-to destination="reply-queue"/>
+                    </jms:message>
+                </jms:publish-consume>
+                <logger level="DEBUG" message="Queing: #[payload]"/>
+                <munit-tools:queue/>
+
+            </foreach>
+
+            <jms:consume destination="reply-queue" config-ref="${config}"/>
+            <munit-tools:queue/>
+
+        </munit:execution>
+        <munit:validation>
+            <foreach collection="#[vars.messages]">
+                <munit-tools:dequeue target="dequeued"/>
+                <logger level="DEBUG" message="Dequeued: #[vars.dequeued]"/>
+                <logger level="DEBUG" message="Message: #[payload]"/>
+
+                <munit-tools:assert-that expression="#[vars.dequeued.message]"
+                                         is="#[MunitTools::equalTo('ping pong')]"/>
+                <munit-tools:assert-that expression="#[vars.dequeued.correlationId]"
+                                         is="#[MunitTools::equalTo(payload.correlationId)]"/>
+            </foreach>
+
+            <munit-tools:dequeue target="dequeued"/>
+            <logger level="DEBUG" message="Dequeued: #[vars.dequeued]"/>
+            <logger level="DEBUG" message="Message: #[payload]"/>
+        </munit:validation>
+    </munit:test>
+
+</mule>
