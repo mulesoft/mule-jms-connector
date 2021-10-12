@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+                          http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+                          http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+                          http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd">
+
+    <munit:config name="no-connectivity-testing-provider-test-case"/>
+
+    <jms:config name="nctConf">
+        <jms:active-mq-nct-connection >
+            <jms:factory-configuration maxRedelivery="${max.redelivery}"/>
+        </jms:active-mq-nct-connection>
+    </jms:config>
+
+    <jms:config name="nctConf-wrong">
+        <jms:active-mq-nct-connection >
+            <jms:factory-configuration brokerUrl="tcp://localhost:61000" />
+        </jms:active-mq-nct-connection>
+    </jms:config>
+
+    <munit:test name="noConnectivityTestProvider">
+        <munit:execution>
+            <flow-ref name="publish-nct-provider-flow"/>
+        </munit:execution>
+        <munit:validation>
+            <jms:consume config-ref="nctConf" destination="destination_nct"/>
+            <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo('1')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="noConnectivityTestProviderServerUnavailable" expectedErrorType="JMS:CONNECTIVITY">
+        <munit:execution>
+            <jms:consume config-ref="nctConf-wrong" destination="destination_nct"/>
+        </munit:execution>
+    </munit:test>
+
+    <flow name="publish-nct-provider-flow">
+        <jms:publish config-ref="nctConf" destination="destination_nct">
+            <jms:message>
+                <jms:body>1</jms:body>
+            </jms:message>
+        </jms:publish>
+    </flow>
+</mule>
