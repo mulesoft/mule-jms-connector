@@ -28,7 +28,7 @@
 
     <munit:test name="connection-lost-and-eventually-recovered-with-pool" ignore="#[Munit::muleVersionPriorTo('4.3.0') or Munit::muleVersionEqualTo('4.3.0')]">
         <munit:behavior>
-            <set-variable variableName="containerName" value="activemq"/>
+            <set-variable variableName="containerName" value="mule-activemq-ssl"/>
             <set-variable variableName="message" value="Tartan is stylish"/>
         </munit:behavior>
         <munit:execution>

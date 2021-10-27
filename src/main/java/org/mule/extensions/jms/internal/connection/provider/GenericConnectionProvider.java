@@ -9,6 +9,7 @@ package org.mule.extensions.jms.internal.connection.provider;
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import static org.mule.runtime.api.meta.ExternalLibraryType.DEPENDENCY;
 
+import org.apache.activemq.broker.SslContext;
 import org.mule.extensions.jms.api.connection.factory.jndi.JndiConnectionFactory;
 import org.mule.jms.commons.api.connection.LookupJndiDestination;
 import org.mule.jms.commons.internal.support.*;
@@ -56,6 +57,9 @@ public class GenericConnectionProvider extends BaseConnectionProvider {
   protected Supplier<ConnectionFactory> getConnectionFactorySupplier() {
     return this::getConnectionFactory;
   }
+
+  @Override
+  protected void configureSSLContext() {}
 
   @Override
   protected JmsSupportFactory getJmsSupportFactory() {

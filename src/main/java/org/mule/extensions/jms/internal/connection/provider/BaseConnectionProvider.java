@@ -13,6 +13,7 @@ import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.disposeIfNeeded
 import static org.mule.runtime.extension.api.annotation.param.ParameterGroup.CONNECTION;
 import static org.slf4j.LoggerFactory.getLogger;
 
+import org.apache.activemq.broker.SslContext;
 import org.mule.extensions.jms.api.connection.JmsSpecification;
 import org.mule.extensions.jms.api.connection.caching.CachingStrategy;
 import org.mule.extensions.jms.api.connection.caching.DefaultCachingStrategy;
@@ -114,8 +115,9 @@ public abstract class BaseConnectionProvider
 
   @Override
   public void initialise() throws InitialisationException {
+    Runnable setupSsl = () -> this.configureSSLContext();
     jmsConnectionProvider =
-        new JmsConnectionProvider(jmsSessionManager,
+        new JmsConnectionProvider(setupSsl, jmsSessionManager,
                                   getConnectionFactorySupplier(),
                                   specification.getJmsSpecification(),
                                   connectionParameters,
@@ -139,6 +141,7 @@ public abstract class BaseConnectionProvider
   @Override
   public JmsTransactionalConnection connect() throws ConnectionException {
     try {
+      configureSSLContext();
       return createWithJmsThreadGroup(jmsConnectionProvider::connect);
     } catch (Exception e) {
       if (e.getCause() instanceof ConnectionException) {
@@ -148,6 +151,8 @@ public abstract class BaseConnectionProvider
       }
     }
   }
+
+  protected abstract void configureSSLContext();
 
   protected JmsTransactionalConnection connectOnSameThread() throws ConnectionException {
     return jmsConnectionProvider.connect();

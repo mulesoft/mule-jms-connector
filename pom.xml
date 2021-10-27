@@ -227,6 +227,7 @@
                         <configuration>
                             <portNames>
                                 <portName>activemq.listener.port</portName>
+                                <portName>activemq.ssl.listener.port</portName>
                                 <portName>activemq.web_console.port</portName>
                                 <portName>connection.lost.port</portName>
                                 <portName>connection.broken.port</portName>
@@ -246,6 +247,7 @@
                     <workingDirectory>${project.build.directory}</workingDirectory>
                     <systemPropertyVariables>
                         <activeMQPort>${activemq.listener.port}</activeMQPort>
+                        <activeMQSslPort>${activemq.ssl.listener.port}</activeMQSslPort>
                         <buildDirectory>${project.build.directory}</buildDirectory>
                     </systemPropertyVariables>
                 </configuration>
@@ -364,7 +366,7 @@
                         <version>${docker.maven.plugin.version}</version>
                         <configuration>
                             <images>
-                                <image>
+                                <!--image>
                                     <name>rmohr/activemq</name>
                                     <alias>activemq</alias>
                                     <run>
@@ -387,10 +389,10 @@
                                             <time>500000</time>
                                         </wait>
                                     </run>
-                                </image>
+                                </image-->
                                 <image>
                                     <name>mule-activemq-ssl</name>
-                                    <alias>activemqssl</alias>
+                                    <alias>activemq</alias>
                                     <build>
                                         <dockerFileDir>${project.basedir}/src/test/docker/tls</dockerFileDir>
                                     </build>
@@ -402,6 +404,11 @@
                                                 <soft>10240</soft>
                                             </ulimit>
                                         </ulimits>
+                                        <ports>
+                                            <port>${activemq.listener.port}:61616</port>
+                                            <port>${activemq.ssl.listener.port}:61617</port>
+                                            <port>${activemq.web_console.port}:8161</port>
+                                        </ports>
                                         <log>
                                             <enabled>true</enabled>
                                         </log>
@@ -445,7 +452,6 @@
                                 <id>start</id>
                                 <phase>pre-integration-test</phase>
                                 <goals>
-                                    <goal>stop</goal>
                                     <goal>build</goal>
                                     <goal>start</goal>
                                 </goals>
@@ -456,9 +462,10 @@
                             </execution>
                             <execution>
                                 <id>stop</id>
-                                <phase>post-integration-test</phase>
+                                <phase>clean</phase>
                                 <goals>
                                     <goal>stop</goal>
+                                    <goal>remove</goal>
                                 </goals>
                             </execution>
                         </executions>

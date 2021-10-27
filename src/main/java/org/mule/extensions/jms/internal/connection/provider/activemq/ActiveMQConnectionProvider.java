@@ -41,29 +41,21 @@ import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-
 import java.util.function.Supplier;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
-import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLContextSpi;
-import javax.net.ssl.TrustManager;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.broker.SslContext;
 import org.slf4j.Logger;
-
 
 /**
  * A {@link ConnectionProvider} that contains custom logic to handle ActiveMQ connections in particular
@@ -120,6 +112,9 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider implement
 
     try {
       return createWithJmsThreadGroup(() -> {
+        if (shouldUseSsl()) {
+          configureSSLContext();
+        }
 
         try {
           return super.connectOnSameThread();
@@ -178,95 +173,7 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider implement
 
       connectionFactory = connectionFactoryProvider.createDefaultConnectionFactory(shouldUseSsl());
     }
-
-    if (shouldUseSsl()) {
-      setupTlsContext(connectionFactory);
-    }
-
-
     return connectionFactory;
-  }
-
-  /**
-   * Setups the trustmanagers and keymanagers for the ActiveMQConnection Factory
-   * Important: this must be performed this way. Using the SslContext.setCurrentContex
-   * uses threadLocals for storing the context and it get's lost during reconnections.
-   * @param connectionFactory the target connectionFactory.
-   */
-  private void setupTlsContext(ConnectionFactory connectionFactory) {
-    boolean isFieldAccessible = false;
-    try {
-      SSLContext sslContext = tlsConfiguration.createSslContext();
-      Field sslContextSPIField = null;
-      SSLContextSpi sslContextSpi;
-      Field trustManagerField = null;
-      Field keyManagerField = null;
-      TrustManager tm;
-      KeyManager km;
-      try {
-        sslContextSPIField = SSLContext.class.getDeclaredField("contextSpi");
-        isFieldAccessible = sslContextSPIField.isAccessible();
-        sslContextSPIField.setAccessible(true);
-        sslContextSpi = (SSLContextSpi) sslContextSPIField.get(sslContext);
-      } catch (NoSuchFieldException e) {
-        throw new RuntimeException("Could not find the contextSpi field. This might be caused due changes in the JDK. Failed to initialize TLS Context",
-                                   e);
-      } catch (IllegalAccessException e) {
-        throw new RuntimeException("Could not access sslContextSpi field. Failed to initialize TLS Context", e);
-      } finally {
-        if (sslContextSPIField != null) {
-          sslContextSPIField.setAccessible(isFieldAccessible);
-        }
-      }
-
-
-
-      try {
-        trustManagerField = sslContextSpi.getClass().getDeclaredField("trustManager");
-        isFieldAccessible = trustManagerField.isAccessible();
-        trustManagerField.setAccessible(true);
-        tm = (TrustManager) trustManagerField.get(sslContextSpi);
-      } catch (NoSuchFieldException e) {
-        throw new RuntimeException("Coult not find the trustManagerField. this might due changes in JDK. Failed to initialize TLS context",
-                                   e);
-      } catch (IllegalAccessException e) {
-        throw new RuntimeException("Could not access trustManager field", e);
-      } finally {
-        if (trustManagerField != null) {
-          trustManagerField.setAccessible(isFieldAccessible);
-        }
-      }
-
-      try {
-        keyManagerField = sslContextSpi.getClass().getDeclaredField("keyManager");
-        isFieldAccessible = keyManagerField.isAccessible();
-        keyManagerField.setAccessible(true);
-        km = (KeyManager) keyManagerField.get(sslContextSpi);
-      } catch (NoSuchFieldException e) {
-        throw new RuntimeException("Could not find the keyManagerField. this might due changes in JDK. Failed to initialize TLS context",
-                                   e);
-      } catch (IllegalAccessException e) {
-        throw new RuntimeException("Could not access keyManager field", e);
-      } finally {
-        if (keyManagerField != null) {
-          keyManagerField.setAccessible(isFieldAccessible);
-        }
-      }
-
-      try {
-        Method setKTMethod = connectionFactory.getClass().getMethod("setKeyAndTrustManagers", KeyManager[].class,
-                                                                    TrustManager[].class, SecureRandom.class);
-        setKTMethod.invoke(connectionFactory, new KeyManager[] {km},
-                           new TrustManager[] {tm}, null);
-      } catch (NoSuchMethodException e) {
-        throw new RuntimeException("Could not get setKeyAndTrustManagers method. Failed to initialize TLS Context", e);
-      } catch (InvocationTargetException | IllegalAccessException e) {
-        throw new RuntimeException("Could not invoke setKeyAndTrustManagers method. Failed to initialize TLS Context", e);
-      }
-
-    } catch (NoSuchAlgorithmException | KeyManagementException e) {
-      throw new JmsExtensionException("A problem occurred trying to configure SSL Options on ActiveMQ Connection", e);
-    }
   }
 
   @Override
@@ -356,15 +263,24 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider implement
         && (tlsConfiguration.isKeyStoreConfigured() || tlsConfiguration.isTrustStoreConfigured());
   }
 
+  protected void configureSSLContext() {
+    try {
+      SSLContext sslContext = tlsConfiguration.createSslContext();
+      SslContext activeMQSslContext = new SslContext();
+      activeMQSslContext.setSSLContext(sslContext);
+      SslContext.setCurrentSslContext(activeMQSslContext);
+    } catch (KeyManagementException | NoSuchAlgorithmException e) {
+      throw new JmsExtensionException("A problem occurred trying to configure SSL Options on ActiveMQ Connection", e);
+    }
+  }
+
   public ActiveMQConnectionFactoryProvider getConnectionFactoryProvider() {
     return connectionFactoryProvider;
   }
 
   @Override
   public void initialise() throws InitialisationException {
-    LifecycleUtils.initialiseIfNeeded(tlsConfiguration);
     super.initialise();
+    LifecycleUtils.initialiseIfNeeded(tlsConfiguration);
   }
-
-
 }
