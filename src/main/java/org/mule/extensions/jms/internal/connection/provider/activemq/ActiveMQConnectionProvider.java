@@ -8,7 +8,6 @@ package org.mule.extensions.jms.internal.connection.provider.activemq;
 
 import static org.mule.extensions.jms.api.connection.JmsSpecification.JMS_2_0;
 import static org.mule.extensions.jms.internal.common.JmsCommons.createWithJmsThreadGroup;
-import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.initialiseIfNeeded;
 import static org.mule.extensions.jms.internal.connection.provider.activemq.ActiveMQConnectionProvider.ACTIVEMQ_VERSION;
 import static org.mule.extensions.jms.internal.connection.provider.activemq.ActiveMQConnectionProvider.BROKER_CLASS;
 import static org.mule.extensions.jms.internal.connection.provider.activemq.ActiveMQConnectionProvider.BROKER_GA;
