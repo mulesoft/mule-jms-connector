@@ -366,30 +366,6 @@
                         <version>${docker.maven.plugin.version}</version>
                         <configuration>
                             <images>
-                                <!--image>
-                                    <name>rmohr/activemq</name>
-                                    <alias>activemq</alias>
-                                    <run>
-                                        <ports>
-                                            <port>${activemq.listener.port}:61616</port>
-                                            <port>${activemq.web_console.port}:8161</port>
-                                        </ports>
-                                        <ulimits>
-                                            <ulimit>
-                                                <name>nofile</name>
-                                                <hard>10240</hard>
-                                                <soft>10240</soft>
-                                            </ulimit>
-                                        </ulimits>
-                                        <log>
-                                            <enabled>true</enabled>
-                                        </log>
-                                        <wait>
-                                            <log>ActiveMQ Jolokia REST API available</log>
-                                            <time>500000</time>
-                                        </wait>
-                                    </run>
-                                </image-->
                                 <image>
                                     <name>mule-activemq-ssl</name>
                                     <alias>activemq</alias>
