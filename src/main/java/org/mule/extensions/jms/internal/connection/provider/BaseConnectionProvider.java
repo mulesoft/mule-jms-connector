@@ -140,7 +140,6 @@ public abstract class BaseConnectionProvider
   @Override
   public JmsTransactionalConnection connect() throws ConnectionException {
     try {
-      configureSSLContext();
       return createWithJmsThreadGroup(jmsConnectionProvider::connect);
     } catch (Exception e) {
       if (e.getCause() instanceof ConnectionException) {

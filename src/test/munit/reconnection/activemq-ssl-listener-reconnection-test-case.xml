@@ -48,36 +48,36 @@
             <set-variable variableName="correlationID" value="good-omens"/>
         </munit:behavior>
         <munit:execution>
-            <flow-ref name="publish-on-unstable-broker" />
+            <flow-ref name="publish-message-to-broker" />
             <munit-tools:dequeue queueName="jmsMessagesQueue" timeout="50"  timeoutUnit="SECONDS"/>
             <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo(vars.message)]"/>
 
-            <flow-ref name="stopActiveMQBroker" />
+            <flow-ref name="stop-activemq-broker" />
             <set-variable variableName="containerId" value="#[payload]" />
-            <flow-ref name="startActiveMQBroker" />
+            <flow-ref name="start-activemq-broker" />
             <logger message="#[ import * from dw::Runtime --- '' wait 2000]"/>
 
             <until-successful maxRetries="10" millisBetweenRetries="1000">
-                <flow-ref name="publish-on-unstable-broker" />
+                <flow-ref name="publish-message-to-broker" />
                 <munit-tools:dequeue queueName="jmsMessagesQueue" timeout="50"  timeoutUnit="SECONDS"/>
                 <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo(vars.message)]"/>
             </until-successful>
 
-            <flow-ref name="stopActiveMQBroker" />
+            <flow-ref name="stop-activemq-broker" />
             <set-variable variableName="containerId" value="#[payload]" />
-            <flow-ref name="startActiveMQBroker" />
+            <flow-ref name="start-activemq-broker" />
             <logger message="#[ import * from dw::Runtime --- '' wait 2000]"/>
         </munit:execution>
         <munit:validation>
             <until-successful maxRetries="10" millisBetweenRetries="1000">
-                <flow-ref name="publish-on-unstable-broker" />
+                <flow-ref name="publish-message-to-broker" />
                 <munit-tools:dequeue queueName="jmsMessagesQueue" timeout="50"  timeoutUnit="SECONDS"/>
                 <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo(vars.message)]"/>
             </until-successful>
         </munit:validation>
     </munit:test>
 
-    <flow name="publish-on-unstable-broker">
+    <flow name="publish-message-to-broker">
         <set-payload value="#[output application/json --- { prophecy3008: 'Read angel, for the final days are upon us.'}]" />
         <until-successful maxRetries="10" millisBetweenRetries="2000">
             <jms:publish config-ref="JMS_SSL_Config" destination="Q1" persistentDelivery="true" timeToLive="5" timeToLiveUnit="MINUTES">
@@ -98,13 +98,13 @@
         <munit-tools:queue queueName="jmsMessagesQueue"/>
     </flow>
 
-    <flow name="stopActiveMQBroker">
+    <flow name="stop-activemq-broker">
         <java:invoke-static class="org.mule.extensions.jms.test.util.BrokerContainerLifecycleManger" method="stopContainerWithName(String, int)">
             <java:args >#[{ arg0 : vars.containerName, arg1: 0 }]</java:args>
         </java:invoke-static>
     </flow>
 
-    <flow name="startActiveMQBroker">
+    <flow name="start-activemq-broker">
         <java:invoke-static class="org.mule.extensions.jms.test.util.BrokerContainerLifecycleManger" method="startContainerWithId(String)">
             <java:args >#[{ arg0 : vars.containerId }]</java:args>
         </java:invoke-static>
