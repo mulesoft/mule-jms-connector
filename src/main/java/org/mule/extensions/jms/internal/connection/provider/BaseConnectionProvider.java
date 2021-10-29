@@ -116,7 +116,7 @@ public abstract class BaseConnectionProvider
   public void initialise() throws InitialisationException {
     Runnable setupSsl = () -> this.configureSSLContext();
     jmsConnectionProvider =
-        new JmsConnectionProvider(setupSsl, jmsSessionManager,
+        new JmsConnectionProvider(jmsSessionManager,
                                   getConnectionFactorySupplier(),
                                   specification.getJmsSpecification(),
                                   connectionParameters,
@@ -125,7 +125,7 @@ public abstract class BaseConnectionProvider
                                   enableXa(),
                                   getJmsSupportFactory(),
                                   new ConnectionFactoryDecoratorFactory(muleContext, registry),
-                                  configName);
+                                  configName, java.util.Optional.of(setupSsl));
   }
 
   // TODO (EE-6615): JmsSupportyFactory is not part of jms-client API.
