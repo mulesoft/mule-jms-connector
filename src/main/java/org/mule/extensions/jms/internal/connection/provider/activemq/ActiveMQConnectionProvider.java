@@ -263,12 +263,14 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider implement
         && (tlsConfiguration.isKeyStoreConfigured() || tlsConfiguration.isTrustStoreConfigured());
   }
 
-  private void configureSSLContext() {
+  protected void configureSSLContext() {
     try {
-      SSLContext sslContext = tlsConfiguration.createSslContext();
-      SslContext activeMQSslContext = new SslContext();
-      activeMQSslContext.setSSLContext(sslContext);
-      SslContext.setCurrentSslContext(activeMQSslContext);
+      if (tlsConfiguration != null) {
+        SSLContext sslContext = tlsConfiguration.createSslContext();
+        SslContext activeMQSslContext = new SslContext();
+        activeMQSslContext.setSSLContext(sslContext);
+        SslContext.setCurrentSslContext(activeMQSslContext);
+      }
     } catch (KeyManagementException | NoSuchAlgorithmException e) {
       throw new JmsExtensionException("A problem occurred trying to configure SSL Options on ActiveMQ Connection", e);
     }
