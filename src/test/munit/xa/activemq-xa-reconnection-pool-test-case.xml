@@ -28,7 +28,7 @@
 
     <munit:test name="connection-lost-and-eventually-recovered-with-pool" ignore="#[Munit::muleVersionPriorTo('4.3.0') or Munit::muleVersionEqualTo('4.3.0')]">
         <munit:behavior>
-            <set-variable variableName="containerName" value="activemq"/>
+            <set-variable variableName="containerName" value="mule-activemq-ssl"/>
             <set-variable variableName="message" value="Tartan is stylish"/>
         </munit:behavior>
         <munit:execution>
@@ -36,9 +36,9 @@
             <jms:consume config-ref="JMS_Config_XA_UNSTABLE_CONNECTION_WITH_POOL" destination="destination_1"/>
             <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo('Tartan is stylish')]"/>
 
-            <flow-ref name="stopActiveMQBroker" />
+            <flow-ref name="stop-activemq-broker-container" />
             <set-variable variableName="containerId" value="#[payload]" />
-            <flow-ref name="startActiveMQBroker" />
+            <flow-ref name="start-activemq-broker-container" />
             <logger message="#[ import * from dw::Runtime --- '' wait 2000]"/>
 
             <until-successful maxRetries="10" millisBetweenRetries="1000">
@@ -61,13 +61,13 @@
         </try>
     </flow>
 
-    <flow name="stopActiveMQBroker">
+    <flow name="stop-activemq-broker-container">
         <java:invoke-static class="org.mule.extensions.jms.test.util.BrokerContainerLifecycleManger" method="stopContainerWithName(String, int)">
             <java:args >#[{ arg0 : vars.containerName, arg1: 0 }]</java:args>
         </java:invoke-static>
     </flow>
 
-    <flow name="startActiveMQBroker">
+    <flow name="start-activemq-broker-container">
         <java:invoke-static class="org.mule.extensions.jms.test.util.BrokerContainerLifecycleManger" method="startContainerWithId(String)">
             <java:args >#[{ arg0 : vars.containerId }]</java:args>
         </java:invoke-static>

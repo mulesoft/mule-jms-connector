@@ -11,7 +11,11 @@ import static org.mule.runtime.api.meta.ExternalLibraryType.DEPENDENCY;
 
 import org.mule.extensions.jms.api.connection.factory.jndi.JndiConnectionFactory;
 import org.mule.jms.commons.api.connection.LookupJndiDestination;
-import org.mule.jms.commons.internal.support.*;
+import org.mule.jms.commons.internal.support.JmsSupport;
+import org.mule.jms.commons.internal.support.Jms11Support;
+import org.mule.jms.commons.internal.support.Jms20Support;
+import org.mule.jms.commons.internal.support.JmsSupportFactory;
+import org.mule.jms.commons.internal.support.Jms102bSupport;
 import org.mule.runtime.api.connection.ConnectionProvider;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.Expression;
@@ -56,6 +60,9 @@ public class GenericConnectionProvider extends BaseConnectionProvider {
   protected Supplier<ConnectionFactory> getConnectionFactorySupplier() {
     return this::getConnectionFactory;
   }
+
+  @Override
+  protected void configureSSLContext() {}
 
   @Override
   protected JmsSupportFactory getJmsSupportFactory() {
