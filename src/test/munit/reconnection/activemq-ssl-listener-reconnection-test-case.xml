@@ -14,7 +14,7 @@
       http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
       http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd">
 
-    <munit:config name="activemq-ssl-listener-reconnection-test-case.xml" minMuleVersion="4.1.6"/>
+    <munit:config name="activemq-ssl-listener-reconnection-test-case.xml" minMuleVersion="4.3.0"/>
     <global-property name="munit.disable.lazy.connections" value="false"/>
 
     <jms:config name="JMS_SSL_Config">
