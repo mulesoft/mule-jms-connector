@@ -114,6 +114,7 @@ public abstract class BaseConnectionProvider
 
   @Override
   public void initialise() throws InitialisationException {
+    Runnable setupSsl = () -> this.configureSSLContext();
     jmsConnectionProvider =
         new JmsConnectionProvider(jmsSessionManager,
                                   getConnectionFactorySupplier(),
@@ -124,7 +125,7 @@ public abstract class BaseConnectionProvider
                                   enableXa(),
                                   getJmsSupportFactory(),
                                   new ConnectionFactoryDecoratorFactory(muleContext, registry),
-                                  configName);
+                                  configName, java.util.Optional.of(setupSsl));
   }
 
   // TODO (EE-6615): JmsSupportyFactory is not part of jms-client API.
@@ -148,6 +149,8 @@ public abstract class BaseConnectionProvider
       }
     }
   }
+
+  protected abstract void configureSSLContext();
 
   protected JmsTransactionalConnection connectOnSameThread() throws ConnectionException {
     return jmsConnectionProvider.connect();

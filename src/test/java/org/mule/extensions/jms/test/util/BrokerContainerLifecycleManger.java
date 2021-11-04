@@ -25,7 +25,7 @@ public class BrokerContainerLifecycleManger {
     final List<Container> containers = docker.listContainers();
 
     for (Container container : containers) {
-      if (container.image().contains("/" + containerName)) {
+      if (container.image().contains(containerName)) {
         return container;
       }
     }
