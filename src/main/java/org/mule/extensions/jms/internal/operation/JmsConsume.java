@@ -20,7 +20,9 @@ import org.mule.extensions.jms.internal.config.JmsConfig;
 import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
 import org.mule.extensions.jms.internal.metadata.JmsOutputResolver;
 import org.mule.jms.commons.api.AttributesOutputResolver;
+import org.mule.jms.commons.api.message.JmsAttributes;
 import org.mule.jms.commons.internal.connection.JmsTransactionalConnection;
+import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.lifecycle.Disposable;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.scheduler.SchedulerService;
@@ -40,6 +42,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.jms.Destination;
+import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 
@@ -82,23 +85,23 @@ public final class JmsConsume implements Initialisable, Disposable {
    */
   @OutputResolver(output = JmsOutputResolver.class, attributes = AttributesOutputResolver.class)
   @Throws(JmsConsumeErrorTypeProvider.class)
-  public void consume(@Config JmsConfig config,
-                      @Connection JmsTransactionalConnection connection,
-                      @Summary("The name of the Destination from where the Message should be consumed") String destination,
-                      @ConfigOverride @Summary("The Type of the Consumer that should be used for the provided destination") ConsumerType consumerType,
-                      @Optional @Summary("The Session ACK mode to use when consuming a message") ConsumerAckMode ackMode,
-                      @ConfigOverride @Summary("The JMS selector to be used for filtering incoming messages") String selector,
-                      @Optional @Summary("The content type of the message body") @Example(EXAMPLE_CONTENT_TYPE) String contentType,
-                      @Optional @Summary("The encoding of the message body") @Example(EXAMPLE_ENCODING) String encoding,
-                      @Optional(
-                          defaultValue = "10000") @Summary("Maximum time to wait for a message to arrive before timeout") Long maximumWait,
-                      @Optional(
-                          defaultValue = "MILLISECONDS") @Example("MILLISECONDS") @Summary("Time unit to be used in the maximumWaitTime configuration") TimeUnit maximumWaitUnit,
-                      OperationTransactionalAction transactionalAction,
-                      CompletionCallback<Object, Object> result)
-      throws JmsExtensionException {
-    jmsConsume.consume(config, connection, destination, consumerType, ackMode, selector, contentType, encoding, maximumWait,
-                       maximumWaitUnit, transactionalAction, (CompletionCallback) result);
+  public Result<Object, JmsAttributes> consume(@Config JmsConfig config,
+                                               @Connection JmsTransactionalConnection connection,
+                                               @Summary("The name of the Destination from where the Message should be consumed") String destination,
+                                               @ConfigOverride @Summary("The Type of the Consumer that should be used for the provided destination") ConsumerType consumerType,
+                                               @Optional @Summary("The Session ACK mode to use when consuming a message") ConsumerAckMode ackMode,
+                                               @ConfigOverride @Summary("The JMS selector to be used for filtering incoming messages") String selector,
+                                               @Optional @Summary("The content type of the message body") @Example(EXAMPLE_CONTENT_TYPE) String contentType,
+                                               @Optional @Summary("The encoding of the message body") @Example(EXAMPLE_ENCODING) String encoding,
+                                               @Optional(
+                                                   defaultValue = "10000") @Summary("Maximum time to wait for a message to arrive before timeout") Long maximumWait,
+                                               @Optional(
+                                                   defaultValue = "MILLISECONDS") @Example("MILLISECONDS") @Summary("Time unit to be used in the maximumWaitTime configuration") TimeUnit maximumWaitUnit,
+                                               OperationTransactionalAction transactionalAction)
+      throws JmsExtensionException, ConnectionException {
+    return jmsConsume.consume(config, connection, destination, consumerType, ackMode,
+                              selector, contentType, encoding, maximumWait,
+                              maximumWaitUnit, transactionalAction);
   }
 
 
