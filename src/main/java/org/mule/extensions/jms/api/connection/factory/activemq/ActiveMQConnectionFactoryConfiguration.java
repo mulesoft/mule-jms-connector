@@ -89,7 +89,7 @@ public class ActiveMQConnectionFactoryConfiguration {
    */
   @Parameter
   @Optional
-  @Summary("Whitelist of packages of classes that are allowed sent and received.")
+  @Summary("List of packages of classes that are allowed sent and received.")
   @Expression(NOT_SUPPORTED)
   @ExcludeFromConnectivitySchema
   private List<String> trustedPackages;
