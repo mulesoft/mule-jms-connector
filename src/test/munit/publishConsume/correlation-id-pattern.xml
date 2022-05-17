@@ -122,7 +122,7 @@
 
             </foreach>
 
-            <jms:consume destination="reply-queue" config-ref="${config}"/>
+            <jms:consume destination="reply-queue" config-ref="config-no-caching"/>
             <munit-tools:queue/>
 
         </munit:execution>
