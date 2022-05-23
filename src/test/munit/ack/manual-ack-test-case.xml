@@ -30,7 +30,7 @@
         </munit:execution>
         <munit:validation>
             <foreach collection="#[1 to vars.numberOfMessages]">
-                <jms:consume config-ref="config" destination="DEV.QUEUE.1" ackMode="MANUAL" maximumWait="30000" >
+                <jms:consume config-ref="config-no-caching" destination="DEV.QUEUE.1" ackMode="MANUAL" maximumWait="30000" >
                     <reconnect-forever />
                     <jms:consumer-type >
                         <jms:queue-consumer />
