@@ -13,7 +13,7 @@
     <groupId>org.mule.connectors</groupId>
     <artifactId>mule-jms-connector</artifactId>
     <packaging>mule-extension</packaging>
-    <version>1.9.0-SNAPSHOT</version>
+    <version>1.9.0-FGC</version>
 
     <name>JMS Connector</name>
     <description>Mule connector lets you easily send and receive messages to queues and topics for any message service which implements the JMS specification</description>
@@ -33,7 +33,7 @@
         <muleSpringModuleVersion>1.3.6</muleSpringModuleVersion>
 
         <formatterConfigPath>formatter.xml</formatterConfigPath>
-        <muleJmsClientVersion>1.13.2</muleJmsClientVersion>
+        <muleJmsClientVersion>1.13.4</muleJmsClientVersion>
         <muleSdkApiVersion>0.3.0</muleSdkApiVersion>
         <mule.http.connector.version>1.5.23</mule.http.connector.version>
 

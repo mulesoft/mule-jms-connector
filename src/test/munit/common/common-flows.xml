@@ -31,4 +31,10 @@
                       path="#['/org.apache.activemq:type=Broker,brokerName=' ++ vars.brokerName ++ ',destinationType=Queue,destinationName=' ++ vars.destinationName ++'/purge']"/>
     </flow>
 
+    <flow name="deleteQueue" >
+        <http:request method="GET"
+                      config-ref="HTTP_Request_configuration"
+                      path="#['/org.apache.activemq:type=Broker,brokerName=' ++ vars.brokerName ++ '/removeQueue/' ++ vars.destinationName]"/>
+    </flow>
+
 </mule>

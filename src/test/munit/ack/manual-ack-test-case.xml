@@ -12,6 +12,11 @@
 
     <munit:config name="manual-ack"/>
 
+    <munit:before-suite name="beforeTest-manual-ack-test-case" description="before suite">
+        <set-variable variableName="brokerName" value="localhost"/>
+        <set-variable variableName="destinationName" value="DEV.QUEUE.consumerIsKeptOpenUntilMessageIsAcknowledged"/>
+        <flow-ref name="deleteQueue"/>
+    </munit:before-suite >
 
     <munit:test name="consumerIsKeptOpenUntilMessageIsAcknowledged" >
         <munit:behavior>
@@ -20,7 +25,7 @@
         </munit:behavior>
         <munit:execution>
             <foreach collection="#[1 to vars.numberOfMessages]">
-                <jms:publish config-ref="config" destination="DEV.QUEUE.1">
+                <jms:publish config-ref="config" destination="DEV.QUEUE.consumerIsKeptOpenUntilMessageIsAcknowledged">
                     <jms:message>
                         <jms:body>#[vars.message]
                         </jms:body>
@@ -29,20 +34,51 @@
             </foreach>
         </munit:execution>
         <munit:validation>
-            <foreach collection="#[1 to vars.numberOfMessages]">
-                <jms:consume config-ref="config-no-caching" destination="DEV.QUEUE.1" ackMode="MANUAL" maximumWait="30000" >
+            <parallel-foreach collection="#[1 to vars.numberOfMessages]">
+                <jms:consume config-ref="config" destination="DEV.QUEUE.consumerIsKeptOpenUntilMessageIsAcknowledged" ackMode="MANUAL" maximumWait="30000" >
                     <reconnect-forever />
                     <jms:consumer-type >
                         <jms:queue-consumer />
                     </jms:consumer-type>
                 </jms:consume>
-                <munit-tools:sleep time="2000"/>
-                <jms:ack ackId="#[attributes.ackId]"/>
+                <munit-tools:sleep time="#[output application/java --- randomInt(1000)]"/>
+<!--                <jms:ack ackId="#[attributes.ackId]"/>-->
                 <logger level="INFO" message="Message ACKed!" />
                 <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo(vars.message)]"/>
-            </foreach>
+            </parallel-foreach>
         </munit:validation>
     </munit:test>
+
+<!--    <munit:test name="consumerIsKeptOpenUntilMessageIsAcknowledgedParallelRandomWait" >-->
+<!--        <munit:behavior>-->
+<!--            <set-variable variableName="numberOfMessages" value="#[5]" />-->
+<!--            <set-variable variableName="message" value="The ducks in St James's Park are so used to being fed bread by secret agents meeting clandestinely that they have developed their own Pavlovian reaction." />-->
+<!--        </munit:behavior>-->
+<!--        <munit:execution>-->
+<!--            <foreach collection="#[1 to vars.numberOfMessages]">-->
+<!--                <jms:publish config-ref="config" destination="DEV.QUEUE.ACK.MANUAL1">-->
+<!--                    <jms:message>-->
+<!--                        <jms:body>#[vars.message]-->
+<!--                        </jms:body>-->
+<!--                    </jms:message>-->
+<!--                </jms:publish>-->
+<!--            </foreach>-->
+<!--        </munit:execution>-->
+<!--        <munit:validation>-->
+<!--            <foreach collection="#[1 to vars.numberOfMessages]">-->
+<!--                <jms:consume config-ref="config" destination="DEV.QUEUE.ACK.MANUAL" ackMode="MANUAL" maximumWait="30000" >-->
+<!--                    <reconnect-forever />-->
+<!--                    <jms:consumer-type >-->
+<!--                        <jms:queue-consumer />-->
+<!--                    </jms:consumer-type>-->
+<!--                </jms:consume>-->
+<!--                <munit-tools:sleep time="2000"/>-->
+<!--                <jms:ack ackId="#[attributes.ackId]"/>-->
+<!--                <logger level="INFO" message="Message ACKed!" />-->
+<!--                <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo(vars.message)]"/>-->
+<!--            </foreach>-->
+<!--        </munit:validation>-->
+<!--    </munit:test>-->
 
 
 </mule>
