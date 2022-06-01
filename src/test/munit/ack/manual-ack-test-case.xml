@@ -49,7 +49,8 @@
         </munit:validation>
     </munit:test>
 
-    <munit:test name="consumerIsKeptOpenUntilMessageIsAcknowledgedParallelRandomWait" >
+    <!--  This tests passes when the test is executed alone but not with all the others tests suites, ignoring it until we fix munit cleanup on jms: W-11232199  -->
+    <munit:test name="consumerIsKeptOpenUntilMessageIsAcknowledgedParallelRandomWait" ignore="true">
         <munit:behavior>
             <set-variable variableName="numberOfMessages" value="#[5]" />
             <set-variable variableName="message" value="The ducks in St James's Park are so used to being fed bread by secret agents meeting clandestinely that they have developed their own Pavlovian reaction." />
