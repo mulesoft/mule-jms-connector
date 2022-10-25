@@ -17,18 +17,22 @@ import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import static org.mule.runtime.api.meta.ExternalLibraryType.DEPENDENCY;
 import static org.slf4j.LoggerFactory.getLogger;
 
+import org.apache.activemq.ActiveMQXASslConnectionFactory;
 import org.mule.extensions.jms.api.exception.JmsExtensionException;
 import org.mule.extensions.jms.api.exception.JmsMissingLibraryException;
 import org.mule.extensions.jms.internal.connection.exception.ActiveMQException;
 import org.mule.extensions.jms.internal.connection.provider.BaseConnectionProvider;
 import org.mule.jms.commons.internal.connection.JmsConnection;
 import org.mule.jms.commons.internal.connection.JmsTransactionalConnection;
+import org.mule.jms.commons.internal.connection.provider.ConnectionFactoryDecoratorFactory;
+import org.mule.jms.commons.internal.connection.provider.JmsConnectionProvider;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.connection.ConnectionProvider;
 import org.mule.runtime.api.exception.MuleRuntimeException;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.api.tls.TlsContextFactory;
+import org.mule.runtime.core.api.MuleContext;
 import org.mule.runtime.core.api.lifecycle.LifecycleUtils;
 import org.mule.runtime.core.api.util.proxy.TargetInvocationHandler;
 import org.mule.runtime.extension.api.annotation.Alias;
@@ -42,9 +46,11 @@ import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.security.KeyManagementException;
+import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
 import java.util.function.Supplier;
 
@@ -270,10 +276,29 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider implement
         SslContext activeMQSslContext = new SslContext();
         activeMQSslContext.setSSLContext(sslContext);
         SslContext.setCurrentSslContext(activeMQSslContext);
+        setSSLConfigurationToConnectionFactory();
       }
     } catch (KeyManagementException | NoSuchAlgorithmException e) {
       throw new JmsExtensionException("A problem occurred trying to configure SSL Options on ActiveMQ Connection", e);
+    } catch (Exception e) {
+      e.printStackTrace();
     }
+  }
+
+
+  private void setSSLConfigurationToConnectionFactory() throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+
+    Method setTrustStoreMethod = connectionFactory.getClass().getMethod("setTrustStore", String.class);
+    Method setTrustStorePasswordMethod = connectionFactory.getClass().getMethod("setTrustStorePassword", String.class);
+    Method setKeyStoreMethod = connectionFactory.getClass().getMethod("setKeyStore", String.class);
+    Method setKeyStorePasswordMethod = connectionFactory.getClass().getMethod("setKeyStorePassword", String.class);
+    Method setKeyStoreKeyPasswordMethod = connectionFactory.getClass().getMethod("setKeyStoreKeyPassword", String.class);
+
+    setKeyStoreMethod.invoke(connectionFactory, tlsConfiguration.getKeyStoreConfiguration().getPath());
+    setKeyStorePasswordMethod.invoke(connectionFactory, tlsConfiguration.getKeyStoreConfiguration().getPassword());
+    setKeyStoreKeyPasswordMethod.invoke(connectionFactory, tlsConfiguration.getKeyStoreConfiguration().getKeyPassword());
+    setTrustStoreMethod.invoke(connectionFactory, tlsConfiguration.getTrustStoreConfiguration().getPath());
+    setTrustStorePasswordMethod.invoke(connectionFactory, tlsConfiguration.getTrustStoreConfiguration().getPassword());
   }
 
   public ActiveMQConnectionFactoryProvider getConnectionFactoryProvider() {
@@ -285,4 +310,5 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider implement
     super.initialise();
     LifecycleUtils.initialiseIfNeeded(tlsConfiguration);
   }
+
 }
