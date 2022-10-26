@@ -286,7 +286,8 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider implement
   }
 
 
-  private void setSSLConfigurationToConnectionFactory() throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+  private void setSSLConfigurationToConnectionFactory()
+      throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
 
     Method setTrustStoreMethod = connectionFactory.getClass().getMethod("setTrustStore", String.class);
     Method setTrustStorePasswordMethod = connectionFactory.getClass().getMethod("setTrustStorePassword", String.class);
