@@ -37,7 +37,7 @@
 
 <munit:test name="on_new_message_with_xa_and_ssl">
     <munit:enable-flow-sources>
-        <munit:enable-flow-source value="jms-messages-listener-flow" />
+        <munit:enable-flow-source value="jms-messages-xa-listener-flow" />
     </munit:enable-flow-sources>
     <munit:behavior>
         <set-variable variableName="containerName" value="mule-activemq-ssl"/>
@@ -45,13 +45,13 @@
         <set-variable variableName="correlationID" value="agent-007"/>
     </munit:behavior>
     <munit:execution>
-        <flow-ref name="publish-message-to-broker" />
+        <flow-ref name="publish-message-xa-to-broker" />
         <munit-tools:dequeue queueName="jmsMessagesQueue" timeout="50"  timeoutUnit="SECONDS"/>
         <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo(vars.message)]"/>
     </munit:execution>
 </munit:test>
 
-<flow name="publish-message-to-broker">
+<flow name="publish-message-xa-to-broker">
     <set-payload value="#[output application/json --- { Saying: 'A word is enough to the wise'}]" />
     <try transactionalAction="ALWAYS_BEGIN" transactionType="XA">
         <jms:publish config-ref="JMS_SSL_XA_Config" destination="Q1" persistentDelivery="true" timeToLive="5" timeToLiveUnit="MINUTES">
@@ -61,7 +61,7 @@
     <logger level="ERROR" message="GUIDO: Message published!"/>
 </flow>
 
-<flow name="jms-messages-listener-flow" >
+<flow name="jms-messages-xa-listener-flow" >
         <jms:listener config-ref="JMS_SSL_XA_Config" destination="Q1" ackMode="AUTO" transactionalAction="ALWAYS_BEGIN" transactionType="XA">
             <jms:consumer-type >
                 <jms:queue-consumer />
