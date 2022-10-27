@@ -283,19 +283,17 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider implement
       throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
 
     if (enableXa()) {
-
-      Method setTrustStoreMethod = connectionFactory.getClass().getMethod("setTrustStore", String.class);
-      Method setTrustStorePasswordMethod = connectionFactory.getClass().getMethod("setTrustStorePassword", String.class);
-      Method setKeyStoreMethod = connectionFactory.getClass().getMethod("setKeyStore", String.class);
-      Method setKeyStorePasswordMethod = connectionFactory.getClass().getMethod("setKeyStorePassword", String.class);
-      Method setKeyStoreKeyPasswordMethod = connectionFactory.getClass().getMethod("setKeyStoreKeyPassword", String.class);
-
-      setKeyStoreMethod.invoke(connectionFactory, tlsConfiguration.getKeyStoreConfiguration().getPath());
-      setKeyStorePasswordMethod.invoke(connectionFactory, tlsConfiguration.getKeyStoreConfiguration().getPassword());
-      setKeyStoreKeyPasswordMethod.invoke(connectionFactory, tlsConfiguration.getKeyStoreConfiguration().getKeyPassword());
-      setTrustStoreMethod.invoke(connectionFactory, tlsConfiguration.getTrustStoreConfiguration().getPath());
-      setTrustStorePasswordMethod.invoke(connectionFactory, tlsConfiguration.getTrustStoreConfiguration().getPassword());
+      executeConnectionFactoryMethod("setTrustStore", tlsConfiguration.getTrustStoreConfiguration().getPath());
+      executeConnectionFactoryMethod("setTrustStorePassword", tlsConfiguration.getTrustStoreConfiguration().getPassword());
+      executeConnectionFactoryMethod("setKeyStore", tlsConfiguration.getKeyStoreConfiguration().getPath());
+      executeConnectionFactoryMethod("setKeyStorePassword", tlsConfiguration.getKeyStoreConfiguration().getPassword());
+      executeConnectionFactoryMethod("setKeyStoreKeyPassword", tlsConfiguration.getKeyStoreConfiguration().getKeyPassword());
     }
+  }
+
+  private void executeConnectionFactoryMethod(String methodName, String args)
+      throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    connectionFactory.getClass().getMethod(methodName, String.class).invoke(connectionFactory, args);
   }
 
   public ActiveMQConnectionFactoryProvider getConnectionFactoryProvider() {
@@ -308,3 +306,4 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider implement
     LifecycleUtils.initialiseIfNeeded(tlsConfiguration);
   }
 }
+
