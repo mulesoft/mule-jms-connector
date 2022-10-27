@@ -307,5 +307,4 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider implement
     super.initialise();
     LifecycleUtils.initialiseIfNeeded(tlsConfiguration);
   }
-
 }
