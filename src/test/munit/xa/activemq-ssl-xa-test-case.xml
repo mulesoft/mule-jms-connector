@@ -40,6 +40,17 @@
         </jms:active-mq-connection>
     </jms:config>
 
+    <flow name="publish-message-to-broker">
+        <set-payload value="#[output application/json --- { Saying: 'A word is enough to the wise'}]" />
+        <try transactionalAction="ALWAYS_BEGIN" transactionType="XA">
+            <until-successful maxRetries="10" millisBetweenRetries="2000">
+                <jms:publish config-ref="JMS_SSL_XA_Config" destination="Q1" persistentDelivery="true" timeToLive="5" timeToLiveUnit="MINUTES">
+                    <jms:message correlationId="#[vars.correlationID]"/>
+                </jms:publish>
+            </until-successful>
+        </try>
+        <logger level="ERROR" message="GUIDO: Message published!"/>
+
     <munit:test name="publish-msg-with-xa-ssl-and-verify">
         <munit:enable-flow-sources>
             <munit:enable-flow-source value="jms-messages-listener-flow" />
@@ -55,17 +66,6 @@
             <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo(vars.message)]"/>
         </munit:execution>
     </munit:test>
-
-    <flow name="publish-message-to-broker">
-        <set-payload value="#[output application/json --- { Saying: 'A word is enough to the wise'}]" />
-        <try transactionalAction="ALWAYS_BEGIN" transactionType="XA">
-            <until-successful maxRetries="10" millisBetweenRetries="2000">
-                <jms:publish config-ref="JMS_SSL_XA_Config" destination="Q1" persistentDelivery="true" timeToLive="5" timeToLiveUnit="MINUTES">
-                    <jms:message correlationId="#[vars.correlationID]"/>
-                </jms:publish>
-        </try>
-            <logger level="ERROR" message="GUIDO: Message published!"/>
-        </until-successful>
     </flow>
 
     <flow name="jms-messages-listener-flow" >
