@@ -58,7 +58,7 @@
             <jms:message correlationId="#[vars.correlationID]"/>
         </jms:publish>
     </try>
-    <logger level="ERROR" message="GUIDO: Message published!"/>
+    <logger level="INFO" message="Activemq-ssl-xa: Message published!"/>
 </flow>
 
 <flow name="jms-messages-xa-listener-flow" >
@@ -67,7 +67,7 @@
                 <jms:queue-consumer />
             </jms:consumer-type>
         </jms:listener>
-    <logger level="ERROR" message="GUIDO: Received message #[payload] with correlationID : #[attributes.headers.correlationId]"/>
+    <logger level="INFO" message="Activemq-ssl-xa: Received message #[payload] with correlationID : #[attributes.headers.correlationId]"/>
     <munit-tools:queue queueName="jmsMessagesQueue"/>
 </flow>
 </mule>

@@ -137,7 +137,6 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider implement
     }
   }
 
-
   @Override
   public ConnectionFactory getConnectionFactory() throws ActiveMQException {
     if (connectionFactory != null) {
@@ -206,7 +205,6 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider implement
         // close and stop methods so that they remain open when returning to the cache. In that case, we don't
         // need to do any custom cleanup, as the connections will be closed when destroying the cache. The
         // type of the invocation handler for these connections is SharedConnectionInvocationHandler.
-
         if (invocationHandler instanceof TargetInvocationHandler) {
           // this is really an XA connection, bypass the java.lang.reflect.Proxy as it
           // can't delegate to non-interfaced methods (like proprietary 'cleanup' one)
@@ -306,4 +304,3 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider implement
     LifecycleUtils.initialiseIfNeeded(tlsConfiguration);
   }
 }
-
