@@ -6,7 +6,6 @@
       xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
       xmlns="http://www.mulesoft.org/schema/mule/core"
       xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
-      xmlns:java="http://www.mulesoft.org/schema/mule/java"
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
       http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
