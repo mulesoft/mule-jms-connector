@@ -26,6 +26,7 @@ import org.mule.runtime.api.metadata.DataType;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.sdk.api.runtime.source.DistributedTraceContextManager;
 
+import java.util.Locale;
 import java.util.OptionalLong;
 
 import javax.jms.Connection;
@@ -67,7 +68,7 @@ public class JmsSpanCustomizerTestCase {
     jmsConsumeSpanCustomizer.customizeSpan(distributedTraceContextManager, jmsTransactionalConnection, destination, consumerType);
 
     verify(distributedTraceContextManager).setCurrentSpanName(expectedSpanName);
-    verify(distributedTraceContextManager).addCurrentSpanAttribute(MESSAGING_SYSTEM, messagingSystem);
+    verify(distributedTraceContextManager).addCurrentSpanAttribute(MESSAGING_SYSTEM, messagingSystem.toLowerCase(Locale.ROOT));
     verify(distributedTraceContextManager).addCurrentSpanAttribute(MESSAGING_DESTINATION, destination);
     verify(distributedTraceContextManager).addCurrentSpanAttribute(MESSAGING_DESTINATION_KIND, "queue");
   }
@@ -99,7 +100,7 @@ public class JmsSpanCustomizerTestCase {
                                            destinationType);
 
     verify(distributedTraceContextManager).setCurrentSpanName(expectedSpanName);
-    verify(distributedTraceContextManager).addCurrentSpanAttribute(MESSAGING_SYSTEM, messagingSystem);
+    verify(distributedTraceContextManager).addCurrentSpanAttribute(MESSAGING_SYSTEM, messagingSystem.toLowerCase(Locale.ROOT));
     verify(distributedTraceContextManager).addCurrentSpanAttribute(MESSAGING_DESTINATION, destination);
     verify(distributedTraceContextManager).addCurrentSpanAttribute(MESSAGING_DESTINATION_KIND, "topic");
   }
