@@ -7,7 +7,6 @@
 package org.mule.extensions.jms.internal.operation.profiling.tracing;
 
 import org.mule.extensions.jms.api.destination.DestinationType;
-import org.mule.extensions.jms.api.message.JmsMessageBuilder;
 import org.mule.jms.commons.internal.connection.JmsTransactionalConnection;
 import org.mule.sdk.api.runtime.source.DistributedTraceContextManager;
 
@@ -17,9 +16,6 @@ public class JmsPublishSpanCustomizer extends JmsSpanCustomizer {
 
   private static final String SPAN_OPERATION_NAME = "send";
   public static final String MESSAGING_DESTINATION_KIND = "messaging.destination_kind";
-  public static final String MESSAGING_CONVERSATION_ID = "messaging.conversation_id";
-  public static final String MESSAGING_MESSAGE_PAYLOAD_SIZE_BYTES = "messaging.message_payload_size_bytes";
-  public static final String MESSAGING_MESSAGE_PAYLOAD_COMPRESSED_SIZE_BYTES = "messaging.message_payload_compressed_size_bytes";
 
   /**
    * @return a new instance of a {@link JmsPublishSpanCustomizer}.
@@ -30,17 +26,10 @@ public class JmsPublishSpanCustomizer extends JmsSpanCustomizer {
 
   public void customizeSpan(DistributedTraceContextManager distributedTraceContextManager, JmsTransactionalConnection connection,
                             String destination,
-                            DestinationType destinationType, JmsMessageBuilder messageBuilder) {
+                            DestinationType destinationType) {
     super.customizeSpan(distributedTraceContextManager, connection, destination);
     distributedTraceContextManager
         .addCurrentSpanAttribute(MESSAGING_DESTINATION_KIND, destinationType.toString().toLowerCase(Locale.ROOT));
-    distributedTraceContextManager
-        .addCurrentSpanAttribute(MESSAGING_CONVERSATION_ID, messageBuilder.getCorrelationId());
-    if (messageBuilder.getBody().getByteLength().isPresent()) {
-      distributedTraceContextManager
-          .addCurrentSpanAttribute(MESSAGING_MESSAGE_PAYLOAD_SIZE_BYTES,
-                                   String.valueOf(messageBuilder.getBody().getByteLength().getAsLong()));
-    }
   }
 
   @Override
