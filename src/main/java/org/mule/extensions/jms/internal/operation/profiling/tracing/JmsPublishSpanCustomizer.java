@@ -6,13 +6,21 @@
  */
 package org.mule.extensions.jms.internal.operation.profiling.tracing;
 
+import static org.mule.extensions.jms.internal.operation.profiling.tracing.SpanCustomizerUtils.safeExecute;
+
+import static org.slf4j.LoggerFactory.getLogger;
+
 import org.mule.extensions.jms.api.destination.DestinationType;
 import org.mule.jms.commons.internal.connection.JmsTransactionalConnection;
 import org.mule.sdk.api.runtime.source.DistributedTraceContextManager;
 
 import java.util.Locale;
 
+import org.slf4j.Logger;
+
 public class JmsPublishSpanCustomizer extends JmsSpanCustomizer {
+
+  private static final Logger LOGGER = getLogger(JmsPublishSpanCustomizer.class);
 
   private static final String SPAN_OPERATION_NAME = "send";
   public static final String MESSAGING_DESTINATION_KIND = "messaging.destination_kind";
@@ -28,8 +36,9 @@ public class JmsPublishSpanCustomizer extends JmsSpanCustomizer {
                             String destination,
                             DestinationType destinationType) {
     super.customizeSpan(distributedTraceContextManager, connection, destination);
-    distributedTraceContextManager
-        .addCurrentSpanAttribute(MESSAGING_DESTINATION_KIND, destinationType.toString().toLowerCase(Locale.ROOT));
+    safeExecute(() -> distributedTraceContextManager
+        .addCurrentSpanAttribute(MESSAGING_DESTINATION_KIND, destinationType.toString().toLowerCase(Locale.ROOT)),
+                "Messaging destination kind data could not be added to span", LOGGER);
   }
 
   @Override
