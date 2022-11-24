@@ -47,6 +47,9 @@
         <docker.maven.plugin.version>0.40.2</docker.maven.plugin.version>
         <maven.helper.plugin.version>3.3.0</maven.helper.plugin.version>
         <docker.skip>${skipTests}</docker.skip>
+        
+        <muleSdkCompatibilityApiVersion>1.0.0-SNAPSHOT</muleSdkCompatibilityApiVersion>
+        <muleSdkApiVersion>1.0.0-SNAPSHOT</muleSdkApiVersion>
     </properties>
 
     <dependencies>
@@ -208,6 +211,16 @@
                     <artifactId>bcpkix-jdk15on</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.mule.sdk</groupId>
+            <artifactId>mule-sdk-compatibility-api</artifactId>
+            <version>${muleSdkCompatibilityApiVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mule.sdk</groupId>
+            <artifactId>mule-sdk-api</artifactId>
+            <version>${muleSdkApiVersion}</version>
         </dependency>
     </dependencies>
 
