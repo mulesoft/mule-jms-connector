@@ -9,7 +9,7 @@
                           http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
                           http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd">
 
-    <munit:config name="manual-ack"/>
+    <munit:config name="manual-ack" minMuleVersion="4.2.0"/>
 
     <munit:after-test name="afterTest-manual-ack-test-case" description="after test">
         <set-variable variableName="brokerName" value="localhost"/>
@@ -17,7 +17,7 @@
         <flow-ref name="deleteQueue"/>
     </munit:after-test >
 
-    <munit:test name="consumerIsKeptOpenUntilMessageIsAcknowledged" >
+    <munit:test name="consumerIsKeptOpenUntilMessageIsAcknowledged">
         <munit:behavior>
             <set-variable variableName="numberOfMessages" value="#[5]" />
             <set-variable variableName="message" value="The ducks in St James's Park are so used to being fed bread by secret agents meeting clandestinely that they have developed their own Pavlovian reaction." />

@@ -17,7 +17,7 @@
         <flow-ref name="purgeQueue"/>
     </munit:after-test>
 
-    <munit:test name="recoverSessionManuallyConcurrent">
+    <munit:test name="recoverSessionManuallyConcurrent" ignore="#[Munit::muleVersionPriorTo('4.2.1')]">
         <munit:enable-flow-sources>
             <munit:enable-flow-source value="listener"/>
         </munit:enable-flow-sources>
