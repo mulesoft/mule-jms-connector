@@ -37,7 +37,7 @@
 
     <flow name="listener">
         <jms:listener config-ref="config-no-caching" destination="DEV.QUEUE.1" ackMode="MANUAL" numberOfConsumers="2"/>
-        <munit-tools:queue/>
+        <munit-tools:queue><munit-tools:value>#[payload]</munit-tools:value></munit-tools:queue>
         <flow-ref name="errorConcurrentSub_Flow" />
         <error-handler name="errorError_Handler" >
             <on-error-propagate logException="true">
