@@ -5,6 +5,8 @@
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
                           http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
 
+    <global-property name="munit.disable.lazy.connections" value="false"/>
+
     <jms:config name="config">
         <jms:active-mq-connection >
             <jms:factory-configuration maxRedelivery="${max.redelivery}" trustAllPackages="true"/>
