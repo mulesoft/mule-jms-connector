@@ -29,6 +29,8 @@ public class AllureConstants {
       String MESSAGE_TYPES = "Durable Subscriber";
 
       String MESSAGE_FILTERING = "Message Filtering";
+
+      String TRACING = "Tracing";
     }
 
   }

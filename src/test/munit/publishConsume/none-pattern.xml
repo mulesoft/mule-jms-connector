@@ -4,12 +4,10 @@
       xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
       xmlns="http://www.mulesoft.org/schema/mule/core"
       xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
-      xmlns:mtf="http://www.mulesoft.org/schema/mule/mtf"
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
       http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
       http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
-      http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
-      http://www.mulesoft.org/schema/mule/mtf http://www.mulesoft.org/schema/mule/mtf/current/mule-mtf.xsd">
+      http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd">
 
     <munit:config name="none-pattern.xml">
         <munit:parameterizations>
@@ -33,6 +31,8 @@
         <set-variable variableName="destinationName" value="someDest"/>
         <flow-ref name="purgeQueue"/>
         <set-variable variableName="destinationName" value="reply-queue"/>
+        <flow-ref name="purgeQueue"/>
+        <set-variable variableName="destinationName" value="reply-queue-1"/>
         <flow-ref name="purgeQueue"/>
     </munit:after-test>
 
@@ -98,14 +98,14 @@
             <!-- Pre load messages to Reply queue to show that the None pattern will takes this values -->
             <foreach collection="#[Utils::createMessages(1, 'invalid')]">
                 <set-variable variableName="uuid" value="#[uuid()]"/>
-                <jms:publish destination="reply-queue" config-ref="${config}" >
+                <jms:publish destination="reply-queue-1" config-ref="${config}" >
                     <jms:message correlationId="#[vars.uuid]">
                         <jms:body>#[{
                             message : payload,
                             correlationId : vars.uuid
                             }]
                         </jms:body>
-                        <jms:reply-to destination="reply-queue"/>
+                        <jms:reply-to destination="reply-queue-1"/>
                     </jms:message>
                 </jms:publish>
             </foreach>
@@ -115,13 +115,13 @@
             <jms:publish-consume config-ref="${config}" destination="someDest" requestReplyPattern="NONE">
                 <jms:message correlationId="#[vars.uuid]">
                     <jms:body>#[{ message : 'ping ', correlationId : vars.uuid }]</jms:body>
-                    <jms:reply-to destination="reply-queue"/>
+                    <jms:reply-to destination="reply-queue-1"/>
                 </jms:message>
             </jms:publish-consume>
 
             <logger level="DEBUG" message="Queing: #[payload]"/>
             <munit-tools:queue/>
-            <jms:consume destination="reply-queue" config-ref="${config}"/>
+            <jms:consume destination="reply-queue-1" config-ref="${config}"/>
             <munit-tools:queue/>
         </munit:execution>
         <munit:validation>
