@@ -6,12 +6,12 @@
  */
 package org.mule.extensions.jms.internal.connection.provider;
 
+import static org.mule.runtime.api.i18n.I18nMessageFactory.createStaticMessage;
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import static org.mule.runtime.api.meta.ExternalLibraryType.DEPENDENCY;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import org.mule.extensions.jms.api.connection.factory.jndi.JndiConnectionFactory;
-import org.mule.extensions.jms.api.exception.JmsExtensionException;
 import org.mule.jms.commons.api.connection.LookupJndiDestination;
 import org.mule.jms.commons.internal.support.JmsSupport;
 import org.mule.jms.commons.internal.support.Jms11Support;
@@ -19,6 +19,7 @@ import org.mule.jms.commons.internal.support.Jms20Support;
 import org.mule.jms.commons.internal.support.JmsSupportFactory;
 import org.mule.jms.commons.internal.support.Jms102bSupport;
 import org.mule.runtime.api.connection.ConnectionProvider;
+import org.mule.runtime.api.exception.MuleRuntimeException;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.ExternalLib;
@@ -26,6 +27,7 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.slf4j.Logger;
 
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -63,7 +65,6 @@ import javax.net.ssl.X509TrustManager;
 public class GenericConnectionProvider extends BaseConnectionProvider {
 
   private static final Logger LOGGER = getLogger(GenericConnectionProvider.class);
-  public static final String PROTOCOL = "SSL";
   private final String trustStorePassword = System.getProperty("mule.jms.generic.additionalCertificatePassword", "");
   private final String trustStoreName = System.getProperty("mule.jms.generic.additionalCertificateFileName", "");
 
@@ -76,7 +77,7 @@ public class GenericConnectionProvider extends BaseConnectionProvider {
 
   @Override
   public ConnectionFactory getConnectionFactory() {
-    this.configureSSLContextIfNeeded();
+    this.addCertificatesToSSLContextIfNeeded();
     return connectionFactory;
   }
 
@@ -91,6 +92,10 @@ public class GenericConnectionProvider extends BaseConnectionProvider {
   }
 
   @Override
+  /**
+   * This method is empty since it is appropriate to use it when the connection provider offers the SSL/TLS tab in the UI.
+   * In the case of the Generic Connection Provider, we will use an internal{@link #addCertificatesToSSLContextIfNeeded()} method that,
+   * based on some system properties, will modify the SSL/TLS context. **/
   protected void configureSSLContext() {}
 
   @Override
@@ -123,24 +128,25 @@ public class GenericConnectionProvider extends BaseConnectionProvider {
     };
   }
 
-  protected void configureSSLContextIfNeeded() {
+  protected void addCertificatesToSSLContextIfNeeded() {
     if (!trustStorePassword.isEmpty() && !trustStoreName.isEmpty()) {
       try {
-        final SSLContext context = SSLContext.getInstance(PROTOCOL);
+        String[] protocols = SSLContext.getDefault().getDefaultSSLParameters().getProtocols();
+        final SSLContext context = SSLContext.getInstance(protocols[0]);
         context.init(new KeyManager[0],
                      getCustomTrustStoreWithDefaultCerts(getTruststoreFile(trustStoreName), trustStorePassword),
                      new SecureRandom());
         SSLContext.setDefault(context);
       } catch (Exception e) {
-        throw new JmsExtensionException("Failed to set custom TrustStore", e);
+        throw new MuleRuntimeException(createStaticMessage("Failed to set TrustStore"), e);
       }
     }
   }
 
   private TrustManager[] getCustomTrustStoreWithDefaultCerts(java.util.Optional<File> truststoreFile, String trustStorePassword)
-      throws Exception {
-    final KeyStore keyStore = getKeyStoreWithCustomCerts(truststoreFile, trustStorePassword);
+      throws CertificateException, IOException, NoSuchAlgorithmException, KeyStoreException {
 
+    final KeyStore keyStore = getKeyStoreWithCustomCerts(truststoreFile, trustStorePassword);
     final TrustManagerFactory jdkDefaultTrustManagerFactory =
         TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
     jdkDefaultTrustManagerFactory.init((KeyStore) null);
@@ -165,6 +171,9 @@ public class GenericConnectionProvider extends BaseConnectionProvider {
     keyStore.load(null, null);
     try (FileInputStream kos = new FileInputStream(truststoreFile.get())) {
       keyStore.load(kos, trustStorePassword.toCharArray());
+    } catch (EOFException e) {
+      LOGGER.error("{} is not a TrustStore valid", trustStoreName);
+      throw new IOException("Truststore loading error");
     }
     return keyStore;
   }
@@ -172,7 +181,7 @@ public class GenericConnectionProvider extends BaseConnectionProvider {
   private java.util.Optional<File> getTruststoreFile(String trustStoreName) {
     URL resource = this.getClass().getClassLoader().getResource(trustStoreName);
     if (Objects.isNull(resource)) {
-      LOGGER.error("Failed to found file {}", trustStoreName);
+      LOGGER.error("{} not found", trustStoreName);
       return java.util.Optional.empty();
     }
     return java.util.Optional.of(new File(resource.getPath()));
