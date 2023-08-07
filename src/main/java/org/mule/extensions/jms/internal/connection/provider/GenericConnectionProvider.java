@@ -25,7 +25,6 @@ import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.ExternalLib;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
-import org.slf4j.Logger;
 
 import java.io.EOFException;
 import java.io.File;
@@ -44,6 +43,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.NoSuchElementException;
 
 import javax.jms.ConnectionFactory;
 import javax.jms.XAConnectionFactory;
@@ -64,7 +64,7 @@ import javax.net.ssl.X509TrustManager;
 @ExternalLib(name = "JMS Client", description = "Client which lets communicate with a JMS broker", type = DEPENDENCY)
 public class GenericConnectionProvider extends BaseConnectionProvider {
 
-  private static final Logger LOGGER = getLogger(GenericConnectionProvider.class);
+  private final String DEFAULT_PROTOCOL = "TLSv1.2";
   private final String trustStorePassword = System.getProperty("mule.jms.generic.additionalCertificatePassword", "");
   private final String trustStoreName = System.getProperty("mule.jms.generic.additionalCertificateFileName", "");
 
@@ -132,7 +132,8 @@ public class GenericConnectionProvider extends BaseConnectionProvider {
     if (!trustStorePassword.isEmpty() && !trustStoreName.isEmpty()) {
       try {
         String[] protocols = SSLContext.getDefault().getDefaultSSLParameters().getProtocols();
-        final SSLContext context = SSLContext.getInstance(protocols[0]);
+        String protocol = protocols.length > 0 ? protocols[0] : DEFAULT_PROTOCOL;
+        final SSLContext context = SSLContext.getInstance(protocol);
         context.init(new KeyManager[0],
                      getCustomTrustStoreWithDefaultCerts(getTruststoreFile(trustStoreName), trustStorePassword),
                      new SecureRandom());
@@ -171,19 +172,15 @@ public class GenericConnectionProvider extends BaseConnectionProvider {
     keyStore.load(null, null);
     try (FileInputStream kos = new FileInputStream(truststoreFile.get())) {
       keyStore.load(kos, trustStorePassword.toCharArray());
-    } catch (EOFException e) {
-      LOGGER.error("{} is not a TrustStore valid", trustStoreName);
-      throw new IOException("Truststore loading error");
+    } catch (EOFException | NoSuchElementException e) {
+      String errorMessage = String.format("Error loading TrustStore: %s not valid or not found", trustStoreName);
+      throw new IOException(errorMessage, e);
     }
     return keyStore;
   }
 
   private java.util.Optional<File> getTruststoreFile(String trustStoreName) {
     URL resource = this.getClass().getClassLoader().getResource(trustStoreName);
-    if (Objects.isNull(resource)) {
-      LOGGER.error("{} not found", trustStoreName);
-      return java.util.Optional.empty();
-    }
-    return java.util.Optional.of(new File(resource.getPath()));
+    return Objects.isNull(resource) ? java.util.Optional.empty() : java.util.Optional.of(new File(resource.getPath()));
   }
 }
