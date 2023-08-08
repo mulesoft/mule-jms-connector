@@ -37,7 +37,7 @@ public class GenericConnectionProviderSecureTestCase {
     @Test
     public void testGetConnectionFactory_withProperties() throws Exception{
         System.setProperty("mule.jms.generic.additionalCertificatePassword", "changeit");
-        System.setProperty("mule.jms.generic.additionalCertificateFileName", "tls/customTrust.jks");
+        System.setProperty("mule.jms.generic.additionalCertificateFileName", "tls/genericConnectionTests.jks");
 
         SSLContext mockSSLContext = PowerMockito.mock(SSLContext.class);
         SSLParameters mockSSLParameters = PowerMockito.mock(SSLParameters.class);
@@ -58,7 +58,7 @@ public class GenericConnectionProviderSecureTestCase {
         PowerMockito.doReturn(mockKeyStore).
                 when(connectionProvider,"getKeyStoreWithCustomCerts",any(Optional.class),anyString());
 
-        PowerMockito.when(connectionProvider, "getTruststoreFile", "tls/customTrust.jks").thenReturn(Optional.of(mockTruststoreFile));
+        PowerMockito.when(connectionProvider, "getTruststoreFile", "tls/genericConnectionTests.jks").thenReturn(Optional.of(mockTruststoreFile));
 
         FileInputStream mockFileInputStream = PowerMockito.mock(FileInputStream.class);
         PowerMockito.whenNew(FileInputStream.class).withArguments(mockTruststoreFile).thenReturn(mockFileInputStream);
