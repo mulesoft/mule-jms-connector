@@ -25,6 +25,7 @@ import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.ExternalLib;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
+import org.slf4j.Logger;
 
 import java.io.EOFException;
 import java.io.File;
@@ -64,6 +65,7 @@ import javax.net.ssl.X509TrustManager;
 @ExternalLib(name = "JMS Client", description = "Client which lets communicate with a JMS broker", type = DEPENDENCY)
 public class GenericConnectionProvider extends BaseConnectionProvider {
 
+  private static final Logger LOGGER = getLogger(GenericConnectionProvider.class);
   private final String DEFAULT_PROTOCOL = "TLSv1.2";
   private final String trustStorePassword = System.getProperty("mule.jms.generic.additionalCertificatePassword", "");
   private final String trustStoreName = System.getProperty("mule.jms.generic.additionalCertificateFileName", "");
@@ -141,6 +143,8 @@ public class GenericConnectionProvider extends BaseConnectionProvider {
       } catch (Exception e) {
         throw new MuleRuntimeException(createStaticMessage("Failed to set TrustStore"), e);
       }
+    } else if (!trustStorePassword.isEmpty() || !trustStoreName.isEmpty()) {
+      LOGGER.warn("Both parameters are required to start the secure channel and only one was detected.");
     }
   }
 
