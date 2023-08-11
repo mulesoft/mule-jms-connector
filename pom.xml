@@ -33,8 +33,8 @@
         <muleSpringModuleVersion>1.3.7</muleSpringModuleVersion>
 
         <formatterConfigPath>formatter.xml</formatterConfigPath>
-        <muleJmsClientVersion>1.14.0-SNAPSHOT</muleJmsClientVersion>
-        <muleSdkApiVersion>0.3.0</muleSdkApiVersion>
+        <muleJmsClientVersion>1.13.12</muleJmsClientVersion>
+
         <mule.http.connector.version>1.7.3</mule.http.connector.version>
 
         <!-- Remove when a new parent version with MTF is available -->
@@ -49,7 +49,7 @@
         <docker.skip>${skipTests}</docker.skip>
         
         <muleSdkCompatibilityApiVersion>1.0.0-SNAPSHOT</muleSdkCompatibilityApiVersion>
-        <muleSdkApiVersion>1.0.0-SNAPSHOT</muleSdkApiVersion>
+        <muleSdkApiVersion>0.3.0</muleSdkApiVersion>
     </properties>
 
     <dependencies>
@@ -216,11 +216,6 @@
             <groupId>org.mule.sdk</groupId>
             <artifactId>mule-sdk-compatibility-api</artifactId>
             <version>${muleSdkCompatibilityApiVersion}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mule.sdk</groupId>
-            <artifactId>mule-sdk-api</artifactId>
-            <version>${muleSdkApiVersion}</version>
         </dependency>
     </dependencies>
 
