@@ -66,7 +66,7 @@ import javax.net.ssl.X509TrustManager;
 public class GenericConnectionProvider extends BaseConnectionProvider {
 
   private static final Logger LOGGER = getLogger(GenericConnectionProvider.class);
-  private final String DEFAULT_PROTOCOL = "TLSv1.2";
+  private final String DEFAULT_PROTOCOL = "SSL";
   private final String trustStorePassword = System.getProperty("mule.jms.generic.additionalCertificatePassword", "");
   private final String trustStoreName = System.getProperty("mule.jms.generic.additionalCertificateFileName", "");
 
@@ -133,9 +133,7 @@ public class GenericConnectionProvider extends BaseConnectionProvider {
   protected void addCertificatesToSSLContextIfNeeded() {
     if (!trustStorePassword.isEmpty() && !trustStoreName.isEmpty()) {
       try {
-        String[] protocols = SSLContext.getDefault().getDefaultSSLParameters().getProtocols();
-        String protocol = protocols.length > 0 ? protocols[0] : DEFAULT_PROTOCOL;
-        final SSLContext context = SSLContext.getInstance(protocol);
+        final SSLContext context = SSLContext.getInstance(DEFAULT_PROTOCOL);
         context.init(new KeyManager[0],
                      getCustomTrustStoreWithDefaultCerts(getTruststoreFile(trustStoreName), trustStorePassword),
                      new SecureRandom());

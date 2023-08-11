@@ -54,7 +54,6 @@ public class GenericConnectionProviderSecureTestCase {
     PowerMockito.when(SSLContext.getDefault()).thenReturn(mockSSLContext);
     PowerMockito.when(mockSSLContext.getDefaultSSLParameters()).thenReturn(mockSSLParameters);
     PowerMockito.when(SSLContext.getInstance(anyString())).thenReturn(mockSSLContext);
-    PowerMockito.when(SSLContext.getDefault().getDefaultSSLParameters().getProtocols()).thenReturn(new String[0]);
     PowerMockito.when(TrustManagerFactory.getDefaultAlgorithm()).thenReturn("TLS");
     PowerMockito.when(TrustManagerFactory.getInstance(anyString())).thenReturn(mockTrustManagerFactory);
     PowerMockito.when(mockTrustManagerFactory.getTrustManagers()).thenReturn(new TrustManager[0]);
