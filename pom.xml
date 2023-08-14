@@ -34,7 +34,6 @@
 
         <formatterConfigPath>formatter.xml</formatterConfigPath>
         <muleJmsClientVersion>1.13.12</muleJmsClientVersion>
-
         <mule.http.connector.version>1.7.3</mule.http.connector.version>
 
         <!-- Remove when a new parent version with MTF is available -->
@@ -48,8 +47,8 @@
         <maven.helper.plugin.version>3.3.0</maven.helper.plugin.version>
         <docker.skip>${skipTests}</docker.skip>
         
-        <muleSdkCompatibilityApiVersion>1.0.0-SNAPSHOT</muleSdkCompatibilityApiVersion>
-        <muleSdkApiVersion>0.3.0</muleSdkApiVersion>
+        <muleSdkCompatibilityApiVersion>0.6.0-SNAPSHOT</muleSdkCompatibilityApiVersion>
+        <muleSdkApiVersion>0.6.0</muleSdkApiVersion>
     </properties>
 
     <dependencies>
