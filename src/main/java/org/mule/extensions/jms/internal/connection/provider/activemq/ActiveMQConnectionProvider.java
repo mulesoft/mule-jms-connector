@@ -42,7 +42,6 @@ import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.security.KeyManagementException;
@@ -137,6 +136,7 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider implement
     }
   }
 
+
   @Override
   public ConnectionFactory getConnectionFactory() throws ActiveMQException {
     if (connectionFactory != null) {
@@ -205,6 +205,7 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider implement
         // close and stop methods so that they remain open when returning to the cache. In that case, we don't
         // need to do any custom cleanup, as the connections will be closed when destroying the cache. The
         // type of the invocation handler for these connections is SharedConnectionInvocationHandler.
+
         if (invocationHandler instanceof TargetInvocationHandler) {
           // this is really an XA connection, bypass the java.lang.reflect.Proxy as it
           // can't delegate to non-interfaced methods (like proprietary 'cleanup' one)
@@ -269,29 +270,10 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider implement
         SslContext activeMQSslContext = new SslContext();
         activeMQSslContext.setSSLContext(sslContext);
         SslContext.setCurrentSslContext(activeMQSslContext);
-        setSSLConfigurationToConnectionFactory();
       }
-    } catch (KeyManagementException | NoSuchAlgorithmException | InvocationTargetException | IllegalAccessException
-        | NoSuchMethodException e) {
+    } catch (KeyManagementException | NoSuchAlgorithmException e) {
       throw new JmsExtensionException("A problem occurred trying to configure SSL Options on ActiveMQ Connection", e);
     }
-  }
-
-  private void setSSLConfigurationToConnectionFactory()
-      throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
-
-    if (enableXa()) {
-      executeConnectionFactoryMethod("setTrustStore", tlsConfiguration.getTrustStoreConfiguration().getPath());
-      executeConnectionFactoryMethod("setTrustStorePassword", tlsConfiguration.getTrustStoreConfiguration().getPassword());
-      executeConnectionFactoryMethod("setKeyStore", tlsConfiguration.getKeyStoreConfiguration().getPath());
-      executeConnectionFactoryMethod("setKeyStorePassword", tlsConfiguration.getKeyStoreConfiguration().getPassword());
-      executeConnectionFactoryMethod("setKeyStoreKeyPassword", tlsConfiguration.getKeyStoreConfiguration().getKeyPassword());
-    }
-  }
-
-  private void executeConnectionFactoryMethod(String methodName, String args)
-      throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-    connectionFactory.getClass().getMethod(methodName, String.class).invoke(connectionFactory, args);
   }
 
   public ActiveMQConnectionFactoryProvider getConnectionFactoryProvider() {
