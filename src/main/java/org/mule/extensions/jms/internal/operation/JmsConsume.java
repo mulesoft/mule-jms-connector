@@ -8,8 +8,6 @@ package org.mule.extensions.jms.internal.operation;
 
 import static org.mule.extensions.jms.internal.common.JmsCommons.EXAMPLE_CONTENT_TYPE;
 import static org.mule.extensions.jms.internal.common.JmsCommons.EXAMPLE_ENCODING;
-import static org.mule.extensions.jms.internal.operation.profiling.tracing.JmsConsumeSpanCustomizer.getJmsConsumeSpanCustomizer;
-
 import static org.slf4j.LoggerFactory.getLogger;
 
 import org.mule.extensions.jms.api.config.ConsumerAckMode;
@@ -22,6 +20,7 @@ import org.mule.extensions.jms.internal.config.JmsConfig;
 import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
 import org.mule.extensions.jms.internal.metadata.JmsOutputResolver;
 import org.mule.jms.commons.api.AttributesOutputResolver;
+import org.mule.jms.commons.api.message.JmsAttributes;
 import org.mule.jms.commons.internal.connection.JmsTransactionalConnection;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.lifecycle.Disposable;
@@ -36,14 +35,14 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 import org.mule.runtime.extension.api.runtime.operation.Result;
-import org.mule.runtime.extension.api.runtime.parameter.CorrelationInfo;
+import org.mule.runtime.extension.api.runtime.process.CompletionCallback;
 import org.mule.runtime.extension.api.tx.OperationTransactionalAction;
-import org.mule.sdk.compatibility.api.utils.ForwardCompatibilityHelper;
 
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.jms.Destination;
+import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 
@@ -66,9 +65,6 @@ public final class JmsConsume implements Initialisable, Disposable {
 
   private org.mule.jms.commons.internal.operation.JmsConsume jmsConsume;
 
-  @Inject
-  private java.util.Optional<ForwardCompatibilityHelper> forwardCompatibilityHelper;
-
   /**
    * Operation that allows the user to consume a single {@link Message} from a given {@link Destination}.
    *
@@ -81,8 +77,8 @@ public final class JmsConsume implements Initialisable, Disposable {
    * @param selector        a custom JMS selector for filtering the messages
    * @param contentType     the {@link Message}'s content content type
    * @param encoding        the {@link Message}'s content encoding
-   * @param maximumWait     maximum time to wait for a message before timing out
-   * @param maximumWaitUnit Time unit to be used in the maximumWaitTime configurations
+   * @param maximumWait maximum time to wait for a message before timing out
+   * @param maximumWaitUnit  Time unit to be used in the maximumWaitTime configurations
    * @return a {@link Result} with the {@link Message} content as {@link Result#getOutput} and its properties
    * and headers as {@link Result#getAttributes}
    * @throws JmsConsumeException if an error occurs
@@ -101,10 +97,8 @@ public final class JmsConsume implements Initialisable, Disposable {
                                             defaultValue = "10000") @Summary("Maximum time to wait for a message to arrive before timeout") Long maximumWait,
                                         @Optional(
                                             defaultValue = "MILLISECONDS") @Example("MILLISECONDS") @Summary("Time unit to be used in the maximumWaitTime configuration") TimeUnit maximumWaitUnit,
-                                        OperationTransactionalAction transactionalAction,
-                                        CorrelationInfo correlationInfo)
+                                        OperationTransactionalAction transactionalAction)
       throws JmsExtensionException, ConnectionException {
-    customizeCurrentSpan(connection, destination, consumerType, correlationInfo);
     return (Result) jmsConsume.consume(config, connection, destination, consumerType, ackMode,
                                        selector, contentType, encoding, maximumWait,
                                        maximumWaitUnit, transactionalAction);
@@ -113,20 +107,11 @@ public final class JmsConsume implements Initialisable, Disposable {
 
   @Override
   public void initialise() {
-    jmsConsume =
-        new org.mule.jms.commons.internal.operation.JmsConsume(sessionManager, schedulerService);
+    jmsConsume = new org.mule.jms.commons.internal.operation.JmsConsume(sessionManager, schedulerService);
   }
 
   @Override
   public void dispose() {
     jmsConsume.dispose();
-  }
-
-  private void customizeCurrentSpan(JmsTransactionalConnection connection, String destination,
-                                    org.mule.jms.commons.api.destination.ConsumerType consumerType,
-                                    org.mule.runtime.extension.api.runtime.parameter.CorrelationInfo correlationInfo) {
-    forwardCompatibilityHelper
-        .ifPresent(fch -> getJmsConsumeSpanCustomizer().customizeSpan(fch.getDistributedTraceContextManager(correlationInfo),
-                                                                      connection, destination, consumerType));
   }
 }

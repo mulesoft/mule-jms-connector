@@ -7,8 +7,6 @@
 package org.mule.extensions.jms.internal.operation;
 
 import static org.mule.extensions.jms.internal.common.JmsCommons.QUEUE;
-import static org.mule.extensions.jms.internal.operation.profiling.tracing.JmsPublishSpanCustomizer.getJmsPublishSpanCustomizer;
-
 import static org.slf4j.LoggerFactory.getLogger;
 
 import org.mule.extensions.jms.api.config.JmsProducerConfig;
@@ -35,7 +33,6 @@ import org.mule.runtime.extension.api.runtime.parameter.CorrelationInfo;
 import org.mule.runtime.extension.api.runtime.parameter.OutboundCorrelationStrategy;
 import org.mule.runtime.extension.api.runtime.process.CompletionCallback;
 import org.mule.runtime.extension.api.tx.OperationTransactionalAction;
-import org.mule.sdk.compatibility.api.utils.ForwardCompatibilityHelper;
 
 import javax.inject.Inject;
 import javax.jms.Destination;
@@ -57,9 +54,6 @@ public final class JmsPublish implements Initialisable, Disposable {
 
   @Inject
   private SchedulerService schedulerService;
-
-  @Inject
-  private java.util.Optional<ForwardCompatibilityHelper> forwardCompatibilityHelper;
 
   private org.mule.jms.commons.internal.operation.JmsPublish jmsPublish;
 
@@ -91,16 +85,8 @@ public final class JmsPublish implements Initialisable, Disposable {
                       CompletionCallback<Void, Void> completionCallback)
 
       throws JmsExtensionException {
-    customizeCurrentSpan(connection, destination, destinationType, correlationInfo);
     jmsPublish.publish(config, connection, destination, destinationType, messageBuilder, overrides, transactionalAction,
                        sendCorrelationId, correlationInfo, completionCallback);
-  }
-
-  private void customizeCurrentSpan(JmsTransactionalConnection connection, String destination, DestinationType destinationType,
-                                    CorrelationInfo correlationInfo) {
-    forwardCompatibilityHelper
-        .ifPresent(fch -> getJmsPublishSpanCustomizer().customizeSpan(fch.getDistributedTraceContextManager(correlationInfo),
-                                                                      connection, destination, destinationType));
   }
 
 
