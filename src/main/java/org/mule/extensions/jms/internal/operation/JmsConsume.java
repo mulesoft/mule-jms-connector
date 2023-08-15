@@ -9,6 +9,7 @@ package org.mule.extensions.jms.internal.operation;
 import static org.mule.extensions.jms.internal.common.JmsCommons.EXAMPLE_CONTENT_TYPE;
 import static org.mule.extensions.jms.internal.common.JmsCommons.EXAMPLE_ENCODING;
 import static org.mule.extensions.jms.internal.operation.profiling.tracing.JmsConsumeSpanCustomizer.getJmsConsumeSpanCustomizer;
+import static org.mule.jms.commons.internal.common.JmsCommons.getDestinationType;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -81,8 +82,8 @@ public final class JmsConsume implements Initialisable, Disposable {
    * @param selector        a custom JMS selector for filtering the messages
    * @param contentType     the {@link Message}'s content content type
    * @param encoding        the {@link Message}'s content encoding
-   * @param maximumWait     maximum time to wait for a message before timing out
-   * @param maximumWaitUnit Time unit to be used in the maximumWaitTime configurations
+   * @param maximumWait maximum time to wait for a message before timing out
+   * @param maximumWaitUnit  Time unit to be used in the maximumWaitTime configurations
    * @return a {@link Result} with the {@link Message} content as {@link Result#getOutput} and its properties
    * and headers as {@link Result#getAttributes}
    * @throws JmsConsumeException if an error occurs

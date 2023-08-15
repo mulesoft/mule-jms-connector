@@ -44,6 +44,8 @@ public class JmsSpanCustomizerTestCase {
   public static final String MESSAGING_SYSTEM = "messaging.system";
   public static final String MESSAGING_DESTINATION = "messaging.destination";
   public static final String MESSAGING_DESTINATION_KIND = "messaging.destination_kind";
+  public static final String MESSAGING_CONVERSATION_ID = "messaging.conversation_id";
+  public static final String MESSAGING_MESSAGE_PAYLOAD_SIZE_BYTES = "messaging.message_payload_size_bytes";
 
   @Test
   @Description("The consume span customizer informs the distributed trace context manager the correct attributes/name")
@@ -96,11 +98,13 @@ public class JmsSpanCustomizerTestCase {
 
     JmsPublishSpanCustomizer jmsPublishSpanCustomizer = getJmsPublishSpanCustomizer();
     jmsPublishSpanCustomizer.customizeSpan(distributedTraceContextManager, jmsTransactionalConnection, destination,
-                                           destinationType);
+                                           destinationType, jmsMessageBuilder);
 
     verify(distributedTraceContextManager).setCurrentSpanName(expectedSpanName);
     verify(distributedTraceContextManager).addCurrentSpanAttribute(MESSAGING_SYSTEM, messagingSystem);
     verify(distributedTraceContextManager).addCurrentSpanAttribute(MESSAGING_DESTINATION, destination);
     verify(distributedTraceContextManager).addCurrentSpanAttribute(MESSAGING_DESTINATION_KIND, "topic");
+    verify(distributedTraceContextManager).addCurrentSpanAttribute(MESSAGING_CONVERSATION_ID, correlationId);
+    verify(distributedTraceContextManager).addCurrentSpanAttribute(MESSAGING_MESSAGE_PAYLOAD_SIZE_BYTES, "39");
   }
 }
