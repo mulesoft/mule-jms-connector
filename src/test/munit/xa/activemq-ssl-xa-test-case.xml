@@ -15,7 +15,6 @@
       http://www.mulesoft.org/schema/mule/ee/bti http://www.mulesoft.org/schema/mule/ee/bti/current/mule-bti-ee.xsd">
 
 <munit:config name="activemq-ssl-xa-test-case.xml" minMuleVersion="4.3.0"/>
-<global-property name="munit.disable.lazy.connections" value="false"/>
 
     <bti:transaction-manager/>
 
