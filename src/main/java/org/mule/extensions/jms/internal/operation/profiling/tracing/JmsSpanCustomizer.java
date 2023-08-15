@@ -7,7 +7,6 @@
 package org.mule.extensions.jms.internal.operation.profiling.tracing;
 
 import static org.mule.extensions.jms.internal.operation.profiling.tracing.SpanCustomizerUtils.safeExecute;
-import static org.mule.jms.commons.internal.common.JmsCommons.getDestinationType;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -25,7 +24,6 @@ public abstract class JmsSpanCustomizer {
   private static final Logger LOGGER = getLogger(JmsSpanCustomizer.class);
   public static final String MESSAGING_SYSTEM = "messaging.system";
   public static final String MESSAGING_DESTINATION = "messaging.destination";
-  public static final String SPAN_KIND = "span.kind.override";
 
   protected void customizeSpan(DistributedTraceContextManager distributedTraceContextManager,
                                JmsTransactionalConnection connection, String destination) {
@@ -36,13 +34,9 @@ public abstract class JmsSpanCustomizer {
                 "Messaging system data could not be added to span", LOGGER);
     safeExecute(() -> distributedTraceContextManager.addCurrentSpanAttribute(MESSAGING_DESTINATION, destination),
                 "Messaging destination data could not be added to span", LOGGER);
-    safeExecute(() -> distributedTraceContextManager.addCurrentSpanAttribute(SPAN_KIND, getSpanKind()),
-                "Span kind could not be added to span", LOGGER);
   }
 
   protected abstract String getSpanOperation();
-
-  protected abstract String getSpanKind();
 
   private String getMessagingSystem(JmsTransactionalConnection connection) {
     try {
