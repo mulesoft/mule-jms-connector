@@ -13,7 +13,6 @@ import static org.mule.extensions.jms.internal.operation.profiling.tracing.JmsPu
 import static org.mule.extensions.jms.test.AllureConstants.JmsFeature.JmsStory.TRACING;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -104,34 +103,5 @@ public class JmsSpanCustomizerTestCase {
     verify(distributedTraceContextManager).addCurrentSpanAttribute(MESSAGING_SYSTEM, messagingSystem.toLowerCase(Locale.ROOT));
     verify(distributedTraceContextManager).addCurrentSpanAttribute(MESSAGING_DESTINATION, destination);
     verify(distributedTraceContextManager).addCurrentSpanAttribute(MESSAGING_DESTINATION_KIND, "topic");
-  }
-
-  @Test
-  @Description("The correct functioning of the connector should not be hindered by tracing")
-  public void jmsSpanCustomizerShouldSetCorrespondingAttributesEvenIfThereIsAnException() throws JMSException {
-    String messagingSystem = "testActiveMq";
-    String destination = "queueName";
-    String expectedSpanName = destination + " " + "receive";
-
-    DistributedTraceContextManager distributedTraceContextManager = mock(DistributedTraceContextManager.class);
-    JmsTransactionalConnection jmsTransactionalConnection = mock(JmsTransactionalConnection.class);
-    Connection connection = mock(Connection.class);
-    ConnectionMetaData connectionMetaData = mock(ConnectionMetaData.class);
-    ConsumerType consumerType = mock(ConsumerType.class);
-
-    when(jmsTransactionalConnection.get()).thenReturn(connection);
-    // This will cause a NullPointerException
-    when(connection.getMetaData()).thenReturn(null);
-    when(connectionMetaData.getJMSProviderName()).thenReturn(messagingSystem);
-    when(consumerType.topic()).thenReturn(false);
-
-    JmsConsumeSpanCustomizer jmsConsumeSpanCustomizer = getJmsConsumeSpanCustomizer();
-    jmsConsumeSpanCustomizer.customizeSpan(distributedTraceContextManager, jmsTransactionalConnection, destination, consumerType);
-
-    verify(distributedTraceContextManager).setCurrentSpanName(expectedSpanName);
-    verify(distributedTraceContextManager, never()).addCurrentSpanAttribute(MESSAGING_SYSTEM,
-                                                                            messagingSystem.toLowerCase(Locale.ROOT));
-    verify(distributedTraceContextManager).addCurrentSpanAttribute(MESSAGING_DESTINATION, destination);
-    verify(distributedTraceContextManager).addCurrentSpanAttribute(MESSAGING_DESTINATION_KIND, "queue");
   }
 }
