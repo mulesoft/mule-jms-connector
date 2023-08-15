@@ -40,7 +40,9 @@ public abstract class JmsSpanCustomizer {
 
   private String getMessagingSystem(JmsTransactionalConnection connection) {
     try {
-      return connection.get().getMetaData().getJMSProviderName().toLowerCase(Locale.ROOT);
+      if (connection != null && connection.get() != null) {
+        return connection.get().getMetaData().getJMSProviderName().toLowerCase(Locale.ROOT);
+      }
     } catch (JMSException e) {
       LOGGER.info("Span connection metadata could not be fetched");
     }
