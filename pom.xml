@@ -43,7 +43,7 @@
         <munit.version>2.3.15</munit.version>
         <mtf-tools.version>1.1.2</mtf-tools.version>
         <mavenResources.version>3.3.0</mavenResources.version>
-        <docker.maven.plugin.version>0.41.0</docker.maven.plugin.version>
+        <docker.maven.plugin.version>0.40.2</docker.maven.plugin.version>
         <maven.helper.plugin.version>3.3.0</maven.helper.plugin.version>
         <docker.skip>${skipTests}</docker.skip>
         <muleSdkApiVersion>0.6.0</muleSdkApiVersion>
