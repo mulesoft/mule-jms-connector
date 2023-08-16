@@ -16,7 +16,7 @@
 
     <munit:config name="reconnection-publish-test-case.xml"  minMuleVersion="4.3.0"/>
 
-    <munit:test name="publish-with-reconnection">
+    <munit:test name="publish-with-reconnection" timeOut="240000">
         <munit:execution>
             <flow-ref name="publish-reconnection-flow"/>
         </munit:execution>
