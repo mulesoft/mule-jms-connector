@@ -44,16 +44,12 @@
         <munit.version>3.2.1</munit.version>
         <mtf-tools.version>1.2.0</mtf-tools.version>
         <mavenResources.version>3.3.0</mavenResources.version>
-
         <docker.maven.plugin.version>0.41.0</docker.maven.plugin.version>
         <maven.helper.plugin.version>3.3.0</maven.helper.plugin.version>
         <docker.skip>${skipTests}</docker.skip>
-
         <maven.dependency.plugin.version>2.8</maven.dependency.plugin.version>
-
         <muleSdkCompatibilityApiVersion>0.7.0</muleSdkCompatibilityApiVersion>
         <muleSdkApiVersion>0.7.0</muleSdkApiVersion>
-
         <mulesoftLicenseVersion>1.4.0</mulesoftLicenseVersion>
         <license.maven.plugin.version>4.2</license.maven.plugin.version>
         <licensePath>LICENSE_HEADER_CPAL.txt</licensePath>
@@ -230,6 +226,38 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>${license.maven.plugin.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.mulesoft.license</groupId>
+                        <artifactId>license</artifactId>
+                        <version>${mulesoftLicenseVersion}</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <header>${licensePath}</header>
+                    <properties>
+                        <year>${licenseYear}</year>
+                    </properties>
+                    <includes>
+                        <include>**/*.java</include>
+                    </includes>
+                    <mapping>
+                        <java>SLASHSTAR_STYLE</java>
+                    </mapping>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
