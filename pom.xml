@@ -13,7 +13,7 @@
     <groupId>org.mule.connectors</groupId>
     <artifactId>mule-jms-connector</artifactId>
     <packaging>mule-extension</packaging>
-    <version>1.9.0-SNAPSHOT</version>
+    <version>2.0.0-SNAPSHOT</version>
 
     <name>JMS Connector</name>
     <description>Mule connector lets you easily send and receive messages to queues and topics for any message service which implements the JMS specification</description>
@@ -49,6 +49,11 @@
         
         <muleSdkCompatibilityApiVersion>1.0.0-SNAPSHOT</muleSdkCompatibilityApiVersion>
         <muleSdkApiVersion>1.0.0-SNAPSHOT</muleSdkApiVersion>
+
+        <mulesoftLicenseVersion>1.4.0</mulesoftLicenseVersion>
+        <license.maven.plugin.version>4.2</license.maven.plugin.version>
+        <licensePath>LICENSE_HEADER_CPAL.txt</licensePath>
+        <licenseYear>2023</licenseYear>
     </properties>
 
     <dependencies>
@@ -220,6 +225,38 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>${license.maven.plugin.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.mulesoft.license</groupId>
+                        <artifactId>license</artifactId>
+                        <version>${mulesoftLicenseVersion}</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <header>${licensePath}</header>
+                    <properties>
+                        <year>${licenseYear}</year>
+                    </properties>
+                    <includes>
+                        <include>**/*.java</include>
+                    </includes>
+                    <mapping>
+                        <java>SLASHSTAR_STYLE</java>
+                    </mapping>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
