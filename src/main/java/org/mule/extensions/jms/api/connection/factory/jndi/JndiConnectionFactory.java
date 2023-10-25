@@ -182,12 +182,40 @@ public class JndiConnectionFactory extends DelegatingConnectionFactory implement
     return connectionFactoryJndiName;
   }
 
+  public void setConnectionFactoryJndiName(String connectionFactoryJndiName) {
+    this.connectionFactoryJndiName = connectionFactoryJndiName;
+  }
+
   public LookupJndiDestination getLookupDestination() {
     return lookupDestination;
   }
 
+  public void setLookupDestination(LookupJndiDestination lookupDestination) {
+    this.lookupDestination = lookupDestination;
+  }
+
   public JndiNameResolverProvider getNameResolverProvider() {
     return nameResolverProvider;
+  }
+
+  public void setNameResolverProvider(JndiNameResolverProvider nameResolverProvider) {
+    this.nameResolverProvider = nameResolverProvider;
+  }
+
+  public JndiNameResolver getNameResolver() {
+    return nameResolver;
+  }
+
+  public void setNameResolver(JndiNameResolver nameResolver) {
+    this.nameResolver = nameResolver;
+  }
+
+  public ConnectionFactory getConnectionFactory() {
+    return connectionFactory;
+  }
+
+  public void setConnectionFactory(ConnectionFactory connectionFactory) {
+    this.connectionFactory = connectionFactory;
   }
 
   @Override
