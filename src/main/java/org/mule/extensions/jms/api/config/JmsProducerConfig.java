@@ -167,7 +167,7 @@ public final class JmsProducerConfig implements org.mule.jms.commons.api.config.
     return disableMessageId;
   }
 
-  public void setDisableMessageId(boolean disableMessageId ) {
+  public void setDisableMessageId(boolean disableMessageId) {
     this.disableMessageId = disableMessageId;
   }
 
@@ -179,7 +179,7 @@ public final class JmsProducerConfig implements org.mule.jms.commons.api.config.
     return disableMessageTimestamp;
   }
 
-  public void setDisableMessageTimestamp(boolean disableMessageTimestamp ) {
+  public void setDisableMessageTimestamp(boolean disableMessageTimestamp) {
     this.disableMessageTimestamp = disableMessageTimestamp;
   }
 
@@ -204,7 +204,7 @@ public final class JmsProducerConfig implements org.mule.jms.commons.api.config.
   }
 
   public void setJmsType(String jmsType) {
-    this.jmsType= jmsType;
+    this.jmsType = jmsType;
   }
 
   @Override

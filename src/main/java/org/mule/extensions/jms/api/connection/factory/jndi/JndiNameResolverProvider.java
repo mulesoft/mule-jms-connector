@@ -53,7 +53,7 @@ public final class JndiNameResolverProvider {
   }
 
   public void setCustomJndiNameResolver(JndiNameResolver customJndiNameResolver) {
-    this.customJndiNameResolver= customJndiNameResolver;
+    this.customJndiNameResolver = customJndiNameResolver;
   }
 
   public JndiNameResolverProperties getNameResolverBuilder() {
@@ -61,7 +61,7 @@ public final class JndiNameResolverProvider {
   }
 
   public void setNameResolverBuilder(JndiNameResolverProperties nameResolverBuilder) {
-    this.nameResolverBuilder= nameResolverBuilder;
+    this.nameResolverBuilder = nameResolverBuilder;
   }
 
   JndiNameResolver createDefaultJndiResolver() throws InitialisationException {

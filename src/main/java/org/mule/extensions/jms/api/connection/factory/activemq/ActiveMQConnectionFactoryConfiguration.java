@@ -131,7 +131,7 @@ public class ActiveMQConnectionFactoryConfiguration {
   }
 
   public void setBrokerUrl(String brokerUrl) {
-    this.brokerUrl= brokerUrl;
+    this.brokerUrl = brokerUrl;
   }
 
   public long getInitialRedeliveryDelay() {
@@ -139,7 +139,7 @@ public class ActiveMQConnectionFactoryConfiguration {
   }
 
   public void setInitialRedeliveryDelay(long initialRedeliveryDelay) {
-    this.initialRedeliveryDelay= initialRedeliveryDelay;
+    this.initialRedeliveryDelay = initialRedeliveryDelay;
   }
 
   public long getRedeliveryDelay() {
@@ -147,7 +147,7 @@ public class ActiveMQConnectionFactoryConfiguration {
   }
 
   public void setRedeliveryDelay(long redeliveryDelay) {
-    this.redeliveryDelay= redeliveryDelay;
+    this.redeliveryDelay = redeliveryDelay;
   }
 
   public List<String> getTrustedPackages() {
@@ -167,7 +167,7 @@ public class ActiveMQConnectionFactoryConfiguration {
   }
 
   public void setTrustAllPackages(boolean trustAllPackages) {
-    this.trustAllPackages= trustAllPackages;
+    this.trustAllPackages = trustAllPackages;
   }
 
   @Override

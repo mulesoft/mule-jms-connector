@@ -47,7 +47,7 @@ public class JmsAttributes implements org.mule.jms.commons.api.message.JmsAttrib
     this.ackId = ackId;
   }
 
-  public JmsAttributes(){
+  public JmsAttributes() {
     this.properties = null;
     this.headers = null;
     this.ackId = null;

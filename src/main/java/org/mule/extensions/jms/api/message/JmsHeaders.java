@@ -134,7 +134,7 @@ public class JmsHeaders extends org.mule.jms.commons.api.message.JmsHeaders {
   @Optional
   private Long deliveryTime;
 
-  public JmsHeaders(){}
+  public JmsHeaders() {}
 
   public String getJMSMessageID() {
     return messageId;

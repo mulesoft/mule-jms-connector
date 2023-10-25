@@ -52,15 +52,15 @@ public class JndiNameResolverProperties {
   }
 
   public void setJndiInitialContextFactory(String jndiInitialContextFactory) {
-    this.jndiInitialContextFactory= jndiInitialContextFactory;
+    this.jndiInitialContextFactory = jndiInitialContextFactory;
   }
 
   public Map<String, Object> getProviderProperties() {
     return providerProperties;
   }
 
-  public void setProviderProperties(Map<String, Object>  providerProperties) {
-    this.providerProperties= providerProperties;
+  public void setProviderProperties(Map<String, Object> providerProperties) {
+    this.providerProperties = providerProperties;
   }
 
   public String getJndiProviderUrl() {
@@ -68,7 +68,7 @@ public class JndiNameResolverProperties {
   }
 
   public void setJndiProviderUrl(String jndiProviderUrl) {
-    this.jndiProviderUrl= jndiProviderUrl;
+    this.jndiProviderUrl = jndiProviderUrl;
   }
 
   @Override
