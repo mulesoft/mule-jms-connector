@@ -10,6 +10,7 @@ import static java.lang.String.format;
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import static org.mule.runtime.core.api.util.ClassUtils.instantiateClass;
 
+import org.apache.activemq.ActiveMQXAConnectionFactory;
 import org.mule.extensions.jms.api.connection.factory.activemq.ActiveMQConnectionFactoryConfiguration;
 import org.mule.extensions.jms.api.exception.JmsMissingLibraryException;
 import org.mule.extensions.jms.internal.connection.exception.ActiveMQException;
@@ -25,6 +26,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 import javax.jms.ConnectionFactory;
+import javax.jms.Session;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.slf4j.Logger;
@@ -86,6 +88,8 @@ public class ActiveMQConnectionFactoryProvider {
 
       this.connectionFactory = (ConnectionFactory) instantiateClass(factoryClass, factoryConfiguration.getBrokerUrl());
       applyVendorSpecificConnectionFactoryProperties(connectionFactory);
+      if (this.connectionFactory instanceof ActiveMQXAConnectionFactory)
+        ((ActiveMQXAConnectionFactory) connectionFactory).setXaAckMode(Session.AUTO_ACKNOWLEDGE);
       return connectionFactory;
     } catch (ClassNotFoundException e) {
       String message =
