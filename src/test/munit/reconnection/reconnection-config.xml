@@ -11,7 +11,7 @@
 
     <jms:active-mq-connection>
         <reconnection >
-            <reconnect-forever frequency="5000"/>
+            <reconnect-forever />
         </reconnection>
         <jms:caching-strategy >
             <jms:no-caching />
