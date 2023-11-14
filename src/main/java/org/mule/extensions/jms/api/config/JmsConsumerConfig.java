@@ -87,6 +87,23 @@ public final class JmsConsumerConfig implements org.mule.jms.commons.api.config.
     return ackMode;
   }
 
+
+  public void setMaxRedelivery(int maxRedelivery) {
+    this.maxRedelivery = maxRedelivery;
+  }
+
+  public void setSelector(String selector) {
+    this.selector = selector;
+  }
+
+  public void setConsumerType(ConsumerType consumerType) {
+    this.consumerType = consumerType;
+  }
+
+  public void setAckMode(AckMode ackMode) {
+    this.ackMode = ackMode;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o)

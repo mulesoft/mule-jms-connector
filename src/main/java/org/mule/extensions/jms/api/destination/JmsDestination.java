@@ -52,7 +52,15 @@ public class JmsDestination implements org.mule.jms.commons.api.destination.JmsD
     return destination;
   }
 
+  public void setDestination(String destination) {
+    this.destination = destination;
+  }
+
   public DestinationType getDestinationType() {
     return destinationType;
+  }
+
+  public void setDestinationType(DestinationType destinationType) {
+    this.destinationType = destinationType;
   }
 }

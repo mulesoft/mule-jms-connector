@@ -134,48 +134,94 @@ public class JmsHeaders extends org.mule.jms.commons.api.message.JmsHeaders {
   @Optional
   private Long deliveryTime;
 
+  public JmsHeaders() {}
+
   public String getJMSMessageID() {
     return messageId;
+  }
+
+  public void setJMSMessageID(String messageId) {
+    this.messageId = messageId;
   }
 
   public long getJMSTimestamp() {
     return timestamp;
   }
 
+  public void setJMSTimestamp(long timestamp) {
+    this.timestamp = timestamp;
+  }
+
   public String getJMSCorrelationID() {
     return correlationId;
+  }
+
+  public void setJMSCorrelationID(String correlationId) {
+    this.correlationId = correlationId;
   }
 
   public JmsDestination getJMSReplyTo() {
     return replyTo;
   }
 
+  public void setJMSReplyTo(JmsDestination replyTo) {
+    this.replyTo = replyTo;
+  }
+
   public JmsDestination getJMSDestination() {
     return destination;
+  }
+
+  public void setJMSDestination(JmsDestination destination) {
+    this.destination = destination;
   }
 
   public int getJMSDeliveryMode() {
     return deliveryMode;
   }
 
+  public void setJMSDeliveryMode(int deliveryMode) {
+    this.deliveryMode = deliveryMode;
+  }
+
   public boolean getJMSRedelivered() {
     return redelivered;
+  }
+
+  public void setJMSRedelivered(boolean redelivered) {
+    this.redelivered = redelivered;
   }
 
   public String getJMSType() {
     return type;
   }
 
+  public void setJMSType(String type) {
+    this.type = type;
+  }
+
   public long getJMSExpiration() {
     return expiration;
+  }
+
+  public void setJMSExpiration(long expiration) {
+    this.expiration = expiration;
   }
 
   public Long getJMSDeliveryTime() {
     return deliveryTime;
   }
 
+  public void setJMSDeliveryTime(Long deliveryTime) {
+    this.deliveryTime = deliveryTime;
+  }
+
   public int getJMSPriority() {
     return priority;
+  }
+
+  public void setJMSPriority(int priority) {
+    this.priority = priority;
   }
 
   public static class Builder implements JmsHeadersBuilder {

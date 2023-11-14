@@ -100,4 +100,12 @@ public class SimpleJndiNameResolver extends AbstractJndiNameResolver {
 
     return true;
   }
+
+  public Context getJndiContext() {
+    return jndiContext;
+  }
+
+  public void setJndiContext(Context jndiContext) {
+    this.jndiContext = jndiContext;
+  }
 }
