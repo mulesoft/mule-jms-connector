@@ -18,7 +18,7 @@
         </jms:caching-strategy>
         <!--<jms:xa-connection-pool minPoolSize="5" />-->
         <!--<jms:factory-configuration enable-xa="true" brokerUrl="tcp://0.0.0.0:${connection.lost.port}" maxRedelivery="1"/>-->
-        <jms:factory-configuration brokerUrl="tcp://localhost:${connection.lost.port}"/>
+        <jms:factory-configuration brokerUrl="tcp://0.0.0.0:${connection.lost.port}"/>
     </jms:active-mq-connection>
 
 </jms:config>
