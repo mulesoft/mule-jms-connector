@@ -16,6 +16,8 @@
 
     <munit:config name="reconnection-publish-test-case.xml"  minMuleVersion="4.3.0"/>
 
+    <munit:dynamic-port propertyName="connection.lost.port"/>
+
     <munit:test name="publish-with-reconnection">
         <munit:execution>
             <flow-ref name="publish-reconnection-flow"/>
