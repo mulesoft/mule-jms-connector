@@ -127,36 +127,84 @@ public final class JmsProducerConfig implements org.mule.jms.commons.api.config.
     return persistentDelivery;
   }
 
+  public boolean getPersistentDelivery() {
+    return persistentDelivery;
+  }
+
+  public void setPersistentDelivery(boolean persistentDelivery) {
+    this.persistentDelivery = persistentDelivery;
+  }
+
   public int getPriority() {
     return priority;
+  }
+
+  public void setPriority(int priority) {
+    this.priority = priority;
   }
 
   public long getTimeToLive() {
     return timeToLive;
   }
 
+  public void setTimeToLive(long timeToLive) {
+    this.timeToLive = timeToLive;
+  }
+
   public TimeUnit getTimeToLiveUnit() {
     return timeToLiveUnit;
+  }
+
+  public void setTimeToLiveUnit(TimeUnit timeToLiveUnit) {
+    this.timeToLiveUnit = timeToLiveUnit;
   }
 
   public boolean isDisableMessageId() {
     return disableMessageId;
   }
 
+  public boolean getDisableMessageId() {
+    return disableMessageId;
+  }
+
+  public void setDisableMessageId(boolean disableMessageId) {
+    this.disableMessageId = disableMessageId;
+  }
+
   public boolean isDisableMessageTimestamp() {
     return disableMessageTimestamp;
+  }
+
+  public boolean getDisableMessageTimestamp() {
+    return disableMessageTimestamp;
+  }
+
+  public void setDisableMessageTimestamp(boolean disableMessageTimestamp) {
+    this.disableMessageTimestamp = disableMessageTimestamp;
   }
 
   public Long getDeliveryDelay() {
     return deliveryDelay;
   }
 
+  public void setDeliveryDelay(Long deliveryDelay) {
+    this.deliveryDelay = deliveryDelay;
+  }
+
   public TimeUnit getDeliveryDelayUnit() {
     return deliveryDelayUnit;
   }
 
+  public void setDeliveryDelayUnit(TimeUnit deliveryDelayUnit) {
+    this.deliveryDelayUnit = deliveryDelayUnit;
+  }
+
   public String getJmsType() {
     return jmsType;
+  }
+
+  public void setJmsType(String jmsType) {
+    this.jmsType = jmsType;
   }
 
   @Override

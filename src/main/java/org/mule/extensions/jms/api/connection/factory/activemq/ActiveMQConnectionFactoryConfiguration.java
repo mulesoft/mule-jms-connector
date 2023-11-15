@@ -110,28 +110,64 @@ public class ActiveMQConnectionFactoryConfiguration {
     return maxRedelivery;
   }
 
+  public void setMaxRedelivery(int maxRedelivery) {
+    this.maxRedelivery = maxRedelivery;
+  }
+
   public boolean isEnableXA() {
     return enableXA;
+  }
+
+  public boolean getEnableXA() {
+    return enableXA;
+  }
+
+  public void setEnableXA(boolean enableXA) {
+    this.enableXA = enableXA;
   }
 
   public String getBrokerUrl() {
     return brokerUrl;
   }
 
+  public void setBrokerUrl(String brokerUrl) {
+    this.brokerUrl = brokerUrl;
+  }
+
   public long getInitialRedeliveryDelay() {
     return initialRedeliveryDelay;
+  }
+
+  public void setInitialRedeliveryDelay(long initialRedeliveryDelay) {
+    this.initialRedeliveryDelay = initialRedeliveryDelay;
   }
 
   public long getRedeliveryDelay() {
     return redeliveryDelay;
   }
 
+  public void setRedeliveryDelay(long redeliveryDelay) {
+    this.redeliveryDelay = redeliveryDelay;
+  }
+
   public List<String> getTrustedPackages() {
     return trustedPackages;
   }
 
+  public void setTrustedPackages(List<String> trustedPackages) {
+    this.trustedPackages = trustedPackages;
+  }
+
   public boolean isTrustAllPackages() {
     return trustAllPackages;
+  }
+
+  public boolean getTrustAllPackages() {
+    return trustAllPackages;
+  }
+
+  public void setTrustAllPackages(boolean trustAllPackages) {
+    this.trustAllPackages = trustAllPackages;
   }
 
   @Override
