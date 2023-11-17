@@ -133,6 +133,7 @@ public class ActiveMQConnectionFactoryConfiguration {
   @Expression(NOT_SUPPORTED)
   @ExcludeFromConnectivitySchema
   @DisplayName("Verify hostname")
+
   private boolean verifyHostName;
 
 
@@ -207,7 +208,6 @@ public class ActiveMQConnectionFactoryConfiguration {
   public void setVerifyHostName(boolean verifyHostName) {
     this.verifyHostName = verifyHostName;
   }
-
   public XaAckMode getXaAckMode() {
     return xaAckMode;
   }
