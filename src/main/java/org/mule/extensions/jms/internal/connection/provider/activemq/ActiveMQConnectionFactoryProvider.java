@@ -10,6 +10,7 @@ import static java.lang.String.format;
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import static org.mule.runtime.core.api.util.ClassUtils.instantiateClass;
 
+import org.apache.activemq.util.URISupport;
 import org.mule.extensions.jms.api.connection.factory.activemq.ActiveMQConnectionFactoryConfiguration;
 import org.mule.extensions.jms.api.exception.JmsMissingLibraryException;
 import org.mule.extensions.jms.internal.connection.exception.ActiveMQException;
@@ -22,7 +23,11 @@ import org.mule.runtime.extension.api.annotation.param.display.Placement;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.jms.ConnectionFactory;
 
@@ -83,9 +88,11 @@ public class ActiveMQConnectionFactoryProvider {
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug(format("Creating new [%s]", factoryClass));
       }
-
-      this.connectionFactory = (ConnectionFactory) instantiateClass(factoryClass, factoryConfiguration.getBrokerUrl());
+      this.connectionFactory =
+          (ConnectionFactory) instantiateClass(factoryClass, setPropertiesInURL(factoryConfiguration.getBrokerUrl(), factoryClass,
+                                                                                factoryConfiguration));
       applyVendorSpecificConnectionFactoryProperties(connectionFactory);
+
       return connectionFactory;
     } catch (ClassNotFoundException e) {
       String message =
@@ -112,9 +119,35 @@ public class ActiveMQConnectionFactoryProvider {
       setRedeliveryDelay(redeliveryPolicy);
       setTrustedPackages(connectionFactory);
       setTrustAllPackages(connectionFactory);
-
     } catch (Exception e) {
       LOGGER.error("Failed to set custom ConnectionFactoryProperties for ActiveMQ RedeliveryPolicy: " + e.getMessage(), e);
+    }
+  }
+
+  private String setPropertiesInURL(String brokerURL, String factoryClass,
+                                    ActiveMQConnectionFactoryConfiguration factoryConfiguration)
+      throws URISyntaxException {
+    if (factoryClass == ACTIVEMQ_XA_SSL_CONNECTION_FACTORY_CLASS
+        || factoryClass == ACTIVEMQ_SSL_CONNECTION_FACTORY_CLASS) {
+      URI brokerURI = createURI(brokerURL);
+      Map<String, String> map;
+      if (brokerURI.getQuery() != null) {
+        map = URISupport.parseQuery(brokerURI.getQuery());
+      } else {
+        map = new HashMap<>();
+      }
+      map.put("socket.verifyHostName", String.valueOf(factoryConfiguration.getVerifyHostName()));
+      brokerURI = URISupport.createRemainingURI(brokerURI, map);
+      return brokerURI.toString();
+    }
+    return brokerURL;
+  }
+
+  private static URI createURI(String url) {
+    try {
+      return new URI(url);
+    } catch (URISyntaxException var2) {
+      throw (IllegalArgumentException) (new IllegalArgumentException("Invalid broker URI: " + url)).initCause(var2);
     }
   }
 

@@ -17,11 +17,13 @@
         <munit:parameterizations>
             <munit:parameterization name="invalid-broker-url">
                 <munit:parameters>
+                    <!-- a valid ip which is not the host defined in the CN for the TSL connection certificate -->
                     <munit:parameter propertyName="brokerUrl" value="ssl://0.0.0.0:${activemq.port}"/>
                 </munit:parameters>
             </munit:parameterization>
             <munit:parameterization name="valid-broker-url">
                 <munit:parameters>
+                    <!-- a host which is not the one defined in the CN for the TSL connection certificate -->
                     <munit:parameter propertyName="brokerUrl" value="ssl://localhost:${activemq.port}"/>
                 </munit:parameters>
             </munit:parameterization>
