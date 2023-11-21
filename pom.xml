@@ -26,6 +26,7 @@
         <commonsLangVersion>3.12.0</commonsLangVersion>
         <guavaVersion>32.1.2-jre</guavaVersion>
         <jacksonVersion>2.14.2</jacksonVersion>
+        <javax.jaxb-api.version>2.3.1</javax.jaxb-api.version>
         <dockerClientVersion>8.16.0</dockerClientVersion>
 
         <hawtbufVersion>1.11</hawtbufVersion>
@@ -55,6 +56,8 @@
         <license.maven.plugin.version>4.2</license.maven.plugin.version>
         <licensePath>LICENSE_HEADER_CPAL.txt</licensePath>
         <licenseYear>2023</licenseYear>
+
+        <jacoco.version>0.8.8</jacoco.version>
     </properties>
 
     <dependencies>
@@ -184,6 +187,12 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jacksonVersion}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>${javax.jaxb-api.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
