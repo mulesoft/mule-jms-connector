@@ -52,8 +52,10 @@ public class ActiveMQConnectionFactoryProvider {
   private static final String ACTIVEMQ_SSL_CONNECTION_FACTORY_CLASS = "org.apache.activemq.ActiveMQSslConnectionFactory";
   private static final String ACTIVEMQ_XA_CONNECTION_FACTORY_CLASS = "org.apache.activemq.ActiveMQXAConnectionFactory";
   private static final String ACTIVEMQ_XA_SSL_CONNECTION_FACTORY_CLASS = "org.apache.activemq.ActiveMQXASslConnectionFactory";
+
   private static final int REDELIVERY_IGNORE = -1;
 
+  private static final String VERIFY_HOSTNAME="socket.verifyHostName";
   /**
    * Parameters required to configure a default {@link ActiveMQConnectionFactory}
    */
@@ -127,27 +129,26 @@ public class ActiveMQConnectionFactoryProvider {
   private String setPropertiesInURL(String brokerURL, String factoryClass,
                                     ActiveMQConnectionFactoryConfiguration factoryConfiguration)
       throws URISyntaxException {
-    if (factoryClass == ACTIVEMQ_XA_SSL_CONNECTION_FACTORY_CLASS
-        || factoryClass == ACTIVEMQ_SSL_CONNECTION_FACTORY_CLASS) {
+    if (isSslFactoryClass(factoryClass)) {
       URI brokerURI = createURI(brokerURL);
-      Map<String, String> map;
-      if (brokerURI.getQuery() != null) {
-        map = URISupport.parseQuery(brokerURI.getQuery());
-      } else {
-        map = new HashMap<>();
-      }
-      map.put("socket.verifyHostName", String.valueOf(factoryConfiguration.getVerifyHostName()));
+      Map<String, String> map = (brokerURI.getQuery() != null) ? URISupport.parseQuery(brokerURI.getQuery()) : new HashMap<>();
+      map.put(VERIFY_HOSTNAME, String.valueOf(factoryConfiguration.getVerifyHostName()));
       brokerURI = URISupport.createRemainingURI(brokerURI, map);
       return brokerURI.toString();
     }
     return brokerURL;
   }
 
+  private boolean isSslFactoryClass(String factoryClass) {
+    return factoryClass == ACTIVEMQ_XA_SSL_CONNECTION_FACTORY_CLASS
+            || factoryClass == ACTIVEMQ_SSL_CONNECTION_FACTORY_CLASS;
+  }
+
   private static URI createURI(String url) {
     try {
       return new URI(url);
-    } catch (URISyntaxException var2) {
-      throw (IllegalArgumentException) (new IllegalArgumentException("Invalid broker URI: " + url)).initCause(var2);
+    } catch (URISyntaxException e) {
+      throw new RuntimeException("Invalid broker URI: " + url, e);
     }
   }
 
