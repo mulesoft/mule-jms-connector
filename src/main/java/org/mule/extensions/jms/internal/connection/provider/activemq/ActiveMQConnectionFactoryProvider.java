@@ -55,7 +55,7 @@ public class ActiveMQConnectionFactoryProvider {
 
   private static final int REDELIVERY_IGNORE = -1;
 
-  private static final String VERIFY_HOSTNAME="socket.verifyHostName";
+  private static final String VERIFY_HOSTNAME = "socket.verifyHostName";
   /**
    * Parameters required to configure a default {@link ActiveMQConnectionFactory}
    */
@@ -141,7 +141,7 @@ public class ActiveMQConnectionFactoryProvider {
 
   private boolean isSslFactoryClass(String factoryClass) {
     return factoryClass == ACTIVEMQ_XA_SSL_CONNECTION_FACTORY_CLASS
-            || factoryClass == ACTIVEMQ_SSL_CONNECTION_FACTORY_CLASS;
+        || factoryClass == ACTIVEMQ_SSL_CONNECTION_FACTORY_CLASS;
   }
 
   private static URI createURI(String url) {
