@@ -55,8 +55,8 @@ public class ActiveMQConnectionFactoryProvider {
   private static final String ACTIVEMQ_XA_SSL_CONNECTION_FACTORY_CLASS = "org.apache.activemq.ActiveMQXASslConnectionFactory";
 
   private static final int REDELIVERY_IGNORE = -1;
-
   private static final String VERIFY_HOSTNAME = "socket.verifyHostName";
+
   /**
    * Parameters required to configure a default {@link ActiveMQConnectionFactory}
    */
