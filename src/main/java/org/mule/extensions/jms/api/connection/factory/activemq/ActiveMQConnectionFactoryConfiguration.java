@@ -202,7 +202,9 @@ public class ActiveMQConnectionFactoryConfiguration {
   }
 
   public boolean getVerifyHostName() {
-    return verifyHostName;
+    //TODO: change the default value to a parameter. This default is required to support a security fix and avoid
+    // breaking backwards compatibility (GUS ticket: W-14487260)
+    return false;
   }
 
   public void setVerifyHostName(boolean verifyHostName) {
