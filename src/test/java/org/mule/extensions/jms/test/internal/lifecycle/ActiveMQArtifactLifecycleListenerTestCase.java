@@ -10,12 +10,12 @@ import static org.mule.extensions.jms.test.AllureConstants.ActiveMQFeature.ACTIV
 import static org.mule.extensions.jms.test.AllureConstants.ActiveMQFeature.ActiveMQStories.ACTIVE_MQ_RESOURCE_RELEASING;
 import static org.mule.extensions.jms.test.util.CollectableReference.collectedByGc;
 import static org.mule.extensions.jms.test.util.DependencyResolver.getDependencyFromMaven;
-import static org.mule.extensions.jms.test.util.Eventually.eventually;
 
 import static java.lang.Thread.currentThread;
 import static java.lang.Thread.getAllStackTraces;
 import static java.util.stream.Collectors.toList;
 
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
@@ -148,8 +148,8 @@ public class ActiveMQArtifactLifecycleListenerTestCase {
     CollectableReference<ClassLoader> extensionClassLoader =
         new CollectableReference<>(classLoadersHierarchy.getAppExtensionClassLoader());
     classLoadersHierarchy.disposeApp();
-    assertThat(extensionClassLoader, is(eventually(collectedByGc())));
-    assertThat(appClassLoader, is(eventually(collectedByGc())));
+    await().until(() -> extensionClassLoader, is(collectedByGc()));
+    await().until(() -> appClassLoader, is(collectedByGc()));
   }
 
   private void disposeDomainAndAssertRelease(TestClassLoadersHierarchy classLoadersHierarchy) throws IOException {
@@ -158,8 +158,8 @@ public class ActiveMQArtifactLifecycleListenerTestCase {
     CollectableReference<ClassLoader> domainExtensionClassLoader =
         new CollectableReference<>(classLoadersHierarchy.getDomainExtensionClassLoader());
     classLoadersHierarchy.disposeDomain();
-    assertThat(domainExtensionClassLoader, is(eventually(collectedByGc())));
-    assertThat(domainClassLoader, is(eventually(collectedByGc())));
+    await().until(() -> domainExtensionClassLoader, is(collectedByGc()));
+    await().until(() -> domainClassLoader, is(collectedByGc()));
   }
 
   private void tryStartFailingActiveMQConnection(ClassLoader classLoader) throws ReflectiveOperationException {
