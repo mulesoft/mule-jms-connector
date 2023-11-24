@@ -20,6 +20,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
+import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.fail;
 
 import org.mule.extensions.jms.internal.lifecycle.ActiveMQArtifactLifecycleListener;
@@ -67,6 +68,20 @@ public class ActiveMQArtifactLifecycleListenerTestCase {
   }
 
   @Test
+  public void whenDriverIsInAppThenThreadsAreNotLeakedAfterDisposal() throws Exception {
+    assertThreadsNamesAfterAppDisposal(TestClassLoadersHierarchy.Builder::withUrlsInApp,
+                                       TestClassLoadersHierarchy::getAppExtensionClassLoader,
+                                       not(hasReadCheckTimer()));
+  }
+
+  @Test
+  public void whenDriverIsInAppExtensionThenThreadsAreNotLeakedAfterDisposal() throws Exception {
+    assertThreadsNamesAfterAppDisposal(TestClassLoadersHierarchy.Builder::withUrlsInAppExtension,
+                                       TestClassLoadersHierarchy::getAppExtensionClassLoader,
+                                       not(hasReadCheckTimer()));
+  }
+
+  @Test
   public void whenDriverIsInDomainThenClassLoadersAreNotLeakedAfterDisposal() throws Exception {
     assertClassLoadersAreNotLeakedAfterDisposal(TestClassLoadersHierarchy.Builder::withUrlsInDomain,
                                                 TestClassLoadersHierarchy::getDomainExtensionClassLoader);
@@ -80,15 +95,16 @@ public class ActiveMQArtifactLifecycleListenerTestCase {
 
   @Test
   public void whenDriverIsInDomainThenThreadsAreNotDisposedWhenAppIsDisposed() throws Exception {
-    try (TestClassLoadersHierarchy classLoadersHierarchy = getBaseClassLoaderHierarchyBuilder()
-        .withUrlsInDomain(new URL[] {ACTIVEMQ_DRIVER_URL})
-        .build()) {
-      tryStartFailingActiveMQConnection(classLoadersHierarchy.getDomainExtensionClassLoader());
+    assertThreadsNamesAfterAppDisposal(TestClassLoadersHierarchy.Builder::withUrlsInDomain,
+                                       TestClassLoadersHierarchy::getDomainExtensionClassLoader,
+                                       hasReadCheckTimer());
+  }
 
-      classLoadersHierarchy.disposeApp();
-      // When the app is disposed the thread is still active because it belongs to the domain
-      assertThat(getCurrentThreadNames(), hasReadCheckTimer());
-    }
+  @Test
+  public void whenDriverIsInDomainExtensionThenThreadsAreNotDisposedWhenAppIsDisposed() throws Exception {
+    assertThreadsNamesAfterAppDisposal(TestClassLoadersHierarchy.Builder::withUrlsInDomainExtension,
+                                       TestClassLoadersHierarchy::getDomainExtensionClassLoader,
+                                       hasReadCheckTimer());
   }
 
   private TestClassLoadersHierarchy.Builder getBaseClassLoaderHierarchyBuilder() {
@@ -108,6 +124,21 @@ public class ActiveMQArtifactLifecycleListenerTestCase {
 
       disposeAppAndAssertRelease(classLoadersHierarchy);
       disposeDomainAndAssertRelease(classLoadersHierarchy);
+    }
+  }
+
+  private void assertThreadsNamesAfterAppDisposal(BiFunction<TestClassLoadersHierarchy.Builder, URL[], TestClassLoadersHierarchy.Builder> driverConfigurer,
+                                                  Function<TestClassLoadersHierarchy, ClassLoader> connectionClassLoaderProvider,
+                                                  Matcher<Iterable<? super String>> threadNamesMatcher)
+      throws Exception {
+    TestClassLoadersHierarchy.Builder builder = getBaseClassLoaderHierarchyBuilder();
+    builder = driverConfigurer.apply(builder, new URL[] {ACTIVEMQ_DRIVER_URL});
+
+    try (TestClassLoadersHierarchy classLoadersHierarchy = builder.build()) {
+      tryStartFailingActiveMQConnection(connectionClassLoaderProvider.apply(classLoadersHierarchy));
+
+      classLoadersHierarchy.disposeApp();
+      assertThat(getCurrentThreadNames(), threadNamesMatcher);
     }
   }
 
