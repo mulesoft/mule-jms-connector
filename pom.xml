@@ -19,7 +19,7 @@
     <description>Mule connector lets you easily send and receive messages to queues and topics for any message service which implements the JMS specification</description>
 
     <properties>
-        <activemq.version>5.15.16</activemq.version>
+        <activemq.version>5.16.4</activemq.version>
         <artemisVersion>2.25.0</artemisVersion>
         <javaxJmsApiVersion>2.0.1</javaxJmsApiVersion>
         <commonsIoVersion>2.11.0</commonsIoVersion>
@@ -66,12 +66,19 @@
             <groupId>org.mule.connectors</groupId>
             <artifactId>mule-jms-client</artifactId>
             <version>${muleJmsClientVersion}</version>
+                        <exclusions>
+                            <exclusion>
+                                <groupId>org.springframework</groupId>
+                                <artifactId>spring-jms</artifactId>
+                            </exclusion>
+                        </exclusions>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.springframework</groupId>-->
-<!--            <artifactId>spring-core</artifactId>-->
-<!--            <version>5.3.31</version>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>5.3.31</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
@@ -93,6 +100,12 @@
             <artifactId>javax.jms-api</artifactId>
             <version>${javaxJmsApiVersion}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jms</artifactId>
+            <version>5.3.31</version>
+            <scope>test</scope>
         </dependency>
 
         <!-- ActiveMQ Dependencies-->

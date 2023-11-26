@@ -106,6 +106,14 @@ public class ActiveMQConnectionFactoryConfiguration {
   @ExcludeFromConnectivitySchema
   private boolean trustAllPackages;
 
+  @Parameter
+  @Optional(defaultValue = "false")
+  @Summary("Indicates whether an ssl connection socket must verify the broker URL hostname matches the CN value in " +
+      "the TSL certificate. \n We recommend setting this value to true.")
+  @Expression(NOT_SUPPORTED)
+  @ExcludeFromConnectivitySchema
+  private boolean verifyHostName;
+
 
   public int getMaxRedelivery() {
     return maxRedelivery;
@@ -172,11 +180,12 @@ public class ActiveMQConnectionFactoryConfiguration {
   }
 
   public boolean getVerifyHostName() {
-    //TODO: change the default value to a parameter. This default is required to support a security fix and avoid
-    // breaking backwards compatibility (GUS ticket: W-14487260)
-    return false;
+    return verifyHostName;
   }
 
+  public void setVerifyHostName(boolean verifyHostName) {
+    this.verifyHostName = verifyHostName;
+  }
 
   @Override
   public boolean equals(Object o) {
@@ -190,6 +199,7 @@ public class ActiveMQConnectionFactoryConfiguration {
         redeliveryDelay == that.redeliveryDelay &&
         maxRedelivery == that.maxRedelivery &&
         trustAllPackages == that.trustAllPackages &&
+        verifyHostName == that.verifyHostName &&
         Objects.equals(brokerUrl, that.brokerUrl) &&
         Objects.equals(trustedPackages, that.trustedPackages);
   }
@@ -197,6 +207,6 @@ public class ActiveMQConnectionFactoryConfiguration {
   @Override
   public int hashCode() {
     return Objects.hash(brokerUrl, enableXA, initialRedeliveryDelay, redeliveryDelay, maxRedelivery, trustedPackages,
-                        trustAllPackages);
+                        trustAllPackages, verifyHostName);
   }
 }
