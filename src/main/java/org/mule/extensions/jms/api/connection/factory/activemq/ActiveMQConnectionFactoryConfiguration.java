@@ -137,6 +137,7 @@ public class ActiveMQConnectionFactoryConfiguration {
   private boolean verifyHostName;
 
 
+
   public int getMaxRedelivery() {
     return maxRedelivery;
   }
@@ -202,14 +203,13 @@ public class ActiveMQConnectionFactoryConfiguration {
   }
 
   public boolean getVerifyHostName() {
-    //TODO: change the default value to a parameter. This default is required to support a security fix and avoid
-    // breaking backwards compatibility (GUS ticket: W-14487260)
-    return false;
+    return verifyHostName;
   }
 
   public void setVerifyHostName(boolean verifyHostName) {
     this.verifyHostName = verifyHostName;
   }
+
   public XaAckMode getXaAckMode() {
     return xaAckMode;
   }
@@ -217,6 +217,7 @@ public class ActiveMQConnectionFactoryConfiguration {
   public void setXaAckMode(XaAckMode xaAckMode) {
     this.xaAckMode = xaAckMode;
   }
+
 
   @Override
   public boolean equals(Object o) {
