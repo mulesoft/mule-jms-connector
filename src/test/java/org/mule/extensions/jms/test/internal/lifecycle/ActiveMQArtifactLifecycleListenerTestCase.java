@@ -109,7 +109,7 @@ public class ActiveMQArtifactLifecycleListenerTestCase {
 
   private TestClassLoadersHierarchy.Builder getBaseClassLoaderHierarchyBuilder() {
     return TestClassLoadersHierarchy.getBuilder()
-        .withArtifactLifecycleListener(new ActiveMQArtifactLifecycleListener())
+        .withArtifactLifecycleListener(ActiveMQArtifactLifecycleListener.class)
         .excludingClassNamesFromRoot(this::isClassFromDriver);
   }
 
