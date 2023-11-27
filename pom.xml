@@ -35,8 +35,8 @@
         <formatterConfigPath>formatter.xml</formatterConfigPath>
         <muleJmsClientVersion>1.14.0-SNAPSHOT</muleJmsClientVersion>
         <mule.http.connector.version>1.7.3</mule.http.connector.version>
-        <spring.core.version>5.3.31</spring.core.version>
-        <spring.jms.version>5.3.31</spring.jms.version>
+        <spring.core.version>5.3.29</spring.core.version>
+        <spring.jms.version>5.3.29</spring.jms.version>
 
         <!-- Remove when a new parent version with MTF is available -->
         <munit.input.directory>src/test/munit</munit.input.directory>
@@ -152,13 +152,11 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-jms</artifactId>
             <version>${spring.jms.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
             <version>${spring.core.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mule.tests.plugin</groupId>
