@@ -95,7 +95,7 @@
         <!-- ActiveMQ Dependencies-->
         <dependency>
             <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-all</artifactId>
+            <artifactId>activemq-client</artifactId>
             <version>${activemq.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -114,7 +114,7 @@
         <!-- https://mvnrepository.com/artifact/org.apache.activemq/activemq-all -->
         <dependency>
             <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-client</artifactId>
+            <artifactId>activemq-all</artifactId>
             <version>${activemq.version}</version>
             <scope>test</scope>
         </dependency>
@@ -152,13 +152,11 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
             <version>${spring.core.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jms</artifactId>
             <version>${spring.jms.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mule.tests.plugin</groupId>
