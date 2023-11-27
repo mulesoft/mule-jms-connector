@@ -35,6 +35,8 @@
         <formatterConfigPath>formatter.xml</formatterConfigPath>
         <muleJmsClientVersion>1.14.0-SNAPSHOT</muleJmsClientVersion>
         <mule.http.connector.version>1.7.3</mule.http.connector.version>
+        <spring.core.version>5.3.31</spring.core.version>
+        <spring.jms.version>5.3.31</spring.jms.version>
 
         <!-- Remove when a new parent version with MTF is available -->
         <munit.input.directory>src/test/munit</munit.input.directory>
@@ -70,7 +72,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-            <version>5.3.31</version>
+            <version>${spring.core.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -97,7 +99,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jms</artifactId>
-            <version>5.3.31</version>
+            <version>${spring.jms.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- ActiveMQ Dependencies-->
