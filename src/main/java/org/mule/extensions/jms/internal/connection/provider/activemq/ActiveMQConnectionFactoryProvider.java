@@ -94,7 +94,7 @@ public class ActiveMQConnectionFactoryProvider {
           (ConnectionFactory) instantiateClass(factoryClass, setPropertiesInURL(factoryConfiguration.getBrokerUrl(), factoryClass,
                                                                                 factoryConfiguration));
       applyVendorSpecificConnectionFactoryProperties(connectionFactory);
-
+      setXAAckMode(factoryClass, connectionFactory, factoryConfiguration.getXaAckMode());
       return connectionFactory;
     } catch (ClassNotFoundException e) {
       String message =
@@ -123,6 +123,18 @@ public class ActiveMQConnectionFactoryProvider {
       setTrustAllPackages(connectionFactory);
     } catch (Exception e) {
       LOGGER.error("Failed to set custom ConnectionFactoryProperties for ActiveMQ RedeliveryPolicy: " + e.getMessage(), e);
+    }
+  }
+
+  private void setXAAckMode(String factoryClass,
+                            ConnectionFactory factory,
+                            int xaAckMode)
+      throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException {
+    if (factoryClass == ACTIVEMQ_XA_CONNECTION_FACTORY_CLASS ||
+        factoryClass == ACTIVEMQ_XA_SSL_CONNECTION_FACTORY_CLASS) {
+      Class[] parameters = new Class[1];
+      parameters[0] = int.class;
+      factory.getClass().getMethod("setXaAckMode", parameters).invoke(factory, xaAckMode);
     }
   }
 
