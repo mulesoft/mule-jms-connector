@@ -136,6 +136,13 @@ public class ActiveMQConnectionFactoryConfiguration {
 
   private boolean verifyHostName;
 
+  @Parameter
+  @Optional(defaultValue = "1")
+  @Summary(" ")
+  @Expression(NOT_SUPPORTED)
+  @ExcludeFromConnectivitySchema
+  private int xaAckMode;
+
 
 
   public int getMaxRedelivery() {
