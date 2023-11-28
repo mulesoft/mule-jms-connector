@@ -114,6 +114,13 @@ public class ActiveMQConnectionFactoryConfiguration {
   @ExcludeFromConnectivitySchema
   private boolean verifyHostName;
 
+  @Parameter
+  @Optional(defaultValue = "1")
+  @Summary(" ")
+  @Expression(NOT_SUPPORTED)
+  @ExcludeFromConnectivitySchema
+  private int xaAckMode;
+
 
   public int getMaxRedelivery() {
     return maxRedelivery;
@@ -185,6 +192,14 @@ public class ActiveMQConnectionFactoryConfiguration {
 
   public void setVerifyHostName(boolean verifyHostName) {
     this.verifyHostName = verifyHostName;
+  }
+
+  public int getXaAckMode() {
+    return xaAckMode;
+  }
+
+  public void setXaAckMode(int xaAckMode) {
+    this.xaAckMode = xaAckMode;
   }
 
   @Override
