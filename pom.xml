@@ -94,9 +94,9 @@
         <!-- ActiveMQ Dependencies-->
         <dependency>
             <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-all</artifactId>
+            <artifactId>activemq-client</artifactId>
             <version>${activemq.version}</version>
-            <scope>provided</scope>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.fusesource.hawtbuf</groupId>
@@ -113,9 +113,9 @@
         <!-- https://mvnrepository.com/artifact/org.apache.activemq/activemq-all -->
         <dependency>
             <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-client</artifactId>
+            <artifactId>activemq-all</artifactId>
             <version>${activemq.version}</version>
-            <scope>test</scope>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Used for in memory broker -->
