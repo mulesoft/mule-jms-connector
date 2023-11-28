@@ -27,7 +27,7 @@
         <guavaVersion>32.1.2-jre</guavaVersion>
         <jacksonVersion>2.14.2</jacksonVersion>
         <dockerClientVersion>8.16.0</dockerClientVersion>
-
+        <jacoco.version>0.8.10</jacoco.version>
         <hawtbufVersion>1.11</hawtbufVersion>
         <activemq-protobufVersion>1.1</activemq-protobufVersion>
         <muleSpringModuleVersion>1.3.7</muleSpringModuleVersion>
@@ -339,9 +339,7 @@
                 </executions>
                 <configuration>
                     <argLines>
-                        <argLine>
-                            -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco.exec
-                        </argLine>
+                        <argLine>-javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-munit.exec</argLine>
                     </argLines>
                     <sharedLibraries>
                         <sharedLibrary>
