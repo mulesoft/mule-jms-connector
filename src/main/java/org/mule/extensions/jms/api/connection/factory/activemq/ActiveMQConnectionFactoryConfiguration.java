@@ -7,12 +7,16 @@
 package org.mule.extensions.jms.api.connection.factory.activemq;
 
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
+
+import org.mule.extensions.jms.api.ack.XaAckMode;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
+import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
+import org.mule.runtime.extension.api.annotation.values.OfValues;
 import org.mule.sdk.api.annotation.semantics.connectivity.ExcludeFromConnectivitySchema;
 import org.mule.sdk.api.annotation.semantics.connectivity.Url;
 
@@ -51,6 +55,17 @@ public class ActiveMQConnectionFactoryConfiguration {
   @Optional(defaultValue = "false")
   @Expression(NOT_SUPPORTED)
   private boolean enableXA;
+
+  /**
+   *
+   */
+  @DisplayName("XA ack mode")
+  @Parameter
+  @Optional(defaultValue = "AUTO_ACKNOWLEDGE")
+  @Summary(" ")
+  @Expression(NOT_SUPPORTED)
+  @ExcludeFromConnectivitySchema
+  private XaAckMode xaAckMode;
 
   /**
    * Used to configure the {@link RedeliveryPolicy#getInitialRedeliveryDelay()}
@@ -106,20 +121,20 @@ public class ActiveMQConnectionFactoryConfiguration {
   @ExcludeFromConnectivitySchema
   private boolean trustAllPackages;
 
+  /**
+   * Indicates whether an SSL connection socket must verify the broker URL hostname matches the CN value in the
+   * TSL certificate.
+   * Starting with version 5.15.6 ActiveMQ requires you to explicitly set this value.
+   */
   @Parameter
   @Optional(defaultValue = "false")
-  @Summary("Indicates whether an ssl connection socket must verify the broker URL hostname matches the CN value in " +
+  @Summary("Indicates whether an SSL connection socket must verify the broker URL hostname matches the CN value in " +
       "the TSL certificate. \n We recommend setting this value to true.")
   @Expression(NOT_SUPPORTED)
   @ExcludeFromConnectivitySchema
+  @DisplayName("Verify hostname")
   private boolean verifyHostName;
 
-  @Parameter
-  @Optional(defaultValue = "1")
-  @Summary(" ")
-  @Expression(NOT_SUPPORTED)
-  @ExcludeFromConnectivitySchema
-  private int xaAckMode;
 
 
   public int getMaxRedelivery() {
@@ -194,11 +209,11 @@ public class ActiveMQConnectionFactoryConfiguration {
     this.verifyHostName = verifyHostName;
   }
 
-  public int getXaAckMode() {
+  public XaAckMode getXaAckMode() {
     return xaAckMode;
   }
 
-  public void setXaAckMode(int xaAckMode) {
+  public void setXaAckMode(XaAckMode xaAckMode) {
     this.xaAckMode = xaAckMode;
   }
 
