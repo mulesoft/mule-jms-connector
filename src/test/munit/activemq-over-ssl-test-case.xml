@@ -13,7 +13,22 @@
                           http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd
                           http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd">
 
-    <munit:config name="activemq-over-ssl-test-case" minMuleVersion="4.3.0"/>
+    <munit:config name="activemq-over-ssl-test-case" minMuleVersion="4.3.0">
+        <munit:parameterizations>
+            <munit:parameterization name="invalid-broker-url">
+                <munit:parameters>
+                    <!-- a valid ip which is not the host defined in the CN for the TSL connection certificate -->
+                    <munit:parameter propertyName="brokerUrl" value="ssl://0.0.0.0:${activemq.port}"/>
+                </munit:parameters>
+            </munit:parameterization>
+            <munit:parameterization name="valid-broker-url">
+                <munit:parameters>
+                    <!-- a host which is not the one defined in the CN for the TSL connection certificate -->
+                    <munit:parameter propertyName="brokerUrl" value="ssl://localhost:${activemq.port}"/>
+                </munit:parameters>
+            </munit:parameterization>
+        </munit:parameterizations>
+    </munit:config>
 
     <munit:dynamic-port propertyName="activemq.port"/>
 
@@ -23,7 +38,7 @@
                 <tls:trust-store insecure="true" />
                 <tls:key-store type="jks" path="tls/client.ks" keyPassword="password" password="password" algorithm="PKIX"/>
             </tls:context>
-            <jms:factory-configuration brokerUrl="ssl://0.0.0.0:${activemq.port}" />
+            <jms:factory-configuration brokerUrl="${brokerUrl}" />
         </jms:active-mq-connection>
     </jms:config>
 
