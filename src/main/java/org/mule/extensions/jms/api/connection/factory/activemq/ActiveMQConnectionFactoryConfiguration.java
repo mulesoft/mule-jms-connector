@@ -136,7 +136,6 @@ public class ActiveMQConnectionFactoryConfiguration {
   private boolean verifyHostName;
 
 
-
   public int getMaxRedelivery() {
     return maxRedelivery;
   }
