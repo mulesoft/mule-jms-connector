@@ -106,6 +106,7 @@ public class ActiveMQConnectionFactoryConfiguration {
   @ExcludeFromConnectivitySchema
   private boolean trustAllPackages;
 
+
   public int getMaxRedelivery() {
     return maxRedelivery;
   }
@@ -132,6 +133,20 @@ public class ActiveMQConnectionFactoryConfiguration {
 
   public boolean isTrustAllPackages() {
     return trustAllPackages;
+  }
+
+  public boolean getTrustAllPackages() {
+    return trustAllPackages;
+  }
+
+  public void setTrustAllPackages(boolean trustAllPackages) {
+    this.trustAllPackages = trustAllPackages;
+  }
+
+  public boolean getVerifyHostName() {
+    //TODO: change the default value to a parameter. This default is required to support a security fix and avoid
+    // breaking backwards compatibility (GUS ticket: W-14487260)
+    return false;
   }
 
   @Override

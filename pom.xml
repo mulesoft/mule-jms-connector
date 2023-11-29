@@ -19,7 +19,7 @@
     <description>Mule connector lets you easily send and receive messages to queues and topics for any message service which implements the JMS specification</description>
 
     <properties>
-        <activemq.version>5.14.5</activemq.version>
+        <activemq.version>5.15.16</activemq.version>
         <artemisVersion>2.25.0</artemisVersion>
         <javaxJmsApiVersion>2.0.1</javaxJmsApiVersion>
         <commonsIoVersion>2.11.0</commonsIoVersion>
@@ -35,6 +35,7 @@
         <formatterConfigPath>formatter.xml</formatterConfigPath>
         <muleJmsClientVersion>1.13.12</muleJmsClientVersion>
         <mule.http.connector.version>1.7.3</mule.http.connector.version>
+        <spring.core.version>4.3.30.RELEASE</spring.core.version>
 
         <!-- Remove when a new parent version with MTF is available -->
         <munit.input.directory>src/test/munit</munit.input.directory>
@@ -138,6 +139,12 @@
             <artifactId>artemis-jms-client</artifactId>
             <version>${artemisVersion}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${spring.core.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.mule.tests.plugin</groupId>
