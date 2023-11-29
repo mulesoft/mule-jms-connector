@@ -35,7 +35,7 @@
         <formatterConfigPath>formatter.xml</formatterConfigPath>
         <muleJmsClientVersion>1.14.0-SNAPSHOT</muleJmsClientVersion>
         <mule.http.connector.version>1.7.3</mule.http.connector.version>
-        <spring.core.version>4.3.30.RELEASE</spring.core.version>
+        <spring.core.version>5.2.24.RELEASE</spring.core.version>
 
         <!-- Remove when a new parent version with MTF is available -->
         <munit.input.directory>src/test/munit</munit.input.directory>
