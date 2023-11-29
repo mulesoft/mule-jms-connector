@@ -94,7 +94,6 @@ public class ActiveMQConnectionFactoryProvider {
           (ConnectionFactory) instantiateClass(factoryClass, setPropertiesInURL(factoryConfiguration.getBrokerUrl(), factoryClass,
                                                                                 factoryConfiguration));
       applyVendorSpecificConnectionFactoryProperties(connectionFactory);
-
       return connectionFactory;
     } catch (ClassNotFoundException e) {
       String message =

@@ -133,15 +133,8 @@ public class ActiveMQConnectionFactoryConfiguration {
   @Expression(NOT_SUPPORTED)
   @ExcludeFromConnectivitySchema
   @DisplayName("Verify hostname")
-
   private boolean verifyHostName;
 
-  @Parameter
-  @Optional(defaultValue = "1")
-  @Summary(" ")
-  @Expression(NOT_SUPPORTED)
-  @ExcludeFromConnectivitySchema
-  private int xaAckMode;
 
 
 
