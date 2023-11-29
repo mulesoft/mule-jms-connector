@@ -56,6 +56,7 @@ public class ActiveMQConnectionFactoryProvider {
 
   private static final int REDELIVERY_IGNORE = -1;
   private static final String VERIFY_HOSTNAME = "socket.verifyHostName";
+  
   /**
    * Parameters required to configure a default {@link ActiveMQConnectionFactory}
    */
@@ -94,6 +95,7 @@ public class ActiveMQConnectionFactoryProvider {
           (ConnectionFactory) instantiateClass(factoryClass, setPropertiesInURL(factoryConfiguration.getBrokerUrl(), factoryClass,
                                                                                 factoryConfiguration));
       applyVendorSpecificConnectionFactoryProperties(connectionFactory);
+
       return connectionFactory;
     } catch (ClassNotFoundException e) {
       String message =
