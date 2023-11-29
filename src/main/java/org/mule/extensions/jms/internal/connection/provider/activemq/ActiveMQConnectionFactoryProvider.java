@@ -8,7 +8,6 @@ package org.mule.extensions.jms.internal.connection.provider.activemq;
 
 import static java.lang.String.format;
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
-import static org.mule.runtime.core.api.util.ClassUtils.findImplementedInterfaces;
 import static org.mule.runtime.core.api.util.ClassUtils.instantiateClass;
 
 import org.apache.activemq.util.URISupport;
@@ -56,7 +55,7 @@ public class ActiveMQConnectionFactoryProvider {
 
   private static final int REDELIVERY_IGNORE = -1;
   private static final String VERIFY_HOSTNAME = "socket.verifyHostName";
-  
+
   /**
    * Parameters required to configure a default {@link ActiveMQConnectionFactory}
    */
