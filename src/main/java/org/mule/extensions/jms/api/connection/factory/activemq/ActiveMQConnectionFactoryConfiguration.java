@@ -56,12 +56,14 @@ public class ActiveMQConnectionFactoryConfiguration {
   private boolean enableXA;
 
   /**
-   *
+   * Indicates how ACK is going to be handled in an XA Session.
+   * Since ActiveMQ version 5.16.0 this value is mandatory for XA sessions without an XA transaction associated.
+   * The possible value is one of the fields available in {@link "https://docs.oracle.com/javaee/6/api/javax/jms/Session.html?is-external=true#AUTO_ACKNOWLEDGE"}
    */
   @DisplayName("XA ack mode")
   @Parameter
   @Optional(defaultValue = "AUTO_ACKNOWLEDGE")
-  @Summary(" ")
+  @Summary("Indicates how ACK is going to be handled in an XA Session.")
   @Expression(NOT_SUPPORTED)
   @ExcludeFromConnectivitySchema
   private XaAckMode xaAckMode;
@@ -190,9 +192,6 @@ public class ActiveMQConnectionFactoryConfiguration {
     return trustAllPackages;
   }
 
-  public boolean getTrustAllPackages() {
-    return trustAllPackages;
-  }
 
   public void setTrustAllPackages(boolean trustAllPackages) {
     this.trustAllPackages = trustAllPackages;
@@ -228,6 +227,7 @@ public class ActiveMQConnectionFactoryConfiguration {
         maxRedelivery == that.maxRedelivery &&
         trustAllPackages == that.trustAllPackages &&
         verifyHostName == that.verifyHostName &&
+        xaAckMode == that.xaAckMode &&
         Objects.equals(brokerUrl, that.brokerUrl) &&
         Objects.equals(trustedPackages, that.trustedPackages);
   }
@@ -235,6 +235,6 @@ public class ActiveMQConnectionFactoryConfiguration {
   @Override
   public int hashCode() {
     return Objects.hash(brokerUrl, enableXA, initialRedeliveryDelay, redeliveryDelay, maxRedelivery, trustedPackages,
-                        trustAllPackages, verifyHostName);
+                        trustAllPackages, verifyHostName, xaAckMode);
   }
 }
