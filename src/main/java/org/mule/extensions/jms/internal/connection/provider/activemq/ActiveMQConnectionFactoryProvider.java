@@ -147,7 +147,6 @@ public class ActiveMQConnectionFactoryProvider {
       version = Class.forName(factoryClass).getPackage().getImplementationVersion();
     } catch (ClassNotFoundException e) {
       LOGGER.debug(e.getMessage());
-      return null;
     }
     return version;
   }
