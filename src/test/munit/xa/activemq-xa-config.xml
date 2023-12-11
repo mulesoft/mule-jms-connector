@@ -27,7 +27,7 @@ http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/
             <jms:caching-strategy >
                 <jms:no-caching />
             </jms:caching-strategy>
-            <jms:factory-configuration brokerUrl="tcp://0.0.0.0:${activemq.listener.port}" enable-xa="true" maxRedelivery="5" trustAllPackages="true"/>
+            <jms:factory-configuration brokerUrl="tcp://${activemq.host}:${activemq.listener.port}" enable-xa="true" maxRedelivery="5" trustAllPackages="true"/>
         </jms:active-mq-connection>
     </jms:config>
 
@@ -39,7 +39,7 @@ http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/
             <jms:caching-strategy >
                 <jms:no-caching />
             </jms:caching-strategy>
-            <jms:factory-configuration brokerUrl="tcp://0.0.0.0:${connection.lost.port}" enable-xa="true" maxRedelivery="-1" trustAllPackages="true"/>
+            <jms:factory-configuration brokerUrl="tcp://${activemq.host}:${connection.lost.port}" enable-xa="true" maxRedelivery="-1" trustAllPackages="true"/>
         </jms:active-mq-connection>
     </jms:config>
 
@@ -52,7 +52,7 @@ http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/
                 <jms:no-caching />
             </jms:caching-strategy>
             <jms:xa-connection-pool minPoolSize="5" maxPoolSize="10" />
-            <jms:factory-configuration brokerUrl="tcp://0.0.0.0:${activemq.listener.port}" enable-xa="true" maxRedelivery="1" trustAllPackages="true"/>
+            <jms:factory-configuration brokerUrl="tcp://${activemq.host}:${activemq.listener.port}" enable-xa="true" maxRedelivery="1" trustAllPackages="true"/>
         </jms:active-mq-connection>
     </jms:config>
 </mule>
