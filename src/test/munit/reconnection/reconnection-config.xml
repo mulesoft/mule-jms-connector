@@ -7,7 +7,6 @@
                           http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
                           http://www.mulesoft.org/schema/mule/ee/bti http://www.mulesoft.org/schema/mule/ee/bti/current/mule-bti-ee.xsd">
 
-    <munit:dynamic-port propertyName="connection.lost.port"/>
 <jms:config name="JMS_CONNECTION_TOXI">
 
     <jms:active-mq-connection>

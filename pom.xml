@@ -268,30 +268,30 @@
                     </execution>
                 </executions>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>org.codehaus.mojo</groupId>-->
-<!--                <artifactId>build-helper-maven-plugin</artifactId>-->
-<!--                <version>${maven.helper.plugin.version}</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>reserve-network-port</id>-->
-<!--                        <phase>generate-test-resources</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>reserve-network-port</goal>-->
-<!--                        </goals>-->
-<!--                        <configuration>-->
-<!--                            <portNames>-->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>${maven.helper.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>reserve-network-port</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>reserve-network-port</goal>
+                        </goals>
+                        <configuration>
+                            <portNames>
 <!--                                <portName>activemq.listener.port</portName>-->
-<!--                                <portName>activemq.ssl.listener.port</portName>-->
+                                <portName>activemq.ssl.listener.port</portName>
 <!--                                <portName>activemq.web_console.port</portName>-->
-<!--                                <portName>connection.lost.port</portName>-->
-<!--                                <portName>connection.broken.port</portName>-->
-<!--                                <portName>toxiproxy.port</portName>-->
-<!--                            </portNames>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
+                                <portName>connection.lost.port</portName>
+                                <portName>connection.broken.port</portName>
+                                <portName>toxiproxy.port</portName>
+                            </portNames>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
