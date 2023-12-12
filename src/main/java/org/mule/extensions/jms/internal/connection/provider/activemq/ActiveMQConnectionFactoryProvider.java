@@ -91,22 +91,22 @@ public class ActiveMQConnectionFactoryProvider {
         LOGGER.debug(format("Creating new [%s]", factoryClass));
       }
       this.connectionFactory =
-              (ConnectionFactory) instantiateClass(factoryClass, setPropertiesInURL(factoryConfiguration.getBrokerUrl(), factoryClass,
-                      factoryConfiguration));
+          (ConnectionFactory) instantiateClass(factoryClass, setPropertiesInURL(factoryConfiguration.getBrokerUrl(), factoryClass,
+                                                                                factoryConfiguration));
       applyVendorSpecificConnectionFactoryProperties(connectionFactory);
 
       return connectionFactory;
     } catch (ClassNotFoundException e) {
       String message =
-              format("Failed to create a default Connection Factory for ActiveMQ using the [%s] implementation because the Class was not found. \n "
-                              +
-                              "Please verify that you have configured the ActiveMQ Client Dependency as a Shared Library of your application.",
-                      factoryClass);
+          format("Failed to create a default Connection Factory for ActiveMQ using the [%s] implementation because the Class was not found. \n "
+              +
+              "Please verify that you have configured the ActiveMQ Client Dependency as a Shared Library of your application.",
+                 factoryClass);
       LOGGER.error(message, e);
       throw new JmsMissingLibraryException(e, message);
     } catch (Exception e) {
       String message = format("Failed to create a default Connection Factory for ActiveMQ using the [%s] implementation: %s",
-              factoryClass, e.getMessage());
+                              factoryClass, e.getMessage());
       LOGGER.error(message, e);
       throw new ActiveMQException(message, e);
     }
@@ -128,7 +128,7 @@ public class ActiveMQConnectionFactoryProvider {
 
   private String setPropertiesInURL(String brokerURL, String factoryClass,
                                     ActiveMQConnectionFactoryConfiguration factoryConfiguration)
-          throws URISyntaxException {
+      throws URISyntaxException {
     if (isSslFactoryClass(factoryClass)) {
       URI brokerURI = createURI(brokerURL);
       Map<String, String> map = (brokerURI.getQuery() != null) ? URISupport.parseQuery(brokerURI.getQuery()) : new HashMap<>();
@@ -155,7 +155,7 @@ public class ActiveMQConnectionFactoryProvider {
     boolean isVerifyHostnameVersion = false;
     if (activemqClientVersion != null) {
       String minorVersion =
-              activemqClientVersion.substring(activemqClientVersion.indexOf(".") + 1, activemqClientVersion.lastIndexOf("."));
+          activemqClientVersion.substring(activemqClientVersion.indexOf(".") + 1, activemqClientVersion.lastIndexOf("."));
       String patchVersion = activemqClientVersion.substring(activemqClientVersion.lastIndexOf(".") + 1);
       isVerifyHostnameVersion = Integer.parseInt(minorVersion) >= 15 && Integer.parseInt(patchVersion) >= 6;
     }
@@ -164,7 +164,7 @@ public class ActiveMQConnectionFactoryProvider {
 
   private boolean isSslFactoryClass(String factoryClass) {
     return factoryClass == ACTIVEMQ_XA_SSL_CONNECTION_FACTORY_CLASS
-            || factoryClass == ACTIVEMQ_SSL_CONNECTION_FACTORY_CLASS;
+        || factoryClass == ACTIVEMQ_SSL_CONNECTION_FACTORY_CLASS;
   }
 
   private static URI createURI(String url) {
@@ -176,20 +176,20 @@ public class ActiveMQConnectionFactoryProvider {
   }
 
   private void setMaximumRedeliveries(Object redeliveryPolicy)
-          throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+      throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
     Method setMaximumRedeliveriesMethod = redeliveryPolicy.getClass().getMethod("setMaximumRedeliveries", Integer.TYPE);
     int maxRedelivery = factoryConfiguration.getMaxRedelivery();
     setMaximumRedeliveriesMethod.invoke(redeliveryPolicy, maxRedelivery);
   }
 
   private void setInitialRedeliveryDelay(Object redeliveryPolicy)
-          throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+      throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
     Method setInitialRedeliveryDelayMethod = redeliveryPolicy.getClass().getMethod("setInitialRedeliveryDelay", Long.TYPE);
     setInitialRedeliveryDelayMethod.invoke(redeliveryPolicy, factoryConfiguration.getInitialRedeliveryDelay());
   }
 
   private void setRedeliveryDelay(Object redeliveryPolicy)
-          throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+      throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
     Method setRedeliveryDelayMethod = redeliveryPolicy.getClass().getMethod("setRedeliveryDelay", Long.TYPE);
     setRedeliveryDelayMethod.invoke(redeliveryPolicy, factoryConfiguration.getRedeliveryDelay());
   }
