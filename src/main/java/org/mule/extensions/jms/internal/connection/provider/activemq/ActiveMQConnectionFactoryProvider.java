@@ -128,7 +128,7 @@ public class ActiveMQConnectionFactoryProvider {
 
   private String setPropertiesInURL(String brokerURL, String factoryClass,
                                     ActiveMQConnectionFactoryConfiguration factoryConfiguration)
-          throws URISyntaxException {
+      throws URISyntaxException {
     if (isSslFactoryClass(factoryClass)) {
       URI brokerURI = createURI(brokerURL);
       Map<String, String> map = (brokerURI.getQuery() != null) ? URISupport.parseQuery(brokerURI.getQuery()) : new HashMap<>();
