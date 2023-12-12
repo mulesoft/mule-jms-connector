@@ -7,9 +7,9 @@
                           http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
                           http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
                           http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
-
+    <configuration-properties  file="activemq.properties" />
     <http:request-config name="HTTP_Request_configuration" basePath="/api/jolokia/exec">
-        <http:request-connection host="localhost" port="${activemq.web_console.port}">
+        <http:request-connection host="${activemq.host}" port="${activemq.web_console.port}">
             <http:authentication >
                 <http:basic-authentication username="admin" password="admin" />
             </http:authentication>

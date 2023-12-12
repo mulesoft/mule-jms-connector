@@ -128,38 +128,15 @@ public class ActiveMQConnectionFactoryProvider {
 
   private String setPropertiesInURL(String brokerURL, String factoryClass,
                                     ActiveMQConnectionFactoryConfiguration factoryConfiguration)
-      throws URISyntaxException {
+          throws URISyntaxException {
     if (isSslFactoryClass(factoryClass)) {
       URI brokerURI = createURI(brokerURL);
       Map<String, String> map = (brokerURI.getQuery() != null) ? URISupport.parseQuery(brokerURI.getQuery()) : new HashMap<>();
-      if (isVerifyHostnameValidVersion(getActiveMqClientVersion(factoryClass))) {
-        map.put(VERIFY_HOSTNAME, String.valueOf(factoryConfiguration.getVerifyHostName()));
-      }
+      map.put(VERIFY_HOSTNAME, String.valueOf(factoryConfiguration.getVerifyHostName()));
       brokerURI = URISupport.createRemainingURI(brokerURI, map);
       return brokerURI.toString();
     }
     return brokerURL;
-  }
-
-  private String getActiveMqClientVersion(String factoryClass) {
-    String version = null;
-    try {
-      version = Class.forName(factoryClass).getPackage().getImplementationVersion();
-    } catch (ClassNotFoundException e) {
-      LOGGER.debug(e.getMessage());
-    }
-    return version;
-  }
-
-  private boolean isVerifyHostnameValidVersion(String activemqClientVersion) {
-    boolean isVerifyHostnameVersion = false;
-    if (activemqClientVersion != null) {
-      String minorVersion =
-          activemqClientVersion.substring(activemqClientVersion.indexOf(".") + 1, activemqClientVersion.lastIndexOf("."));
-      String patchVersion = activemqClientVersion.substring(activemqClientVersion.lastIndexOf(".") + 1);
-      isVerifyHostnameVersion = Integer.parseInt(minorVersion) >= 15 && Integer.parseInt(patchVersion) >= 6;
-    }
-    return isVerifyHostnameVersion;
   }
 
   private boolean isSslFactoryClass(String factoryClass) {
