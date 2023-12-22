@@ -71,18 +71,22 @@ public final class JmsConsumerConfig implements org.mule.jms.commons.api.config.
   @Expression(NOT_SUPPORTED)
   // TODO MULE-10958: duplicated in ActiveMQ for default factory creation
   private int maxRedelivery;
+
   @ExcludeFromGeneratedCoverage
   public int getMaxRedelivery() {
     return maxRedelivery;
   }
+
   @ExcludeFromGeneratedCoverage
   public String getSelector() {
     return selector;
   }
+
   @ExcludeFromGeneratedCoverage
   public ConsumerType getConsumerType() {
     return consumerType;
   }
+
   @ExcludeFromGeneratedCoverage
   public AckMode getAckMode() {
     return ackMode;
@@ -90,22 +94,22 @@ public final class JmsConsumerConfig implements org.mule.jms.commons.api.config.
 
 
   @ExcludeFromGeneratedCoverage
-public void setMaxRedelivery(int maxRedelivery) {
+  public void setMaxRedelivery(int maxRedelivery) {
     this.maxRedelivery = maxRedelivery;
   }
 
   @ExcludeFromGeneratedCoverage
-public void setSelector(String selector) {
+  public void setSelector(String selector) {
     this.selector = selector;
   }
 
   @ExcludeFromGeneratedCoverage
-public void setConsumerType(ConsumerType consumerType) {
+  public void setConsumerType(ConsumerType consumerType) {
     this.consumerType = consumerType;
   }
 
   @ExcludeFromGeneratedCoverage
-public void setAckMode(AckMode ackMode) {
+  public void setAckMode(AckMode ackMode) {
     this.ackMode = ackMode;
   }
 

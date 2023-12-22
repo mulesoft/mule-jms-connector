@@ -57,6 +57,7 @@ public final class JndiNameResolverProvider {
   public void setCustomJndiNameResolver(JndiNameResolver customJndiNameResolver) {
     this.customJndiNameResolver = customJndiNameResolver;
   }
+
   @ExcludeFromGeneratedCoverage
   public JndiNameResolverProperties getNameResolverBuilder() {
     return nameResolverBuilder;

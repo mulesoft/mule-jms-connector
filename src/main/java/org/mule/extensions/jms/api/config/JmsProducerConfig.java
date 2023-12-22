@@ -135,18 +135,20 @@ public final class JmsProducerConfig implements org.mule.jms.commons.api.config.
   }
 
   @ExcludeFromGeneratedCoverage
-public void setPersistentDelivery(boolean persistentDelivery) {
+  public void setPersistentDelivery(boolean persistentDelivery) {
     this.persistentDelivery = persistentDelivery;
   }
+
   @ExcludeFromGeneratedCoverage
   public int getPriority() {
     return priority;
   }
 
   @ExcludeFromGeneratedCoverage
-public void setPriority(int priority) {
+  public void setPriority(int priority) {
     this.priority = priority;
   }
+
   @ExcludeFromGeneratedCoverage
   public long getTimeToLive() {
     return timeToLive;
@@ -163,42 +165,47 @@ public void setPriority(int priority) {
   }
 
   @ExcludeFromGeneratedCoverage
-public void setTimeToLiveUnit(TimeUnit timeToLiveUnit) {
+  public void setTimeToLiveUnit(TimeUnit timeToLiveUnit) {
     this.timeToLiveUnit = timeToLiveUnit;
   }
+
   @ExcludeFromGeneratedCoverage
   public boolean isDisableMessageId() {
     return disableMessageId;
   }
+
   @ExcludeFromGeneratedCoverage
   public boolean getDisableMessageId() {
     return disableMessageId;
   }
 
   @ExcludeFromGeneratedCoverage
-public void setDisableMessageId(boolean disableMessageId) {
+  public void setDisableMessageId(boolean disableMessageId) {
     this.disableMessageId = disableMessageId;
   }
+
   @ExcludeFromGeneratedCoverage
   public boolean isDisableMessageTimestamp() {
     return disableMessageTimestamp;
   }
+
   @ExcludeFromGeneratedCoverage
   public boolean getDisableMessageTimestamp() {
     return disableMessageTimestamp;
   }
 
   @ExcludeFromGeneratedCoverage
-public void setDisableMessageTimestamp(boolean disableMessageTimestamp) {
+  public void setDisableMessageTimestamp(boolean disableMessageTimestamp) {
     this.disableMessageTimestamp = disableMessageTimestamp;
   }
+
   @ExcludeFromGeneratedCoverage
   public Long getDeliveryDelay() {
     return deliveryDelay;
   }
 
   @ExcludeFromGeneratedCoverage
-public void setDeliveryDelay(Long deliveryDelay) {
+  public void setDeliveryDelay(Long deliveryDelay) {
     this.deliveryDelay = deliveryDelay;
   }
 
@@ -208,16 +215,17 @@ public void setDeliveryDelay(Long deliveryDelay) {
   }
 
   @ExcludeFromGeneratedCoverage
-public void setDeliveryDelayUnit(TimeUnit deliveryDelayUnit) {
+  public void setDeliveryDelayUnit(TimeUnit deliveryDelayUnit) {
     this.deliveryDelayUnit = deliveryDelayUnit;
   }
+
   @ExcludeFromGeneratedCoverage
   public String getJmsType() {
     return jmsType;
   }
 
   @ExcludeFromGeneratedCoverage
-public void setJmsType(String jmsType) {
+  public void setJmsType(String jmsType) {
     this.jmsType = jmsType;
   }
 

@@ -81,7 +81,7 @@ abstract class AbstractJndiNameResolver implements JndiNameResolver {
    * Sets the the JNDI provider URL
    */
   @ExcludeFromGeneratedCoverage
-public void setJndiProviderUrl(String jndiProviderUrl) {
+  public void setJndiProviderUrl(String jndiProviderUrl) {
     this.jndiProviderUrl = jndiProviderUrl;
   }
 
@@ -97,7 +97,7 @@ public void setJndiProviderUrl(String jndiProviderUrl) {
    * Sets the JNDI initial factory
    */
   @ExcludeFromGeneratedCoverage
-public void setJndiInitialFactory(String jndiInitialFactory) {
+  public void setJndiInitialFactory(String jndiInitialFactory) {
     this.jndiInitialFactory = jndiInitialFactory;
   }
 
@@ -113,7 +113,7 @@ public void setJndiInitialFactory(String jndiInitialFactory) {
    * Sets the properties to be passed to the JNDI Name Resolver Context
    */
   @ExcludeFromGeneratedCoverage
-public void setJndiProviderProperties(Map<String, Object> jndiProviderProperties) {
+  public void setJndiProviderProperties(Map<String, Object> jndiProviderProperties) {
     this.jndiProviderProperties = jndiProviderProperties;
   }
 
@@ -129,7 +129,7 @@ public void setJndiProviderProperties(Map<String, Object> jndiProviderProperties
    * Sets the {@link InitialContextFactory} used to create the initial context
    */
   @ExcludeFromGeneratedCoverage
-public void setContextFactory(InitialContextFactory contextFactory) {
+  public void setContextFactory(InitialContextFactory contextFactory) {
     if (contextFactory == null) {
       throw new IllegalArgumentException("Context factory cannot be null");
     }

@@ -53,25 +53,27 @@ public class JndiNameResolverProperties {
   }
 
   @ExcludeFromGeneratedCoverage
-public void setJndiInitialContextFactory(String jndiInitialContextFactory) {
+  public void setJndiInitialContextFactory(String jndiInitialContextFactory) {
     this.jndiInitialContextFactory = jndiInitialContextFactory;
   }
+
   @ExcludeFromGeneratedCoverage
   public Map<String, Object> getProviderProperties() {
     return providerProperties;
   }
 
   @ExcludeFromGeneratedCoverage
-public void setProviderProperties(Map<String, Object> providerProperties) {
+  public void setProviderProperties(Map<String, Object> providerProperties) {
     this.providerProperties = providerProperties;
   }
+
   @ExcludeFromGeneratedCoverage
   public String getJndiProviderUrl() {
     return jndiProviderUrl;
   }
 
   @ExcludeFromGeneratedCoverage
-public void setJndiProviderUrl(String jndiProviderUrl) {
+  public void setJndiProviderUrl(String jndiProviderUrl) {
     this.jndiProviderUrl = jndiProviderUrl;
   }
 

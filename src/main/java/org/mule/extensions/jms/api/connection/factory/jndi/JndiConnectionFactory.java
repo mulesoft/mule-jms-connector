@@ -150,6 +150,7 @@ public class JndiConnectionFactory extends DelegatingConnectionFactory implement
       throw e;
     }
   }
+
   @ExcludeFromGeneratedCoverage
   private JndiNameResolver getJndiNameResolver() {
     return nameResolver;
@@ -178,40 +179,44 @@ public class JndiConnectionFactory extends DelegatingConnectionFactory implement
     // We'll use the classic API
     return null;
   }
+
   @ExcludeFromGeneratedCoverage
   public String getConnectionFactoryJndiName() {
     return connectionFactoryJndiName;
   }
 
   @ExcludeFromGeneratedCoverage
-public void setConnectionFactoryJndiName(String connectionFactoryJndiName) {
+  public void setConnectionFactoryJndiName(String connectionFactoryJndiName) {
     this.connectionFactoryJndiName = connectionFactoryJndiName;
   }
+
   @ExcludeFromGeneratedCoverage
   public LookupJndiDestination getLookupDestination() {
     return lookupDestination;
   }
 
   @ExcludeFromGeneratedCoverage
-public void setLookupDestination(LookupJndiDestination lookupDestination) {
+  public void setLookupDestination(LookupJndiDestination lookupDestination) {
     this.lookupDestination = lookupDestination;
   }
+
   @ExcludeFromGeneratedCoverage
   public JndiNameResolverProvider getNameResolverProvider() {
     return nameResolverProvider;
   }
 
   @ExcludeFromGeneratedCoverage
-public void setNameResolverProvider(JndiNameResolverProvider nameResolverProvider) {
+  public void setNameResolverProvider(JndiNameResolverProvider nameResolverProvider) {
     this.nameResolverProvider = nameResolverProvider;
   }
+
   @ExcludeFromGeneratedCoverage
   public JndiNameResolver getNameResolver() {
     return nameResolver;
   }
 
   @ExcludeFromGeneratedCoverage
-public void setNameResolver(JndiNameResolver nameResolver) {
+  public void setNameResolver(JndiNameResolver nameResolver) {
     this.nameResolver = nameResolver;
   }
 
@@ -220,7 +225,7 @@ public void setNameResolver(JndiNameResolver nameResolver) {
   }
 
   @ExcludeFromGeneratedCoverage
-public void setConnectionFactory(ConnectionFactory connectionFactory) {
+  public void setConnectionFactory(ConnectionFactory connectionFactory) {
     this.connectionFactory = connectionFactory;
   }
 

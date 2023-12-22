@@ -103,13 +103,14 @@ public class SimpleJndiNameResolver extends AbstractJndiNameResolver {
 
     return true;
   }
+
   @ExcludeFromGeneratedCoverage
   public Context getJndiContext() {
     return jndiContext;
   }
 
   @ExcludeFromGeneratedCoverage
-public void setJndiContext(Context jndiContext) {
+  public void setJndiContext(Context jndiContext) {
     this.jndiContext = jndiContext;
   }
 }

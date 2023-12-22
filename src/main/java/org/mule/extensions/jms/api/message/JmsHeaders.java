@@ -142,97 +142,107 @@ public class JmsHeaders extends org.mule.jms.commons.api.message.JmsHeaders {
   }
 
   @ExcludeFromGeneratedCoverage
-public void setJMSMessageID(String messageId) {
+  public void setJMSMessageID(String messageId) {
     this.messageId = messageId;
   }
+
   @ExcludeFromGeneratedCoverage
   public long getJMSTimestamp() {
     return timestamp;
   }
 
   @ExcludeFromGeneratedCoverage
-public void setJMSTimestamp(long timestamp) {
+  public void setJMSTimestamp(long timestamp) {
     this.timestamp = timestamp;
   }
+
   @ExcludeFromGeneratedCoverage
   public String getJMSCorrelationID() {
     return correlationId;
   }
 
   @ExcludeFromGeneratedCoverage
-public void setJMSCorrelationID(String correlationId) {
+  public void setJMSCorrelationID(String correlationId) {
     this.correlationId = correlationId;
   }
+
   @ExcludeFromGeneratedCoverage
   public JmsDestination getJMSReplyTo() {
     return replyTo;
   }
 
   @ExcludeFromGeneratedCoverage
-public void setJMSReplyTo(JmsDestination replyTo) {
+  public void setJMSReplyTo(JmsDestination replyTo) {
     this.replyTo = replyTo;
   }
+
   @ExcludeFromGeneratedCoverage
   public JmsDestination getJMSDestination() {
     return destination;
   }
 
   @ExcludeFromGeneratedCoverage
-public void setJMSDestination(JmsDestination destination) {
+  public void setJMSDestination(JmsDestination destination) {
     this.destination = destination;
   }
+
   @ExcludeFromGeneratedCoverage
   public int getJMSDeliveryMode() {
     return deliveryMode;
   }
 
   @ExcludeFromGeneratedCoverage
-public void setJMSDeliveryMode(int deliveryMode) {
+  public void setJMSDeliveryMode(int deliveryMode) {
     this.deliveryMode = deliveryMode;
   }
+
   @ExcludeFromGeneratedCoverage
   public boolean getJMSRedelivered() {
     return redelivered;
   }
 
   @ExcludeFromGeneratedCoverage
-public void setJMSRedelivered(boolean redelivered) {
+  public void setJMSRedelivered(boolean redelivered) {
     this.redelivered = redelivered;
   }
+
   @ExcludeFromGeneratedCoverage
   public String getJMSType() {
     return type;
   }
 
   @ExcludeFromGeneratedCoverage
-public void setJMSType(String type) {
+  public void setJMSType(String type) {
     this.type = type;
   }
+
   @ExcludeFromGeneratedCoverage
   public long getJMSExpiration() {
     return expiration;
   }
 
   @ExcludeFromGeneratedCoverage
-public void setJMSExpiration(long expiration) {
+  public void setJMSExpiration(long expiration) {
     this.expiration = expiration;
   }
+
   @ExcludeFromGeneratedCoverage
   public Long getJMSDeliveryTime() {
     return deliveryTime;
   }
 
   @ExcludeFromGeneratedCoverage
-public void setJMSDeliveryTime(Long deliveryTime) {
+  public void setJMSDeliveryTime(Long deliveryTime) {
     this.deliveryTime = deliveryTime;
   }
+
   @ExcludeFromGeneratedCoverage
   public int getJMSPriority() {
     return priority;
   }
 
   @ExcludeFromGeneratedCoverage
-public void setJMSPriority(int priority) {
+  public void setJMSPriority(int priority) {
     this.priority = priority;
   }
 

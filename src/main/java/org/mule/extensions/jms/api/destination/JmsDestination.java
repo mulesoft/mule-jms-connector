@@ -48,13 +48,14 @@ public class JmsDestination implements org.mule.jms.commons.api.destination.JmsD
     this.destination = name;
     this.destinationType = type;
   }
+
   @ExcludeFromGeneratedCoverage
   public String getDestination() {
     return destination;
   }
 
   @ExcludeFromGeneratedCoverage
-public void setDestination(String destination) {
+  public void setDestination(String destination) {
     this.destination = destination;
   }
 
@@ -63,7 +64,7 @@ public void setDestination(String destination) {
   }
 
   @ExcludeFromGeneratedCoverage
-public void setDestinationType(DestinationType destinationType) {
+  public void setDestinationType(DestinationType destinationType) {
     this.destinationType = destinationType;
   }
 }
