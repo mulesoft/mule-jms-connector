@@ -180,6 +180,13 @@ public void setTrustAllPackages(boolean trustAllPackages) {
     this.trustAllPackages = trustAllPackages;
   }
 
+  public boolean getVerifyHostName() {
+    //TODO: change the default value to a parameter. This default is required to support a security fix and avoid
+    // breaking backwards compatibility (GUS ticket: W-14487260)
+    return false;
+  }
+
+
   @Override
   @ExcludeFromGeneratedCoverage
   public boolean equals(Object o) {
