@@ -46,6 +46,7 @@
         <docker.maven.plugin.version>0.41.0</docker.maven.plugin.version>
         <maven.helper.plugin.version>3.3.0</maven.helper.plugin.version>
         <docker.skip>${skipTests}</docker.skip>
+        <mavenResources.version>3.3.0</mavenResources.version>
 
         <muleSdkCompatibilityApiVersion>1.0.0-SNAPSHOT</muleSdkCompatibilityApiVersion>
         <muleSdkApiVersion>1.0.0-SNAPSHOT</muleSdkApiVersion>
