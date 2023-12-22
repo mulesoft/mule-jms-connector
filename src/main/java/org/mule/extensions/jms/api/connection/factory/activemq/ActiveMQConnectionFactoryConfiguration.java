@@ -114,69 +114,77 @@ public class ActiveMQConnectionFactoryConfiguration {
   }
 
   @ExcludeFromGeneratedCoverage
-public void setMaxRedelivery(int maxRedelivery) {
+  public void setMaxRedelivery(int maxRedelivery) {
     this.maxRedelivery = maxRedelivery;
   }
+
   @ExcludeFromGeneratedCoverage
   public boolean isEnableXA() {
     return enableXA;
   }
+
   @ExcludeFromGeneratedCoverage
   public boolean getEnableXA() {
     return enableXA;
   }
 
   @ExcludeFromGeneratedCoverage
-public void setEnableXA(boolean enableXA) {
+  public void setEnableXA(boolean enableXA) {
     this.enableXA = enableXA;
   }
+
   @ExcludeFromGeneratedCoverage
   public String getBrokerUrl() {
     return brokerUrl;
   }
 
   @ExcludeFromGeneratedCoverage
-public void setBrokerUrl(String brokerUrl) {
+  public void setBrokerUrl(String brokerUrl) {
     this.brokerUrl = brokerUrl;
   }
+
   @ExcludeFromGeneratedCoverage
   public long getInitialRedeliveryDelay() {
     return initialRedeliveryDelay;
   }
 
   @ExcludeFromGeneratedCoverage
-public void setInitialRedeliveryDelay(long initialRedeliveryDelay) {
+  public void setInitialRedeliveryDelay(long initialRedeliveryDelay) {
     this.initialRedeliveryDelay = initialRedeliveryDelay;
   }
+
   @ExcludeFromGeneratedCoverage
   public long getRedeliveryDelay() {
     return redeliveryDelay;
   }
 
   @ExcludeFromGeneratedCoverage
-public void setRedeliveryDelay(long redeliveryDelay) {
+  public void setRedeliveryDelay(long redeliveryDelay) {
     this.redeliveryDelay = redeliveryDelay;
   }
+
   @ExcludeFromGeneratedCoverage
   public List<String> getTrustedPackages() {
     return trustedPackages;
   }
 
   @ExcludeFromGeneratedCoverage
-public void setTrustedPackages(List<String> trustedPackages) {
+  public void setTrustedPackages(List<String> trustedPackages) {
     this.trustedPackages = trustedPackages;
   }
+
   @ExcludeFromGeneratedCoverage
   public boolean isTrustAllPackages() {
     return trustAllPackages;
   }
+
   @ExcludeFromGeneratedCoverage
   public boolean getTrustAllPackages() {
     return trustAllPackages;
   }
 
   @ExcludeFromGeneratedCoverage
-public void setTrustAllPackages(boolean trustAllPackages) {
+  public void setTrustAllPackages(boolean trustAllPackages) {
     this.trustAllPackages = trustAllPackages;
   }
 
