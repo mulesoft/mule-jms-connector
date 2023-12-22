@@ -9,20 +9,7 @@ http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/
       http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
 http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd">
 
-    <munit:config name="listener-internal-rollback">
-            <munit:parameterizations>
-                <munit:parameterization name="default">
-                    <munit:parameters>
-                        <munit:parameter propertyName="source" value="mqListenerRollback"/>
-                    </munit:parameters>
-                </munit:parameterization>
-                <munit:parameterization name="tx">
-                    <munit:parameters>
-                        <munit:parameter propertyName="source" value="mqListenerRollbackTx"/>
-                    </munit:parameters>
-                </munit:parameterization>
-            </munit:parameterizations>
-    </munit:config>
+    <munit:config name="listener-error.xml"/>
 
     <munit:after-test name="afterTest-listener-internal-rollback" description="after test">
         <set-variable variableName="brokerName" value="localhost"/>
@@ -32,11 +19,11 @@ http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/mu
 
     <munit:test name="messageIsReturnedToQueue">
         <munit:enable-flow-sources>
-            <munit:enable-flow-source value="${source}"/>
+            <munit:enable-flow-source value="mqListenerRollback"/>
         </munit:enable-flow-sources>
         <munit:execution>
             <set-payload value="#[java!org::mule::extensions::jms::test::PojoThatDoesntDeserialize::new('bla')]"/>
-            <jms:publish config-ref="config-no-caching" destination="DEV.QUEUE.1"/>
+            <jms:publish config-ref="config-with-client-id" destination="ASDFASDFASDFASDFASDF"/>
         </munit:execution>
         <munit:validation>
             <until-successful millisBetweenRetries="100" maxRetries="1000">
@@ -50,12 +37,7 @@ http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/mu
 
 
     <flow name="mqListenerRollback">
-        <jms:listener config-ref="config-no-caching" destination="DEV.QUEUE.1"/>
-        <munit-tools:queue/>
-    </flow>
-
-    <flow name="mqListenerRollbackTx">
-        <jms:listener config-ref="config-no-caching" destination="DEV.QUEUE.1" transactionalAction="ALWAYS_BEGIN"/>
+        <jms:listener config-ref="config-with-client-id" destination="ASDFASDFASDFASDFASDF"/>
         <munit-tools:queue/>
     </flow>
 

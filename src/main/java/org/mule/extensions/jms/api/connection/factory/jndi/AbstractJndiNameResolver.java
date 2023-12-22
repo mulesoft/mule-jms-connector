@@ -11,6 +11,7 @@ import static org.mule.runtime.api.util.Preconditions.checkArgument;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.mule.extensions.jms.internal.ExcludeFromGeneratedCoverage;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 
@@ -71,6 +72,7 @@ abstract class AbstractJndiNameResolver implements JndiNameResolver {
   /**
    * Gets the JNDI provider URL
    */
+  @ExcludeFromGeneratedCoverage
   public String getJndiProviderUrl() {
     return jndiProviderUrl;
   }
@@ -78,13 +80,15 @@ abstract class AbstractJndiNameResolver implements JndiNameResolver {
   /**
    * Sets the the JNDI provider URL
    */
-  public void setJndiProviderUrl(String jndiProviderUrl) {
+  @ExcludeFromGeneratedCoverage
+public void setJndiProviderUrl(String jndiProviderUrl) {
     this.jndiProviderUrl = jndiProviderUrl;
   }
 
   /**
    * Gets the JNDI initial factory
    */
+  @ExcludeFromGeneratedCoverage
   public String getJndiInitialFactory() {
     return jndiInitialFactory;
   }
@@ -92,13 +96,15 @@ abstract class AbstractJndiNameResolver implements JndiNameResolver {
   /**
    * Sets the JNDI initial factory
    */
-  public void setJndiInitialFactory(String jndiInitialFactory) {
+  @ExcludeFromGeneratedCoverage
+public void setJndiInitialFactory(String jndiInitialFactory) {
     this.jndiInitialFactory = jndiInitialFactory;
   }
 
   /**
    * Gets the properties to be passed to the JNDI Name Resolver Context
    */
+  @ExcludeFromGeneratedCoverage
   public Map<String, Object> getJndiProviderProperties() {
     return jndiProviderProperties;
   }
@@ -106,13 +112,15 @@ abstract class AbstractJndiNameResolver implements JndiNameResolver {
   /**
    * Sets the properties to be passed to the JNDI Name Resolver Context
    */
-  public void setJndiProviderProperties(Map<String, Object> jndiProviderProperties) {
+  @ExcludeFromGeneratedCoverage
+public void setJndiProviderProperties(Map<String, Object> jndiProviderProperties) {
     this.jndiProviderProperties = jndiProviderProperties;
   }
 
   /**
    * Gets the {@link InitialContextFactory} used to create the initial context
    */
+  @ExcludeFromGeneratedCoverage
   public InitialContextFactory getContextFactory() {
     return contextFactory;
   }
@@ -120,7 +128,8 @@ abstract class AbstractJndiNameResolver implements JndiNameResolver {
   /**
    * Sets the {@link InitialContextFactory} used to create the initial context
    */
-  public void setContextFactory(InitialContextFactory contextFactory) {
+  @ExcludeFromGeneratedCoverage
+public void setContextFactory(InitialContextFactory contextFactory) {
     if (contextFactory == null) {
       throw new IllegalArgumentException("Context factory cannot be null");
     }
@@ -129,11 +138,13 @@ abstract class AbstractJndiNameResolver implements JndiNameResolver {
   }
 
   @Override
+  @ExcludeFromGeneratedCoverage
   public void initialise() throws InitialisationException {
     // Does nothing
   }
 
   @Override
+  @ExcludeFromGeneratedCoverage
   public void dispose() {
     // Does nothing
   }
@@ -149,11 +160,13 @@ abstract class AbstractJndiNameResolver implements JndiNameResolver {
   }
 
   @Override
+  @ExcludeFromGeneratedCoverage
   public int hashCode() {
     return hash(contextFactory, jndiProviderUrl, jndiInitialFactory, jndiProviderProperties);
   }
 
   @Override
+  @ExcludeFromGeneratedCoverage
   public boolean equals(Object other) {
     if (other == null) {
       return false;

@@ -7,6 +7,8 @@
 package org.mule.extensions.jms.internal.connection.param;
 
 import static org.mule.runtime.extension.api.annotation.param.display.Placement.ADVANCED_TAB;
+
+import org.mule.extensions.jms.internal.ExcludeFromGeneratedCoverage;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
@@ -69,6 +71,7 @@ public class XaPoolParameters implements org.mule.jms.commons.internal.connectio
   }
 
   @Override
+  @ExcludeFromGeneratedCoverage
   public boolean equals(Object o) {
     if (this == o)
       return true;
@@ -81,6 +84,7 @@ public class XaPoolParameters implements org.mule.jms.commons.internal.connectio
   }
 
   @Override
+  @ExcludeFromGeneratedCoverage
   public int hashCode() {
     return Objects.hash(minPoolSize, maxPoolSize, maxIdleSeconds);
   }

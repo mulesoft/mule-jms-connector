@@ -23,7 +23,19 @@
                     <munit:parameter propertyName="max.redelivery" value="100"/>
                 </munit:parameters>
             </munit:parameterization>
-        </munit:parameterizations>
+            <munit:parameterization name="jndi-never">
+                <munit:parameters>
+                    <munit:parameter propertyName="config" value="config-jndi-never"/>
+                    <munit:parameter propertyName="max.redelivery" value="100"/>
+                </munit:parameters>
+            </munit:parameterization>
+<!--        <munit:parameterization name="jndi-try-always">-->
+<!--            <munit:parameters>-->
+<!--                <munit:parameter propertyName="config" value="config-jndi-try-always"/>-->
+<!--                <munit:parameter propertyName="max.redelivery" value="100"/>-->
+<!--            </munit:parameters>-->
+<!--        </munit:parameterization>-->
+    </munit:parameterizations>
     </munit:config>
 
     <munit:after-test name="afterTest-correlation-id-pattern" description="after test">

@@ -6,6 +6,7 @@
  */
 package org.mule.extensions.jms.api.message;
 
+import org.mule.extensions.jms.internal.ExcludeFromGeneratedCoverage;
 import org.mule.jms.commons.api.destination.JmsDestination;
 import org.mule.jms.commons.api.message.JmsHeadersBuilder;
 import org.mule.runtime.extension.api.annotation.param.Optional;
@@ -140,87 +141,98 @@ public class JmsHeaders extends org.mule.jms.commons.api.message.JmsHeaders {
     return messageId;
   }
 
-  public void setJMSMessageID(String messageId) {
+  @ExcludeFromGeneratedCoverage
+public void setJMSMessageID(String messageId) {
     this.messageId = messageId;
   }
-
+  @ExcludeFromGeneratedCoverage
   public long getJMSTimestamp() {
     return timestamp;
   }
 
-  public void setJMSTimestamp(long timestamp) {
+  @ExcludeFromGeneratedCoverage
+public void setJMSTimestamp(long timestamp) {
     this.timestamp = timestamp;
   }
-
+  @ExcludeFromGeneratedCoverage
   public String getJMSCorrelationID() {
     return correlationId;
   }
 
-  public void setJMSCorrelationID(String correlationId) {
+  @ExcludeFromGeneratedCoverage
+public void setJMSCorrelationID(String correlationId) {
     this.correlationId = correlationId;
   }
-
+  @ExcludeFromGeneratedCoverage
   public JmsDestination getJMSReplyTo() {
     return replyTo;
   }
 
-  public void setJMSReplyTo(JmsDestination replyTo) {
+  @ExcludeFromGeneratedCoverage
+public void setJMSReplyTo(JmsDestination replyTo) {
     this.replyTo = replyTo;
   }
-
+  @ExcludeFromGeneratedCoverage
   public JmsDestination getJMSDestination() {
     return destination;
   }
 
-  public void setJMSDestination(JmsDestination destination) {
+  @ExcludeFromGeneratedCoverage
+public void setJMSDestination(JmsDestination destination) {
     this.destination = destination;
   }
-
+  @ExcludeFromGeneratedCoverage
   public int getJMSDeliveryMode() {
     return deliveryMode;
   }
 
-  public void setJMSDeliveryMode(int deliveryMode) {
+  @ExcludeFromGeneratedCoverage
+public void setJMSDeliveryMode(int deliveryMode) {
     this.deliveryMode = deliveryMode;
   }
-
+  @ExcludeFromGeneratedCoverage
   public boolean getJMSRedelivered() {
     return redelivered;
   }
 
-  public void setJMSRedelivered(boolean redelivered) {
+  @ExcludeFromGeneratedCoverage
+public void setJMSRedelivered(boolean redelivered) {
     this.redelivered = redelivered;
   }
-
+  @ExcludeFromGeneratedCoverage
   public String getJMSType() {
     return type;
   }
 
-  public void setJMSType(String type) {
+  @ExcludeFromGeneratedCoverage
+public void setJMSType(String type) {
     this.type = type;
   }
-
+  @ExcludeFromGeneratedCoverage
   public long getJMSExpiration() {
     return expiration;
   }
 
-  public void setJMSExpiration(long expiration) {
+  @ExcludeFromGeneratedCoverage
+public void setJMSExpiration(long expiration) {
     this.expiration = expiration;
   }
-
+  @ExcludeFromGeneratedCoverage
   public Long getJMSDeliveryTime() {
     return deliveryTime;
   }
 
-  public void setJMSDeliveryTime(Long deliveryTime) {
+  @ExcludeFromGeneratedCoverage
+public void setJMSDeliveryTime(Long deliveryTime) {
     this.deliveryTime = deliveryTime;
   }
-
+  @ExcludeFromGeneratedCoverage
   public int getJMSPriority() {
     return priority;
   }
 
-  public void setJMSPriority(int priority) {
+  @ExcludeFromGeneratedCoverage
+public void setJMSPriority(int priority) {
     this.priority = priority;
   }
 

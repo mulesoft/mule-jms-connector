@@ -19,6 +19,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 import org.mule.extensions.jms.api.exception.JmsExtensionException;
 import org.mule.extensions.jms.api.exception.JmsMissingLibraryException;
+import org.mule.extensions.jms.internal.ExcludeFromGeneratedCoverage;
 import org.mule.extensions.jms.internal.connection.exception.ActiveMQException;
 import org.mule.extensions.jms.internal.connection.provider.BaseConnectionProvider;
 import org.mule.jms.commons.internal.connection.JmsConnection;
@@ -138,6 +139,7 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider implement
   }
 
   @Override
+  @ExcludeFromGeneratedCoverage
   public ConnectionFactory getConnectionFactory() throws ActiveMQException {
     if (connectionFactory != null) {
       return connectionFactory;
