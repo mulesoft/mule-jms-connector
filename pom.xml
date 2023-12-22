@@ -227,11 +227,6 @@
             <artifactId>mule-sdk-compatibility-api</artifactId>
             <version>${muleSdkCompatibilityApiVersion}</version>
         </dependency>
-        <dependency>
-            <groupId>org.mule.sdk</groupId>
-            <artifactId>mule-sdk-api</artifactId>
-            <version>${muleSdkApiVersion}</version>
-        </dependency>
     </dependencies>
 
     <build>
