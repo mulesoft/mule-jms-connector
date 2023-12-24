@@ -133,7 +133,6 @@
             <scope>provided</scope>
         </dependency>
 
-
         <!-- Test Dependencies -->
         <dependency>
             <groupId>org.apache.activemq</groupId>
@@ -282,9 +281,9 @@
                         </goals>
                         <configuration>
                             <portNames>
-                                <portName>activemq.listener.port</portName>
+<!--                                <portName>activemq.listener.port</portName>-->
                                 <portName>activemq.ssl.listener.port</portName>
-                                <portName>activemq.web_console.port</portName>
+<!--                                <portName>activemq.web_console.port</portName>-->
                                 <portName>connection.lost.port</portName>
                                 <portName>connection.broken.port</portName>
                                 <portName>toxiproxy.port</portName>
@@ -433,128 +432,128 @@
         </plugins>
     </build>
 
-    <profiles>
-        <profile>
-            <id>docker</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>io.fabric8</groupId>
-                        <artifactId>docker-maven-plugin</artifactId>
-                        <version>${docker.maven.plugin.version}</version>
-                        <configuration>
-                            <images>
-                                <image>
-                                    <name>mule-activemq-ssl</name>
-                                    <alias>activemq</alias>
-                                    <build>
-                                        <dockerFileDir>${project.basedir}/src/test/docker/tls</dockerFileDir>
-                                    </build>
-                                    <run>
-                                        <ulimits>
-                                            <ulimit>
-                                                <name>nofile</name>
-                                                <hard>10240</hard>
-                                                <soft>10240</soft>
-                                            </ulimit>
-                                        </ulimits>
-                                        <ports>
-                                            <port>${activemq.listener.port}:61616</port>
-                                            <port>${activemq.ssl.listener.port}:61617</port>
-                                            <port>${activemq.web_console.port}:8161</port>
-                                        </ports>
-                                        <log>
-                                            <enabled>true</enabled>
-                                        </log>
-                                        <wait>
-                                            <log>ActiveMQ Jolokia REST API available</log>
-                                            <time>500000</time>
-                                        </wait>
-                                    </run>
-                                </image>
-                                <image>
-                                    <name>shopify/toxiproxy</name>
-                                    <alias>toxiproxy</alias>
-                                    <run>
-                                        <ports>
-                                            <port>${toxiproxy.port}:8474</port>
-                                            <port>${connection.lost.port}:${connection.lost.port}</port>
-                                            <port>${connection.broken.port}:${connection.broken.port}</port>
-                                        </ports>
-                                        <links>
-                                            <link>activemq</link>
-                                        </links>
-                                    </run>
-                                </image>
-                            </images>
-                            <verbose>true</verbose>
-                        </configuration>
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.slf4j</groupId>
-                                <artifactId>slf4j-api</artifactId>
-                                <version>2.0.7</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>org.slf4j</groupId>
-                                <artifactId>jcl-over-slf4j</artifactId>
-                                <version>2.0.7</version>
-                            </dependency>
-                        </dependencies>
-                        <executions>
-                            <execution>
-                                <id>start</id>
-                                <phase>pre-integration-test</phase>
-                                <goals>
-                                    <goal>build</goal>
-                                    <goal>start</goal>
-                                </goals>
-                                <configuration>
-                                    <showLogs>true</showLogs>
-                                    <logStdout>true</logStdout>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>stop</id>
-                                <phase>clean</phase>
-                                <goals>
-                                    <goal>stop</goal>
-                                    <goal>remove</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>docker-windows</id>
-            <activation>
-                <os>
-                    <family>windows</family>
-                </os>
-            </activation>
-            <properties>
-                <docker.skip>true</docker.skip>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <systemPropertyVariables>
-                                <skipTestsWhichRequireDocker>true</skipTestsWhichRequireDocker>
-                            </systemPropertyVariables>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+<!--    <profiles>-->
+<!--        <profile>-->
+<!--            <id>docker</id>-->
+<!--            <activation>-->
+<!--                <activeByDefault>true</activeByDefault>-->
+<!--            </activation>-->
+<!--            <build>-->
+<!--                <plugins>-->
+<!--                    <plugin>-->
+<!--                        <groupId>io.fabric8</groupId>-->
+<!--                        <artifactId>docker-maven-plugin</artifactId>-->
+<!--                        <version>${docker.maven.plugin.version}</version>-->
+<!--                        <configuration>-->
+<!--                            <images>-->
+<!--                                <image>-->
+<!--                                    <name>mule-activemq-ssl</name>-->
+<!--                                    <alias>activemq</alias>-->
+<!--                                    <build>-->
+<!--                                        <dockerFileDir>${project.basedir}/src/test/docker/tls</dockerFileDir>-->
+<!--                                    </build>-->
+<!--                                    <run>-->
+<!--                                        <ulimits>-->
+<!--                                            <ulimit>-->
+<!--                                                <name>nofile</name>-->
+<!--                                                <hard>10240</hard>-->
+<!--                                                <soft>10240</soft>-->
+<!--                                            </ulimit>-->
+<!--                                        </ulimits>-->
+<!--                                        <ports>-->
+<!--                                            <port>${activemq.listener.port}:61616</port>-->
+<!--                                            <port>${activemq.ssl.listener.port}:61617</port>-->
+<!--                                            <port>${activemq.web_console.port}:8161</port>-->
+<!--                                        </ports>-->
+<!--                                        <log>-->
+<!--                                            <enabled>true</enabled>-->
+<!--                                        </log>-->
+<!--                                        <wait>-->
+<!--                                            <log>ActiveMQ Jolokia REST API available</log>-->
+<!--                                            <time>500000</time>-->
+<!--                                        </wait>-->
+<!--                                    </run>-->
+<!--                                </image>-->
+<!--                                <image>-->
+<!--                                    <name>shopify/toxiproxy</name>-->
+<!--                                    <alias>toxiproxy</alias>-->
+<!--                                    <run>-->
+<!--                                        <ports>-->
+<!--                                            <port>${toxiproxy.port}:8474</port>-->
+<!--                                            <port>${connection.lost.port}:${connection.lost.port}</port>-->
+<!--                                            <port>${connection.broken.port}:${connection.broken.port}</port>-->
+<!--                                        </ports>-->
+<!--                                        <links>-->
+<!--                                            <link>activemq</link>-->
+<!--                                        </links>-->
+<!--                                    </run>-->
+<!--                                </image>-->
+<!--                            </images>-->
+<!--                            <verbose>true</verbose>-->
+<!--                        </configuration>-->
+<!--                        <dependencies>-->
+<!--                            <dependency>-->
+<!--                                <groupId>org.slf4j</groupId>-->
+<!--                                <artifactId>slf4j-api</artifactId>-->
+<!--                                <version>2.0.7</version>-->
+<!--                            </dependency>-->
+<!--                            <dependency>-->
+<!--                                <groupId>org.slf4j</groupId>-->
+<!--                                <artifactId>jcl-over-slf4j</artifactId>-->
+<!--                                <version>2.0.7</version>-->
+<!--                            </dependency>-->
+<!--                        </dependencies>-->
+<!--                        <executions>-->
+<!--                            <execution>-->
+<!--                                <id>start</id>-->
+<!--                                <phase>pre-integration-test</phase>-->
+<!--                                <goals>-->
+<!--                                    <goal>build</goal>-->
+<!--                                    <goal>start</goal>-->
+<!--                                </goals>-->
+<!--                                <configuration>-->
+<!--                                    <showLogs>true</showLogs>-->
+<!--                                    <logStdout>true</logStdout>-->
+<!--                                </configuration>-->
+<!--                            </execution>-->
+<!--                            <execution>-->
+<!--                                <id>stop</id>-->
+<!--                                <phase>clean</phase>-->
+<!--                                <goals>-->
+<!--                                    <goal>stop</goal>-->
+<!--                                    <goal>remove</goal>-->
+<!--                                </goals>-->
+<!--                            </execution>-->
+<!--                        </executions>-->
+<!--                    </plugin>-->
+<!--                </plugins>-->
+<!--            </build>-->
+<!--        </profile>-->
+<!--        <profile>-->
+<!--            <id>docker-windows</id>-->
+<!--            <activation>-->
+<!--                <os>-->
+<!--                    <family>windows</family>-->
+<!--                </os>-->
+<!--            </activation>-->
+<!--            <properties>-->
+<!--                <docker.skip>true</docker.skip>-->
+<!--            </properties>-->
+<!--            <build>-->
+<!--                <plugins>-->
+<!--                    <plugin>-->
+<!--                        <groupId>org.apache.maven.plugins</groupId>-->
+<!--                        <artifactId>maven-surefire-plugin</artifactId>-->
+<!--                        <configuration>-->
+<!--                            <systemPropertyVariables>-->
+<!--                                <skipTestsWhichRequireDocker>true</skipTestsWhichRequireDocker>-->
+<!--                            </systemPropertyVariables>-->
+<!--                        </configuration>-->
+<!--                    </plugin>-->
+<!--                </plugins>-->
+<!--            </build>-->
+<!--        </profile>-->
+<!--    </profiles>-->
 
 
     <distributionManagement>
@@ -577,6 +576,11 @@
             <id>mule</id>
             <name>Mule Repository</name>
             <url>https://repository.mulesoft.org/nexus/content/repositories/public/</url>
+        </repository>
+        <repository>
+            <id>ext-releases</id>
+            <name>Mule External Libraries Repository</name>
+            <url>https://repository-master.mulesoft.org/nexus/content/repositories/ext-releases</url>
         </repository>
     </repositories>
 
