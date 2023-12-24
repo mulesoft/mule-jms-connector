@@ -15,16 +15,32 @@
 
     <munit:config name="activemq-over-ssl-test-case" minMuleVersion="4.3.0">
         <munit:parameterizations>
-            <munit:parameterization name="invalid-broker-url">
+            <munit:parameterization name="invalid-broker-url-default">
                 <munit:parameters>
                     <!-- a valid ip which is not the host defined in the CN for the TSL connection certificate -->
                     <munit:parameter propertyName="brokerUrl" value="ssl://0.0.0.0:${activemq.port}"/>
+                    <munit:parameter propertyName="config" value="config-with-ssl-default"/>
                 </munit:parameters>
             </munit:parameterization>
-            <munit:parameterization name="valid-broker-url">
+            <munit:parameterization name="valid-broker-url-default">
                 <munit:parameters>
                     <!-- a host which is not the one defined in the CN for the TSL connection certificate -->
                     <munit:parameter propertyName="brokerUrl" value="ssl://localhost:${activemq.port}"/>
+                    <munit:parameter propertyName="config" value="config-with-ssl-default"/>
+                </munit:parameters>
+            </munit:parameterization>
+            <munit:parameterization name="invalid-broker-url-false">
+                <munit:parameters>
+                    <!-- a valid ip which is not the host defined in the CN for the TSL connection certificate -->
+                    <munit:parameter propertyName="brokerUrl" value="ssl://0.0.0.0:${activemq.port}"/>
+                    <munit:parameter propertyName="config" value="config-with-ssl-default"/>
+                </munit:parameters>
+            </munit:parameterization>
+            <munit:parameterization name="valid-broker-url-false">
+                <munit:parameters>
+                    <!-- a host which is not the one defined in the CN for the TSL connection certificate -->
+                    <munit:parameter propertyName="brokerUrl" value="ssl://localhost:${activemq.port}"/>
+                    <munit:parameter propertyName="config" value="config-with-ssl-default"/>
                 </munit:parameters>
             </munit:parameterization>
         </munit:parameterizations>
@@ -32,13 +48,23 @@
 
     <munit:dynamic-port propertyName="activemq.port"/>
 
-    <jms:config name="config-with-ssl">
+    <jms:config name="config-with-ssl-default">
         <jms:active-mq-connection>
             <tls:context >
                 <tls:trust-store insecure="true" />
                 <tls:key-store type="jks" path="tls/client.ks" keyPassword="password" password="password" algorithm="PKIX"/>
             </tls:context>
-            <jms:factory-configuration brokerUrl="${brokerUrl}" />
+            <jms:factory-configuration brokerUrl="${brokerUrl}"/>
+        </jms:active-mq-connection>
+    </jms:config>
+
+    <jms:config name="config-with-ssl-false">
+        <jms:active-mq-connection>
+            <tls:context >
+                <tls:trust-store insecure="true" />
+                <tls:key-store type="jks" path="tls/client.ks" keyPassword="password" password="password" algorithm="PKIX"/>
+            </tls:context>
+            <jms:factory-configuration brokerUrl="${brokerUrl}" verifyHostName="false"/>
         </jms:active-mq-connection>
     </jms:config>
 
@@ -61,12 +87,12 @@
     <munit:test name="send-message-through-SSL">
         <munit:execution>
             <set-variable variableName="message" value="#[&quot;I'm a secure message&quot;]"/>
-            <jms:publish config-ref="config-with-ssl" destination="someDest">
+            <jms:publish config-ref="${config}" destination="someDest">
                 <jms:message>
                     <jms:body>#[vars.message]</jms:body>
                 </jms:message>
             </jms:publish>
-            <jms:consume config-ref="config-with-ssl" destination="someDest"/>
+            <jms:consume config-ref="${config}" destination="someDest"/>
         </munit:execution>
         <munit:validation>
             <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo(vars.message)]"/>

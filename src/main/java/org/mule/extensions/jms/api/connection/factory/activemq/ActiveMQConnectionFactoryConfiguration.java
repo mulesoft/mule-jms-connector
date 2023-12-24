@@ -7,10 +7,13 @@
 package org.mule.extensions.jms.api.connection.factory.activemq;
 
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
+
+import org.mule.extensions.jms.api.ack.XaAckMode;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
+import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 import org.mule.sdk.api.annotation.semantics.connectivity.ExcludeFromConnectivitySchema;
@@ -51,6 +54,19 @@ public class ActiveMQConnectionFactoryConfiguration {
   @Optional(defaultValue = "false")
   @Expression(NOT_SUPPORTED)
   private boolean enableXA;
+
+  /**
+   * Indicates how ACK is going to be handled in an XA Session.
+   * Since ActiveMQ version 5.16.0 this value is mandatory for XA sessions without an XA transaction associated.
+   * The possible value is one of the fields available in {@link "https://docs.oracle.com/javaee/6/api/javax/jms/Session.html?is-external=true#AUTO_ACKNOWLEDGE"}
+   */
+  @DisplayName("XA ack mode")
+  @Parameter
+  @Optional(defaultValue = "AUTO_ACKNOWLEDGE")
+  @Summary("Indicates how ACK is going to be handled in an XA Session.")
+  @Expression(NOT_SUPPORTED)
+  @ExcludeFromConnectivitySchema
+  private XaAckMode xaAckMode;
 
   /**
    * Used to configure the {@link RedeliveryPolicy#getInitialRedeliveryDelay()}
@@ -106,6 +122,19 @@ public class ActiveMQConnectionFactoryConfiguration {
   @ExcludeFromConnectivitySchema
   private boolean trustAllPackages;
 
+  /**
+   * Indicates whether an SSL connection socket must verify the broker URL hostname matches the CN value in the
+   * TSL certificate.
+   * Starting with version 5.15.6 ActiveMQ requires you to explicitly set this value.
+   */
+  @Parameter
+  @Optional(defaultValue = "false")
+  @Summary("Indicates whether an SSL connection socket must verify the broker URL hostname matches the CN value in " +
+      "the TSL certificate. \n We recommend setting this value to true.")
+  @Expression(NOT_SUPPORTED)
+  @ExcludeFromConnectivitySchema
+  @DisplayName("Verify hostname")
+  private boolean verifyHostName;
 
   public int getMaxRedelivery() {
     return maxRedelivery;
@@ -163,18 +192,25 @@ public class ActiveMQConnectionFactoryConfiguration {
     return trustAllPackages;
   }
 
-  public boolean getTrustAllPackages() {
-    return trustAllPackages;
-  }
 
   public void setTrustAllPackages(boolean trustAllPackages) {
     this.trustAllPackages = trustAllPackages;
   }
 
   public boolean getVerifyHostName() {
-    //TODO: change the default value to a parameter. This default is required to support a security fix and avoid
-    // breaking backwards compatibility (GUS ticket: W-14487260)
-    return false;
+    return verifyHostName;
+  }
+
+  public void setVerifyHostName(boolean verifyHostName) {
+    this.verifyHostName = verifyHostName;
+  }
+
+  public XaAckMode getXaAckMode() {
+    return xaAckMode;
+  }
+
+  public void setXaAckMode(XaAckMode xaAckMode) {
+    this.xaAckMode = xaAckMode;
   }
 
 
@@ -190,6 +226,8 @@ public class ActiveMQConnectionFactoryConfiguration {
         redeliveryDelay == that.redeliveryDelay &&
         maxRedelivery == that.maxRedelivery &&
         trustAllPackages == that.trustAllPackages &&
+        verifyHostName == that.verifyHostName &&
+        xaAckMode == that.xaAckMode &&
         Objects.equals(brokerUrl, that.brokerUrl) &&
         Objects.equals(trustedPackages, that.trustedPackages);
   }
@@ -197,6 +235,6 @@ public class ActiveMQConnectionFactoryConfiguration {
   @Override
   public int hashCode() {
     return Objects.hash(brokerUrl, enableXA, initialRedeliveryDelay, redeliveryDelay, maxRedelivery, trustedPackages,
-                        trustAllPackages);
+                        trustAllPackages, verifyHostName, xaAckMode);
   }
 }
