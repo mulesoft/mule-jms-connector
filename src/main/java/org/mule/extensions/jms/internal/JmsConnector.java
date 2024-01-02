@@ -34,7 +34,9 @@ import org.mule.runtime.extension.api.annotation.SubTypeMapping;
 import org.mule.runtime.extension.api.annotation.connectivity.ConnectionProviders;
 import org.mule.runtime.extension.api.annotation.dsl.xml.Xml;
 import org.mule.runtime.extension.api.annotation.error.ErrorTypes;
+import org.mule.sdk.api.annotation.JavaVersionSupport;
 import org.mule.sdk.api.annotation.OnArtifactLifecycle;
+import org.mule.sdk.api.meta.JavaVersion;
 
 import javax.jms.ConnectionFactory;
 
@@ -63,6 +65,7 @@ import javax.jms.ConnectionFactory;
 @OnException(JmsExceptionHandler.class)
 @Export(classes = JmsAttributes.class)
 @OnArtifactLifecycle(JmsArtifactLifecycleListener.class)
+@JavaVersionSupport({JavaVersion.JAVA_8, JavaVersion.JAVA_11, JavaVersion.JAVA_17})
 public class JmsConnector {
 
 }

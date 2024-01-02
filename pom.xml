@@ -395,19 +395,13 @@
                     <dependency>
                         <groupId>org.mule.module</groupId>
                         <artifactId>mule-java-module</artifactId>
-                        <version>1.2.10</version>
+                        <version>1.3.0-SNAPSHOT</version>
                         <classifier>mule-plugin</classifier>
                     </dependency>
                     <dependency>
                         <groupId>com.mulesoft.munit</groupId>
                         <artifactId>mtf-tools</artifactId>
                         <version>${mtf-tools.version}</version>
-                        <classifier>mule-plugin</classifier>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.mule.modules</groupId>
-                        <artifactId>mule-connection-test-module</artifactId>
-                        <version>1.0.0</version>
                         <classifier>mule-plugin</classifier>
                     </dependency>
                     <dependency>
@@ -461,20 +455,6 @@
                                             <log>ActiveMQ Jolokia REST API available</log>
                                             <time>500000</time>
                                         </wait>
-                                    </run>
-                                </image>
-                                <image>
-                                    <name>shopify/toxiproxy</name>
-                                    <alias>toxiproxy</alias>
-                                    <run>
-                                        <ports>
-                                            <port>${toxiproxy.port}:8474</port>
-                                            <port>${connection.lost.port}:${connection.lost.port}</port>
-                                            <port>${connection.broken.port}:${connection.broken.port}</port>
-                                        </ports>
-                                        <links>
-                                            <link>activemq</link>
-                                        </links>
                                     </run>
                                 </image>
                             </images>
