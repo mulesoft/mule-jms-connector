@@ -7,6 +7,7 @@
 package org.mule.extensions.jms.api.connection.factory.jndi;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.mule.extensions.jms.internal.ExcludeFromGeneratedCoverage;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
@@ -51,22 +52,27 @@ public class JndiNameResolverProperties {
     return jndiInitialContextFactory;
   }
 
+  @ExcludeFromGeneratedCoverage
   public void setJndiInitialContextFactory(String jndiInitialContextFactory) {
     this.jndiInitialContextFactory = jndiInitialContextFactory;
   }
 
+  @ExcludeFromGeneratedCoverage
   public Map<String, Object> getProviderProperties() {
     return providerProperties;
   }
 
+  @ExcludeFromGeneratedCoverage
   public void setProviderProperties(Map<String, Object> providerProperties) {
     this.providerProperties = providerProperties;
   }
 
+  @ExcludeFromGeneratedCoverage
   public String getJndiProviderUrl() {
     return jndiProviderUrl;
   }
 
+  @ExcludeFromGeneratedCoverage
   public void setJndiProviderUrl(String jndiProviderUrl) {
     this.jndiProviderUrl = jndiProviderUrl;
   }
@@ -77,6 +83,7 @@ public class JndiNameResolverProperties {
   }
 
   @Override
+  @ExcludeFromGeneratedCoverage
   public boolean equals(Object other) {
     if (other == null) {
       return false;

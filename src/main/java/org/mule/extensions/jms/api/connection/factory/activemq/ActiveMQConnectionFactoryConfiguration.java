@@ -7,6 +7,8 @@
 package org.mule.extensions.jms.api.connection.factory.activemq;
 
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
+
+import org.mule.extensions.jms.internal.ExcludeFromGeneratedCoverage;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Optional;
@@ -106,67 +108,82 @@ public class ActiveMQConnectionFactoryConfiguration {
   @ExcludeFromConnectivitySchema
   private boolean trustAllPackages;
 
-
+  @ExcludeFromGeneratedCoverage
   public int getMaxRedelivery() {
     return maxRedelivery;
   }
 
+  @ExcludeFromGeneratedCoverage
   public void setMaxRedelivery(int maxRedelivery) {
     this.maxRedelivery = maxRedelivery;
   }
 
+  @ExcludeFromGeneratedCoverage
   public boolean isEnableXA() {
     return enableXA;
   }
 
+  @ExcludeFromGeneratedCoverage
   public boolean getEnableXA() {
     return enableXA;
   }
 
+  @ExcludeFromGeneratedCoverage
   public void setEnableXA(boolean enableXA) {
     this.enableXA = enableXA;
   }
 
+  @ExcludeFromGeneratedCoverage
   public String getBrokerUrl() {
     return brokerUrl;
   }
 
+  @ExcludeFromGeneratedCoverage
   public void setBrokerUrl(String brokerUrl) {
     this.brokerUrl = brokerUrl;
   }
 
+  @ExcludeFromGeneratedCoverage
   public long getInitialRedeliveryDelay() {
     return initialRedeliveryDelay;
   }
 
+  @ExcludeFromGeneratedCoverage
   public void setInitialRedeliveryDelay(long initialRedeliveryDelay) {
     this.initialRedeliveryDelay = initialRedeliveryDelay;
   }
 
+  @ExcludeFromGeneratedCoverage
   public long getRedeliveryDelay() {
     return redeliveryDelay;
   }
 
+  @ExcludeFromGeneratedCoverage
   public void setRedeliveryDelay(long redeliveryDelay) {
     this.redeliveryDelay = redeliveryDelay;
   }
 
+  @ExcludeFromGeneratedCoverage
   public List<String> getTrustedPackages() {
     return trustedPackages;
   }
 
+  @ExcludeFromGeneratedCoverage
   public void setTrustedPackages(List<String> trustedPackages) {
     this.trustedPackages = trustedPackages;
   }
 
+  @ExcludeFromGeneratedCoverage
   public boolean isTrustAllPackages() {
     return trustAllPackages;
   }
 
+  @ExcludeFromGeneratedCoverage
   public boolean getTrustAllPackages() {
     return trustAllPackages;
   }
 
+  @ExcludeFromGeneratedCoverage
   public void setTrustAllPackages(boolean trustAllPackages) {
     this.trustAllPackages = trustAllPackages;
   }
@@ -179,6 +196,7 @@ public class ActiveMQConnectionFactoryConfiguration {
 
 
   @Override
+  @ExcludeFromGeneratedCoverage
   public boolean equals(Object o) {
     if (this == o)
       return true;
@@ -195,6 +213,7 @@ public class ActiveMQConnectionFactoryConfiguration {
   }
 
   @Override
+  @ExcludeFromGeneratedCoverage
   public int hashCode() {
     return Objects.hash(brokerUrl, enableXA, initialRedeliveryDelay, redeliveryDelay, maxRedelivery, trustedPackages,
                         trustAllPackages);

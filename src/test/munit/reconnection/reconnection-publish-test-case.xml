@@ -3,7 +3,7 @@
 <mule xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
-      xmlns:connection-test="http://www.mulesoft.org/schema/mule/connection-test"
+      xmlns:java="http://www.mulesoft.org/schema/mule/java"
       xmlns="http://www.mulesoft.org/schema/mule/core"
       xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
       xmlns:mtf="http://www.mulesoft.org/schema/mule/mtf"
@@ -11,8 +11,8 @@
       http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
       http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
       http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
-      http://www.mulesoft.org/schema/mule/connection-test http://www.mulesoft.org/schema/mule/connection-test/current/mule-connection-test.xsd
-      http://www.mulesoft.org/schema/mule/mtf http://www.mulesoft.org/schema/mule/mtf/current/mule-mtf.xsd">
+      http://www.mulesoft.org/schema/mule/mtf http://www.mulesoft.org/schema/mule/mtf/current/mule-mtf.xsd
+      http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd">
 
     <munit:config name="reconnection-publish-test-case.xml"  minMuleVersion="4.3.0"/>
 
@@ -29,16 +29,16 @@
     </munit:test>
 
     <flow name="publish-reconnection-flow">
-        <connection-test:define-proxy-server-port serverPort="${toxiproxy.port}"/>
-        <connection-test:create-proxy realPort="61616" realHost="activemq" proxyPort="${connection.lost.port}"/>
         <jms:publish config-ref="JMS_CONNECTION_TOXI" destination="destination_2">
             <jms:message>
                 <jms:body>1</jms:body>
             </jms:message>
         </jms:publish>
-        <connection-test:disconnect-proxy proxyPort="${connection.lost.port}"/>
+        <flow-ref name="stop-activemq-broker" />
+        <set-variable variableName="containerId" value="#[payload]" />
         <munit-tools:sleep time="500"/>
-        <connection-test:reconnect-proxy proxyPort="${connection.lost.port}"/>
+        <flow-ref name="start-activemq-broker" />
+        <logger message="#[ import * from dw::Runtime --- '' wait 2000]"/>
         <munit-tools:sleep time="500"/>
         <jms:publish config-ref="JMS_CONNECTION_TOXI" destination="destination_2">
             <jms:message>
@@ -46,6 +46,18 @@
             </jms:message>
         </jms:publish>
 
+    </flow>
+
+    <flow name="stop-activemq-broker">
+        <java:invoke-static class="org.mule.extensions.jms.test.util.BrokerContainerLifecycleManger" method="stopContainerWithName(String, int)">
+            <java:args >#[{ arg0 : vars.containerName, arg1: 0 }]</java:args>
+        </java:invoke-static>
+    </flow>
+
+    <flow name="start-activemq-broker">
+        <java:invoke-static class="org.mule.extensions.jms.test.util.BrokerContainerLifecycleManger" method="startContainerWithId(String)">
+            <java:args >#[{ arg0 : vars.containerId }]</java:args>
+        </java:invoke-static>
     </flow>
 
 

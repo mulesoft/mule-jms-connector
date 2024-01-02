@@ -19,6 +19,7 @@ import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.stopIfNeeded;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.mule.extensions.jms.api.connection.LookupJndiDestination;
 import org.mule.extensions.jms.api.exception.JmsExtensionException;
+import org.mule.extensions.jms.internal.ExcludeFromGeneratedCoverage;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.api.lifecycle.Lifecycle;
@@ -150,6 +151,7 @@ public class JndiConnectionFactory extends DelegatingConnectionFactory implement
     }
   }
 
+  @ExcludeFromGeneratedCoverage
   private JndiNameResolver getJndiNameResolver() {
     return nameResolver;
   }
@@ -178,34 +180,42 @@ public class JndiConnectionFactory extends DelegatingConnectionFactory implement
     return null;
   }
 
+  @ExcludeFromGeneratedCoverage
   public String getConnectionFactoryJndiName() {
     return connectionFactoryJndiName;
   }
 
+  @ExcludeFromGeneratedCoverage
   public void setConnectionFactoryJndiName(String connectionFactoryJndiName) {
     this.connectionFactoryJndiName = connectionFactoryJndiName;
   }
 
+  @ExcludeFromGeneratedCoverage
   public LookupJndiDestination getLookupDestination() {
     return lookupDestination;
   }
 
+  @ExcludeFromGeneratedCoverage
   public void setLookupDestination(LookupJndiDestination lookupDestination) {
     this.lookupDestination = lookupDestination;
   }
 
+  @ExcludeFromGeneratedCoverage
   public JndiNameResolverProvider getNameResolverProvider() {
     return nameResolverProvider;
   }
 
+  @ExcludeFromGeneratedCoverage
   public void setNameResolverProvider(JndiNameResolverProvider nameResolverProvider) {
     this.nameResolverProvider = nameResolverProvider;
   }
 
+  @ExcludeFromGeneratedCoverage
   public JndiNameResolver getNameResolver() {
     return nameResolver;
   }
 
+  @ExcludeFromGeneratedCoverage
   public void setNameResolver(JndiNameResolver nameResolver) {
     this.nameResolver = nameResolver;
   }
@@ -214,6 +224,7 @@ public class JndiConnectionFactory extends DelegatingConnectionFactory implement
     return connectionFactory;
   }
 
+  @ExcludeFromGeneratedCoverage
   public void setConnectionFactory(ConnectionFactory connectionFactory) {
     this.connectionFactory = connectionFactory;
   }
@@ -224,6 +235,7 @@ public class JndiConnectionFactory extends DelegatingConnectionFactory implement
   }
 
   @Override
+  @ExcludeFromGeneratedCoverage
   public boolean equals(Object other) {
     if (other == null) {
       return false;

@@ -9,6 +9,7 @@ package org.mule.extensions.jms.api.config;
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 
 import org.mule.extensions.jms.api.connection.JmsSpecification;
+import org.mule.extensions.jms.internal.ExcludeFromGeneratedCoverage;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
@@ -123,90 +124,112 @@ public final class JmsProducerConfig implements org.mule.jms.commons.api.config.
   @Summary("The message type identifier to be set in the JMSType Header when a message is sent")
   private String jmsType;
 
+  @ExcludeFromGeneratedCoverage
   public boolean isPersistentDelivery() {
     return persistentDelivery;
   }
 
+  @ExcludeFromGeneratedCoverage
   public boolean getPersistentDelivery() {
     return persistentDelivery;
   }
 
+  @ExcludeFromGeneratedCoverage
   public void setPersistentDelivery(boolean persistentDelivery) {
     this.persistentDelivery = persistentDelivery;
   }
 
+  @ExcludeFromGeneratedCoverage
   public int getPriority() {
     return priority;
   }
 
+  @ExcludeFromGeneratedCoverage
   public void setPriority(int priority) {
     this.priority = priority;
   }
 
+  @ExcludeFromGeneratedCoverage
   public long getTimeToLive() {
     return timeToLive;
   }
 
+  @ExcludeFromGeneratedCoverage
   public void setTimeToLive(long timeToLive) {
     this.timeToLive = timeToLive;
   }
 
+  @ExcludeFromGeneratedCoverage
   public TimeUnit getTimeToLiveUnit() {
     return timeToLiveUnit;
   }
 
+  @ExcludeFromGeneratedCoverage
   public void setTimeToLiveUnit(TimeUnit timeToLiveUnit) {
     this.timeToLiveUnit = timeToLiveUnit;
   }
 
+  @ExcludeFromGeneratedCoverage
   public boolean isDisableMessageId() {
     return disableMessageId;
   }
 
+  @ExcludeFromGeneratedCoverage
   public boolean getDisableMessageId() {
     return disableMessageId;
   }
 
+  @ExcludeFromGeneratedCoverage
   public void setDisableMessageId(boolean disableMessageId) {
     this.disableMessageId = disableMessageId;
   }
 
+  @ExcludeFromGeneratedCoverage
   public boolean isDisableMessageTimestamp() {
     return disableMessageTimestamp;
   }
 
+  @ExcludeFromGeneratedCoverage
   public boolean getDisableMessageTimestamp() {
     return disableMessageTimestamp;
   }
 
+  @ExcludeFromGeneratedCoverage
   public void setDisableMessageTimestamp(boolean disableMessageTimestamp) {
     this.disableMessageTimestamp = disableMessageTimestamp;
   }
 
+  @ExcludeFromGeneratedCoverage
   public Long getDeliveryDelay() {
     return deliveryDelay;
   }
 
+  @ExcludeFromGeneratedCoverage
   public void setDeliveryDelay(Long deliveryDelay) {
     this.deliveryDelay = deliveryDelay;
   }
 
+  @ExcludeFromGeneratedCoverage
   public TimeUnit getDeliveryDelayUnit() {
     return deliveryDelayUnit;
   }
 
+  @ExcludeFromGeneratedCoverage
   public void setDeliveryDelayUnit(TimeUnit deliveryDelayUnit) {
     this.deliveryDelayUnit = deliveryDelayUnit;
   }
 
+  @ExcludeFromGeneratedCoverage
   public String getJmsType() {
     return jmsType;
   }
 
+  @ExcludeFromGeneratedCoverage
   public void setJmsType(String jmsType) {
     this.jmsType = jmsType;
   }
 
+  @ExcludeFromGeneratedCoverage
   @Override
   public boolean equals(Object o) {
     if (this == o)
@@ -225,6 +248,7 @@ public final class JmsProducerConfig implements org.mule.jms.commons.api.config.
         Objects.equals(jmsType, that.jmsType);
   }
 
+  @ExcludeFromGeneratedCoverage
   @Override
   public int hashCode() {
     return Objects.hash(persistentDelivery, priority, timeToLive, timeToLiveUnit, disableMessageId, disableMessageTimestamp,

@@ -9,6 +9,7 @@ package org.mule.extensions.jms.api.connection.factory.jndi;
 import static java.util.Objects.hash;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.mule.extensions.jms.internal.ExcludeFromGeneratedCoverage;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 
 import javax.naming.CommunicationException;
@@ -66,6 +67,7 @@ public class SimpleJndiNameResolver extends AbstractJndiNameResolver {
   }
 
   @Override
+  @ExcludeFromGeneratedCoverage
   public int hashCode() {
     int result = super.hashCode();
     if (jndiContext != null) {
@@ -75,6 +77,7 @@ public class SimpleJndiNameResolver extends AbstractJndiNameResolver {
   }
 
   @Override
+  @ExcludeFromGeneratedCoverage
   public boolean equals(Object other) {
     if (other == null) {
       return false;
@@ -101,10 +104,12 @@ public class SimpleJndiNameResolver extends AbstractJndiNameResolver {
     return true;
   }
 
+  @ExcludeFromGeneratedCoverage
   public Context getJndiContext() {
     return jndiContext;
   }
 
+  @ExcludeFromGeneratedCoverage
   public void setJndiContext(Context jndiContext) {
     this.jndiContext = jndiContext;
   }

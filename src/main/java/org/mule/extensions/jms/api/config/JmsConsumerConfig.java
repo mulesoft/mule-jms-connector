@@ -11,6 +11,7 @@ import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import org.mule.extensions.jms.api.ack.AckMode;
 import org.mule.extensions.jms.api.destination.ConsumerType;
 import org.mule.extensions.jms.api.destination.QueueConsumer;
+import org.mule.extensions.jms.internal.ExcludeFromGeneratedCoverage;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
 import org.mule.runtime.extension.api.annotation.param.NullSafe;
@@ -71,39 +72,48 @@ public final class JmsConsumerConfig implements org.mule.jms.commons.api.config.
   // TODO MULE-10958: duplicated in ActiveMQ for default factory creation
   private int maxRedelivery;
 
+  @ExcludeFromGeneratedCoverage
   public int getMaxRedelivery() {
     return maxRedelivery;
   }
 
+  @ExcludeFromGeneratedCoverage
   public String getSelector() {
     return selector;
   }
 
+  @ExcludeFromGeneratedCoverage
   public ConsumerType getConsumerType() {
     return consumerType;
   }
 
+  @ExcludeFromGeneratedCoverage
   public AckMode getAckMode() {
     return ackMode;
   }
 
 
+  @ExcludeFromGeneratedCoverage
   public void setMaxRedelivery(int maxRedelivery) {
     this.maxRedelivery = maxRedelivery;
   }
 
+  @ExcludeFromGeneratedCoverage
   public void setSelector(String selector) {
     this.selector = selector;
   }
 
+  @ExcludeFromGeneratedCoverage
   public void setConsumerType(ConsumerType consumerType) {
     this.consumerType = consumerType;
   }
 
+  @ExcludeFromGeneratedCoverage
   public void setAckMode(AckMode ackMode) {
     this.ackMode = ackMode;
   }
 
+  @ExcludeFromGeneratedCoverage
   @Override
   public boolean equals(Object o) {
     if (this == o)
@@ -117,6 +127,7 @@ public final class JmsConsumerConfig implements org.mule.jms.commons.api.config.
         Objects.equals(selector, that.selector);
   }
 
+  @ExcludeFromGeneratedCoverage
   @Override
   public int hashCode() {
     return Objects.hash(ackMode, consumerType, selector, maxRedelivery);

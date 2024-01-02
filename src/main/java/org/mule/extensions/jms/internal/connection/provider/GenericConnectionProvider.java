@@ -12,6 +12,7 @@ import static org.mule.runtime.api.meta.ExternalLibraryType.DEPENDENCY;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import org.mule.extensions.jms.api.connection.factory.jndi.JndiConnectionFactory;
+import org.mule.extensions.jms.internal.ExcludeFromGeneratedCoverage;
 import org.mule.jms.commons.api.connection.LookupJndiDestination;
 import org.mule.jms.commons.internal.support.JmsSupport;
 import org.mule.jms.commons.internal.support.Jms11Support;
@@ -78,6 +79,7 @@ public class GenericConnectionProvider extends BaseConnectionProvider {
   private ConnectionFactory connectionFactory;
 
   @Override
+  @ExcludeFromGeneratedCoverage
   public ConnectionFactory getConnectionFactory() {
     this.addCertificatesToSSLContextIfNeeded();
     return connectionFactory;
@@ -130,6 +132,8 @@ public class GenericConnectionProvider extends BaseConnectionProvider {
     };
   }
 
+  // These methods are excluded from coverage since they need special weblogic configuration
+  @ExcludeFromGeneratedCoverage
   protected void addCertificatesToSSLContextIfNeeded() {
     if (!trustStorePassword.isEmpty() && !trustStoreName.isEmpty()) {
       try {
@@ -146,6 +150,7 @@ public class GenericConnectionProvider extends BaseConnectionProvider {
     }
   }
 
+  @ExcludeFromGeneratedCoverage
   private TrustManager[] getCustomTrustStoreWithDefaultCerts(java.util.Optional<File> truststoreFile, String trustStorePassword)
       throws CertificateException, IOException, NoSuchAlgorithmException, KeyStoreException {
 
@@ -168,6 +173,7 @@ public class GenericConnectionProvider extends BaseConnectionProvider {
     return trustManagerFactory.getTrustManagers();
   }
 
+  @ExcludeFromGeneratedCoverage
   private KeyStore getKeyStoreWithCustomCerts(java.util.Optional<File> truststoreFile, String trustStorePassword)
       throws CertificateException, IOException, NoSuchAlgorithmException, KeyStoreException {
     final KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
@@ -181,6 +187,7 @@ public class GenericConnectionProvider extends BaseConnectionProvider {
     return keyStore;
   }
 
+  @ExcludeFromGeneratedCoverage
   private java.util.Optional<File> getTruststoreFile(String trustStoreName) {
     URL resource = this.getClass().getClassLoader().getResource(trustStoreName);
     return Objects.isNull(resource) ? java.util.Optional.empty() : java.util.Optional.of(new File(resource.getPath()));
