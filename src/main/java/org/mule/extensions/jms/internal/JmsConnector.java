@@ -23,7 +23,6 @@ import org.mule.extensions.jms.internal.config.JmsConfig;
 import org.mule.extensions.jms.internal.connection.provider.GenericConnectionProvider;
 import org.mule.extensions.jms.internal.connection.provider.activemq.ActiveMQConnectionNCTProvider;
 import org.mule.extensions.jms.internal.connection.provider.activemq.ActiveMQConnectionProvider;
-import org.mule.extensions.jms.internal.lifecycle.JmsArtifactLifecycleListener;
 import org.mule.extensions.jms.internal.operation.JmsAcknowledge;
 import org.mule.runtime.extension.api.annotation.Configurations;
 import org.mule.runtime.extension.api.annotation.Export;
@@ -64,7 +63,6 @@ import javax.jms.ConnectionFactory;
 @ErrorTypes(JmsError.class)
 @OnException(JmsExceptionHandler.class)
 @Export(classes = JmsAttributes.class)
-@OnArtifactLifecycle(JmsArtifactLifecycleListener.class)
 @JavaVersionSupport({JavaVersion.JAVA_8, JavaVersion.JAVA_11, JavaVersion.JAVA_17})
 public class JmsConnector {
 
