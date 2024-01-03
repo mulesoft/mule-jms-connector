@@ -8,6 +8,7 @@ package org.mule.extensions.jms.api.destination;
 
 import static org.mule.extensions.jms.internal.common.JmsCommons.QUEUE;
 
+import org.mule.extensions.jms.internal.ExcludeFromGeneratedCoverage;
 import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
@@ -48,11 +49,22 @@ public class JmsDestination implements org.mule.jms.commons.api.destination.JmsD
     this.destinationType = type;
   }
 
+  @ExcludeFromGeneratedCoverage
   public String getDestination() {
     return destination;
   }
 
+  @ExcludeFromGeneratedCoverage
+  public void setDestination(String destination) {
+    this.destination = destination;
+  }
+
   public DestinationType getDestinationType() {
     return destinationType;
+  }
+
+  @ExcludeFromGeneratedCoverage
+  public void setDestinationType(DestinationType destinationType) {
+    this.destinationType = destinationType;
   }
 }
