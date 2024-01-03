@@ -1,5 +1,5 @@
 /*
- * Copyright (c) MuleSoft, Inc.  All rights reserved.  http://www.mulesoft.com
+ * Copyright 2023 Salesforce, Inc. All rights reserved.
  * The software in this package is published under the terms of the CPAL v1.0
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
@@ -111,24 +111,52 @@ public class ActiveMQConnectionFactoryConfiguration {
     return maxRedelivery;
   }
 
+  public void setMaxRedelivery(int maxRedelivery) {
+    this.maxRedelivery = maxRedelivery;
+  }
+
   public boolean isEnableXA() {
     return enableXA;
+  }
+
+  public boolean getEnableXA() {
+    return enableXA;
+  }
+
+  public void setEnableXA(boolean enableXA) {
+    this.enableXA = enableXA;
   }
 
   public String getBrokerUrl() {
     return brokerUrl;
   }
 
+  public void setBrokerUrl(String brokerUrl) {
+    this.brokerUrl = brokerUrl;
+  }
+
   public long getInitialRedeliveryDelay() {
     return initialRedeliveryDelay;
+  }
+
+  public void setInitialRedeliveryDelay(long initialRedeliveryDelay) {
+    this.initialRedeliveryDelay = initialRedeliveryDelay;
   }
 
   public long getRedeliveryDelay() {
     return redeliveryDelay;
   }
 
+  public void setRedeliveryDelay(long redeliveryDelay) {
+    this.redeliveryDelay = redeliveryDelay;
+  }
+
   public List<String> getTrustedPackages() {
     return trustedPackages;
+  }
+
+  public void setTrustedPackages(List<String> trustedPackages) {
+    this.trustedPackages = trustedPackages;
   }
 
   public boolean isTrustAllPackages() {
@@ -148,6 +176,7 @@ public class ActiveMQConnectionFactoryConfiguration {
     // breaking backwards compatibility (GUS ticket: W-14487260)
     return false;
   }
+
 
   @Override
   public boolean equals(Object o) {

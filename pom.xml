@@ -47,7 +47,14 @@
         <docker.maven.plugin.version>0.41.0</docker.maven.plugin.version>
         <maven.helper.plugin.version>3.3.0</maven.helper.plugin.version>
         <docker.skip>${skipTests}</docker.skip>
-        <muleSdkApiVersion>0.6.0</muleSdkApiVersion>
+
+        <muleSdkCompatibilityApiVersion>1.0.0-SNAPSHOT</muleSdkCompatibilityApiVersion>
+        <muleSdkApiVersion>1.0.0-SNAPSHOT</muleSdkApiVersion>
+
+        <mulesoftLicenseVersion>1.4.0</mulesoftLicenseVersion>
+        <license.maven.plugin.version>4.2</license.maven.plugin.version>
+        <licensePath>LICENSE_HEADER_CPAL.txt</licensePath>
+        <licenseYear>2023</licenseYear>
     </properties>
 
     <dependencies>
@@ -215,6 +222,16 @@
                     <artifactId>bcpkix-jdk15on</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.mule.sdk</groupId>
+            <artifactId>mule-sdk-compatibility-api</artifactId>
+            <version>${muleSdkCompatibilityApiVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mule.sdk</groupId>
+            <artifactId>mule-sdk-api</artifactId>
+            <version>${muleSdkApiVersion}</version>
         </dependency>
     </dependencies>
 
