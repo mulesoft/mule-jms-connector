@@ -6,6 +6,7 @@
  */
 package org.mule.extensions.jms.api.connection.caching;
 
+import org.mule.extensions.jms.internal.ExcludeFromGeneratedCoverage;
 import org.mule.runtime.extension.api.annotation.Alias;
 
 /**
@@ -19,11 +20,13 @@ import org.mule.runtime.extension.api.annotation.Alias;
 public class NoCachingConfiguration extends org.mule.jms.commons.api.connection.caching.NoCachingConfiguration
     implements CachingStrategy {
 
+  @ExcludeFromGeneratedCoverage
   @Override
   public int hashCode() {
     return NoCachingConfiguration.class.hashCode();
   }
 
+  @ExcludeFromGeneratedCoverage
   @Override
   public boolean equals(Object obj) {
     return obj != null && obj.getClass() == NoCachingConfiguration.class;

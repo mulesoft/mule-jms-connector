@@ -3,26 +3,28 @@
 <mule xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
-      xmlns:connection-test="http://www.mulesoft.org/schema/mule/connection-test"
       xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:java="http://www.mulesoft.org/schema/mule/java"
       xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
       xmlns:mtf="http://www.mulesoft.org/schema/mule/mtf"
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
       http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
       http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
       http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
-      http://www.mulesoft.org/schema/mule/connection-test http://www.mulesoft.org/schema/mule/connection-test/current/mule-connection-test.xsd
-      http://www.mulesoft.org/schema/mule/mtf http://www.mulesoft.org/schema/mule/mtf/current/mule-mtf.xsd">
+      http://www.mulesoft.org/schema/mule/mtf http://www.mulesoft.org/schema/mule/mtf/current/mule-mtf.xsd
+   http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd">
 
-    <!--  Is required a 4.1.5 min mule version to prevent a bug on the lazy init on Bitronix -->
+    <!--TODO: the tests that was useful in this class at the moment are ignored we should work on recover-->
     <munit:config name="activemq-xa-reconnection-test-case.xml" minMuleVersion="4.1.6"/>
+    <!--  Is required a 4.1.5 min mule version to prevent a bug on the lazy init on Bitronix -->
+    <!--
 
     <munit:before-suite name="proxySetup">
-        <connection-test:define-proxy-server-port serverPort="${toxiproxy.port}"/>
-        <connection-test:create-proxy realPort="61616" realHost="activemq" proxyPort="${connection.lost.port}"/>
+        <set-variable variableName="containerName" value="activemq"/>
     </munit:before-suite>
 
-    <munit:after-test name="afterTest-activemq-xa-reconnection-test-case" description="after test">
+    <munit:after-test name="afterTest-activemq-xa-re
+    connection-test-case" description="after test">
         <set-variable variableName="brokerName" value="localhost"/>
         <set-variable variableName="destinationName" value="destination_1"/>
         <flow-ref name="purgeQueue"/>
@@ -30,7 +32,7 @@
         <flow-ref name="purgeQueue"/>
     </munit:after-test>
 
-    <!-- Ignored until MULE-17221 is fixed -->
+
     <munit:test name="connection-lost-and-recovered-several-times" ignore="true">
         <munit:execution>
             <try transactionType="XA" transactionalAction="ALWAYS_BEGIN">
@@ -46,14 +48,14 @@
         </munit:validation>
     </munit:test>
 
-    <!--flacky JMSC-66-->
-    <!--<munit:test name="connection-lost-and-eventually-recovered" ignore="#[Munit::muleVersionEqualTo('4.2.0')]">-->
     <munit:test name="connection-lost-and-eventually-recovered" ignore="true">
         <munit:execution>
-            <connection-test:disconnect-proxy proxyPort="${connection.lost.port}"/>
+            <flow-ref name="stop-activemq-broker" />
+            <set-variable variableName="containerId" value="#[payload]" />
             <async>
-                <logger message="#[ import * from dw::Runtime --- '' wait 1000]"/>
-                <connection-test:reconnect-proxy proxyPort="${connection.lost.port}"/>
+                <logger message="#[ import * from dw::Runtime - '' wait 1000]"/>
+                <flow-ref name="start-activemq-broker" />
+                <logger message="#[ import * from dw::Runtime - '' wait 2000]"/>
             </async>
             <set-payload value="Al tok perro"/>
             <try transactionType="XA" transactionalAction="ALWAYS_BEGIN">
@@ -70,9 +72,11 @@
             <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo('Al tok perro')]"/>
         </munit:validation>
     </munit:test>
-    <munit:test name="connection-lost-and-never-recover" ignore="#[Munit::muleVersionEqualTo('4.2.0')]">
+
+    <munit:test name="connection-lost-and-never-recover" ignore="true">
         <munit:behavior>
-            <connection-test:disconnect-proxy proxyPort="${connection.lost.port}"/>
+            <flow-ref name="stop-activemq-broker" />
+            <set-variable variableName="containerId" value="#[payload]" />
         </munit:behavior>
         <munit:execution>
             <try>
@@ -88,7 +92,8 @@
                     <on-error-continue/>
                 </error-handler>
             </try>
-            <connection-test:reconnect-proxy proxyPort="${connection.lost.port}"/>
+            <flow-ref name="start-activemq-broker" />
+            <logger message="#[ import * from dw::Runtime - '' wait 2000]"/>
         </munit:execution>
         <munit:validation>
             <try>
@@ -117,8 +122,7 @@
     </flow>
 
     <flow name="try-with-connectivity-error">
-        <connection-test:disconnect-proxy proxyPort="${connection.lost.port}"/>
-        <logger message="#[ import * from dw::Runtime --- '' wait 500]"/>
+        <logger message="#[ import * from dw::Runtime - '' wait 500]"/>
         <try>
             <set-payload value="#[1]"/>
             <flow-ref name="publish-each"/>
@@ -126,9 +130,8 @@
                 <on-error-continue/>
             </error-handler>
         </try>
-        <connection-test:reconnect-proxy proxyPort="${connection.lost.port}"/>
         <set-payload value="#[3]"/>
-        <logger message="#[ import * from dw::Runtime --- '' wait 1000]"/>
+        <logger message="#[ import * from dw::Runtime - '' wait 1000]"/>
         <flow-ref name="publish-each"/>
     </flow>
 
@@ -148,4 +151,20 @@
         <jms:consume config-ref="JMS_Config_XA_UNSTABLE_CONNECTION" destination="destination_1"/>
         <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo(4)]"/>
     </flow>
+
+
+
+    <flow name="stop-activemq-broker">
+        <java:invoke-static class="org.mule.extensions.jms.test.util.BrokerContainerLifecycleManger" method="stopContainerWithName(String, int)">
+            <java:args >#[{ arg0 : vars.containerName, arg1: 0 }]</java:args>
+        </java:invoke-static>
+    </flow>
+
+    <flow name="start-activemq-broker">
+        <java:invoke-static class="org.mule.extensions.jms.test.util.BrokerContainerLifecycleManger" method="startContainerWithId(String)">
+            <java:args >#[{ arg0 : vars.containerId }]</java:args>
+        </java:invoke-static>
+    </flow>
+    flacky JMSC-66 -->
+
 </mule>

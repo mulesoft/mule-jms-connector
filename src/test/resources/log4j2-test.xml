@@ -23,11 +23,13 @@
         <AsyncLogger name="com.mulesoft.mule.runtime.module.cluster.internal.HazelcastClusterCoreExtension" level="ERROR"/>
         <AsyncLogger name="org.mule.runtime.deployment.model.internal.application.ApplicationClassLoaderBuilder" level="ERROR"/>
         <AsyncLogger name="com.mulesoft.mule.runtime.gw.client.provider.ApiPlatformClientProvider" level="ERROR"/>
+        <AsyncLogger name="org.mule.extensions.jms.api.connection.factory.jndi" level="DEBUG"/>
+
         <AsyncLogger name="bitronix.tm.BitronixTransactionManager" level="ERROR"/>
         <AsyncLogger name="org.quartz.simpl.RAMJobStore" level="ERROR"/>
 
         <!-- Mule classes -->
-        <AsyncLogger name="org.mule" level="WARN"/>
+        <AsyncLogger name="org.mule.extensions.jms" level="DEBUG"/>
         <!--<AsyncLogger name="org.mule.test.runner" level="DEBUG"/>-->
         <AsyncLogger name="com.mulesoft" level="WARN"/>
 

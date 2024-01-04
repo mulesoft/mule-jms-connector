@@ -12,6 +12,11 @@
             <jms:factory-configuration maxRedelivery="${max.redelivery}" trustAllPackages="true"/>
         </jms:active-mq-connection>
     </jms:config>
+    <jms:config name="config-with-client-id">
+        <jms:active-mq-connection clientId="asdfasdf" >
+            <jms:factory-configuration maxRedelivery="${max.redelivery}" trustAllPackages="true"/>
+        </jms:active-mq-connection>
+    </jms:config>
 
     <jms:config name="config-no-caching">
         <jms:active-mq-connection>
@@ -27,6 +32,32 @@
             <jms:factory-configuration maxRedelivery="${max.redelivery}" trustAllPackages="true"/>
         </jms:active-mq-connection>
         <jms:consumer-config ackMode="MANUAL" />
+    </jms:config>
+
+    <jms:config name="config-jndi-never">
+        <jms:generic-connection>
+            <jms:connection-factory>
+                <jms:jndi-connection-factory connectionFactoryJndiName="ConnectionFactory"
+                                             lookupDestination="NEVER" >
+                    <jms:name-resolver-builder
+                            jndiInitialContextFactory="org.apache.activemq.jndi.ActiveMQInitialContextFactory"
+                            jndiProviderUrl="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>
+                </jms:jndi-connection-factory>
+            </jms:connection-factory>
+        </jms:generic-connection>
+    </jms:config>
+
+    <jms:config name="config-jndi-try-always">
+        <jms:generic-connection>
+            <jms:connection-factory>
+                <jms:jndi-connection-factory connectionFactoryJndiName="ConnectionFactory"
+                                             lookupDestination="TRY_ALWAYS">
+                    <jms:name-resolver-builder
+                            jndiInitialContextFactory="org.apache.activemq.jndi.ActiveMQInitialContextFactory"
+                            jndiProviderUrl="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>
+                </jms:jndi-connection-factory>
+            </jms:connection-factory>
+        </jms:generic-connection>
     </jms:config>
 
 </mule>

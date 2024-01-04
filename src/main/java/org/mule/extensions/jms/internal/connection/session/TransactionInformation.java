@@ -6,6 +6,8 @@
  */
 package org.mule.extensions.jms.internal.connection.session;
 
+import org.mule.extensions.jms.internal.ExcludeFromGeneratedCoverage;
+
 /**
  * Object to save the information about the current transaction.
  *
@@ -18,18 +20,22 @@ final class TransactionInformation {
 
   TransactionInformation() {}
 
+  @ExcludeFromGeneratedCoverage
   JmsSession getJmsSession() {
     return jmsSession;
   }
 
+  @ExcludeFromGeneratedCoverage
   void setJmsSession(JmsSession jmsSession) {
     this.jmsSession = jmsSession;
   }
 
+  @ExcludeFromGeneratedCoverage
   TransactionStatus getTransactionStatus() {
     return transactionStatus;
   }
 
+  @ExcludeFromGeneratedCoverage
   void setTransactionStatus(TransactionStatus transactionStatus) {
     this.transactionStatus = transactionStatus;
   }

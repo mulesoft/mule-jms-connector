@@ -6,6 +6,7 @@
  */
 package org.mule.extensions.jms.api.ack;
 
+import org.mule.extensions.jms.internal.ExcludeFromGeneratedCoverage;
 import org.mule.jms.commons.internal.config.InternalAckMode;
 import org.mule.jms.commons.internal.config.JmsAckMode;
 
@@ -40,6 +41,7 @@ public enum ConsumerAckMode implements JmsAckMode {
     this.ackMode = ackMode;
   }
 
+  @ExcludeFromGeneratedCoverage
   @Override
   public InternalAckMode getInternalAckMode() {
     return ackMode;

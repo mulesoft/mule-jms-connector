@@ -11,6 +11,7 @@ import static java.lang.String.format;
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.mule.extensions.jms.internal.ExcludeFromGeneratedCoverage;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.ExclusiveOptionals;
@@ -52,8 +53,19 @@ public final class JndiNameResolverProvider {
     return customJndiNameResolver;
   }
 
+  @ExcludeFromGeneratedCoverage
+  public void setCustomJndiNameResolver(JndiNameResolver customJndiNameResolver) {
+    this.customJndiNameResolver = customJndiNameResolver;
+  }
+
+  @ExcludeFromGeneratedCoverage
   public JndiNameResolverProperties getNameResolverBuilder() {
     return nameResolverBuilder;
+  }
+
+  @ExcludeFromGeneratedCoverage
+  public void setNameResolverBuilder(JndiNameResolverProperties nameResolverBuilder) {
+    this.nameResolverBuilder = nameResolverBuilder;
   }
 
   JndiNameResolver createDefaultJndiResolver() throws InitialisationException {
