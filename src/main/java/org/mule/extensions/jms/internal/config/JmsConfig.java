@@ -18,9 +18,11 @@ import org.mule.extensions.jms.internal.source.JmsListener;
 import org.mule.runtime.api.lifecycle.Disposable;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
+import org.mule.runtime.api.meta.MuleVersion;
 import org.mule.runtime.api.scheduler.Scheduler;
 import org.mule.runtime.api.scheduler.SchedulerConfig;
 import org.mule.runtime.api.scheduler.SchedulerService;
+import org.mule.runtime.core.api.config.MuleManifest;
 import org.mule.runtime.extension.api.annotation.Configuration;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.Operations;
@@ -124,14 +126,17 @@ public class JmsConfig
 
   @Override
   public void initialise() {
-    //TODO - MULE-16982 : This code is required until the Connector reaches Min Mule version 4.3
-    try {
-      scheduler = schedulerService.customScheduler(SchedulerConfig.config()
-          .withMaxConcurrentTasks(1)
-          .withWaitAllowed(true)
-          .withName("jms-connector-resource-releaser"), 10000);
-    } catch (Exception e) {
-      scheduler = schedulerService.ioScheduler();
+    MuleVersion muleVersion = new MuleVersion(MuleManifest.getProductVersion());
+    if (muleVersion.priorTo("4.3.0")){
+      try {
+      //TODO - MULE-16982 : This code is required until the Connector reaches Min Mule version 4.3
+        scheduler = schedulerService.customScheduler(SchedulerConfig.config()
+            .withMaxConcurrentTasks(1)
+            .withWaitAllowed(true)
+            .withName("jms-connector-resource-releaser"), 10000);
+      } catch (Exception e) {
+        scheduler = schedulerService.ioScheduler();
+      }
     }
   }
 }
