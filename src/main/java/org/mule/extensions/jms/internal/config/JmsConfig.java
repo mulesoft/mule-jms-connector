@@ -127,9 +127,9 @@ public class JmsConfig
   @Override
   public void initialise() {
     MuleVersion muleVersion = new MuleVersion(MuleManifest.getProductVersion());
-    if (muleVersion.priorTo("4.3.0")){
+    if (muleVersion.priorTo("4.3.0")) {
       try {
-      //TODO - MULE-16982 : This code is required until the Connector reaches Min Mule version 4.3
+        //TODO - MULE-16982 : This code is required until the Connector reaches Min Mule version 4.3
         scheduler = schedulerService.customScheduler(SchedulerConfig.config()
             .withMaxConcurrentTasks(1)
             .withWaitAllowed(true)
