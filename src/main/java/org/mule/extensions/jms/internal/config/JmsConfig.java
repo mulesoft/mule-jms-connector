@@ -51,6 +51,8 @@ public class JmsConfig
   SchedulerService schedulerService;
 
   private static Scheduler scheduler;
+
+  private static final Object lock = new Object();
   private static int instanceCount = 0;
 
   @DefaultEncoding
@@ -117,7 +119,7 @@ public class JmsConfig
 
   @Override
   public void dispose() {
-    synchronized (JmsConfig.class) {
+    synchronized (lock) {
       instanceCount--;
       if (instanceCount <= 0 && scheduler != null) {
         scheduler.stop();
@@ -128,7 +130,7 @@ public class JmsConfig
 
   @Override
   public void initialise() {
-    synchronized (JmsConfig.class) {
+    synchronized (lock) {
       if (scheduler == null) {
         try {
           scheduler = schedulerService.customScheduler(SchedulerConfig.config()
