@@ -18,8 +18,7 @@ import org.mule.extensions.jms.internal.source.JmsListener;
 import org.mule.runtime.api.lifecycle.Disposable;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.scheduler.Scheduler;
-import org.mule.runtime.api.scheduler.SchedulerConfig;
-import org.mule.runtime.api.scheduler.SchedulerService;;
+import org.mule.runtime.api.scheduler.SchedulerConfig;import org.mule.runtime.api.scheduler.SchedulerService;;
 import org.mule.runtime.extension.api.annotation.Configuration;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.Operations;
@@ -132,9 +131,9 @@ public class JmsConfig
       if (scheduler == null) {
         try {
           scheduler = schedulerService.customScheduler(SchedulerConfig.config()
-                  .withMaxConcurrentTasks(1)
-                  .withWaitAllowed(true)
-                  .withName("jms-connector-resource-releaser"), 10000);
+              .withMaxConcurrentTasks(1)
+              .withWaitAllowed(true)
+              .withName("jms-connector-resource-releaser"), 10000);
         } catch (Exception e) {
           scheduler = schedulerService.ioScheduler();
         }
