@@ -17,12 +17,9 @@ import org.mule.extensions.jms.internal.operation.JmsPublishConsume;
 import org.mule.extensions.jms.internal.source.JmsListener;
 import org.mule.runtime.api.lifecycle.Disposable;
 import org.mule.runtime.api.lifecycle.Initialisable;
-import org.mule.runtime.api.lifecycle.InitialisationException;
-import org.mule.runtime.api.meta.MuleVersion;
 import org.mule.runtime.api.scheduler.Scheduler;
 import org.mule.runtime.api.scheduler.SchedulerConfig;
-import org.mule.runtime.api.scheduler.SchedulerService;
-import org.mule.runtime.core.api.config.MuleManifest;
+import org.mule.runtime.api.scheduler.SchedulerService;;
 import org.mule.runtime.extension.api.annotation.Configuration;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.Operations;
@@ -53,7 +50,8 @@ public class JmsConfig
   @Inject
   SchedulerService schedulerService;
 
-  private Scheduler scheduler;
+  private static Scheduler scheduler;
+  private static int instanceCount = 0;
 
   @DefaultEncoding
   private String muleEncoding;
@@ -119,24 +117,29 @@ public class JmsConfig
 
   @Override
   public void dispose() {
-    if (scheduler != null) {
-      scheduler.stop();
+    synchronized (JmsConfig.class) {
+      instanceCount--;
+      if (instanceCount <= 0 && scheduler != null) {
+        scheduler.stop();
+        scheduler = null;
+      }
     }
   }
 
   @Override
   public void initialise() {
-    MuleVersion muleVersion = new MuleVersion(MuleManifest.getProductVersion());
-    if (muleVersion.priorTo("4.3.0")) {
-      try {
-        //TODO - MULE-16982 : This code is required until the Connector reaches Min Mule version 4.3
-        scheduler = schedulerService.customScheduler(SchedulerConfig.config()
-            .withMaxConcurrentTasks(1)
-            .withWaitAllowed(true)
-            .withName("jms-connector-resource-releaser"), 10000);
-      } catch (Exception e) {
-        scheduler = schedulerService.ioScheduler();
+    synchronized (JmsConfig.class) {
+      if (scheduler == null) {
+        try {
+          scheduler = schedulerService.customScheduler(SchedulerConfig.config()
+                  .withMaxConcurrentTasks(1)
+                  .withWaitAllowed(true)
+                  .withName("jms-connector-resource-releaser"), 10000);
+        } catch (Exception e) {
+          scheduler = schedulerService.ioScheduler();
+        }
       }
+      instanceCount++;
     }
   }
 }
