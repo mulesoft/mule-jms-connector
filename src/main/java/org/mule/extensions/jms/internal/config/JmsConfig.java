@@ -17,7 +17,6 @@ import org.mule.extensions.jms.internal.operation.JmsPublishConsume;
 import org.mule.extensions.jms.internal.source.JmsListener;
 import org.mule.runtime.api.lifecycle.Disposable;
 import org.mule.runtime.api.lifecycle.Initialisable;
-import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.api.scheduler.Scheduler;
 import org.mule.runtime.api.scheduler.SchedulerConfig;
 import org.mule.runtime.api.scheduler.SchedulerService;
@@ -51,7 +50,10 @@ public class JmsConfig
   @Inject
   SchedulerService schedulerService;
 
-  private Scheduler scheduler;
+  private static Scheduler scheduler;
+
+  private static final Object lock = new Object();
+  private static int instanceCount = 0;
 
   @DefaultEncoding
   private String muleEncoding;
@@ -117,21 +119,29 @@ public class JmsConfig
 
   @Override
   public void dispose() {
-    if (scheduler != null) {
-      scheduler.stop();
+    synchronized (lock) {
+      instanceCount--;
+      if (instanceCount <= 0 && scheduler != null) {
+        scheduler.stop();
+        scheduler = null;
+      }
     }
   }
 
   @Override
   public void initialise() {
-    //TODO - MULE-16982 : This code is required until the Connector reaches Min Mule version 4.3
-    try {
-      scheduler = schedulerService.customScheduler(SchedulerConfig.config()
-          .withMaxConcurrentTasks(1)
-          .withWaitAllowed(true)
-          .withName("jms-connector-resource-releaser"), 10000);
-    } catch (Exception e) {
-      scheduler = schedulerService.ioScheduler();
+    synchronized (lock) {
+      if (scheduler == null) {
+        try {
+          scheduler = schedulerService.customScheduler(SchedulerConfig.config()
+              .withMaxConcurrentTasks(1)
+              .withWaitAllowed(true)
+              .withName("jms-connector-resource-releaser"), 10000);
+        } catch (Exception e) {
+          scheduler = schedulerService.ioScheduler();
+        }
+      }
+      instanceCount++;
     }
   }
 }
