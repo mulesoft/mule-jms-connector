@@ -411,7 +411,7 @@
                             <images>
                                 <image>
                                     <name>mule-activemq-ssl</name>
-                                    <alias>activemq</alias>
+                                    <alias>mule-activemq-ssl-${activemq.ssl.listener.port}</alias>
                                     <build>
                                         <dockerFileDir>${project.basedir}/src/test/docker/tls</dockerFileDir>
                                     </build>
