@@ -48,8 +48,8 @@
         <docker.skip>${skipTests}</docker.skip>
         <mavenResources.version>3.3.0</mavenResources.version>
 
-        <muleSdkCompatibilityApiVersion>1.0.0-SNAPSHOT</muleSdkCompatibilityApiVersion>
-        <muleSdkApiVersion>1.0.0-SNAPSHOT</muleSdkApiVersion>
+        <muleSdkCompatibilityApiVersion>0.8.0</muleSdkCompatibilityApiVersion>
+        <muleSdkApiVersion>0.8.0</muleSdkApiVersion>
 
         <mulesoftLicenseVersion>1.4.0</mulesoftLicenseVersion>
         <license.maven.plugin.version>4.2</license.maven.plugin.version>
