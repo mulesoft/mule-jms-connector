@@ -286,6 +286,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.8</version>
                 <executions>
                     <execution>
                         <id>copy</id>
@@ -305,7 +306,6 @@
                                     <outputDirectory>${project.basedir}/src/test/docker/tls</outputDirectory>
                                 </artifactItem>
                             </artifactItems>
-
                         </configuration>
                     </execution>
                 </executions>
