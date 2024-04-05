@@ -21,7 +21,7 @@
 <jms:config name="JMS_SSL_XA_Config">
     <jms:active-mq-connection username="admin" password="admin" clientId="client1" >
         <tls:context >
-            <tls:trust-store path="tls/client-truststore.ks" password="racing" type="jks" />
+            <tls:trust-store path="tls/client-truststore-new.p12" password="racing" type="pkcs12" />
         </tls:context>
         <jms:caching-strategy >
             <jms:no-caching />
