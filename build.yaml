@@ -1,1 +1,5 @@
 projectType: extension
+additionalTestConfigs:
+  jdk8:
+    testJdkTool: OPEN-JDK8
+    mavenAdditionalArgs: -DruntimeVersion=4.7.0-rc3
