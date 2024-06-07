@@ -7,10 +7,12 @@
 package org.mule.extensions.jms.api.connection.factory.jndi;
 
 import static java.util.Objects.hash;
+import static org.slf4j.LoggerFactory.getLogger;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.mule.extensions.jms.internal.ExcludeFromGeneratedCoverage;
 import org.mule.runtime.api.lifecycle.InitialisationException;
+import org.slf4j.Logger;
 
 import javax.naming.CommunicationException;
 import javax.naming.Context;
@@ -26,11 +28,20 @@ import java.util.Objects;
  */
 public class SimpleJndiNameResolver extends AbstractJndiNameResolver {
 
+  protected final Logger LOGGER = getLogger(SimpleJndiNameResolver.class);
+
   private Context jndiContext;
 
   @Override
   public synchronized Object lookup(String name) throws NamingException {
     try {
+      LOGGER.debug("lookup: " + name);
+      if (jndiContext == null) {
+        //W-15812905 for the case of Weblogic is restarted the context is null,
+        // for this reason it is necessary to create another one.
+        LOGGER.debug("jndiContext is null, creating a new initial context for " + name);
+        jndiContext = createInitialContext();
+      }
       return doLookUp(name);
     } catch (CommunicationException e) {
       jndiContext = this.createInitialContext();
