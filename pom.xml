@@ -15,6 +15,7 @@
     <packaging>mule-extension</packaging>
     <version>2.0.0-SNAPSHOT</version>
 
+
     <name>JMS Connector</name>
     <description>Mule connector lets you easily send and receive messages to queues and topics for any message service which implements the JMS specification</description>
 
@@ -35,6 +36,7 @@
         <formatterConfigPath>formatter.xml</formatterConfigPath>
         <muleJmsClientVersion>1.13.17-SNAPSHOT</muleJmsClientVersion>
         <mule.http.connector.version>1.9.1</mule.http.connector.version>
+
         <spring.core.version>4.3.30.RELEASE</spring.core.version>
 
         <!-- Remove when a new parent version with MTF is available -->
