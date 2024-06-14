@@ -35,7 +35,7 @@
 
         <formatterConfigPath>formatter.xml</formatterConfigPath>
         <muleJmsClientVersion>1.13.17</muleJmsClientVersion>
-        <mule.http.connector.version>1.9.1</mule.http.connector.version>
+        <mule.http.connector.version>1.9.3</mule.http.connector.version>
 
         <spring.core.version>4.3.30.RELEASE</spring.core.version>
 
