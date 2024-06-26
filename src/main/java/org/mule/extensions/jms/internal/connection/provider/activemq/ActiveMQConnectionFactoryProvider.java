@@ -20,6 +20,7 @@ import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
+import org.mule.extensions.jms.internal.util.ActiveMQConnectionFactoryUtil;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -29,8 +30,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.jms.ConnectionFactory;
@@ -60,10 +59,6 @@ public class ActiveMQConnectionFactoryProvider {
   private static final int REDELIVERY_IGNORE = -1;
 
   private static final String VERIFY_HOSTNAME = "socket.verifyHostName";
-  private static final int MAJOR_VERSION_THRESHOLD = 5;
-  private static final int MINOR_VERSION_THRESHOLD = 15;
-  private static final int PATCH_VERSION_THRESHOLD = 6;
-  private static final String REX_PATTER = "(\\d+)\\.(\\d+)\\.(\\d+)";
   /**
    * Parameters required to configure a default {@link ActiveMQConnectionFactory}
    */
@@ -137,7 +132,8 @@ public class ActiveMQConnectionFactoryProvider {
                                     ActiveMQConnectionFactoryConfiguration factoryConfiguration)
       throws URISyntaxException {
     if (isSslFactoryClass(factoryClass)) {
-      boolean verifyHostNameCheck = isVerifyHostnameValidVersion(getActiveMqClientVersion(factoryClass));
+      boolean verifyHostNameCheck =
+          ActiveMQConnectionFactoryUtil.isVerifyHostnameValidVersion(getActiveMqClientVersion(factoryClass));
       boolean isFailOverURl = brokerURL.contains("failover");
       if (isFailOverURl && verifyHostNameCheck) {
         String failoverUrl = brokerURL.substring("failover:(".length(), brokerURL.length() - 1);
@@ -155,31 +151,6 @@ public class ActiveMQConnectionFactoryProvider {
       return brokerURI.toString();
     }
     return brokerURL;
-  }
-
-  private boolean isVerifyHostnameValidVersion(String activeMqClientVersion) {
-    if (activeMqClientVersion == null) {
-      return false;
-    }
-    Pattern pattern = Pattern.compile(REX_PATTER);
-    Matcher matcher = pattern.matcher(activeMqClientVersion);
-    if (!matcher.matches()) {
-      return false;
-    }
-    int majorVersion = Integer.parseInt(matcher.group(1));
-    int minorVersion = Integer.parseInt(matcher.group(2));
-    int patchVersion = Integer.parseInt(matcher.group(3));
-    if (majorVersion > MAJOR_VERSION_THRESHOLD) {
-      return true;
-    } else if (majorVersion < MAJOR_VERSION_THRESHOLD) {
-      return false;
-    }
-    if (minorVersion > MINOR_VERSION_THRESHOLD) {
-      return true;
-    } else if (minorVersion < MINOR_VERSION_THRESHOLD) {
-      return false;
-    }
-    return patchVersion >= PATCH_VERSION_THRESHOLD;
   }
 
   private String getActiveMqClientVersion(String factoryClass) {
