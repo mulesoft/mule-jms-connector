@@ -27,6 +27,12 @@
                     <munit:parameter propertyName="brokerUrl" value="ssl://localhost:${activemq.port}"/>
                 </munit:parameters>
             </munit:parameterization>
+            <munit:parameterization name="valid-failover-broker-url">
+                <munit:parameters>
+                    <!-- a host which is not the one defined in the CN for the TSL connection certificate, using a failover brokerURL -->
+                    <munit:parameter propertyName="brokerUrl" value="failover:(ssl://localhost:${activemq.port},ssl://localhost:${activemq.port})"/>
+                </munit:parameters>
+            </munit:parameterization>
         </munit:parameterizations>
     </munit:config>
 
