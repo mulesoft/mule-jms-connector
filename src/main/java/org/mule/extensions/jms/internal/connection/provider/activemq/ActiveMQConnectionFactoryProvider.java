@@ -20,14 +20,17 @@ import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
+import org.mule.extensions.jms.internal.util.ActiveMQConnectionFactoryUtil;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.jms.ConnectionFactory;
 
@@ -85,7 +88,6 @@ public class ActiveMQConnectionFactoryProvider {
 
   ConnectionFactory createDefaultConnectionFactory(boolean useSsl) throws ActiveMQException {
     String factoryClass = getFactoryClass(useSsl);
-
     try {
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug(format("Creating new [%s]", factoryClass));
@@ -130,13 +132,35 @@ public class ActiveMQConnectionFactoryProvider {
                                     ActiveMQConnectionFactoryConfiguration factoryConfiguration)
       throws URISyntaxException {
     if (isSslFactoryClass(factoryClass)) {
+      boolean verifyHostNameCheck =
+          ActiveMQConnectionFactoryUtil.isVerifyHostnameValidVersion(getActiveMqClientVersion(factoryClass));
+      boolean isFailOverURl = brokerURL.contains("failover");
+      if (isFailOverURl && verifyHostNameCheck) {
+        String failoverUrl = brokerURL.substring("failover:(".length(), brokerURL.length() - 1);
+        String addedVerifyHostName = Arrays.stream(failoverUrl.split(","))
+            .map(element -> element + "?" + VERIFY_HOSTNAME + "=" + factoryConfiguration.getVerifyHostName())
+            .collect(Collectors.joining(","));
+        brokerURL = "failover:(" + addedVerifyHostName + ")";
+      }
       URI brokerURI = createURI(brokerURL);
       Map<String, String> map = (brokerURI.getQuery() != null) ? URISupport.parseQuery(brokerURI.getQuery()) : new HashMap<>();
-      map.put(VERIFY_HOSTNAME, String.valueOf(factoryConfiguration.getVerifyHostName()));
+      if (verifyHostNameCheck && !isFailOverURl) {
+        map.put(VERIFY_HOSTNAME, String.valueOf(factoryConfiguration.getVerifyHostName()));
+      }
       brokerURI = URISupport.createRemainingURI(brokerURI, map);
       return brokerURI.toString();
     }
     return brokerURL;
+  }
+
+  private String getActiveMqClientVersion(String factoryClass) {
+    String version = null;
+    try {
+      version = Class.forName(factoryClass).getPackage().getImplementationVersion();
+    } catch (ClassNotFoundException e) {
+      LOGGER.debug(e.getMessage());
+    }
+    return version;
   }
 
   private boolean isSslFactoryClass(String factoryClass) {
