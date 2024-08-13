@@ -204,4 +204,44 @@ public class JmsMessageBuilder implements org.mule.jms.commons.api.message.JmsMe
   public String getOutboundEncoding() {
     return outboundEncoding;
   }
+
+  public void setBody(TypedValue<Object> body) {
+    this.body = body;
+  }
+
+  public void setJmsType(String jmsType) {
+    this.jmsType = jmsType;
+  }
+
+  public void setCorrelationId(String correlationId) {
+    this.correlationId = correlationId;
+  }
+
+  public void setSendContentType(boolean sendContentType) {
+    this.sendContentType = sendContentType;
+  }
+
+  public void setOutboundContentType(String outboundContentType) {
+    this.outboundContentType = outboundContentType;
+  }
+
+  public void setSendEncoding(boolean sendEncoding) {
+    this.sendEncoding = sendEncoding;
+  }
+
+  public void setOutboundEncoding(String outboundEncoding) {
+    this.outboundEncoding = outboundEncoding;
+  }
+
+  public void setReplyTo(JmsDestination replyTo) {
+    this.replyTo = replyTo;
+  }
+
+  public void setProperties(Map<String, Object> properties) {
+    this.properties = properties;
+  }
+
+  public void setJmsxProperties(JmsxProperties jmsxProperties) {
+    this.jmsxProperties = jmsxProperties;
+  }
 }
