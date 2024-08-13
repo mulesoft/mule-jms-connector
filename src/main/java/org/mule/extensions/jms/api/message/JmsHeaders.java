@@ -310,4 +310,113 @@ public class JmsHeaders extends org.mule.jms.commons.api.message.JmsHeaders {
     }
   }
 
+  @Override
+  public JmsDestination getDestination() {
+    return destination;
+  }
+
+  @Override
+  public void setDestination(JmsDestination destination) {
+    this.destination = destination;
+  }
+
+  @Override
+  public int getDeliveryMode() {
+    return deliveryMode;
+  }
+
+  @Override
+  public void setDeliveryMode(int deliveryMode) {
+    this.deliveryMode = deliveryMode;
+  }
+
+  @Override
+  public long getExpiration() {
+    return expiration;
+  }
+
+  @Override
+  public void setExpiration(long expiration) {
+    this.expiration = expiration;
+  }
+
+  @Override
+  public int getPriority() {
+    return priority;
+  }
+
+  @Override
+  public void setPriority(int priority) {
+    this.priority = priority;
+  }
+
+  @Override
+  public String getMessageId() {
+    return messageId;
+  }
+
+  @Override
+  public void setMessageId(String messageId) {
+    this.messageId = messageId;
+  }
+
+  @Override
+  public long getTimestamp() {
+    return timestamp;
+  }
+
+  @Override
+  public void setTimestamp(long timestamp) {
+    this.timestamp = timestamp;
+  }
+
+  @Override
+  public String getCorrelationId() {
+    return correlationId;
+  }
+
+  @Override
+  public void setCorrelationId(String correlationId) {
+    this.correlationId = correlationId;
+  }
+
+  @Override
+  public JmsDestination getReplyTo() {
+    return replyTo;
+  }
+
+  @Override
+  public void setReplyTo(JmsDestination replyTo) {
+    this.replyTo = replyTo;
+  }
+
+  @Override
+  public String getType() {
+    return type;
+  }
+
+  @Override
+  public void setType(String type) {
+    this.type = type;
+  }
+
+  @Override
+  public boolean isRedelivered() {
+    return redelivered;
+  }
+
+  @Override
+  public void setRedelivered(boolean redelivered) {
+    this.redelivered = redelivered;
+  }
+
+  @Override
+  public Long getDeliveryTime() {
+    return deliveryTime;
+  }
+
+  @Override
+  public void setDeliveryTime(Long deliveryTime) {
+    this.deliveryTime = deliveryTime;
+  }
 }

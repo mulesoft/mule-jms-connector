@@ -89,6 +89,8 @@ public class JmsCorrelationIdPropagationTestCase extends JmsAbstractTestCase {
     ExpressionAssertion attributesAsserter = from(attributes).as("attributes");
     attributesAsserter.assertThat("#[attributes.headers]", not(nullValue()));
     attributesAsserter.assertThat("#[attributes.headers.JMSCorrelationID]", is(CUSTOM_CORRELATION_ID));
+    attributesAsserter.assertThat("#[attributes.headers.correlationId]", is(CUSTOM_CORRELATION_ID));
+    attributesAsserter.assertThat("#[attributes.headers.messageId]", not(nullValue()));
   }
 
 }
