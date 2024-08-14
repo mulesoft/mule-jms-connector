@@ -13,7 +13,7 @@
     <groupId>org.mule.connectors</groupId>
     <artifactId>mule-jms-connector</artifactId>
     <packaging>mule-extension</packaging>
-    <version>1.9.7-SNAPSHOT</version>
+    <version>1.9.8-SNAPSHOT</version>
 
     <name>JMS Connector</name>
     <description>Mule connector lets you easily send and receive messages to queues and topics for any message service which implements the JMS specification</description>
@@ -33,8 +33,8 @@
         <muleSpringModuleVersion>1.3.11</muleSpringModuleVersion>
 
         <formatterConfigPath>formatter.xml</formatterConfigPath>
-        <muleJmsClientVersion>1.13.17</muleJmsClientVersion>
-        <mule.http.connector.version>1.9.0</mule.http.connector.version>
+        <muleJmsClientVersion>1.13.19</muleJmsClientVersion>
+        <mule.http.connector.version>1.10.0</mule.http.connector.version>
         <spring.core.version>4.3.30.RELEASE</spring.core.version>
 
         <!-- Remove when a new parent version with MTF is available -->
@@ -44,7 +44,7 @@
         <munit.version>3.2.1</munit.version>
         <mtf-tools.version>1.2.0</mtf-tools.version>
         <mavenResources.version>3.3.0</mavenResources.version>
-        <docker.maven.plugin.version>0.41.0</docker.maven.plugin.version>
+        <docker.maven.plugin.version>0.45.0</docker.maven.plugin.version>
         <maven.helper.plugin.version>3.3.0</maven.helper.plugin.version>
         <docker.skip>${skipTests}</docker.skip>
         <maven.dependency.plugin.version>2.8</maven.dependency.plugin.version>
