@@ -8,7 +8,6 @@ package org.mule.extensions.jms.internal.operation;
 
 import static org.mule.extensions.jms.internal.common.JmsCommons.EXAMPLE_CONTENT_TYPE;
 import static org.mule.extensions.jms.internal.common.JmsCommons.EXAMPLE_ENCODING;
-import static org.mule.extensions.jms.internal.operation.profiling.tracing.JmsConsumeSpanCustomizer.getJmsConsumeSpanCustomizer;
 import static org.mule.jms.commons.internal.common.JmsCommons.getDestinationType;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -41,10 +40,13 @@ import org.mule.runtime.extension.api.runtime.parameter.CorrelationInfo;
 import org.mule.runtime.extension.api.tx.OperationTransactionalAction;
 import org.mule.sdk.compatibility.api.utils.ForwardCompatibilityHelper;
 
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
+import javax.jms.ConnectionMetaData;
 import javax.jms.Destination;
+import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 
@@ -58,6 +60,7 @@ import org.slf4j.Logger;
 public final class JmsConsume implements Initialisable, Disposable {
 
   private static final Logger LOGGER = getLogger(JmsConsume.class);
+  private static final String SPAN_OPERATION_NAME = "receive";
 
   @Inject
   private JmsSessionManager sessionManager;
@@ -105,7 +108,7 @@ public final class JmsConsume implements Initialisable, Disposable {
                                         OperationTransactionalAction transactionalAction,
                                         CorrelationInfo correlationInfo)
       throws JmsExtensionException, ConnectionException {
-    customizeCurrentSpan(connection, destination, consumerType, correlationInfo);
+    addSpanInfo(connection, destination, consumerType, correlationInfo);
     return (Result) jmsConsume.consume(config, connection, destination, consumerType, ackMode,
                                        selector, contentType, encoding, maximumWait,
                                        maximumWaitUnit, transactionalAction);
@@ -123,11 +126,24 @@ public final class JmsConsume implements Initialisable, Disposable {
     jmsConsume.dispose();
   }
 
-  private void customizeCurrentSpan(JmsTransactionalConnection connection, String destination,
-                                    org.mule.jms.commons.api.destination.ConsumerType consumerType,
-                                    org.mule.runtime.extension.api.runtime.parameter.CorrelationInfo correlationInfo) {
+  private void addSpanInfo(JmsTransactionalConnection connection, String destination,
+                           org.mule.jms.commons.api.destination.ConsumerType consumerType,
+                           org.mule.runtime.extension.api.runtime.parameter.CorrelationInfo correlationInfo) {
     forwardCompatibilityHelper
-        .ifPresent(fch -> getJmsConsumeSpanCustomizer().customizeSpan(fch.getDistributedTraceContextManager(correlationInfo),
-                                                                      connection, destination, consumerType));
+        .ifPresent(fch -> {
+          ConnectionMetaData connectionMetaData;
+          try {
+            connectionMetaData = connection.get().getMetaData();
+            fch.getDistributedTraceContextManager(correlationInfo)
+                .addCurrentSpanAttribute("messaging.system", connectionMetaData.getJMSProviderName().toLowerCase(Locale.ROOT));
+          } catch (JMSException ignored) {
+            LOGGER.info("Span connection metadata could not be fetched");
+          }
+          fch.getDistributedTraceContextManager(correlationInfo).addCurrentSpanAttribute("span.kind", "CONSUMER");
+          fch.getDistributedTraceContextManager(correlationInfo).setCurrentSpanName(destination + " " + SPAN_OPERATION_NAME);
+          fch.getDistributedTraceContextManager(correlationInfo).addCurrentSpanAttribute("messaging.destination", destination);
+          fch.getDistributedTraceContextManager(correlationInfo)
+              .addCurrentSpanAttribute("messaging.destination_kind", getDestinationType(consumerType).toLowerCase(Locale.ROOT));
+        });
   }
 }
