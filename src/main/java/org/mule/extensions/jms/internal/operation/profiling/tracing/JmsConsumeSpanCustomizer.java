@@ -6,10 +6,7 @@
  */
 package org.mule.extensions.jms.internal.operation.profiling.tracing;
 
-import static org.mule.extensions.jms.internal.operation.profiling.tracing.SpanCustomizerUtils.safeExecute;
 import static org.mule.jms.commons.internal.common.JmsCommons.getDestinationType;
-
-import static org.slf4j.LoggerFactory.getLogger;
 
 import org.mule.jms.commons.api.destination.ConsumerType;
 import org.mule.jms.commons.internal.connection.JmsTransactionalConnection;
@@ -17,11 +14,7 @@ import org.mule.sdk.api.runtime.source.DistributedTraceContextManager;
 
 import java.util.Locale;
 
-import org.slf4j.Logger;
-
 public class JmsConsumeSpanCustomizer extends JmsSpanCustomizer {
-
-  private static final Logger LOGGER = getLogger(JmsConsumeSpanCustomizer.class);
 
   private static final String SPAN_OPERATION_NAME = "receive";
   public static final String MESSAGING_DESTINATION_KIND = "messaging.destination_kind";
@@ -36,9 +29,8 @@ public class JmsConsumeSpanCustomizer extends JmsSpanCustomizer {
   public void customizeSpan(DistributedTraceContextManager distributedTraceContextManager, JmsTransactionalConnection connection,
                             String destination, ConsumerType consumerType) {
     super.customizeSpan(distributedTraceContextManager, connection, destination);
-    safeExecute(() -> distributedTraceContextManager
-        .addCurrentSpanAttribute(MESSAGING_DESTINATION_KIND, getDestinationType(consumerType).toLowerCase(Locale.ROOT)),
-                "Messaging destination kind data could not be added to span", LOGGER);
+    distributedTraceContextManager
+        .addCurrentSpanAttribute(MESSAGING_DESTINATION_KIND, getDestinationType(consumerType).toLowerCase(Locale.ROOT));
   }
 
   @Override
