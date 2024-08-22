@@ -7,7 +7,6 @@
 package org.mule.extensions.jms.internal.operation;
 
 import static org.mule.extensions.jms.internal.common.JmsCommons.QUEUE;
-
 import static org.slf4j.LoggerFactory.getLogger;
 
 import org.mule.extensions.jms.api.config.JmsProducerConfig;
@@ -34,14 +33,9 @@ import org.mule.runtime.extension.api.runtime.parameter.CorrelationInfo;
 import org.mule.runtime.extension.api.runtime.parameter.OutboundCorrelationStrategy;
 import org.mule.runtime.extension.api.runtime.process.CompletionCallback;
 import org.mule.runtime.extension.api.tx.OperationTransactionalAction;
-import org.mule.sdk.compatibility.api.utils.ForwardCompatibilityHelper;
-
-import java.util.Locale;
 
 import javax.inject.Inject;
-import javax.jms.ConnectionMetaData;
 import javax.jms.Destination;
-import javax.jms.JMSException;
 import javax.jms.Message;
 
 import org.slf4j.Logger;
@@ -54,16 +48,12 @@ import org.slf4j.Logger;
 public final class JmsPublish implements Initialisable, Disposable {
 
   private static final Logger LOGGER = getLogger(JmsPublish.class);
-  private static final String SPAN_OPERATION_NAME = "send";
 
   @Inject
   private JmsSessionManager jmsSessionManager;
 
   @Inject
   private SchedulerService schedulerService;
-
-  @Inject
-  private java.util.Optional<ForwardCompatibilityHelper> forwardCompatibilityHelper;
 
   private org.mule.jms.commons.internal.operation.JmsPublish jmsPublish;
 
@@ -95,29 +85,6 @@ public final class JmsPublish implements Initialisable, Disposable {
                       CompletionCallback<Void, Void> completionCallback)
 
       throws JmsExtensionException {
-    forwardCompatibilityHelper
-        .ifPresent(fch -> {
-          ConnectionMetaData connectionMetaData;
-          try {
-            connectionMetaData = connection.get().getMetaData();
-            fch.getDistributedTraceContextManager(correlationInfo)
-                .addCurrentSpanAttribute("messaging.system", connectionMetaData.getJMSProviderName().toLowerCase(Locale.ROOT));
-          } catch (JMSException ignored) {
-            LOGGER.info("Span connection metadata could not be fetched");
-          }
-          fch.getDistributedTraceContextManager(correlationInfo).addCurrentSpanAttribute("span.kind", "PRODUCER");
-          fch.getDistributedTraceContextManager(correlationInfo).setCurrentSpanName(destination + " " + SPAN_OPERATION_NAME);
-          fch.getDistributedTraceContextManager(correlationInfo).addCurrentSpanAttribute("messaging.destination", destination);
-          fch.getDistributedTraceContextManager(correlationInfo)
-              .addCurrentSpanAttribute("messaging.destination_kind", destinationType.toString().toLowerCase(Locale.ROOT));
-          fch.getDistributedTraceContextManager(correlationInfo)
-              .addCurrentSpanAttribute("messaging.conversation_id", messageBuilder.getCorrelationId());
-          fch.getDistributedTraceContextManager(correlationInfo)
-              .addCurrentSpanAttribute("messaging.message_payload_size_bytes",
-                                       messageBuilder.getBody().getByteLength().toString());
-          fch.getDistributedTraceContextManager(correlationInfo)
-              .addCurrentSpanAttribute("messaging.message_payload_compressed_size_bytes", messageBuilder.getCorrelationId());
-        });
     jmsPublish.publish(config, connection, destination, destinationType, messageBuilder, overrides, transactionalAction,
                        sendCorrelationId, correlationInfo, completionCallback);
   }
