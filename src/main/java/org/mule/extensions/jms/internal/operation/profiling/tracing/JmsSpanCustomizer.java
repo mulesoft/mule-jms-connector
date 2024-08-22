@@ -30,7 +30,7 @@ public abstract class JmsSpanCustomizer {
     try {
       connectionMetaData = connection.get().getMetaData();
       distributedTraceContextManager
-          .addCurrentSpanAttribute(MESSAGING_SYSTEM, connectionMetaData.getJMSProviderName().toLowerCase(Locale.ROOT));
+          .addCurrentSpanAttribute(MESSAGING_SYSTEM, connectionMetaData.getJMSProviderName());
     } catch (JMSException ignored) {
       LOGGER.info("Span connection metadata could not be fetched");
     }

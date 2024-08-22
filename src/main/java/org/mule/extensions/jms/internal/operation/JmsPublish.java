@@ -37,8 +37,12 @@ import org.mule.runtime.extension.api.runtime.process.CompletionCallback;
 import org.mule.runtime.extension.api.tx.OperationTransactionalAction;
 import org.mule.sdk.compatibility.api.utils.ForwardCompatibilityHelper;
 
+import java.util.Locale;
+
 import javax.inject.Inject;
+import javax.jms.ConnectionMetaData;
 import javax.jms.Destination;
+import javax.jms.JMSException;
 import javax.jms.Message;
 
 import org.slf4j.Logger;
@@ -91,16 +95,16 @@ public final class JmsPublish implements Initialisable, Disposable {
                       CompletionCallback<Void, Void> completionCallback)
 
       throws JmsExtensionException {
-    customizeCurrentSpan(connection, destination, destinationType, correlationInfo);
+    customizeCurrentSpan(connection, destination, destinationType, messageBuilder, correlationInfo);
     jmsPublish.publish(config, connection, destination, destinationType, messageBuilder, overrides, transactionalAction,
                        sendCorrelationId, correlationInfo, completionCallback);
   }
 
   private void customizeCurrentSpan(JmsTransactionalConnection connection, String destination, DestinationType destinationType,
-                                    CorrelationInfo correlationInfo) {
+                                    JmsMessageBuilder messageBuilder, CorrelationInfo correlationInfo) {
     forwardCompatibilityHelper
         .ifPresent(fch -> getJmsPublishSpanCustomizer().customizeSpan(fch.getDistributedTraceContextManager(correlationInfo),
-                                                                      connection, destination, destinationType));
+                                                                      connection, destination, destinationType, messageBuilder));
   }
 
 
