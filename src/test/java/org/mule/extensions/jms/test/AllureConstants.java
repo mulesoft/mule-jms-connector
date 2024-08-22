@@ -32,4 +32,14 @@ public class AllureConstants {
     }
 
   }
+
+  public interface ActiveMQFeature {
+
+    String ACTIVE_MQ_FEATURE = "ActiveMQ";
+
+    interface ActiveMQStories {
+
+      String ACTIVE_MQ_RESOURCE_RELEASING = "ActiveMQ Resource Releasing";
+    }
+  }
 }
