@@ -24,7 +24,6 @@ public class JmsConsumeSpanCustomizer extends JmsSpanCustomizer {
   private static final Logger LOGGER = getLogger(JmsConsumeSpanCustomizer.class);
 
   private static final String SPAN_OPERATION_NAME = "receive";
-  private static final String SPAN_KIND_NAME = "CONSUMER";
   public static final String MESSAGING_DESTINATION_KIND = "messaging.destination_kind";
 
   /**
@@ -45,10 +44,5 @@ public class JmsConsumeSpanCustomizer extends JmsSpanCustomizer {
   @Override
   protected String getSpanOperation() {
     return SPAN_OPERATION_NAME;
-  }
-
-  @Override
-  protected String getSpanKind() {
-    return SPAN_KIND_NAME;
   }
 }
