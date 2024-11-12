@@ -57,6 +57,11 @@
         <license.maven.plugin.version>4.2</license.maven.plugin.version>
         <licensePath>LICENSE_HEADER_CPAL.txt</licensePath>
         <licenseYear>2023</licenseYear>
+
+        <cert1.type>PKCS12</cert1.type>
+        <cert1.ext>p12</cert1.ext>
+        <cert2.type>JKS</cert2.type>
+        <cert2.ext>jks</cert2.ext>
     </properties>
 
     <dependencies>
@@ -421,7 +426,9 @@
         <profile>
             <id>docker</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <property>
+                    <name>os.name</name>
+                </property>
             </activation>
             <build>
                 <plugins>
@@ -524,6 +531,25 @@
                 </plugins>
             </build>
         </profile>
+
+        <profile>
+            <id>fips140-2</id>
+            <activation>
+                <property>
+                    <name>mule.security.model</name>
+                    <value>fips140-2</value>
+                </property>
+            </activation>
+            <properties>
+                <cert1.type>BCFKS</cert1.type>
+                <cert1.ext>bcfks</cert1.ext>
+                <cert2.type>BCFKS</cert2.type>
+                <cert2.ext>bcfks</cert2.ext>
+            </properties>
+        </profile>
+
+
+
     </profiles>
 
 
