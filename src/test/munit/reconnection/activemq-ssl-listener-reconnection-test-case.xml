@@ -22,7 +22,7 @@
                 <reconnect-forever />
             </reconnection>
             <tls:context >
-                <tls:trust-store path="tls/client-truststore.ks" password="racing" type="jks" />
+                <tls:trust-store path="tls/client-truststore.${cert2.ext}" password="racing" type="${cert2.type}" />
             </tls:context>
             <jms:factory-configuration brokerUrl="ssl://localhost:${activemq.ssl.listener.port}" />
         </jms:active-mq-connection>
