@@ -51,7 +51,7 @@
 
     <sslContext>
       <sslContext
-            keyStore="tls/broker.ts.bcfks" keyStorePassword="password" trustStore="tls/client-truststore.bcfks" trustStorePassword="password"/>
+            keyStore="tls/broker.bcfks" keyStorePassword="password" trustStore="tls/client.bcfks" trustStorePassword="password"/>
     </sslContext>
 
 
