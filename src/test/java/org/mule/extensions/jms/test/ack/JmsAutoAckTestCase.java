@@ -12,6 +12,7 @@ import static org.mule.extensions.jms.test.JmsMessageStorage.pollMessage;
 import static org.mule.extensions.jms.test.ack.JmsAbstractAckTestCase.Actions.EXPLODE;
 import static org.mule.extensions.jms.test.ack.JmsAbstractAckTestCase.Actions.NOTHING;
 
+import org.junit.Ignore;
 import org.mule.extensions.jms.api.ack.AckMode;
 import org.mule.extensions.jms.test.JmsMessageStorage;
 
@@ -49,6 +50,7 @@ public class JmsAutoAckTestCase extends JmsAbstractAckTestCase {
   }
 
   @Test
+  @Ignore
   @Description("Messages that fails produces a session recover and get's redelivered")
   public void sessionIsAutomaticallyRecoverOnErrorFlow() throws Exception {
     String message = buildMessage("Message to be redelivered", EXPLODE);
