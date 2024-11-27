@@ -409,6 +409,9 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <systemPropertyVariables>
+                        <jdk.tls.trustNameService>true</jdk.tls.trustNameService>
+                    </systemPropertyVariables>
                     <argLines>
                         <argLine>-javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-munit.exec</argLine>
                     </argLines>
