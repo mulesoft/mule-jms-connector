@@ -62,6 +62,7 @@
         <cert1.ext>p12</cert1.ext>
         <cert2.type>JKS</cert2.type>
         <cert2.ext>jks</cert2.ext>
+        <jdk.tls.trustNameService>true</jdk.tls.trustNameService>
     </properties>
 
     <dependencies>
