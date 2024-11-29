@@ -59,7 +59,7 @@
             trustStorePassword="password"
             trustStoreType="BCFKS"
 
-            secureRandomAlgorithm="TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256" />
+            secureRandomAlgorithm="NativePRNG" />
     </sslContext>
 
 
