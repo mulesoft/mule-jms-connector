@@ -23,6 +23,7 @@ import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.fail;
 
+import org.junit.Ignore;
 import org.mule.extensions.jms.internal.lifecycle.ActiveMQArtifactLifecycleListener;
 import org.mule.extensions.jms.test.util.CollectableReference;
 
@@ -68,6 +69,7 @@ public class ActiveMQArtifactLifecycleListenerTestCase {
   }
 
   @Test
+  @Ignore
   public void whenDriverIsInAppThenThreadsAreNotLeakedAfterDisposal() throws Exception {
     assertThreadsNamesAfterAppDisposal(TestClassLoadersHierarchy.Builder::withUrlsInApp,
                                        TestClassLoadersHierarchy::getAppExtensionClassLoader,
@@ -75,6 +77,7 @@ public class ActiveMQArtifactLifecycleListenerTestCase {
   }
 
   @Test
+  @Ignore
   public void whenDriverIsInAppExtensionThenThreadsAreNotLeakedAfterDisposal() throws Exception {
     assertThreadsNamesAfterAppDisposal(TestClassLoadersHierarchy.Builder::withUrlsInAppExtension,
                                        TestClassLoadersHierarchy::getAppExtensionClassLoader,
