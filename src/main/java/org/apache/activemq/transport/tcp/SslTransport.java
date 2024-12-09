@@ -1,4 +1,4 @@
-package apache.activemq.transport.tcp;
+package org.apache.activemq.transport.tcp;
 
 import java.io.IOException;
 import java.net.Socket;

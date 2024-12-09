@@ -13,6 +13,7 @@ import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.disposeIfNeeded
 import static org.mule.runtime.extension.api.annotation.param.ParameterGroup.CONNECTION;
 import static org.slf4j.LoggerFactory.getLogger;
 
+import org.apache.activemq.transport.tcp.SslTransport;
 import org.mule.extensions.jms.api.connection.JmsSpecification;
 import org.mule.extensions.jms.api.connection.caching.CachingStrategy;
 import org.mule.extensions.jms.api.connection.caching.DefaultCachingStrategy;
@@ -140,6 +141,9 @@ public abstract class BaseConnectionProvider
   @Override
   public JmsTransactionalConnection connect() throws ConnectionException {
     try {
+      // force loading of class from connector instead of the one from the library, because it uses reflection
+      SslTransport sslTransport = new SslTransport(null, null);
+
       return createWithJmsThreadGroup(jmsConnectionProvider::connect);
     } catch (Exception e) {
       if (e.getCause() instanceof ConnectionException) {
