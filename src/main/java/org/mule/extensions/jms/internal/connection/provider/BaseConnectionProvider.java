@@ -144,9 +144,10 @@ public abstract class BaseConnectionProvider
 
   @Override
   public JmsTransactionalConnection connect() throws ConnectionException {
+
+    URLClassLoader currentClassLoader = (URLClassLoader)Thread.currentThread().getContextClassLoader();
     try {
       // force loading of class from connector instead of the one from the library, because it uses reflection
-      URLClassLoader currentClassLoader = (URLClassLoader)Thread.currentThread().getContextClassLoader();
       ClassLoader firewallLoader = new FirewallLoader(currentClassLoader);
       ClassLoader loader = new URLClassLoader(currentClassLoader.getURLs(), firewallLoader);
       Thread.currentThread().setContextClassLoader(loader);
@@ -158,6 +159,8 @@ public abstract class BaseConnectionProvider
       } else {
         throw new MuleRuntimeException(e.getCause());
       }
+    } finally {
+      Thread.currentThread().setContextClassLoader(currentClassLoader);
     }
   }
 
