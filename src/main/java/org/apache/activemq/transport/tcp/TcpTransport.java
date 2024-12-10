@@ -446,7 +446,7 @@ public class TcpTransport extends TransportThreadSupport implements Transport, S
             // copy the map as its used values is being removed when calling setProperties
             // and we need to be able to set the options again in case socket is re-initailized
             Map<String, Object> copy = new HashMap<String, Object>(socketOptions);
-//            IntrospectionSupport.setProperties(socket, copy);
+            IntrospectionSupport.setProperties(socket, copy);
             if (!copy.isEmpty()) {
                 throw new IllegalArgumentException("Invalid socket parameters: " + copy);
             }
