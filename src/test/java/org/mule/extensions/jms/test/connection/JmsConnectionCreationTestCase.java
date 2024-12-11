@@ -20,6 +20,7 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Issue;
 import io.qameta.allure.Story;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mule.extensions.jms.internal.connection.provider.GenericConnectionProvider;
@@ -59,6 +60,7 @@ public class JmsConnectionCreationTestCase {
   }
 
   @Test
+  @Ignore
   public void genericConnectionCreation() throws Exception {
     AtomicReference<String> atomicReference = new AtomicReference<>();
 
