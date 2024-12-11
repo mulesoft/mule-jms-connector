@@ -92,7 +92,7 @@ public class ActiveMQConnectionFactoryProvider {
 
   ConnectionFactory createDefaultConnectionFactory(boolean useSsl) throws ActiveMQException {
     String factoryClass = getFactoryClass(useSsl);
-    CompositeClassLoader currentClassLoader = (CompositeClassLoader)Thread.currentThread().getContextClassLoader();
+    ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
 
     try {
       if (LOGGER.isDebugEnabled()) {
