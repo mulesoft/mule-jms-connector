@@ -18,6 +18,7 @@ import org.mule.extensions.jms.api.connection.caching.CachingStrategy;
 import org.mule.extensions.jms.api.connection.caching.DefaultCachingStrategy;
 import org.mule.extensions.jms.internal.connection.param.GenericConnectionParameters;
 import org.mule.extensions.jms.internal.connection.param.XaPoolParameters;
+import org.mule.extensions.jms.internal.connection.provider.loader.FirewallLoader;
 import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
 import org.mule.jms.commons.internal.connection.JmsConnection;
 import org.mule.jms.commons.internal.connection.JmsTransactionalConnection;
@@ -42,6 +43,8 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.RefName;
 
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.function.Supplier;
 
 import javax.inject.Inject;
@@ -142,7 +145,17 @@ public abstract class BaseConnectionProvider
 
     try {
 
-      return createWithJmsThreadGroup(jmsConnectionProvider::connect);
+      return createWithJmsThreadGroup(() -> {
+        ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
+        // force loading of class from connector instead of the one from the library, because it uses reflection
+        ClassLoader firewallLoader = new FirewallLoader(currentClassLoader);
+        ClassLoader loader = new URLClassLoader(new URL[]{this.getClass().getProtectionDomain().getCodeSource().getLocation()}, firewallLoader);
+        Thread.currentThread().setContextClassLoader(loader);
+
+        JmsTransactionalConnection conn = jmsConnectionProvider.connect();;
+        Thread.currentThread().setContextClassLoader(currentClassLoader);
+        return conn;
+      });
     } catch (Exception e) {
       if (e.getCause() instanceof ConnectionException) {
         throw (ConnectionException) e.getCause();
@@ -151,7 +164,6 @@ public abstract class BaseConnectionProvider
       }
     }
   }
-
   protected abstract void configureSSLContext();
 
   protected JmsTransactionalConnection connectOnSameThread() throws ConnectionException {

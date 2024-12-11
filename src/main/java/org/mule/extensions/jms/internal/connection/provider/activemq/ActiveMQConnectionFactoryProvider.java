@@ -92,16 +92,11 @@ public class ActiveMQConnectionFactoryProvider {
 
   ConnectionFactory createDefaultConnectionFactory(boolean useSsl) throws ActiveMQException {
     String factoryClass = getFactoryClass(useSsl);
-    ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
 
     try {
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug(format("Creating new [%s]", factoryClass));
       }
-      // force loading of class from connector instead of the one from the library, because it uses reflection
-      ClassLoader firewallLoader = new FirewallLoader(currentClassLoader);
-      ClassLoader loader = new URLClassLoader(new URL[]{this.getClass().getProtectionDomain().getCodeSource().getLocation()}, firewallLoader);
-      Thread.currentThread().setContextClassLoader(loader);
 
       this.connectionFactory =
           (ConnectionFactory) instantiateClass(factoryClass, setPropertiesInURL(factoryConfiguration.getBrokerUrl(), factoryClass,
@@ -122,8 +117,6 @@ public class ActiveMQConnectionFactoryProvider {
                               factoryClass, e.getMessage());
       LOGGER.error(message, e);
       throw new ActiveMQException(message, e);
-    } finally {
-      Thread.currentThread().setContextClassLoader(currentClassLoader);
     }
   }
 
