@@ -9,9 +9,11 @@ package org.mule.extensions.jms.internal.common;
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
 import static org.slf4j.LoggerFactory.getLogger;
 
+import org.mule.extensions.jms.internal.connection.provider.loader.FirewallLoader;
 import org.mule.runtime.core.api.util.func.CheckedSupplier;
 import org.slf4j.Logger;
 
+import java.net.URLClassLoader;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;

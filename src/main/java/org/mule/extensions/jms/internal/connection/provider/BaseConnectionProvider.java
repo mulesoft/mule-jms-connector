@@ -13,13 +13,11 @@ import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.disposeIfNeeded
 import static org.mule.runtime.extension.api.annotation.param.ParameterGroup.CONNECTION;
 import static org.slf4j.LoggerFactory.getLogger;
 
-import org.apache.activemq.transport.tcp.SslTransport;
 import org.mule.extensions.jms.api.connection.JmsSpecification;
 import org.mule.extensions.jms.api.connection.caching.CachingStrategy;
 import org.mule.extensions.jms.api.connection.caching.DefaultCachingStrategy;
 import org.mule.extensions.jms.internal.connection.param.GenericConnectionParameters;
 import org.mule.extensions.jms.internal.connection.param.XaPoolParameters;
-import org.mule.extensions.jms.internal.connection.provider.loader.FirewallLoader;
 import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
 import org.mule.jms.commons.internal.connection.JmsConnection;
 import org.mule.jms.commons.internal.connection.JmsTransactionalConnection;
@@ -36,7 +34,6 @@ import org.mule.runtime.api.lifecycle.Disposable;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.core.api.MuleContext;
-import org.mule.runtime.deployment.model.api.application.ApplicationClassLoader;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
 import org.mule.runtime.extension.api.annotation.param.NullSafe;
@@ -45,8 +42,6 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.RefName;
 
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.function.Supplier;
 
 import javax.inject.Inject;
@@ -145,12 +140,7 @@ public abstract class BaseConnectionProvider
   @Override
   public JmsTransactionalConnection connect() throws ConnectionException {
 
-    URLClassLoader currentClassLoader = (URLClassLoader)Thread.currentThread().getContextClassLoader();
     try {
-      // force loading of class from connector instead of the one from the library, because it uses reflection
-      ClassLoader firewallLoader = new FirewallLoader(currentClassLoader);
-      ClassLoader loader = new URLClassLoader(currentClassLoader.getURLs(), firewallLoader);
-      Thread.currentThread().setContextClassLoader(loader);
 
       return createWithJmsThreadGroup(jmsConnectionProvider::connect);
     } catch (Exception e) {
@@ -159,8 +149,6 @@ public abstract class BaseConnectionProvider
       } else {
         throw new MuleRuntimeException(e.getCause());
       }
-    } finally {
-      Thread.currentThread().setContextClassLoader(currentClassLoader);
     }
   }
 
