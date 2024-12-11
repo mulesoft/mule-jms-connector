@@ -15,6 +15,7 @@ import org.mule.extensions.jms.api.connection.factory.activemq.ActiveMQConnectio
 import org.mule.extensions.jms.api.exception.JmsMissingLibraryException;
 import org.mule.extensions.jms.internal.connection.exception.ActiveMQException;
 import org.mule.extensions.jms.internal.connection.provider.loader.FirewallLoader;
+import org.mule.runtime.core.internal.util.CompositeClassLoader;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.ExclusiveOptionals;
 import org.mule.runtime.extension.api.annotation.param.NullSafe;
@@ -27,6 +28,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -90,7 +92,7 @@ public class ActiveMQConnectionFactoryProvider {
 
   ConnectionFactory createDefaultConnectionFactory(boolean useSsl) throws ActiveMQException {
     String factoryClass = getFactoryClass(useSsl);
-    URLClassLoader currentClassLoader = (URLClassLoader)Thread.currentThread().getContextClassLoader();
+    CompositeClassLoader currentClassLoader = (CompositeClassLoader)Thread.currentThread().getContextClassLoader();
 
     try {
       if (LOGGER.isDebugEnabled()) {
@@ -98,7 +100,7 @@ public class ActiveMQConnectionFactoryProvider {
       }
       // force loading of class from connector instead of the one from the library, because it uses reflection
       ClassLoader firewallLoader = new FirewallLoader(currentClassLoader);
-      ClassLoader loader = new URLClassLoader(currentClassLoader.getURLs(), firewallLoader);
+      ClassLoader loader = new URLClassLoader(new URL[]{this.getClass().getProtectionDomain().getCodeSource().getLocation()}, firewallLoader);
       Thread.currentThread().setContextClassLoader(loader);
 
       this.connectionFactory =
