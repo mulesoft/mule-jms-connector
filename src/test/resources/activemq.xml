@@ -104,7 +104,7 @@
             http://activemq.apache.org/configuring-transports.html
         -->
         <transportConnectors>
-            <transportConnector name="ssl" uri="ssl://0.0.0.0:${activemq.port}?socket.verifyHostName=false&amp;transport.needClientAuth=true&amp;transport.enabledProtocols=TLSv1.2&amp;maxReconnectAttempts=10" />
+            <transportConnector name="ssl" uri="ssl://0.0.0.0:${activemq.port}?socket.verifyHostName=false&amp;transport.needClientAuth=true&amp;transport.enabledProtocols=TLSv1.2" />
         </transportConnectors>
 
         <!-- destroy the spring context on shutdown to stop jetty -->

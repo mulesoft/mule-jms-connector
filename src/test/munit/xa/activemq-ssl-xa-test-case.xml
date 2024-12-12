@@ -26,7 +26,7 @@
         <jms:caching-strategy >
             <jms:no-caching />
         </jms:caching-strategy>
-        <jms:factory-configuration brokerUrl="ssl://localhost:${activemq.ssl.listener.port}" enable-xa="true"/>
+        <jms:factory-configuration brokerUrl="failover:(ssl://localhost:${activemq.ssl.listener.port}?socket.verifyHostName=false&amp;maxReconnectAttempts=10,ssl://localhost:${activemq.ssl.listener.port}?socket.verifyHostName=false)" enable-xa="true"/>
     </jms:active-mq-connection>
 </jms:config>
 
