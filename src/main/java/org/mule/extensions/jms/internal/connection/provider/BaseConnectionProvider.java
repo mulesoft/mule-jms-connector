@@ -175,7 +175,7 @@ public abstract class BaseConnectionProvider
 
     JmsTransactionalConnection conn = jmsConnectionProvider.connect();;
 
-    Thread.currentThread().setContextClassLoader(currentClassLoader);
+//    Thread.currentThread().setContextClassLoader(currentClassLoader);
 
     return conn;
   }
