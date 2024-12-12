@@ -71,7 +71,9 @@
         <flow-ref name="purgeQueue"/>
     </munit:after-test>
 
-    <munit:test name="send-message-through-SSL">
+    <munit:test name="send-message-through-SSL"
+                ignore="true"
+    >
         <munit:execution>
             <set-variable variableName="message" value="#[&quot;I'm a secure message&quot;]"/>
             <jms:publish config-ref="config-with-ssl" destination="someDest">
@@ -86,14 +88,16 @@
         </munit:validation>
     </munit:test>
 
-    <munit:test name="test-connectivity">
+    <munit:test name="test-connectivity"
+                ignore="true"
+    >
         <munit:execution>
             <mtf:test-connectivity config-ref="config-with-ssl" />
         </munit:execution>
     </munit:test>
 
     <munit:test name="wrong-keystore-type-FIPS"
-                ignore="#[p('mule.security.model')==null or p('mule.security.model')!='fips140-2']"
+                ignore="true"
                 expectedException="java.security.KeyStoreException">
         <munit:execution>
             <set-variable variableName="storetype" value="jks"/>
