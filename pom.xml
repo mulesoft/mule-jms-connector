@@ -98,7 +98,6 @@
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-client</artifactId>
             <version>${activemq.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.fusesource.hawtbuf</groupId>
@@ -125,14 +124,12 @@
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-broker</artifactId>
             <version>${activemq.version}</version>
-            <scope>provided</scope>
         </dependency>
         <!-- Used by ActiveMQ if persistent=true -->
         <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-kahadb-store</artifactId>
             <version>${activemq.version}</version>
-            <scope>provided</scope>
         </dependency>
 
 
