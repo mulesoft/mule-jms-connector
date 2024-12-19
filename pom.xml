@@ -26,7 +26,7 @@
         <commonsIoVersion>2.11.0</commonsIoVersion>
         <commonsLangVersion>3.12.0</commonsLangVersion>
         <guavaVersion>32.1.2-jre</guavaVersion>
-        <jacksonVersion>2.14.2</jacksonVersion>
+        <jacksonVersion>2.18.2</jacksonVersion>
         <dockerClientVersion>8.16.0</dockerClientVersion>
         <jacoco.version>0.8.10</jacoco.version>
         <hawtbufVersion>1.11</hawtbufVersion>
