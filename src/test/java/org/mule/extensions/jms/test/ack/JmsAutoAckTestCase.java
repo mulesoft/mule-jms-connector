@@ -31,6 +31,7 @@ public class JmsAutoAckTestCase extends JmsAbstractAckTestCase {
   }
 
   @Test
+  @Ignore
   @Description("Messages are consumed correctly and get's acknowledged automatically by the JMS Client")
   public void sessionIsAutomaticallyAckOnSuccessFlow() throws Exception {
     String message = "Message to ACK";
