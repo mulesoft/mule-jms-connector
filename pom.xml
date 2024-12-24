@@ -527,7 +527,7 @@
                         <executions>
                             <execution>
                                 <id>start</id>
-                                <phase>pre-integration-test</phase>
+                                <phase>install</phase>
                                 <goals>
                                     <goal>build</goal>
                                     <goal>start</goal>
