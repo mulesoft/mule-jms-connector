@@ -483,7 +483,7 @@
                             <images>
                                 <image>
                                     <name>mule-activemq-ssl</name>
-                                    <alias>mule-activemq-ssl-${activemq.ssl.listener.port}</alias>
+                                    <alias>mule-activemq-ssl-${activemq.ssl.listener.port}-${maven.build.timestamp}</alias>
                                     <build>
                                         <dockerFileDir>${project.basedir}/src/test/docker/tls</dockerFileDir>
                                     </build>
