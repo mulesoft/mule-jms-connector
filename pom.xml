@@ -527,7 +527,7 @@
                         <executions>
                             <execution>
                                 <id>start</id>
-                                <phase>install</phase>
+                                <phase>pre-integration-test</phase>
                                 <goals>
                                     <goal>build</goal>
                                     <goal>start</goal>
@@ -537,7 +537,14 @@
                                     <logStdout>true</logStdout>
                                 </configuration>
                             </execution>
-
+                            <execution>
+                                <id>stop</id>
+                                <phase>clean</phase>
+                                <goals>
+                                    <goal>stop</goal>
+                                    <goal>remove</goal>
+                                </goals>
+                            </execution>
                         </executions>
                     </plugin>
                 </plugins>
