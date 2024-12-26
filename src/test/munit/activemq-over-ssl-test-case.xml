@@ -41,8 +41,8 @@
     <munit:dynamic-port propertyName="activemq.port"/>
 
     <munit:before-test name="before-activemq-over-ssl-test-case" description="after test">
-        <set-variable variableName="storetype" value="${cert2.type}"/>
-        <set-variable variableName="storePath" value="tls/client.ks.${cert2.ext}"/>
+        <set-variable variableName="storetype" value="bcfks"/>
+        <set-variable variableName="storePath" value="tls/client.bcfks"/>
     </munit:before-test>
 
     <jms:config name="config-with-ssl">
