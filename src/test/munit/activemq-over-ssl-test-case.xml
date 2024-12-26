@@ -95,8 +95,8 @@
     <munit:test name="wrong-keystore-type-FIPS"
                 expectedException="java.security.KeyStoreException">
         <munit:execution>
-            <set-variable variableName="storetype" value="jks"/>
-            <set-variable variableName="storePath" value="tls/client.ks"/>
+            <set-variable variableName="storetype" value="bcfks"/>
+            <set-variable variableName="storePath" value="tls/client.bcfks"/>
             <mtf:test-connectivity config-ref="config-with-ssl" />
         </munit:execution>
     </munit:test>
