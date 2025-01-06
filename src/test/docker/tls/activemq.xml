@@ -124,7 +124,8 @@
         </shutdownHooks>
         <sslContext>
             <sslContext keyStore="file:${activemq.base}/certs/ActiveMq/broker.ks" keyStorePassword="password"
-                        trustStore="file:${activemq.base}/certs/ActiveMq/broker.ts" trustStorePassword="password"/>
+                        trustStore="file:${activemq.base}/certs/ActiveMq/broker.ts" trustStorePassword="password"
+                        secureRandomAlgorithm="RSA"/>
         </sslContext>
     </broker>
 
