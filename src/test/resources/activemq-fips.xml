@@ -59,7 +59,7 @@
             trustStorePassword="password"
             trustStoreType="BCFKS"
 
-            secureRandomAlgorithm="SHA256" />
+            secureRandomAlgorithm="“HmacSHA256" />
     </sslContext>
 
 
