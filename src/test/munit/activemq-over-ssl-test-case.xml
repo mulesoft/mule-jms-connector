@@ -42,7 +42,7 @@
 
     <munit:before-test name="before-activemq-over-ssl-test-case" description="after test">
         <set-variable variableName="storetype" value="bcfks"/>
-        <set-variable variableName="storePath" value="tls/client.bcfks"/>
+        <set-variable variableName="storePath" value="tls/broker.bcfks"/>
     </munit:before-test>
 
     <jms:config name="config-with-ssl">
@@ -96,7 +96,7 @@
                 expectedException="java.security.KeyStoreException">
         <munit:execution>
             <set-variable variableName="storetype" value="bcfks"/>
-            <set-variable variableName="storePath" value="tls/client.bcfks"/>
+            <set-variable variableName="storePath" value="tls/broker.bcfks"/>
             <mtf:test-connectivity config-ref="config-with-ssl" />
         </munit:execution>
     </munit:test>
