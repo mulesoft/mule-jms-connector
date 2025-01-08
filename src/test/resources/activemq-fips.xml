@@ -58,7 +58,8 @@
             trustStore="tls/client.bcfks"
             trustStorePassword="password"
             trustStoreType="BCFKS"
-             />
+
+            secureRandomAlgorithm="NativePRNGNonBlocking" />
     </sslContext>
 
 
