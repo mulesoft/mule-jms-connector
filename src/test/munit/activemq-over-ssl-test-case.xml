@@ -48,7 +48,7 @@
     <jms:config name="config-with-ssl">
         <jms:active-mq-connection>
             <tls:context >
-                <tls:trust-store type="#[vars.storetype]" path="#[storePath]" password="password" algorithm="PKIX"/>
+                <tls:trust-store type="#[vars.storetype]" path="#[vars.storePath]" password="password" algorithm="PKIX"/>
                 <tls:key-store type="#[vars.storetype]" path="#[vars.storePath]" keyPassword="password" password="password" algorithm="PKIX"/>
             </tls:context>
             <jms:factory-configuration brokerUrl="${brokerUrl}" />
