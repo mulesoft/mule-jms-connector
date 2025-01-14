@@ -48,8 +48,17 @@
     <jms:config name="config-with-ssl">
         <jms:active-mq-connection>
             <tls:context >
-                <tls:trust-store type="#[vars.storetype]" path="#[vars.storePath]" password="password" algorithm="PKIX"/>
-                <tls:key-store type="#[vars.storetype]" path="#[vars.storePath]" keyPassword="password" password="password" algorithm="PKIX"/>
+                <tls:trust-store type="bcfks" path="tls/broker.bcfks" password="password" algorithm="PKIX"/>
+                <tls:key-store type="bcfks" path="tls/broker.bcfks" keyPassword="password" password="password" algorithm="PKIX"/>
+            </tls:context>
+            <jms:factory-configuration brokerUrl="${brokerUrl}" />
+        </jms:active-mq-connection>
+    </jms:config>
+    <jms:config name="config-with-ssl-wrong-type">
+        <jms:active-mq-connection>
+            <tls:context >
+                <tls:trust-store type="bcfks" path="tls/broker.ks" password="password" algorithm="PKIX"/>
+                <tls:key-store type="bcfks" path="tls/broker.ks" keyPassword="password" password="password" algorithm="PKIX"/>
             </tls:context>
             <jms:factory-configuration brokerUrl="${brokerUrl}" />
         </jms:active-mq-connection>
@@ -97,7 +106,7 @@
         <munit:execution>
             <set-variable variableName="storetype" value="bcfks"/>
             <set-variable variableName="storePath" value="tls/broker.ks"/>
-            <mtf:test-connectivity config-ref="config-with-ssl" />
+            <mtf:test-connectivity config-ref="config-with-ssl-wrong-type" />
         </munit:execution>
     </munit:test>
 
