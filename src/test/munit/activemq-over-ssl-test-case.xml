@@ -48,8 +48,8 @@
     <jms:config name="config-with-ssl">
         <jms:active-mq-connection>
             <tls:context >
-                <tls:trust-store type="bcfks" path="tls/broker.bcfks" password="password" algorithm="RSA"/>
-                <tls:key-store type="bcfks" path="tls/broker.bcfks" keyPassword="password" password="password" algorithm="RSA"/>
+                <tls:trust-store type="bcfks" path="tls/broker.bcfks" password="password" algorithm="default"/>
+                <tls:key-store type="bcfks" path="tls/broker.bcfks" keyPassword="password" password="password" algorithm="default"/>
             </tls:context>
             <jms:factory-configuration brokerUrl="${brokerUrl}" />
         </jms:active-mq-connection>
