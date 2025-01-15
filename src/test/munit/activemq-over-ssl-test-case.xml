@@ -41,24 +41,15 @@
     <munit:dynamic-port propertyName="activemq.port"/>
 
     <munit:before-test name="before-activemq-over-ssl-test-case" description="after test">
-        <set-variable variableName="storetype" value="bcfks"/>
-        <set-variable variableName="storePath" value="tls/broker.bcfks"/>
+        <set-variable variableName="keystoretype" value="${cert2.type}"/>
+        <set-variable variableName="keystorepath" value="tls/broker.ks.${cert2.ext}"/>
     </munit:before-test>
 
     <jms:config name="config-with-ssl">
         <jms:active-mq-connection>
             <tls:context >
-                <tls:trust-store type="bcfks" path="tls/broker.bcfks" password="password" algorithm="PKIX"/>
-                <tls:key-store type="bcfks" path="tls/broker.bcfks" keyPassword="password" password="password" algorithm="PKIX"/>
-            </tls:context>
-            <jms:factory-configuration brokerUrl="${brokerUrl}" />
-        </jms:active-mq-connection>
-    </jms:config>
-    <jms:config name="config-with-ssl-wrong-type">
-        <jms:active-mq-connection>
-            <tls:context >
-                <tls:trust-store type="bcfks" path="tls/broker.ks" password="password" algorithm="PKIX"/>
-                <tls:key-store type="bcfks" path="tls/broker.ks" keyPassword="password" password="password" algorithm="PKIX"/>
+                <tls:trust-store type="#[vars.keystoretype]" path="#[vars.keystorepath]" password="password" algorithm="PKIX"/>
+                <tls:key-store type="#[vars.keystoretype]" path="#[vars.keystorepath]" keyPassword="password" password="password" algorithm="PKIX"/>
             </tls:context>
             <jms:factory-configuration brokerUrl="${brokerUrl}" />
         </jms:active-mq-connection>
@@ -104,9 +95,9 @@
     <munit:test name="wrong-keystore-type-FIPS"
                 expectedException="java.security.KeyStoreException">
         <munit:execution>
-            <set-variable variableName="storetype" value="bcfks"/>
-            <set-variable variableName="storePath" value="tls/broker.ks"/>
-            <mtf:test-connectivity config-ref="config-with-ssl-wrong-type" />
+            <set-variable variableName="keystoretype" value="bcfks"/>
+            <set-variable variableName="keystorepath" value="tls/broker.ks"/>
+            <mtf:test-connectivity config-ref="config-with-ssl" />
         </munit:execution>
     </munit:test>
 
