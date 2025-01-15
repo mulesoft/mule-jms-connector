@@ -29,12 +29,12 @@
                     <munit:parameter propertyName="brokerUrl" value="ssl://localhost:${activemq.port}?socket.verifyHostName=false"/>
                 </munit:parameters>
             </munit:parameterization>
-<!--            <munit:parameterization name="valid-failover-broker-url">-->
-<!--                <munit:parameters>-->
-<!--                    &lt;!&ndash; a host which is not the one defined in the CN for the TSL connection certificate, using a failover brokerURL &ndash;&gt;-->
-<!--                    <munit:parameter propertyName="brokerUrl" value="failover:(ssl://localhost:${activemq.port}?socket.verifyHostName=false&amp;maxReconnectAttempts=10,ssl://localhost:${activemq.port}?socket.verifyHostName=false)"/>-->
-<!--                </munit:parameters>-->
-<!--            </munit:parameterization>-->
+            <munit:parameterization name="valid-failover-broker-url">
+                <munit:parameters>
+                    <!-- a host which is not the one defined in the CN for the TSL connection certificate, using a failover brokerURL -->
+                    <munit:parameter propertyName="brokerUrl" value="failover:(ssl://localhost:${activemq.port}?socket.verifyHostName=false&amp;maxReconnectAttempts=10,ssl://localhost:${activemq.port}?socket.verifyHostName=false)"/>
+                </munit:parameters>
+            </munit:parameterization>
         </munit:parameterizations>
     </munit:config>
 
@@ -97,7 +97,7 @@
         <munit:execution>
             <set-variable variableName="storetype" value="bcfks"/>
             <set-variable variableName="storePath" value="tls/broker.ks"/>
-            <mtf:test-connectivity config-ref="config-with-ssl />
+            <mtf:test-connectivity config-ref="config-with-ssl" />
         </munit:execution>
     </munit:test>
 

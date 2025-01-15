@@ -16,7 +16,6 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 
 import org.apache.activemq.command.ConnectionInfo;
-import org.apache.activemq.transport.tcp.TcpTransport;
 import org.apache.activemq.wireformat.WireFormat;
 public class SslTransport extends TcpTransport {
 

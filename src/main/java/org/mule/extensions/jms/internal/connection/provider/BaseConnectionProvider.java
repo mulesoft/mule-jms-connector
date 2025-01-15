@@ -18,7 +18,6 @@ import org.mule.extensions.jms.api.connection.caching.CachingStrategy;
 import org.mule.extensions.jms.api.connection.caching.DefaultCachingStrategy;
 import org.mule.extensions.jms.internal.connection.param.GenericConnectionParameters;
 import org.mule.extensions.jms.internal.connection.param.XaPoolParameters;
-import org.mule.extensions.jms.internal.connection.provider.loader.FirewallLoader;
 import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
 import org.mule.jms.commons.internal.connection.JmsConnection;
 import org.mule.jms.commons.internal.connection.JmsTransactionalConnection;
@@ -43,8 +42,6 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.RefName;
 
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.function.Supplier;
 
 import javax.inject.Inject;
@@ -60,7 +57,7 @@ import org.slf4j.Logger;
  * @since 1.0
  */
 public abstract class BaseConnectionProvider
-    implements CachedConnectionProvider<JmsTransactionalConnection>, Initialisable, Disposable {
+        implements CachedConnectionProvider<JmsTransactionalConnection>, Initialisable, Disposable {
 
   private static final Logger LOGGER = getLogger(BaseConnectionProvider.class);
 
@@ -119,16 +116,16 @@ public abstract class BaseConnectionProvider
   public void initialise() throws InitialisationException {
     Runnable setupSsl = () -> this.configureSSLContext();
     jmsConnectionProvider =
-        new JmsConnectionProvider(jmsSessionManager,
-                                  getConnectionFactorySupplier(),
-                                  specification.getJmsSpecification(),
-                                  connectionParameters,
-                                  xaPoolParameters,
-                                  cachingStrategy,
-                                  enableXa(),
-                                  getJmsSupportFactory(),
-                                  new ConnectionFactoryDecoratorFactory(muleContext, registry),
-                                  configName, java.util.Optional.of(setupSsl));
+            new JmsConnectionProvider(jmsSessionManager,
+                    getConnectionFactorySupplier(),
+                    specification.getJmsSpecification(),
+                    connectionParameters,
+                    xaPoolParameters,
+                    cachingStrategy,
+                    enableXa(),
+                    getJmsSupportFactory(),
+                    new ConnectionFactoryDecoratorFactory(muleContext, registry),
+                    configName, java.util.Optional.of(setupSsl));
   }
 
   // TODO (EE-6615): JmsSupportyFactory is not part of jms-client API.
@@ -142,20 +139,8 @@ public abstract class BaseConnectionProvider
 
   @Override
   public JmsTransactionalConnection connect() throws ConnectionException {
-
     try {
-
-      return createWithJmsThreadGroup(() -> {
-        ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
-        // force loading of class from connector instead of the one from the library, because it uses reflection
-        ClassLoader firewallLoader = new FirewallLoader(currentClassLoader);
-        ClassLoader loader = new URLClassLoader(new URL[]{this.getClass().getProtectionDomain().getCodeSource().getLocation()}, firewallLoader);
-        Thread.currentThread().setContextClassLoader(loader);
-
-        JmsTransactionalConnection conn = jmsConnectionProvider.connect();;
-        Thread.currentThread().setContextClassLoader(currentClassLoader);
-        return conn;
-      });
+      return createWithJmsThreadGroup(jmsConnectionProvider::connect);
     } catch (Exception e) {
       if (e.getCause() instanceof ConnectionException) {
         throw (ConnectionException) e.getCause();
@@ -164,20 +149,11 @@ public abstract class BaseConnectionProvider
       }
     }
   }
+
   protected abstract void configureSSLContext();
 
   protected JmsTransactionalConnection connectOnSameThread() throws ConnectionException {
-    ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
-    // force loading of class from connector instead of the one from the library, because it uses reflection
-    ClassLoader firewallLoader = new FirewallLoader(currentClassLoader);
-    ClassLoader loader = new URLClassLoader(new URL[]{this.getClass().getProtectionDomain().getCodeSource().getLocation()}, firewallLoader);
-    Thread.currentThread().setContextClassLoader(loader);
-
-    JmsTransactionalConnection conn = jmsConnectionProvider.connect();;
-
-//    Thread.currentThread().setContextClassLoader(currentClassLoader);
-
-    return conn;
+    return jmsConnectionProvider.connect();
   }
 
   @Override

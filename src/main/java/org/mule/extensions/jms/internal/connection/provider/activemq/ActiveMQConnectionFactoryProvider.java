@@ -14,8 +14,6 @@ import org.apache.activemq.util.URISupport;
 import org.mule.extensions.jms.api.connection.factory.activemq.ActiveMQConnectionFactoryConfiguration;
 import org.mule.extensions.jms.api.exception.JmsMissingLibraryException;
 import org.mule.extensions.jms.internal.connection.exception.ActiveMQException;
-import org.mule.extensions.jms.internal.connection.provider.loader.FirewallLoader;
-import org.mule.runtime.core.internal.util.CompositeClassLoader;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.ExclusiveOptionals;
 import org.mule.runtime.extension.api.annotation.param.NullSafe;
@@ -28,8 +26,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -92,12 +88,10 @@ public class ActiveMQConnectionFactoryProvider {
 
   ConnectionFactory createDefaultConnectionFactory(boolean useSsl) throws ActiveMQException {
     String factoryClass = getFactoryClass(useSsl);
-
     try {
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug(format("Creating new [%s]", factoryClass));
       }
-
       this.connectionFactory =
           (ConnectionFactory) instantiateClass(factoryClass, setPropertiesInURL(factoryConfiguration.getBrokerUrl(), factoryClass,
                                                                                 factoryConfiguration));
