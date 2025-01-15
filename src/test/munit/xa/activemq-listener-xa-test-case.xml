@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:mtf="http://www.mulesoft.org/schema/mule/mtf" xmlns:mule="http://www.mulesoft.org/schema/mule/munit"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+                          http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+                          http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+                          http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+                          http://www.mulesoft.org/schema/mule/mtf http://www.mulesoft.org/schema/mule/mtf/current/mule-mtf.xsd">
+
+    <!--  Is required a 4.1.5 min mule version to prevent a bug on the lazy init on Bitronix -->
+    <munit:config name="xa-listener-test-cases.xml" minMuleVersion="4.1.5"/>
+
+    <munit:after-test name="afterTest-activemq-listener-xa-test-case" description="after test">
+        <set-variable variableName="brokerName" value="localhost"/>
+        <set-variable variableName="destinationName" value="dest1"/>
+        <flow-ref name="purgeQueue"/>
+        <set-variable variableName="destinationName" value="dest2"/>
+        <flow-ref name="purgeQueue"/>
+    </munit:after-test>
+
+    <munit:test name="receive-xa-message" >
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="xaListener"/>
+        </munit:enable-flow-sources>
+        <munit:execution>
+            <set-variable variableName="message" value="#[randomInt(1000000) as String]"/>
+            <jms:publish destination="dest1" config-ref="config-no-caching">
+                <jms:message>
+                    <jms:body>#[{ message : vars.message }]</jms:body>
+                </jms:message>
+            </jms:publish>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:dequeue/>
+            <munit-tools:assert-that expression="#[payload.message]" is="#[MunitTools::equalTo(vars.message)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="bridge-xa-message" >
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="xaListener"/>
+        </munit:enable-flow-sources>
+        <munit:execution>
+            <set-variable variableName="message" value="#[randomInt(1000000) as String]"/>
+            <jms:publish destination="dest1" config-ref="config-no-caching">
+                <jms:message>
+                    <jms:body>#[{
+                        action : 'PUBLISH',
+                        destination : 'dest2',
+                        message : vars.message
+                        }]</jms:body>
+                </jms:message>
+            </jms:publish>
+            <jms:consume config-ref="config-no-caching" destination="dest2"/>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that expression="#[payload.message]" is="#[MunitTools::equalTo(vars.message)]"/>
+            <munit-tools:dequeue/>
+            <munit-tools:assert-that expression="#[payload.message]" is="#[MunitTools::equalTo(vars.message)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="bridge-xa-message-different-brokers" description="Checks happy path using listener of one broker,
+    and publishing in other broker">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="xaListenerOtherListenerBroker"/>
+        </munit:enable-flow-sources>
+        <munit:execution>
+            <set-variable variableName="message" value="#[randomInt(1000000) as String]"/>
+            <jms:publish destination="dest1" config-ref="JMS_Config_XA_OTHER_BROKER">
+                <jms:message>
+                    <jms:body>#[{
+                        action : 'PUBLISH',
+                        destination : 'dest2',
+                        message : vars.message
+                        }]</jms:body>
+                </jms:message>
+            </jms:publish>
+        </munit:execution>
+        <munit:validation>
+            <jms:consume config-ref="JMS_Config_XA" destination="dest2"/>
+            <munit-tools:assert-that expression="#[payload.message]" is="#[MunitTools::equalTo(vars.message)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="rollback-xa-message" >
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="xaListenerLimitedRedelivery"/>
+        </munit:enable-flow-sources>
+        <munit:execution>
+            <set-variable variableName="message" value="#[randomInt(1000000) as String]"/>
+            <jms:publish destination="dest1" config-ref="config-no-caching">
+                <jms:message>
+                    <jms:body>#[{
+                        txAction : 'ROLLBACK',
+                        }]</jms:body>
+                </jms:message>
+            </jms:publish>
+        </munit:execution>
+        <munit:validation>
+            <until-successful maxRetries="100" millisBetweenRetries="1000">
+                <logger message="#[MunitTools::queueSize()]" level="ERROR"/>
+                <munit-tools:assert-that expression="#[MunitTools::queueSize()]" is="#[MunitTools::equalTo(6)]"/>
+            </until-successful>
+        </munit:validation>
+    </munit:test>
+
+        <munit:test name="rollback-xa-message-not-published" description="Consuming from one broker, publishing in another one
+    and then raising error must rollback the entire operation">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="xaListenerOtherListenerBroker"/>
+        </munit:enable-flow-sources>
+        <munit:execution>
+            <set-variable variableName="message" value="#[randomInt(1000000) as String]"/>
+            <jms:publish destination="dest1" config-ref="JMS_Config_XA_OTHER_BROKER">
+                <jms:message>
+                    <jms:body>#[{
+                        action : 'PUBLISH',
+                        destination : 'dest2',
+                        message : vars.message,
+                        txAction : 'ROLLBACK'
+                        }]</jms:body>
+                </jms:message>
+            </jms:publish>
+        </munit:execution>
+        <munit:validation>
+            <until-successful maxRetries="100" millisBetweenRetries="1000">
+                <logger message="#[MunitTools::queueSize()]" level="ERROR"/>
+                <munit-tools:assert-that expression="#[MunitTools::queueSize()]" is="#[MunitTools::equalTo(6)]"/>
+            </until-successful>
+            <try>
+                <jms:consume config-ref="JMS_Config_XA" destination="dest2" maximumWait="1000"/>
+                <munit-tools:fail message="Operation should have been rolled back"/>
+                <error-handler>
+                    <on-error-continue type="JMS:TIMEOUT"/>
+                </error-handler>
+            </try>
+        </munit:validation>
+    </munit:test>
+
+    <!-- Ignored until MULE-17186 is fixed -->
+    <munit:test name="rollback-xa-message-published" description="Consuming from one broker, publishing in another one
+    inside a nested tx, and then raising error (outside the nested tx) must rollback the consumption but not the
+    publishing" ignore="true">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="xaListenerOtherListenerBroker"/>
+        </munit:enable-flow-sources>
+        <munit:execution>
+            <set-variable variableName="message" value="#[randomInt(1000000) as String]"/>
+            <jms:publish destination="dest1" config-ref="JMS_Config_XA_OTHER_BROKER">
+                <jms:message>
+                    <jms:body>#[{
+                        action : 'PUBLISH_IN_CHILD_TX',
+                        destination : 'dest2',
+                        message : vars.message,
+                        txAction : 'ROLLBACK'
+                        }]</jms:body>
+                </jms:message>
+            </jms:publish>
+        </munit:execution>
+        <munit:validation>
+            <foreach collection="(1 to 6) as Array">
+                <jms:consume config-ref="JMS_Config_XA" destination="dest2" maximumWait="1000"/>
+                <munit-tools:assert-that expression="#[payload.message]" is="#[MunitTools::equalTo(vars.message)]"/>
+            </foreach>
+        </munit:validation>
+    </munit:test>
+
+        <flow name="xaListener">
+            <jms:listener config-ref="JMS_Config_XA" destination="dest1" transactionalAction="ALWAYS_BEGIN" transactionType="XA" numberOfConsumers="1"/>
+            <flow-ref name="listenerCommonLogic"/>
+        </flow>
+
+    <flow name="xaListenerOtherListenerBroker">
+        <jms:listener config-ref="JMS_Config_XA_OTHER_BROKER" destination="dest1" transactionalAction="ALWAYS_BEGIN" transactionType="XA" numberOfConsumers="1"/>
+        <flow-ref name="listenerCommonLogic"/>
+    </flow>
+
+        <flow name="xaListenerLimitedRedelivery">
+            <jms:listener config-ref="JMS_Config_XA_MAX_REDELIVERY" destination="dest1" transactionalAction="ALWAYS_BEGIN" transactionType="XA"  numberOfConsumers="1"/>
+            <flow-ref name="listenerCommonLogic"/>
+        </flow>
+
+        <flow name="listenerCommonLogic">
+            <async>
+                <logger level="DEBUG" message="#[output application/json --- payload]"/>
+                <munit-tools:queue/>
+            </async>
+
+            <choice>
+                <when expression="#[payload.action == 'PUBLISH']">
+                    <jms:publish config-ref="JMS_Config_XA" destination="#[payload.destination]"/>
+                </when>
+                <when expression="#[payload.action == 'PUBLISH_IN_CHILD_TX']">
+                    <try transactionalAction="ALWAYS_BEGIN" transactionType="XA">
+                        <jms:publish config-ref="JMS_Config_XA" destination="#[payload.destination]"/>
+                    </try>
+                </when>
+            </choice>
+            <choice>
+                <when expression="#[payload.txAction == 'ROLLBACK']">
+                    <raise-error type="MULE:ANY" description="TX"/>
+                </when>
+            </choice>
+        </flow>
+
+
+</mule>

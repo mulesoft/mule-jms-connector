@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+                          http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+                          http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+                          http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd">
+
+     <munit:config name="mimeType-propagation"/>
+
+    <munit:after-test name="afterTest-mimetype-propagation-test-case" description="after test">
+        <set-variable variableName="brokerName" value="localhost"/>
+        <set-variable variableName="destinationName" value="DEV.QUEUE.1"/>
+        <flow-ref name="purgeQueue"/>
+    </munit:after-test>
+
+    <munit:test name="messageMimeTypeGetsPropagatedThroughPublishAndConsume">
+        <munit:execution>
+            <set-variable variableName="message" value="#[output application/json --- { key : 'value'}]"/>
+            <jms:publish config-ref="config-no-caching" destination="DEV.QUEUE.1">
+                <jms:message>
+                    <jms:body>#[vars.message]</jms:body>
+                </jms:message>
+            </jms:publish>
+            <jms:consume config-ref="config-no-caching" destination="DEV.QUEUE.1"/>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo(vars.message)]"/>
+            <munit-tools:assert-that expression="#[payload.^mimeType]" is="#[MunitTools::equalTo('application/json')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="messageMimeTypeGetsPropagatedThroughPublishListener">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="mimeTypeListener"/>
+        </munit:enable-flow-sources>
+        <munit:execution>
+            <set-variable variableName="message" value="#[output application/json --- { key : 'value'}]"/>
+            <jms:publish config-ref="config-no-caching" destination="DEV.QUEUE.1">
+                <jms:message>
+                    <jms:body>#[vars.message]</jms:body>
+                </jms:message>
+            </jms:publish>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:dequeue/>
+            <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo(vars.message)]"/>
+            <munit-tools:assert-that expression="#[payload.^mimeType]" is="#[MunitTools::equalTo('application/json')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <flow name="mimeTypeListener">
+        <jms:listener config-ref="config-no-caching" destination="DEV.QUEUE.1"/>
+        <munit-tools:queue/>
+    </flow>
+
+    <munit:test name="messageMimeTypeGetsPropagatedThroughPublishConsume">
+        <munit:execution>
+            <set-variable variableName="message" value="#[output application/json --- { key : 'value'}]"/>
+            <jms:publish-consume config-ref="config-no-caching" destination="DEV.QUEUE.1">
+                <jms:message>
+                    <jms:body>#[vars.message]</jms:body>
+                    <jms:reply-to destination="DEV.QUEUE.1"/>
+                </jms:message>
+            </jms:publish-consume>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo(vars.message)]"/>
+            <munit-tools:assert-that expression="#[payload.^mimeType]" is="#[MunitTools::equalTo('application/json')]"/>
+        </munit:validation>
+    </munit:test>
+</mule>

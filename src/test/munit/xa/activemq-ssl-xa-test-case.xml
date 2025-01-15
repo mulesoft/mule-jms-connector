@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:bti="http://www.mulesoft.org/schema/mule/ee/bti"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+      http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+      http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+      http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+      http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+      http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
+      http://www.mulesoft.org/schema/mule/ee/bti http://www.mulesoft.org/schema/mule/ee/bti/current/mule-bti-ee.xsd">
+
+<munit:config name="activemq-ssl-xa-test-case.xml" minMuleVersion="4.3.0"/>
+
+    <bti:transaction-manager/>
+
+<jms:config name="JMS_SSL_XA_Config">
+    <jms:active-mq-connection username="admin" password="admin" clientId="client1" >
+        <tls:context >
+            <tls:trust-store path="tls/client-truststore-new.${cert1.ext}" password="racing" type="${cert1.type}" />
+        </tls:context>
+        <jms:caching-strategy >
+            <jms:no-caching />
+        </jms:caching-strategy>
+        <jms:factory-configuration brokerUrl="ssl://localhost:${activemq.ssl.listener.port}" enable-xa="true"/>
+    </jms:active-mq-connection>
+</jms:config>
+
+<munit:test name="publish_message_with_xa_and_ssl">
+    <munit:enable-flow-sources>
+        <munit:enable-flow-source value="jms-messages-xa-listener-flow" />
+    </munit:enable-flow-sources>
+    <munit:behavior>
+        <set-variable variableName="containerName" value="mule-activemq-ssl"/>
+        <set-variable variableName="message" value="#[output application/json --- { Saying: 'A word is enough to the wise'}]" />
+        <set-variable variableName="correlationID" value="agent-007"/>
+    </munit:behavior>
+    <munit:execution>
+        <flow-ref name="publish-message-xa-to-broker" />
+        <munit-tools:dequeue queueName="jmsMessagesQueue" timeout="50"  timeoutUnit="SECONDS"/>
+        <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo(vars.message)]"/>
+    </munit:execution>
+</munit:test>
+
+<flow name="publish-message-xa-to-broker">
+    <set-payload value="#[output application/json --- { Saying: 'A word is enough to the wise'}]" />
+    <try transactionalAction="ALWAYS_BEGIN" transactionType="XA">
+        <jms:publish config-ref="JMS_SSL_XA_Config" destination="Q1" persistentDelivery="true" timeToLive="5" timeToLiveUnit="MINUTES">
+            <jms:message correlationId="#[vars.correlationID]"/>
+        </jms:publish>
+    </try>
+    <logger level="INFO" message="Activemq-ssl-xa: Message published!"/>
+</flow>
+
+<flow name="jms-messages-xa-listener-flow" >
+        <jms:listener config-ref="JMS_SSL_XA_Config" destination="Q1" ackMode="AUTO" transactionalAction="ALWAYS_BEGIN" transactionType="XA">
+            <jms:consumer-type >
+                <jms:queue-consumer />
+            </jms:consumer-type>
+        </jms:listener>
+    <logger level="INFO" message="Activemq-ssl-xa: Received message #[payload] with correlationID : #[attributes.headers.correlationId]"/>
+    <munit-tools:queue queueName="jmsMessagesQueue"/>
+</flow>
+</mule>

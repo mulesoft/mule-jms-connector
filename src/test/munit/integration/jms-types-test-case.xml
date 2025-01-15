@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+                          http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+                          http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+                          http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd">
+
+    <munit:config name="jms-types"/>
+
+    <munit:after-test name="afterTest-jms-types-test-case" description="after test">
+        <set-variable variableName="brokerName" value="localhost"/>
+        <set-variable variableName="destinationName" value="DEV.QUEUE.1"/>
+        <flow-ref name="purgeQueue"/>
+    </munit:after-test>
+
+    <munit:test name="sendTextMessage">
+        <munit:execution>
+            <set-variable variableName="message" value="#[output text/plain --- 'some text']"/>
+            <jms:publish config-ref="config-no-caching" destination="DEV.QUEUE.1">
+                <jms:message>
+                    <jms:body>#[vars.message]</jms:body>
+                </jms:message>
+            </jms:publish>
+            <jms:consume config-ref="config-no-caching" destination="DEV.QUEUE.1"/>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that expression="#[payload]" is="#[output application/java --- MunitTools::equalTo(vars.message)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="sendJavaMap">
+        <munit:execution>
+            <set-variable variableName="message" value="#[{ Key1 : 'value', Key2 : [1,2,3] as Array {class: 'byte[]'}, Key3 : 99.9999 as Number {class:'java.lang.Double'}}]"/>
+            <jms:publish config-ref="config-no-caching" destination="DEV.QUEUE.1">
+                <jms:message>
+                    <jms:body>#[vars.message]</jms:body>
+                </jms:message>
+            </jms:publish>
+            <jms:consume config-ref="config-no-caching" destination="DEV.QUEUE.1"/>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that expression="#[payload.Key1]" is="#[MunitTools::equalTo(vars.message.Key1)]"/>
+            <munit-tools:assert-that expression="#[payload.Key1.^class]" is="#[MunitTools::equalTo('java.lang.String')]"/>
+
+            <munit-tools:assert-that expression="#[payload.Key2]" is="#[MunitTools::equalTo(vars.message.Key2)]"/>
+            <munit-tools:assert-that expression="#[payload.Key2.^class]" is="#[MunitTools::equalTo('byte[]')]"/>
+
+            <munit-tools:assert-that expression="#[payload.Key3]" is="#[MunitTools::equalTo(vars.message.Key3)]"/>
+            <munit-tools:assert-that expression="#[payload.Key3.^class]" is="#[MunitTools::equalTo('java.lang.Double')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="sendList">
+        <munit:execution>
+            <set-variable variableName="message" value="#[[1,2,3]]"/>
+            <jms:publish config-ref="config-no-caching" destination="DEV.QUEUE.1">
+                <jms:message>
+                    <jms:body>#[vars.message]</jms:body>
+                </jms:message>
+            </jms:publish>
+            <jms:consume config-ref="config-no-caching" destination="DEV.QUEUE.1"/>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo(vars.message)]"/>
+            <munit-tools:assert-that expression="#[payload.^class]" is="#[MunitTools::equalTo('java.util.ArrayList')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="sendBinary">
+        <munit:execution>
+            <set-variable variableName="message" value="#[[1,2,3] as Array {class: 'byte[]'}]"/>
+            <jms:publish config-ref="config-no-caching" destination="DEV.QUEUE.1">
+                <jms:message>
+                    <jms:body>#[vars.message]</jms:body>
+                </jms:message>
+            </jms:publish>
+            <jms:consume config-ref="config-no-caching" destination="DEV.QUEUE.1"/>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo(vars.message)]"/>
+        </munit:validation>
+    </munit:test>
+
+
+    <munit:test name="sendSerializable">
+        <munit:execution>
+            <set-variable variableName="message" value="#[java!java::awt::Color::new(1)]"/>
+            <jms:publish config-ref="config-no-caching" destination="DEV.QUEUE.1">
+                <jms:message>
+                    <jms:body>#[vars.message]</jms:body>
+                </jms:message>
+            </jms:publish>
+            <jms:consume config-ref="config-no-caching" destination="DEV.QUEUE.1"/>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo(vars.message)]"/>
+            <munit-tools:assert-that expression="#[payload.^class]" is="#[MunitTools::equalTo('java.awt.Color')]"/>
+        </munit:validation>
+    </munit:test>
+
+</mule>
