@@ -97,7 +97,7 @@
         <munit:execution>
             <set-variable variableName="storetype" value="bcfks"/>
             <set-variable variableName="storePath" value="tls/broker.ks"/>
-            <mtf:test-connectivity config-ref="config-with-ssl-wrong-type" />
+            <mtf:test-connectivity config-ref="config-with-ssl />
         </munit:execution>
     </munit:test>
 
