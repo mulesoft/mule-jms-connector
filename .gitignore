@@ -29,3 +29,7 @@ testdir/
 hostkey.ser
 *.h2.db
 *.factorypath
+apache-activemq-5.15.9-bin.tar.gz
+FipsUtils.java
+FipsTestCase.xml
+tls-fips140-2.conf
