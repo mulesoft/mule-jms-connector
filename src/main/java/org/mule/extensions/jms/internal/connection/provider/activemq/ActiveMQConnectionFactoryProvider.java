@@ -26,11 +26,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.jms.ConnectionFactory;
 
@@ -136,11 +134,7 @@ public class ActiveMQConnectionFactoryProvider {
           ActiveMQConnectionFactoryUtil.isVerifyHostnameValidVersion(getActiveMqClientVersion(factoryClass));
       boolean isFailOverURl = brokerURL.contains("failover");
       if (isFailOverURl && verifyHostNameCheck) {
-        String failoverUrl = brokerURL.substring("failover:(".length(), brokerURL.length() - 1);
-        String addedVerifyHostName = Arrays.stream(failoverUrl.split(","))
-            .map(element -> element + "?" + VERIFY_HOSTNAME + "=" + factoryConfiguration.getVerifyHostName())
-            .collect(Collectors.joining(","));
-        brokerURL = "failover:(" + addedVerifyHostName + ")";
+        brokerURL = ActiveMQConnectionFactoryUtil.brokerUrlFormat(brokerURL, factoryConfiguration.getVerifyHostName());
       }
       URI brokerURI = createURI(brokerURL);
       Map<String, String> map = (brokerURI.getQuery() != null) ? URISupport.parseQuery(brokerURI.getQuery()) : new HashMap<>();
