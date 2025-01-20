@@ -24,7 +24,7 @@
             <tls:context >
                 <tls:trust-store path="tls/client.${cert2.ext}" password="password" type="${cert2.type}" />
             </tls:context>
-            <jms:factory-configuration brokerUrl="ssl://localhost:${activemq.ssl.listener.port}" />
+            <jms:factory-configuration brokerUrl="ssl://localhost:${activemq.ssl.listener.port}?socket.verifyHostName=false" />
         </jms:active-mq-connection>
     </jms:config>
 
