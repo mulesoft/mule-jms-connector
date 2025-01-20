@@ -136,13 +136,13 @@ public class ActiveMQConnectionFactoryProvider {
       if (isFailOverURl && verifyHostNameCheck) {
         brokerURL = ActiveMQConnectionFactoryUtil.brokerUrlFormat(brokerURL, factoryConfiguration.getVerifyHostName());
       }
-      URI brokerURI = createURI(brokerURL);
-      Map<String, String> map = (brokerURI.getQuery() != null) ? URISupport.parseQuery(brokerURI.getQuery()) : new HashMap<>();
       if (verifyHostNameCheck && !isFailOverURl) {
+        URI brokerURI = createURI(brokerURL);
+        Map<String, String> map = (brokerURI.getQuery() != null) ? URISupport.parseQuery(brokerURI.getQuery()) : new HashMap<>();
         map.put(VERIFY_HOSTNAME, String.valueOf(factoryConfiguration.getVerifyHostName()));
+        brokerURL = URISupport.createRemainingURI(brokerURI, map).toString();
       }
-      brokerURI = URISupport.createRemainingURI(brokerURI, map);
-      return brokerURI.toString();
+      return brokerURL;
     }
     return brokerURL;
   }
