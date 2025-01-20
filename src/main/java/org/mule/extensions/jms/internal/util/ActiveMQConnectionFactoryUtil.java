@@ -17,7 +17,7 @@ public class ActiveMQConnectionFactoryUtil {
   private static final int MINOR_VERSION_THRESHOLD = 15;
   private static final int PATCH_VERSION_THRESHOLD = 6;
   private static final String REX_PATTER = "(\\d+)\\.(\\d+)\\.(\\d+)";
-  private static final String HOSTS_MATCHER = "\\((.*?)\\)" ;
+  private static final String HOSTS_MATCHER = "\\((.*?)\\)";
   private static final String VERIFY_HOSTNAME = "socket.verifyHostName";
 
   /**
@@ -48,24 +48,43 @@ public class ActiveMQConnectionFactoryUtil {
     return patchVersion >= PATCH_VERSION_THRESHOLD;
   }
 
+  /**
+   * Formats a broker URL by appending the 'VERIFY_HOSTNAME'
+   * parameter to each URL within the `failover:()' block and then reconciles the query parameters
+   * (if any) to the final URL.
+   *
+   * @param brokerURL The broker URL to format. May contain a 'failover:()' section,
+   * with multiple URLs separated by commas.
+   * @param verifyHostName The value to be assigned to the `VERIFY_HOSTNAME` parameter for
+   * brokers within the 'failover:()' block. This value is added to each
+   * broker within the 'failover:()' section.
+   *
+   * @return The URL formatted with the `VERIFY_HOSTNAME` parameter added to each URL
+   * within 'failover:()', and with the original URL's query parameters (if any)
+   * preserved at the end of the URL.
+   * **/
+
   public static String brokerUrlFormat(String brokerURL, boolean verifyHostName) {
-    int parametersIndex = brokerURL.indexOf("?");
-    String queryParameters = "";
-    if (parametersIndex != -1) {
-      queryParameters = brokerURL.substring(parametersIndex);
+    if (brokerURL != null) {
+      int parametersIndex = brokerURL.indexOf("?");
+      String queryParameters = "";
+      if (parametersIndex != -1) {
+        queryParameters = brokerURL.substring(parametersIndex);
+      }
+      Pattern pattern = Pattern.compile(HOSTS_MATCHER);
+      Matcher matcher = pattern.matcher(brokerURL);
+      if (matcher.find()) {
+        String failoverUrl = matcher.group(1);
+        String addedVerifyHostName = Arrays.stream(failoverUrl.split(","))
+            .map(element -> element.trim() + "?" + VERIFY_HOSTNAME + "=" + verifyHostName)
+            .collect(Collectors.joining(","));
+        brokerURL = "failover:(" + addedVerifyHostName + ")";
+      }
+      if (!queryParameters.isEmpty()) {
+        brokerURL += queryParameters;
+      }
+      return brokerURL;
     }
-    Pattern pattern = Pattern.compile(HOSTS_MATCHER);
-    Matcher matcher = pattern.matcher(brokerURL);
-    if (matcher.find()) {
-      String failoverUrl = matcher.group(1);
-      String addedVerifyHostName = Arrays.stream(failoverUrl.split(","))
-          .map(element -> element + "?" + VERIFY_HOSTNAME + "=" + verifyHostName)
-          .collect(Collectors.joining(","));
-      brokerURL = "failover:(" + addedVerifyHostName + ")";
-    }
-    if (!queryParameters.isEmpty()) {
-      brokerURL += queryParameters;
-    }
-    return brokerURL;
+    return "";
   }
 }
