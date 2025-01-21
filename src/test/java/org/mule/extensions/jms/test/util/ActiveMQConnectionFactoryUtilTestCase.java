@@ -57,7 +57,7 @@ public class ActiveMQConnectionFactoryUtilTestCase {
   }
 
   @Test
-  public void testBrokerUrlFormatWithBlankURL() {
+  public void testBrokerUrlFormatWithEmptyURL() {
     assertEquals("",
                  ActiveMQConnectionFactoryUtil.brokerUrlFormat("", false));
   }
@@ -66,5 +66,20 @@ public class ActiveMQConnectionFactoryUtilTestCase {
   public void testBrokerUrlFormatWithNullURL() {
     assertEquals("",
                  ActiveMQConnectionFactoryUtil.brokerUrlFormat(null, false));
+  }
+  @Test
+  public void testBrokerUrlFormatWhenHostNameHasVerifyHostnameParameter() {
+    assertEquals("failover:(ssl://localhost:61616?socket.verifyHostName=false,ssl://localhost:61616?socket.verifyHostName=false)",
+            ActiveMQConnectionFactoryUtil.brokerUrlFormat("failover:(ssl://localhost:61616?socket.verifyHostName=false,ssl://localhost:61616),false", false));
+  }
+  @Test
+  public void testBrokerUrlFormatWhenHostNameHasOthersParameter() {
+    assertEquals("failover:(ssl://localhost:61616?maxReconnectAttempts=5&socket.verifyHostName=false,ssl://localhost:61616?socket.verifyHostName=false)",
+            ActiveMQConnectionFactoryUtil.brokerUrlFormat("failover:(ssl://localhost:61616?maxReconnectAttempts=5,ssl://localhost:61616?socket.verifyHostName=false)", false));
+  }
+  @Test
+  public void testBrokerUrlFormatWhenHostNameHasParameterAndFailoverQueryParameter() {
+    assertEquals("failover:(ssl://localhost:61616?maxReconnectAttempts=5&socket.verifyHostName=false,ssl://localhost:61616?socket.verifyHostName=false)?maxReconnectAttempts=5",
+            ActiveMQConnectionFactoryUtil.brokerUrlFormat("failover:(ssl://localhost:61616?maxReconnectAttempts=5,ssl://localhost:61616?socket.verifyHostName=false)?maxReconnectAttempts=5", false));
   }
 }

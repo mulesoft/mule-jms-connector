@@ -66,18 +66,27 @@ public class ActiveMQConnectionFactoryUtil {
 
   public static String brokerUrlFormat(String brokerURL, boolean verifyHostName) {
     if (brokerURL != null) {
-      int parametersIndex = brokerURL.indexOf("?");
+      int parametersIndex = brokerURL.indexOf(")?");
       String queryParameters = "";
       if (parametersIndex != -1) {
-        queryParameters = brokerURL.substring(parametersIndex);
+        queryParameters = brokerURL.substring(parametersIndex+1);
       }
       Pattern pattern = Pattern.compile(HOSTS_MATCHER);
       Matcher matcher = pattern.matcher(brokerURL);
       if (matcher.find()) {
         String failoverUrl = matcher.group(1);
         String addedVerifyHostName = Arrays.stream(failoverUrl.split(","))
-            .map(element -> element.trim() + "?" + VERIFY_HOSTNAME + "=" + verifyHostName)
-            .collect(Collectors.joining(","));
+            .map(element -> {
+              element = element.trim();
+              if (element.contains(VERIFY_HOSTNAME)) {
+                return element;
+              }
+              if (element.contains("?")) {
+               return element + "&" + VERIFY_HOSTNAME + "=" + verifyHostName;
+              }else {
+                return element + "?" + VERIFY_HOSTNAME + "=" + verifyHostName;
+              }
+            }).collect(Collectors.joining(","));
         brokerURL = "failover:(" + addedVerifyHostName + ")";
       }
       if (!queryParameters.isEmpty()) {
