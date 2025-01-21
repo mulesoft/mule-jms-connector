@@ -1,8 +1,8 @@
 FROM openjdk:8-jre
 
 RUN wget https://downloads.bouncycastle.org/fips-java/bc-fips-1.0.2.4.jar -P $JAVA_HOME/lib/ext
-RUN cp -a $JAVA_HOME/security/java.security $JAVA_HOME/security/java.security.orig
-COPY java.security.fips $JAVA_HOME/security/java.security
+RUN cp -a $JAVA_HOME/lib/security/java.security $JAVA_HOME/lib/security/java.security.orig
+COPY java.security.fips $JAVA_HOME/lib/security/java.security
 
 RUN cp -a $JAVA_HOME/lib/security/cacerts $JAVA_HOME/lib/security/cacerts.orig
 RUN rm $JAVA_HOME/lib/security/cacerts
