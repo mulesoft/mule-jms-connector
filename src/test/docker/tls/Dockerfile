@@ -1,11 +1,12 @@
-FROM openjdk:8u212-stretch
-RUN wget https://downloads.bouncycastle.org/fips-java/bc-fips-1.0.2.4.jar -P /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext
-RUN cp -a /etc/java-8-openjdk/security/java.security /etc/java-8-openjdk/security/java.security.orig
-COPY java.security.fips /etc/java-8-openjdk/security/java.security
+FROM openjdk:8-jre
 
-RUN cp -a /etc/ssl/certs/java/cacerts /etc/ssl/certs/java/cacerts.orig
-RUN rm /etc/ssl/certs/java/cacerts
-RUN keytool -importkeystore -srckeystore /etc/ssl/certs/java/cacerts.orig -srcstoretype JKS -destkeystore /etc/ssl/certs/java/cacerts -deststoretype BCFKS -deststorepass changeit -srcstorepass changeit
+RUN wget https://downloads.bouncycastle.org/fips-java/bc-fips-1.0.2.4.jar -P $JAVA_HOME/lib/ext
+RUN cp -a $JAVA_HOME/security/java.security $JAVA_HOME/security/java.security.orig
+COPY java.security.fips $JAVA_HOME/security/java.security
+
+RUN cp -a $JAVA_HOME/lib/security/cacerts $JAVA_HOME/lib/security/cacerts.orig
+RUN rm $JAVA_HOME/lib/security/cacerts
+RUN keytool -importkeystore -srckeystore $JAVA_HOME/lib/security/cacerts.orig -srcstoretype JKS -destkeystore $JAVA_HOME/lib/security/cacerts -deststoretype BCFKS -deststorepass changeit -srcstorepass changeit
 
 ENV ACTIVEMQ_VERSION 5.15.9
 ENV ACTIVEMQ apache-activemq-$ACTIVEMQ_VERSION
