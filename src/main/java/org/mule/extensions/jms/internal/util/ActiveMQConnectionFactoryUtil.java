@@ -69,7 +69,7 @@ public class ActiveMQConnectionFactoryUtil {
       int parametersIndex = brokerURL.indexOf(")?");
       String queryParameters = "";
       if (parametersIndex != -1) {
-        queryParameters = brokerURL.substring(parametersIndex+1);
+        queryParameters = brokerURL.substring(parametersIndex + 1);
       }
       Pattern pattern = Pattern.compile(HOSTS_MATCHER);
       Matcher matcher = pattern.matcher(brokerURL);
@@ -82,8 +82,8 @@ public class ActiveMQConnectionFactoryUtil {
                 return element;
               }
               if (element.contains("?")) {
-               return element + "&" + VERIFY_HOSTNAME + "=" + verifyHostName;
-              }else {
+                return element + "&" + VERIFY_HOSTNAME + "=" + verifyHostName;
+              } else {
                 return element + "?" + VERIFY_HOSTNAME + "=" + verifyHostName;
               }
             }).collect(Collectors.joining(","));
