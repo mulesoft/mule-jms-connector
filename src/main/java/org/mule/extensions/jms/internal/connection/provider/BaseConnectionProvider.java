@@ -167,17 +167,7 @@ public abstract class BaseConnectionProvider
   protected abstract void configureSSLContext();
 
   protected JmsTransactionalConnection connectOnSameThread() throws ConnectionException {
-    ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
-    // force loading of class from connector instead of the one from the library, because it uses reflection
-    ClassLoader firewallLoader = new FirewallLoader(currentClassLoader);
-    ClassLoader loader = new URLClassLoader(new URL[]{this.getClass().getProtectionDomain().getCodeSource().getLocation()}, firewallLoader);
-    Thread.currentThread().setContextClassLoader(loader);
-
-    JmsTransactionalConnection conn = jmsConnectionProvider.connect();;
-
-//    Thread.currentThread().setContextClassLoader(currentClassLoader);
-
-    return conn;
+    return jmsConnectionProvider.connect();
   }
 
   @Override
