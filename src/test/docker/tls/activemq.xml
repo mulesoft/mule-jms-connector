@@ -125,7 +125,7 @@
         <sslContext>
             <sslContext keyStore="file:${activemq.base}/certs/ActiveMq/broker.ks" keyStorePassword="password" keyStoreType="BCFKS"
                         trustStore="file:${activemq.base}/certs/ActiveMq/broker.ts" trustStorePassword="password"
-                        trustStoreType="BCFKS"
+                        trustStoreType="BCFKS" secureRandomAlgorithm="default"
             />
         </sslContext>
     </broker>
