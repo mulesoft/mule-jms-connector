@@ -123,9 +123,10 @@
             <bean xmlns="http://www.springframework.org/schema/beans" class="org.apache.activemq.hooks.SpringContextHook" />
         </shutdownHooks>
         <sslContext>
-            <sslContext keyStore="file:${activemq.base}/certs/ActiveMq/broker.ks" keyStorePassword="password"
+            <sslContext keyStore="file:${activemq.base}/certs/ActiveMq/broker.ks" keyStorePassword="password" keyStoreType="BCFKS"
                         trustStore="file:${activemq.base}/certs/ActiveMq/broker.ts" trustStorePassword="password"
-                        />
+                        trustStoreType="BCFKS"
+            />
         </sslContext>
     </broker>
 
