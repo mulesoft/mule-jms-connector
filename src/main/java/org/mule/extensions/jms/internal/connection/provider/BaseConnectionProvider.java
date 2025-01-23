@@ -143,18 +143,7 @@ public abstract class BaseConnectionProvider
   @Override
   public JmsTransactionalConnection connect() throws ConnectionException {
     try {
-
-      return createWithJmsThreadGroup(() -> {
-        ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
-        // force loading of class from connector instead of the one from the library, because it uses reflection
-        ClassLoader firewallLoader = new FirewallLoader(currentClassLoader);
-        ClassLoader loader = new URLClassLoader(new URL[]{this.getClass().getProtectionDomain().getCodeSource().getLocation()}, firewallLoader);
-        Thread.currentThread().setContextClassLoader(loader);
-
-        JmsTransactionalConnection conn = jmsConnectionProvider.connect();;
-        Thread.currentThread().setContextClassLoader(currentClassLoader);
-        return conn;
-      });
+      return createWithJmsThreadGroup(jmsConnectionProvider::connect);
     } catch (Exception e) {
       if (e.getCause() instanceof ConnectionException) {
         throw (ConnectionException) e.getCause();
