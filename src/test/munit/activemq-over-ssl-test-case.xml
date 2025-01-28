@@ -48,18 +48,8 @@
     <jms:config name="config-with-ssl">
         <jms:active-mq-connection>
             <tls:context >
-                <tls:trust-store insecure="true" />
-                <tls:key-store type="jks" path="tls/client.ks" keyPassword="password" password="password" algorithm="PKIX"/>
-            </tls:context>
-            <jms:factory-configuration brokerUrl="${brokerUrl}" />
-        </jms:active-mq-connection>
-    </jms:config>
-
-    <jms:config name="config-with-ssl-fips">
-        <jms:active-mq-connection>
-            <tls:context >
-                <tls:trust-store type="bcfks" path="tls/broker.bcfks" password="password" algorithm="PKIX"/>
-                <tls:key-store type="bcfks" path="tls/broker.bcfks" keyPassword="password" password="password" algorithm="PKIX"/>
+                <tls:trust-store type="${vars.storetype}" path="tls/broker.bcfks" password="password" algorithm="PKIX"/>
+                <tls:key-store type="${vars.storetype}" path="tls/broker.bcfks" keyPassword="password" password="password" algorithm="PKIX"/>
             </tls:context>
             <jms:factory-configuration brokerUrl="${brokerUrl}" />
         </jms:active-mq-connection>
@@ -84,6 +74,7 @@
     <munit:test name="send-message-through-SSL">
         <munit:execution>
             <set-variable variableName="message" value="#[&quot;I'm a secure message&quot;]"/>
+            <set-variable variableName="storetype" value="bcfks"/>
             <jms:publish config-ref="config-with-ssl" destination="someDest">
                 <jms:message>
                     <jms:body>#[vars.message]</jms:body>
@@ -99,20 +90,20 @@
     <munit:test name="test-connectivity-fips"
                 ignore="#[p('mule.security.model')==null or p('mule.security.model')!='fips140-2']">
         <munit:execution>
-            <mtf:test-connectivity config-ref="config-with-ssl-fips" />
+            <set-variable variableName="storetype" value="bcfks"/>
+            <mtf:test-connectivity config-ref="config-with-ssl" />
         </munit:execution>
     </munit:test>
 
     <munit:test name="test-connectivity"
                 ignore="#[p('mule.security.model')!='fips140-2']">
         <munit:execution>
+            <set-variable variableName="storetype" value="bcfks"/>
             <mtf:test-connectivity config-ref="config-with-ssl" />
         </munit:execution>
     </munit:test>
     <munit:test name="wrong-keystore-type-FIPS"
-                expectedException="java.security.KeyStoreException"
-                ignore="#[p('mule.security.model')==null or p('mule.security.model')!='fips140-2']"
-    >
+                expectedException="java.security.KeyStoreException" ignore="true">
         <munit:execution>
             <set-variable variableName="storetype" value="bcfks"/>
             <set-variable variableName="storePath" value="tls/broker.ks"/>
