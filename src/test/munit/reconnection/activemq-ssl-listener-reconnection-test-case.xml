@@ -25,7 +25,7 @@
                 <tls:trust-store type="bcfks" path="tls/broker.bcfks" password="password" algorithm="PKIX"/>
                 <tls:key-store type="bcfks" path="tls/broker.bcfks" keyPassword="password" password="password" algorithm="PKIX"/>
             </tls:context>
-            <jms:factory-configuration brokerUrl="ssl://localhost:${activemq.ssl.listener.port}?socket.verifyHostName=false" />
+            <jms:factory-configuration brokerUrl="ssl://localhost:${activemq.ssl.listener.port}" />
         </jms:active-mq-connection>
     </jms:config>
 

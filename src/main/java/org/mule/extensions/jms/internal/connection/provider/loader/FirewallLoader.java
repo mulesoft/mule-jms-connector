@@ -5,7 +5,7 @@ public class FirewallLoader extends ClassLoader {
         super(parent);
     }
     public Class loadClass(String name, boolean resolve) throws ClassNotFoundException {
-        if (name.equals("org.apache.activemq.transport.tcp.SslTransport") || name.equals("org.apache.activemq.transport.tcp.TcpTransport")) {
+        if (name.equals("org.bouncycastle.jsse.provider.ProvSSLSocketDirect")) {
             throw new ClassNotFoundException();
         }
         return super.loadClass(name, resolve);

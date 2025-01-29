@@ -89,6 +89,8 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider implement
   static final String ACTIVEMQ_VERSION = "5.15.16";
   static final String BROKER_GA = "org.apache.activemq:activemq-broker";
   static final String KAHA_DB_GA = "org.apache.activemq:activemq-kahadb-store";
+  public static final String FIPS_140_2 = "fips140-2";
+  public static final String MULE_SECURITY_MODEL = "mule.security.model";
 
   /**
    * a provider for an {@link ActiveMQConnectionFactory}
@@ -268,15 +270,16 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider implement
   }
 
   protected void configureSSLContext() {
+
+    ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
+    // force loading of class from connector instead of the one from the library, because it uses reflection
+    ClassLoader firewallLoader = new FirewallLoader(currentClassLoader);
+    ClassLoader loader = new URLClassLoader(new URL[]{this.getClass().getProtectionDomain().getCodeSource().getLocation()}, firewallLoader);
+    Thread.currentThread().setContextClassLoader(loader);
+
     try {
       if (tlsConfiguration != null) {
         SSLContext sslContext = tlsConfiguration.createSslContext();
-        ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
-        // force loading of class from connector instead of the one from the library, because it uses reflection
-        ClassLoader firewallLoader = new FirewallLoader(currentClassLoader);
-        ClassLoader loader = new URLClassLoader(new URL[]{this.getClass().getProtectionDomain().getCodeSource().getLocation()}, firewallLoader);
-        Thread.currentThread().setContextClassLoader(loader);
-
         SslContext activeMQSslContext = new SslContext();
         activeMQSslContext.setSSLContext(sslContext);
         SslContext.setCurrentSslContext(activeMQSslContext);
@@ -285,6 +288,9 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider implement
     } catch (KeyManagementException | NoSuchAlgorithmException | InvocationTargetException | IllegalAccessException
         | NoSuchMethodException e) {
       throw new JmsExtensionException("A problem occurred trying to configure SSL Options on ActiveMQ Connection", e);
+    } finally {
+      Thread.currentThread().setContextClassLoader(currentClassLoader);
+
     }
   }
 

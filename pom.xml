@@ -135,6 +135,16 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.bouncycastle/bctls-jdk18on -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bctls-jdk18on</artifactId>
+            <version>1.80</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Thanks for using https://jar-download.com -->
+
 
         <!-- Test Dependencies -->
         <dependency>
