@@ -21,12 +21,13 @@
 <jms:config name="JMS_SSL_XA_Config">
     <jms:active-mq-connection username="admin" password="admin" clientId="client1" >
         <tls:context >
-            <tls:trust-store path="tls/client-truststore-new.${cert1.ext}" password="racing" type="${cert1.type}" />
+            <tls:trust-store type="bcfks" path="tls/broker.bcfks" password="password" algorithm="PKIX"/>
+            <tls:key-store type="bcfks" path="tls/broker.bcfks" keyPassword="password" password="password" algorithm="PKIX"/>
         </tls:context>
         <jms:caching-strategy >
             <jms:no-caching />
         </jms:caching-strategy>
-        <jms:factory-configuration brokerUrl="ssl://localhost:${activemq.ssl.listener.port}" enable-xa="true"/>
+        <jms:factory-configuration brokerUrl="ssl://localhost:${activemq.ssl.listener.port}?socket.verifyHostName=false" enable-xa="true"/>
     </jms:active-mq-connection>
 </jms:config>
 

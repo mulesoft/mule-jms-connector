@@ -20,19 +20,19 @@
             <munit:parameterization name="invalid-broker-url">
                 <munit:parameters>
                     <!-- a valid ip which is not the host defined in the CN for the TSL connection certificate -->
-                    <munit:parameter propertyName="brokerUrl" value="ssl://0.0.0.0:${activemq.port}"/>
+                    <munit:parameter propertyName="brokerUrl" value="ssl://0.0.0.0:${activemq.port}?socket.verifyHostName=false"/>
                 </munit:parameters>
             </munit:parameterization>
             <munit:parameterization name="valid-broker-url">
                 <munit:parameters>
                     <!-- a host which is not the one defined in the CN for the TSL connection certificate -->
-                    <munit:parameter propertyName="brokerUrl" value="ssl://localhost:${activemq.port}"/>
+                    <munit:parameter propertyName="brokerUrl" value="ssl://localhost:${activemq.port}?socket.verifyHostName=false"/>
                 </munit:parameters>
             </munit:parameterization>
             <munit:parameterization name="valid-failover-broker-url">
                 <munit:parameters>
                     <!-- a host which is not the one defined in the CN for the TSL connection certificate, using a failover brokerURL -->
-                    <munit:parameter propertyName="brokerUrl" value="failover:(ssl://localhost:${activemq.port},ssl://localhost:${activemq.port})"/>
+                    <munit:parameter propertyName="brokerUrl" value="failover:(ssl://localhost:${activemq.port}?socket.verifyHostName=false&amp;maxReconnectAttempts=10,ssl://localhost:${activemq.port}?socket.verifyHostName=false)"/>
                 </munit:parameters>
             </munit:parameterization>
         </munit:parameterizations>
@@ -41,15 +41,15 @@
     <munit:dynamic-port propertyName="activemq.port"/>
 
     <munit:before-test name="before-activemq-over-ssl-test-case" description="after test">
-        <set-variable variableName="storetype" value="${cert2.type}"/>
-        <set-variable variableName="storePath" value="tls/client.ks.${cert2.ext}"/>
+        <set-variable variableName="storetype" value="bcfks"/>
+        <set-variable variableName="storePath" value="tls/broker.bcfks"/>
     </munit:before-test>
 
     <jms:config name="config-with-ssl">
         <jms:active-mq-connection>
             <tls:context >
-                <tls:trust-store insecure="true" />
-                <tls:key-store type="#[vars.storetype]" path="#[vars.storePath]" keyPassword="password" password="password" algorithm="PKIX"/>
+                <tls:trust-store type="${vars.storetype}" path="tls/broker.bcfks" password="password" algorithm="PKIX"/>
+                <tls:key-store type="${vars.storetype}" path="tls/broker.bcfks" keyPassword="password" password="password" algorithm="PKIX"/>
             </tls:context>
             <jms:factory-configuration brokerUrl="${brokerUrl}" />
         </jms:active-mq-connection>
@@ -92,12 +92,18 @@
         </munit:execution>
     </munit:test>
 
-    <munit:test name="wrong-keystore-type-FIPS"
-                ignore="#[p('mule.security.model')==null or p('mule.security.model')!='fips140-2']"
-                expectedException="java.security.KeyStoreException">
+    <munit:test name="test-connectivity"
+                ignore="#[p('mule.security.model')!='fips140-2']">
         <munit:execution>
-            <set-variable variableName="storetype" value="jks"/>
-            <set-variable variableName="storePath" value="tls/client.ks"/>
+            <mtf:test-connectivity config-ref="config-with-ssl" />
+        </munit:execution>
+    </munit:test>
+
+    <munit:test name="wrong-keystore-type-FIPS"
+                expectedException="java.security.KeyStoreException" ignore="true">
+        <munit:execution>
+            <set-variable variableName="storetype" value="bcfks"/>
+            <set-variable variableName="storePath" value="tls/broker.ks"/>
             <mtf:test-connectivity config-ref="config-with-ssl" />
         </munit:execution>
     </munit:test>
