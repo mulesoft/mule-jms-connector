@@ -18,7 +18,6 @@ import org.mule.extensions.jms.api.connection.caching.CachingStrategy;
 import org.mule.extensions.jms.api.connection.caching.DefaultCachingStrategy;
 import org.mule.extensions.jms.internal.connection.param.GenericConnectionParameters;
 import org.mule.extensions.jms.internal.connection.param.XaPoolParameters;
-import org.mule.extensions.jms.internal.connection.provider.loader.FirewallLoader;
 import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
 import org.mule.jms.commons.internal.connection.JmsConnection;
 import org.mule.jms.commons.internal.connection.JmsTransactionalConnection;
@@ -43,8 +42,6 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.RefName;
 
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.function.Supplier;
 
 import javax.inject.Inject;
