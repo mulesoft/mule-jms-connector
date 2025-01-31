@@ -3,12 +3,14 @@
       xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
       xmlns:java="http://www.mulesoft.org/schema/mule/java"
       xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xmlns:mtf="http://www.mulesoft.org/schema/mule/mtf"
       xmlns="http://www.mulesoft.org/schema/mule/core"
       xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
       xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
                           http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
                           http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
+                          http://www.mulesoft.org/schema/mule/mtf  http://www.mulesoft.org/schema/mule/mtf/current/mule-mtf.xsd
                           http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
                           http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd
                           http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd">
@@ -18,7 +20,7 @@
             <munit:parameterization name="invalid-broker-url">
                 <munit:parameters>
                     <!-- a valid ip which is not the host defined in the CN for the TSL connection certificate -->
-                    <munit:parameter propertyName="brokerUrl" value="ssl://0.0.0.0:${activemq.port}"/>
+                    <munit:parameter propertyName="brokerUrl" value="ssl://0.0.0.0:${activemq.port}?socket.@Ignore@TestName=false"/>
                 </munit:parameters>
             </munit:parameterization>
             <munit:parameterization name="valid-broker-url">
@@ -30,7 +32,7 @@
             <munit:parameterization name="valid-failover-broker-url">
                 <munit:parameters>
                     <!-- a host which is not the one defined in the CN for the TSL connection certificate, using a failover brokerURL -->
-                    <munit:parameter propertyName="brokerUrl" value="failover:(ssl://localhost:${activemq.port},ssl://localhost:${activemq.port})"/>
+                    <munit:parameter propertyName="brokerUrl" value="failover:(ssl://localhost:${activemq.port}?maxReconnectAttempts=10,ssl://localhost:${activemq.port})"/>
                 </munit:parameters>
             </munit:parameterization>
         </munit:parameterizations>
@@ -41,8 +43,8 @@
     <jms:config name="config-with-ssl">
         <jms:active-mq-connection>
             <tls:context >
-                <tls:trust-store insecure="true" />
-                <tls:key-store type="jks" path="tls/client.ks" keyPassword="password" password="password" algorithm="PKIX"/>
+                <tls:trust-store type="bcfks" path="tls/broker.bcfks" password="password" algorithm="PKIX"/>
+                <tls:key-store type="bcfks" path="tls/broker.bcfks" keyPassword="password" password="password" algorithm="PKIX"/>
             </tls:context>
             <jms:factory-configuration brokerUrl="${brokerUrl}" />
         </jms:active-mq-connection>
@@ -78,5 +80,12 @@
             <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo(vars.message)]"/>
         </munit:validation>
     </munit:test>
+
+    <munit:test name="test-connectivity">
+        <munit:execution>
+            <mtf:test-connectivity config-ref="config-with-ssl" />
+        </munit:execution>
+    </munit:test>
+
 
 </mule>

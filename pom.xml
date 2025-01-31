@@ -57,6 +57,11 @@
         <license.maven.plugin.version>4.2</license.maven.plugin.version>
         <licensePath>LICENSE_HEADER_CPAL.txt</licensePath>
         <licenseYear>2023</licenseYear>
+
+        <cert1.type>PKCS12</cert1.type>
+        <cert1.ext>p12</cert1.ext>
+        <cert2.type>JKS</cert2.type>
+        <cert2.ext>jks</cert2.ext>
     </properties>
 
     <dependencies>
@@ -129,6 +134,16 @@
             <version>${activemq.version}</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.bouncycastle/bctls-jdk18on -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bctls-jdk18on</artifactId>
+            <version>1.80</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Thanks for using https://jar-download.com -->
 
 
         <!-- Test Dependencies -->
@@ -229,6 +244,63 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.19.1</version>
+                <configuration>
+                    <argLine>-Dfile.encoding=UTF-8 -javaagent:${settings.localRepository}/org/aspectj/aspectjweaver/${aspectjVersion}/aspectjweaver-${aspectjVersion}.jar -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile='${session.executionRootDirectory}/target/jacoco.exec'</argLine>
+                    <properties>
+                        <property>
+                            <name>listener</name>
+                            <value>io.qameta.allure.junit4.AllureJunit4</value>
+                        </property>
+                    </properties>
+                    <systemPropertyVariables>
+                        <!-- Just propagate this variable due to surefire will not do this when forked vm for tests -->
+                        <mule.freePortFinder.lockPath>${java.io.tmpdir}/mule/freePortFinder</mule.freePortFinder.lockPath>
+                        <maven.projectVersion>${project.version}</maven.projectVersion>
+                        <activeMQPort>${activemq.listener.port}</activeMQPort>
+                        <activeMQSslPort>${activemq.ssl.listener.port}</activeMQSslPort>
+                        <buildDirectory>${project.build.directory}</buildDirectory>
+                    </systemPropertyVariables>
+                    <systemProperties>
+                        <property>
+                            <name>allure.results.directory</name>
+                            <value>${project.build.directory}/allure-results</value>
+                        </property>
+                    </systemProperties>
+                    <forkCount>1</forkCount>
+                    <reuseForks>false</reuseForks>
+                    <workingDirectory>${project.build.directory}</workingDirectory>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.aspectj</groupId>
+                        <artifactId>aspectjweaver</artifactId>
+                        <version>${aspectjVersion}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>org.jacoco.agent</artifactId>
+                        <version>${jacoco.version}</version>
+                        <classifier>runtime</classifier>
+                    </dependency>
+                    <!-- Add this dependency for JAXB API -->
+                    <dependency>
+                        <groupId>javax.xml.bind</groupId>
+                        <artifactId>jaxb-api</artifactId>
+                        <version>2.3.1</version>
+                    </dependency>
+
+                    <!-- Add this dependency for JAXB runtime (optional, depending on your specific needs) -->
+                    <dependency>
+                        <groupId>org.glassfish.jaxb</groupId>
+                        <artifactId>jaxb-runtime</artifactId>
+                        <version>2.3.1</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
             <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
@@ -361,6 +433,9 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <systemPropertyVariables>
+                        <jdk.tls.trustNameService>true</jdk.tls.trustNameService>
+                    </systemPropertyVariables>
                     <argLines>
                         <argLine>-javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-munit.exec</argLine>
                     </argLines>
@@ -421,7 +496,9 @@
         <profile>
             <id>docker</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <property>
+                    <name>os.name</name>
+                </property>
             </activation>
             <build>
                 <plugins>
@@ -524,6 +601,25 @@
                 </plugins>
             </build>
         </profile>
+
+        <profile>
+            <id>fips140-2</id>
+            <activation>
+                <property>
+                    <name>mule.security.model</name>
+                    <value>fips140-2</value>
+                </property>
+            </activation>
+            <properties>
+                <cert1.type>BCFKS</cert1.type>
+                <cert1.ext>bcfks</cert1.ext>
+                <cert2.type>BCFKS</cert2.type>
+                <cert2.ext>bcfks</cert2.ext>
+            </properties>
+        </profile>
+
+
+
     </profiles>
 
 

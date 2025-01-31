@@ -22,6 +22,7 @@ import org.mule.extensions.jms.api.exception.JmsMissingLibraryException;
 import org.mule.extensions.jms.internal.ExcludeFromGeneratedCoverage;
 import org.mule.extensions.jms.internal.connection.exception.ActiveMQException;
 import org.mule.extensions.jms.internal.connection.provider.BaseConnectionProvider;
+import org.mule.extensions.jms.internal.connection.provider.loader.FirewallLoader;
 import org.mule.jms.commons.internal.connection.JmsConnection;
 import org.mule.jms.commons.internal.connection.JmsTransactionalConnection;
 import org.mule.runtime.api.connection.ConnectionException;
@@ -46,6 +47,8 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.function.Supplier;
@@ -86,6 +89,8 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider implement
   static final String ACTIVEMQ_VERSION = "5.15.16";
   static final String BROKER_GA = "org.apache.activemq:activemq-broker";
   static final String KAHA_DB_GA = "org.apache.activemq:activemq-kahadb-store";
+  public static final String FIPS_140_2 = "fips140-2";
+  public static final String MULE_SECURITY_MODEL = "mule.security.model";
 
   /**
    * a provider for an {@link ActiveMQConnectionFactory}
@@ -265,6 +270,13 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider implement
   }
 
   protected void configureSSLContext() {
+
+    ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
+    // force loading of class from connector instead of the one from the library, because it uses reflection
+    ClassLoader firewallLoader = new FirewallLoader(currentClassLoader);
+    ClassLoader loader = new URLClassLoader(new URL[]{this.getClass().getProtectionDomain().getCodeSource().getLocation()}, firewallLoader);
+    Thread.currentThread().setContextClassLoader(loader);
+
     try {
       if (tlsConfiguration != null) {
         SSLContext sslContext = tlsConfiguration.createSslContext();
@@ -276,6 +288,9 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider implement
     } catch (KeyManagementException | NoSuchAlgorithmException | InvocationTargetException | IllegalAccessException
         | NoSuchMethodException e) {
       throw new JmsExtensionException("A problem occurred trying to configure SSL Options on ActiveMQ Connection", e);
+    } finally {
+      Thread.currentThread().setContextClassLoader(currentClassLoader);
+
     }
   }
 
