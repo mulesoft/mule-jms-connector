@@ -22,7 +22,6 @@ import org.mule.extensions.jms.api.exception.JmsMissingLibraryException;
 import org.mule.extensions.jms.internal.ExcludeFromGeneratedCoverage;
 import org.mule.extensions.jms.internal.connection.exception.ActiveMQException;
 import org.mule.extensions.jms.internal.connection.provider.BaseConnectionProvider;
-import org.mule.extensions.jms.internal.connection.provider.loader.FirewallLoader;
 import org.mule.jms.commons.internal.connection.JmsConnection;
 import org.mule.jms.commons.internal.connection.JmsTransactionalConnection;
 import org.mule.runtime.api.connection.ConnectionException;
@@ -271,12 +270,6 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider implement
     try {
       if (tlsConfiguration != null) {
         SSLContext sslContext = tlsConfiguration.createSslContext();
-        ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
-        // force loading of class from connector instead of the one from the library, because it uses reflection
-        ClassLoader firewallLoader = new FirewallLoader(currentClassLoader);
-        ClassLoader loader = new URLClassLoader(new URL[]{this.getClass().getProtectionDomain().getCodeSource().getLocation()}, firewallLoader);
-        Thread.currentThread().setContextClassLoader(loader);
-
         SslContext activeMQSslContext = new SslContext();
         activeMQSslContext.setSSLContext(sslContext);
         SslContext.setCurrentSslContext(activeMQSslContext);
