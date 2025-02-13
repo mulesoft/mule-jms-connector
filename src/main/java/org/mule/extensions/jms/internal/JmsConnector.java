@@ -65,7 +65,7 @@ import javax.jms.ConnectionFactory;
 @OnException(JmsExceptionHandler.class)
 @Export(classes = JmsAttributes.class)
 @OnArtifactLifecycle(JmsArtifactLifecycleListener.class)
-@JavaVersionSupport({JavaVersion.JAVA_8, JavaVersion.JAVA_11, JavaVersion.JAVA_17})
+@JavaVersionSupport({JavaVersion.JAVA_17})
 public class JmsConnector {
 
 }
