@@ -12,7 +12,7 @@ import org.mule.jms.commons.api.message.JmsHeadersBuilder;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 
-import javax.jms.DeliveryMode;
+import jakarta.jms.DeliveryMode;
 
 /**
  * JMS header fields contain values used by both clients and providers to identify and route messages.

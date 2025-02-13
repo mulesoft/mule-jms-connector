@@ -11,7 +11,7 @@ import org.mule.jms.commons.internal.config.JmsAckMode;
 import org.mule.jms.commons.internal.operation.JmsConsume;
 import org.mule.jms.commons.internal.source.JmsListener;
 
-import javax.jms.Session;
+import jakarta.jms.Session;
 
 /**
  * Declares the kind of Acknowledgement mode supported.

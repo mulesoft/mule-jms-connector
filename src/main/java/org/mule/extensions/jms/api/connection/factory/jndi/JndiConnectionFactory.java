@@ -6,7 +6,7 @@
  */
 package org.mule.extensions.jms.api.connection.factory.jndi;
 
-import static java.util.Arrays.asList;
+
 import static java.lang.String.format;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
@@ -31,9 +31,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.connection.DelegatingConnectionFactory;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
-import javax.jms.JMSContext;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.Destination;
+import jakarta.jms.JMSContext;
 import javax.naming.NamingException;
 
 /**
