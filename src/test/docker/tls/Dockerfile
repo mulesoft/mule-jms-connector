@@ -17,8 +17,8 @@ RUN tar xzf $FILENAME -C  /opt && \
     chown -h activemq:activemq $ACTIVEMQ_HOME
 
 COPY activemq.xml /opt/activemq/conf/activemq.xml
-COPY broker-keystore.bcfks /opt/activemq/certs/ActiveMq/broker.bcfks
-COPY client-truststore.bcfks /opt/activemq/certs/ActiveMq/broker.ts.bcfks
+COPY broker-keystore.ks /opt/activemq/certs/ActiveMq/broker.ks
+COPY client-truststore.ks /opt/activemq/certs/ActiveMq/broker.ts
 
 
 USER activemq
