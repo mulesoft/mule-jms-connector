@@ -9,7 +9,7 @@ http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/
             <jms:caching-strategy >
                 <jms:no-caching />
             </jms:caching-strategy>
-            <jms:factory-configuration brokerUrl="tcp://0.0.0.0:${activemq.listener.port}?jms.xaAckMode=1" enable-xa="true" maxRedelivery="-1" trustAllPackages="true"/>
+            <jms:factory-configuration enable-xa="true" maxRedelivery="-1" trustAllPackages="true"/>
         </jms:active-mq-connection>
     </jms:config>
 
@@ -18,7 +18,16 @@ http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/
             <jms:caching-strategy >
                 <jms:no-caching />
             </jms:caching-strategy>
-            <jms:factory-configuration brokerUrl="tcp://0.0.0.0:${activemq.listener.port}?jms.xaAckMode=1" enable-xa="true" maxRedelivery="5" trustAllPackages="true"/>
+            <jms:factory-configuration enable-xa="true" maxRedelivery="5" trustAllPackages="true"/>
+        </jms:active-mq-connection>
+    </jms:config>
+
+    <jms:config name="JMS_Config_XA_WITH_BROKER">
+        <jms:active-mq-connection >
+            <jms:caching-strategy >
+                <jms:no-caching />
+            </jms:caching-strategy>
+            <jms:factory-configuration brokerUrl="tcp://0.0.0.0:${activemq.listener.port}?jms.xaAckMode=1" enable-xa="true" maxRedelivery="-1" trustAllPackages="true"/>
         </jms:active-mq-connection>
     </jms:config>
 
