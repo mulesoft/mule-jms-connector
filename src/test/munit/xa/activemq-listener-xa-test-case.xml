@@ -133,7 +133,7 @@
                 <munit-tools:assert-that expression="#[MunitTools::queueSize()]" is="#[MunitTools::equalTo(6)]"/>
             </until-successful>
             <try>
-                <jms:consume config-ref="JMS_Config_XA_WITH_BROKER" destination="dest2" maximumWait="1000"/>
+                <jms:consume config-ref="JMS_Config_XA" destination="dest2" maximumWait="1000"/>
                 <munit-tools:fail message="Operation should have been rolled back"/>
                 <error-handler>
                     <on-error-continue type="JMS:TIMEOUT"/>
