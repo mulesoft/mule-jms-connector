@@ -82,7 +82,7 @@
             </jms:publish>
         </munit:execution>
         <munit:validation>
-            <jms:consume config-ref="config-no-caching" destination="dest2"/>
+            <jms:consume config-ref="JMS_Config_XA" destination="dest2"/>
             <munit-tools:assert-that expression="#[payload.message]" is="#[MunitTools::equalTo(vars.message)]"/>
         </munit:validation>
     </munit:test>
