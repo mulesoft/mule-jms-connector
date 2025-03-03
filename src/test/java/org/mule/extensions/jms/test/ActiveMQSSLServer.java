@@ -19,12 +19,18 @@ public class ActiveMQSSLServer {
   private static final String ACTIVEMQ_PORT = "activemq.port";
   private static BrokerService brokerService;
   private static boolean started = false;
+  private static final String FIPS140_2 = "fips140-2";
+  private static final String MULE_SECURITY_MODEL_PROPERTY = "mule.security.model";
 
   public static void start(String port) throws Exception {
     if (!started) {
       System.setProperty(ACTIVEMQ_PORT, port);
       try {
-        brokerService = BrokerFactory.createBroker(new URI("xbean:activemq.xml"));
+        if (FIPS140_2.equals(System.getProperty(MULE_SECURITY_MODEL_PROPERTY))) {
+          brokerService = BrokerFactory.createBroker(new URI("xbean:activemq-fips.xml"));
+        } else {
+          brokerService = BrokerFactory.createBroker(new URI("xbean:activemq.xml"));
+        }
         brokerService.start();
       } finally {
         System.clearProperty(ACTIVEMQ_PORT);
