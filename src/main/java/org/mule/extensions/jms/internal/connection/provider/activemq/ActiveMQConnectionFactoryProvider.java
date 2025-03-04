@@ -150,6 +150,13 @@ public class ActiveMQConnectionFactoryProvider {
       brokerURI = URISupport.createRemainingURI(brokerURI, map);
       return brokerURI.toString();
     }
+    if (factoryConfiguration.getEnableXA()) {
+      URI brokerURI = createURI(brokerURL);
+      Map<String, String> map = (brokerURI.getQuery() != null) ? URISupport.parseQuery(brokerURI.getQuery()) : new HashMap<>();
+      map.put("jms.xaAckMode", "1");
+      brokerURI = URISupport.createRemainingURI(brokerURI, map);
+      return brokerURI.toString();
+    }
     return brokerURL;
   }
 
