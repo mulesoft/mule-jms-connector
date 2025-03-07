@@ -19,6 +19,7 @@ public class ActiveMQConnectionFactoryUtilTestCase {
   public void testVersionValid() {
     assertFalse(ActiveMQConnectionFactoryUtil.isVerifyHostnameValidVersion("5.14.5"));
     assertFalse(ActiveMQConnectionFactoryUtil.isVerifyHostnameValidVersion("4.10.5"));
+    assertFalse(ActiveMQConnectionFactoryUtil.isVerifyHostnameValidVersion("3.10.5"));
     assertTrue(ActiveMQConnectionFactoryUtil.isVerifyHostnameValidVersion("5.15.6"));
     assertTrue(ActiveMQConnectionFactoryUtil.isVerifyHostnameValidVersion("5.18.3"));
     assertTrue(ActiveMQConnectionFactoryUtil.isVerifyHostnameValidVersion("6.0.0"));
