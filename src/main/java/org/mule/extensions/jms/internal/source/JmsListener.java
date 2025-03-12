@@ -38,13 +38,7 @@ import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
 import org.mule.runtime.extension.api.annotation.execution.OnError;
 import org.mule.runtime.extension.api.annotation.execution.OnSuccess;
 import org.mule.runtime.extension.api.annotation.metadata.MetadataScope;
-import org.mule.runtime.extension.api.annotation.param.Config;
-import org.mule.runtime.extension.api.annotation.param.ConfigOverride;
-import org.mule.runtime.extension.api.annotation.param.Connection;
-import org.mule.runtime.extension.api.annotation.param.Optional;
-import org.mule.runtime.extension.api.annotation.param.Parameter;
-import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
-import org.mule.runtime.extension.api.annotation.param.RefName;
+import org.mule.runtime.extension.api.annotation.param.*;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.source.ClusterSupport;
@@ -56,12 +50,11 @@ import org.mule.runtime.extension.api.runtime.source.SourceCallbackContext;
 import org.mule.runtime.extension.api.tx.SourceTransactionalAction;
 
 import javax.inject.Inject;
-import javax.jms.Destination;
-import javax.jms.Message;
+import jakarta.jms.Destination;
+import jakarta.jms.Message;
 
 /**
- * JMS Subscriber for {@link Destination}s, allows to listen
- * for incoming {@link Message}s
+ * JMS Subscriber for {@link Destination}s, allows to listen for incoming {@link Message}s
  *
  * @since 1.0
  */
@@ -70,6 +63,7 @@ import javax.jms.Message;
 @EmitsResponse
 @ClusterSupport(value = DEFAULT_PRIMARY_NODE_ONLY)
 @MetadataScope(outputResolver = JmsOutputResolver.class, attributesResolver = AttributesOutputResolver.class)
+@MediaType(MediaType.ANY)
 public class JmsListener extends Source<Object, Object> {
 
   @Inject

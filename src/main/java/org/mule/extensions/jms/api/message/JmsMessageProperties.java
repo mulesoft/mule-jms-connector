@@ -8,16 +8,15 @@ package org.mule.extensions.jms.api.message;
 
 import java.util.Map;
 
-import javax.jms.Message;
+import jakarta.jms.Message;
 
 /**
  * Container element for all the properties present in a JMS {@link Message}.
  * <p>
- * This container not only allows to fetch the all properties in a single Map representation,
- * but also provides accessors for the properties according to their origin.
- * Properties may be those predefined by JMS (the {@link JmsxProperties}),
- * those that are used by the JMS broker or provider (known as plain JMS properties),
- * and finally the ones provided by the User who created the {@link Message}.
+ * This container not only allows to fetch the all properties in a single Map representation, but also provides accessors for the
+ * properties according to their origin. Properties may be those predefined by JMS (the {@link JmsxProperties}), those that are
+ * used by the JMS broker or provider (known as plain JMS properties), and finally the ones provided by the User who created the
+ * {@link Message}.
  *
  * @since 1.0
  */

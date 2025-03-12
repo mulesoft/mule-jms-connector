@@ -8,7 +8,7 @@ package org.mule.extensions.jms.api.exception;
 
 import static org.mule.extensions.jms.api.exception.JmsError.DESTINATION_NOT_FOUND;
 
-import javax.jms.Destination;
+import jakarta.jms.Destination;
 
 /**
  * Custom Exception thrown when the extension was not able to create a given {@link Destination}

@@ -42,6 +42,7 @@ import org.junit.Test;
 
 /**
  * Test case for the {@link ActiveMQArtifactLifecycleListener}.
+ * 
  * @see <a href="https://github.com/apache/activemq/pull/1119">https://github.com/apache/activemq/pull/1119</a>
  */
 @Feature(ACTIVE_MQ_FEATURE)

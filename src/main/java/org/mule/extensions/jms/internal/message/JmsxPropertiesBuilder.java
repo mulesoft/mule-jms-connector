@@ -10,15 +10,14 @@ import org.mule.extensions.jms.api.message.JmsxProperties;
 
 import java.util.Map;
 
-import javax.jms.Message;
+import jakarta.jms.Message;
 
 /**
- * Builder that provides a simple way of creating a {@link JmsxProperties} instance based on
- * the predefined properties {@link JMSXDefinedPropertiesNames names}.
+ * Builder that provides a simple way of creating a {@link JmsxProperties} instance based on the predefined properties
+ * {@link JMSXDefinedPropertiesNames names}.
  * <p>
- * This is useful for converting the properties {@link Map} found in the original {@link Message}
- * to their representation as {@link JmsxProperties}.
- * A default value is provided for the properties that are not set.
+ * This is useful for converting the properties {@link Map} found in the original {@link Message} to their representation as
+ * {@link JmsxProperties}. A default value is provided for the properties that are not set.
  *
  * @since 1.0
  */

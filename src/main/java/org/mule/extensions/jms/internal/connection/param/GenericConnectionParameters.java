@@ -13,7 +13,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Password;
 import org.mule.sdk.api.annotation.semantics.security.ClientId;
 import org.mule.sdk.api.annotation.semantics.security.Username;
 
-import javax.jms.Connection;
+import jakarta.jms.Connection;
 
 /**
  * Common connection parameters for the {@link BaseConnectionProvider}
@@ -39,15 +39,12 @@ public class GenericConnectionParameters implements org.mule.jms.commons.interna
   private String password;
 
   /**
-   *  Client identifier to be assigned to the {@link Connection} upon creation.
-   *  The purpose of client identifier is to associate a connection and its objects
-   *  with a state maintained on behalf of the client by a provider. By definition,
-   *  the client state identified by a client identifier can be "in use" by only one
-   *  client at a time.
-   *  <p>
-   *  The only use of a client identifier defined by JMS is its mandatory use in
-   *  identifying an unshared durable subscription or its optional use in identifying
-   *  a shared durable or non-durable subscription.
+   * Client identifier to be assigned to the {@link Connection} upon creation. The purpose of client identifier is to associate a
+   * connection and its objects with a state maintained on behalf of the client by a provider. By definition, the client state
+   * identified by a client identifier can be "in use" by only one client at a time.
+   * <p>
+   * The only use of a client identifier defined by JMS is its mandatory use in identifying an unshared durable subscription or
+   * its optional use in identifying a shared durable or non-durable subscription.
    */
   @Parameter
   @Optional

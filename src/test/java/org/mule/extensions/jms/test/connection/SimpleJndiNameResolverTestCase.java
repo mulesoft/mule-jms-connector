@@ -70,7 +70,7 @@ public class SimpleJndiNameResolverTestCase {
     setField(anotherSimpleJndiNameResolver, anotherSimpleJndiNameResolver.getClass(), JNDI_CONTEXT_FIELD,
              jndiContext);
 
-    //object is equal to itself
+    // object is equal to itself
     assertThat(simpleJndiNameResolver, equalTo(simpleJndiNameResolver));
   }
 

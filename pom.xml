@@ -32,6 +32,7 @@
         <hawtbufVersion>1.11</hawtbufVersion>
         <activemq-protobufVersion>1.1</activemq-protobufVersion>
         <muleSpringModuleVersion>2.0.0-SNAPSHOT</muleSpringModuleVersion>
+        <jakarta.jms-api.version>3.1.0</jakarta.jms-api.version>
 
         <formatterConfigPath>formatter.xml</formatterConfigPath>
         <muleJmsClientVersion>2.0.0-SNAPSHOT</muleJmsClientVersion>
@@ -85,14 +86,8 @@
         <dependency>
             <groupId>jakarta.jms</groupId>
             <artifactId>jakarta.jms-api</artifactId>
-            <version>3.1.0</version>
+            <version>${jakarta.jms-api.version}</version>
         </dependency>
-        <!--<dependency>
-            <groupId>javax.jms</groupId>
-            <artifactId>javax.jms-api</artifactId>
-            <version>${javaxJmsApiVersion}</version>
-            <scope>provided</scope>
-        </dependency>-->
 
         <!-- ActiveMQ Dependencies-->
         <dependency>

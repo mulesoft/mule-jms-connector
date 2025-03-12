@@ -61,7 +61,7 @@ public class JndiNameResolverPropertiesTestCase {
 
     assertThat(jndiNameResolverProperties, equalTo(anotherSetOfNameResolverProperties));
 
-    //object is equal to itself
+    // object is equal to itself
     assertThat(jndiNameResolverProperties, equalTo(jndiNameResolverProperties));
   }
 

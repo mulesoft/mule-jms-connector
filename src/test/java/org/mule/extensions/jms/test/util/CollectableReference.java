@@ -21,14 +21,16 @@ import org.hamcrest.TypeSafeMatcher;
  * <p>
  * Usage example:
  *
- * <pre>{@code
+ * <pre>
+ * {@code
  *
  * {
  *   CollectableReference<String> collectableReference = new CollectableReference<>(new String("Hello world"));
  *   System.out.println(collectableReference.get());
  *   assertThat(collectableReference, is(eventually(collectedByGc())));
  * }
- * }</pre>
+ * }
+ * </pre>
  *
  * @param <T> The referent type.
  */

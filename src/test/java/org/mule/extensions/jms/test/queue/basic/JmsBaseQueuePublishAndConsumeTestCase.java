@@ -9,7 +9,7 @@ package org.mule.extensions.jms.test.queue.basic;
 import static com.google.common.collect.ImmutableList.of;
 import static java.lang.String.format;
 import static java.util.Collections.emptyMap;
-import static javax.jms.DeliveryMode.NON_PERSISTENT;
+import static jakarta.jms.DeliveryMode.NON_PERSISTENT;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.nullValue;
@@ -19,11 +19,10 @@ import static org.mule.functional.junit4.matchers.MessageMatchers.hasPayload;
 import org.mule.extensions.jms.api.destination.JmsDestination;
 import org.mule.extensions.jms.test.JmsAbstractTestCase;
 import org.mule.runtime.api.message.Message;
-import org.mule.runtime.core.api.el.ExpressionManager;
+
 
 import java.util.List;
 
-import javax.inject.Inject;
 
 import org.junit.Test;
 

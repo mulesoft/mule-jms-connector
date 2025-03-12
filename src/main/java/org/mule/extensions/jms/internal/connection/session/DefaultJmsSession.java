@@ -10,16 +10,15 @@ import static java.util.Optional.ofNullable;
 import static org.mule.runtime.api.util.Preconditions.checkArgument;
 import static org.slf4j.LoggerFactory.getLogger;
 
-import javax.jms.JMSException;
-import javax.jms.Session;
+import jakarta.jms.JMSException;
+import jakarta.jms.Session;
 
 import java.util.Optional;
 
 import org.slf4j.Logger;
 
 /**
- * Wrapper element for a JMS {@link Session} that relates the
- * session with its AckID
+ * Wrapper element for a JMS {@link Session} that relates the session with its AckID
  *
  * @since 1.0
  */

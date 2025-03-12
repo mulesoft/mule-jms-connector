@@ -18,10 +18,10 @@ import org.mule.extensions.jms.api.connection.factory.jndi.JndiConnectionFactory
 import org.mule.extensions.jms.api.connection.factory.jndi.JndiNameResolverProvider;
 import org.mule.extensions.jms.api.connection.factory.jndi.SimpleJndiNameResolver;
 
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSContext;
-import javax.jms.JMSException;
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.JMSContext;
+import jakarta.jms.JMSException;
 
 public class JndiConnectionFactoryTestCase {
 
@@ -66,7 +66,7 @@ public class JndiConnectionFactoryTestCase {
 
     assertThat(jndiConnectionFactory, equalTo(otherJndiConnectionFactory));
 
-    //object is equal to itself
+    // object is equal to itself
     assertThat(jndiConnectionFactory, equalTo(jndiConnectionFactory));
   }
 

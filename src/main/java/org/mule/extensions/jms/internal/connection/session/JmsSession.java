@@ -6,13 +6,12 @@
  */
 package org.mule.extensions.jms.internal.connection.session;
 
-import javax.jms.Session;
+import jakarta.jms.Session;
 
 import java.util.Optional;
 
 /**
- * Wrapper element for a JMS {@link Session} that relates the
- * session with its AckID
+ * Wrapper element for a JMS {@link Session} that relates the session with its AckID
  *
  * @since 1.0
  */

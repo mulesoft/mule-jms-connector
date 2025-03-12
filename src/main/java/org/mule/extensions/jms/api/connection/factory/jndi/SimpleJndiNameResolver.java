@@ -20,9 +20,8 @@ import javax.naming.NamingException;
 import java.util.Objects;
 
 /**
- * Defines a simple {@link JndiNameResolver} that maintains a {@link Context}
- * instance opened all the time and always relies on the context to do the look
- * ups.
+ * Defines a simple {@link JndiNameResolver} that maintains a {@link Context} instance opened all the time and always relies on
+ * the context to do the look ups.
  *
  * @since 1.0
  */
@@ -37,7 +36,7 @@ public class SimpleJndiNameResolver extends AbstractJndiNameResolver {
     try {
       LOGGER.debug("lookup: " + name);
       if (jndiContext == null) {
-        //W-15812905 for the case of Weblogic is restarted the context is null,
+        // W-15812905 for the case of Weblogic is restarted the context is null,
         // for this reason it is necessary to create another one.
         LOGGER.debug("jndiContext is null, creating a new initial context for " + name);
         jndiContext = createInitialContext();

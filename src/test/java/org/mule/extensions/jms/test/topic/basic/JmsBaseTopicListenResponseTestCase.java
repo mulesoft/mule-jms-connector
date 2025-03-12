@@ -29,7 +29,7 @@ import io.qameta.allure.Description;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-import javax.jms.DeliveryMode;
+import jakarta.jms.DeliveryMode;
 
 
 public abstract class JmsBaseTopicListenResponseTestCase extends JmsAbstractTestCase {

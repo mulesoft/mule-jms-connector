@@ -13,6 +13,8 @@ import org.mule.runtime.extension.api.connectivity.NoConnectivityTest;
 
 @DisplayName("ActiveMQ Connection - No Connectivity Test")
 @Alias("active-mq-nct")
+// TODO (nicomz) this should be removed.
+@Deprecated
 public class ActiveMQConnectionNCTProvider extends ActiveMQConnectionProvider implements NoConnectivityTest {
 
 }

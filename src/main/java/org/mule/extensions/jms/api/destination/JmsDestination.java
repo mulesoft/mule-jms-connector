@@ -15,11 +15,10 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
-import javax.jms.Destination;
+import jakarta.jms.Destination;
 
 /**
- * Representation of a {@link Destination} that contains it's identifier name
- * and kind of Destination
+ * Representation of a {@link Destination} that contains it's identifier name and kind of Destination
  *
  * @since 1.0
  */

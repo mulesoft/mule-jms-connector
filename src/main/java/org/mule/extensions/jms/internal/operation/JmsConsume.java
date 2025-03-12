@@ -35,16 +35,14 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 import org.mule.runtime.extension.api.runtime.operation.Result;
-import org.mule.runtime.extension.api.runtime.process.CompletionCallback;
 import org.mule.runtime.extension.api.tx.OperationTransactionalAction;
 
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
+import jakarta.jms.Destination;
+import jakarta.jms.Message;
+import jakarta.jms.MessageConsumer;
 
 import org.slf4j.Logger;
 
@@ -77,10 +75,10 @@ public final class JmsConsume implements Initialisable, Disposable {
    * @param selector        a custom JMS selector for filtering the messages
    * @param contentType     the {@link Message}'s content content type
    * @param encoding        the {@link Message}'s content encoding
-   * @param maximumWait maximum time to wait for a message before timing out
-   * @param maximumWaitUnit  Time unit to be used in the maximumWaitTime configurations
-   * @return a {@link Result} with the {@link Message} content as {@link Result#getOutput} and its properties
-   * and headers as {@link Result#getAttributes}
+   * @param maximumWait     maximum time to wait for a message before timing out
+   * @param maximumWaitUnit Time unit to be used in the maximumWaitTime configurations
+   * @return a {@link Result} with the {@link Message} content as {@link Result#getOutput} and its properties and headers as
+   *         {@link Result#getAttributes}
    * @throws JmsConsumeException if an error occurs
    */
   @OutputResolver(output = JmsOutputResolver.class, attributes = AttributesOutputResolver.class)
@@ -97,11 +95,11 @@ public final class JmsConsume implements Initialisable, Disposable {
                                             defaultValue = "10000") @Summary("Maximum time to wait for a message to arrive before timeout") Long maximumWait,
                                         @Optional(
                                             defaultValue = "MILLISECONDS") @Example("MILLISECONDS") @Summary("Time unit to be used in the maximumWaitTime configuration") TimeUnit maximumWaitUnit,
-                                        OperationTransactionalAction transactionalAction)
+                                        OperationTransactionalAction operationTransactionalActionAction)
       throws JmsExtensionException, ConnectionException {
     return (Result) jmsConsume.consume(config, connection, destination, consumerType, ackMode,
                                        selector, contentType, encoding, maximumWait,
-                                       maximumWaitUnit, transactionalAction);
+                                       maximumWaitUnit, operationTransactionalActionAction);
   }
 
 

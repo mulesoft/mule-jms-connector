@@ -18,8 +18,8 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-import javax.jms.DeliveryMode;
-import javax.jms.Message;
+import jakarta.jms.DeliveryMode;
+import jakarta.jms.Message;
 
 /**
  * Configuration parameters for sending messages to a JMS Queue or Topic
@@ -29,10 +29,9 @@ import javax.jms.Message;
 public final class JmsProducerConfig implements org.mule.jms.commons.api.config.JmsProducerConfig {
 
   /**
-   * Sets the default value for the {@link Message#getJMSDeliveryMode}.
-   * If {@code true}, the {@link DeliveryMode#PERSISTENT} mode will be used,
-   * which instructs the JMS provider to take extra care to insure the message
-   * is not lost in transit due to a JMS provider failure.
+   * Sets the default value for the {@link Message#getJMSDeliveryMode}. If {@code true}, the {@link DeliveryMode#PERSISTENT} mode
+   * will be used, which instructs the JMS provider to take extra care to insure the message is not lost in transit due to a JMS
+   * provider failure.
    */
   @Parameter
   @Optional(defaultValue = "false")
@@ -70,9 +69,8 @@ public final class JmsProducerConfig implements org.mule.jms.commons.api.config.
   private TimeUnit timeToLiveUnit;
 
   /**
-   * Defines the default value to use when producing messages,
-   * for disabling the {@link Message#getJMSMessageID} generation in the broker.
-   * Depending on the provider it may or may not have effect
+   * Defines the default value to use when producing messages, for disabling the {@link Message#getJMSMessageID} generation in the
+   * broker. Depending on the provider it may or may not have effect
    */
   @Parameter
   @Optional(defaultValue = "false")
@@ -81,9 +79,8 @@ public final class JmsProducerConfig implements org.mule.jms.commons.api.config.
   private boolean disableMessageId;
 
   /**
-   * Defines the default value to use, when producing messages,
-   * for disable {@link Message#getJMSTimestamp} generation in the broker.
-   * Depending on the provider it may or may not have effect.
+   * Defines the default value to use, when producing messages, for disable {@link Message#getJMSTimestamp} generation in the
+   * broker. Depending on the provider it may or may not have effect.
    */
   @Parameter
   @Optional(defaultValue = "false")
@@ -92,9 +89,8 @@ public final class JmsProducerConfig implements org.mule.jms.commons.api.config.
   private boolean disableMessageTimestamp;
 
   /**
-   * This is used to determine the {@link Message} delivery delay time which is
-   * calculated by adding the {@code deliveryDelay} value specified on the
-   * send method to the time the message was sent.
+   * This is used to determine the {@link Message} delivery delay time which is calculated by adding the {@code deliveryDelay}
+   * value specified on the send method to the time the message was sent.
    * <p>
    * Only used in {@link JmsSpecification#JMS_2_0}
    */

@@ -14,14 +14,14 @@ package org.mule.extensions.jms.api;
 public enum RequestReplyPattern {
 
   /**
-   * Indicates that when waiting for the reply, the consumer will use a selector looking a message with correlation ID
-   * with the value of the outgoing correlation ID.
+   * Indicates that when waiting for the reply, the consumer will use a selector looking a message with correlation ID with the
+   * value of the outgoing correlation ID.
    */
   CORRELATION_ID(org.mule.jms.commons.api.RequestReplyPattern.CORRELATION_ID),
 
   /**
-   * Indicates that when waiting for the reply, the consumer will use a selector looking a message with correlation ID
-   * with the value of the outgoing message ID
+   * Indicates that when waiting for the reply, the consumer will use a selector looking a message with correlation ID with the
+   * value of the outgoing message ID
    */
   MESSAGE_ID(org.mule.jms.commons.api.RequestReplyPattern.MESSAGE_ID),
 

@@ -17,8 +17,9 @@ public class ActiveMQConnectionFactoryUtil {
   private static final String REX_PATTER = "(\\d+)\\.(\\d+)\\.(\\d+)";
 
   /**
-   * Utility that helps us determine if the activeMQ client version is lower than the limit version to configure the VerifyHostName parameter
-   * **/
+   * Utility that helps us determine if the activeMQ client version is lower than the limit version to configure the
+   * VerifyHostName parameter
+   **/
   public static boolean isVerifyHostnameValidVersion(String activeMqClientVersion) {
     if (activeMqClientVersion == null) {
       return false;

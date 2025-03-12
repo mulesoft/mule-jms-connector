@@ -32,7 +32,7 @@ public class Jms2MultiConsumerTestCase extends AbstractJmsMultiConsumerTestCase 
   public void JMS2TopicsWithSharedConsumersCanUseMultiConsumers() throws Exception {
     publishTo(NUMBER_OF_MESSAGES, topicDestination.getValue(), TOPIC);
 
-    //This is to check that we don't receive repeated messages
+    // This is to check that we don't receive repeated messages
     new PollingProber(5000, 100).check(new JUnitLambdaProbe(() -> receivedMessages() == NUMBER_OF_MESSAGES));
 
     long distinctAckIds = getMessages(NUMBER_OF_MESSAGES)

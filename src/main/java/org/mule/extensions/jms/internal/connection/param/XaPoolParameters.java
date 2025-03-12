@@ -45,8 +45,8 @@ public class XaPoolParameters implements org.mule.jms.commons.internal.connectio
   private int maxPoolSize = 32;
 
   /**
-   * How many seconds can an XA transaction remain idle before its eligible for eviction.
-   * This value is only considered when XA connections are used.
+   * How many seconds can an XA transaction remain idle before its eligible for eviction. This value is only considered when XA
+   * connections are used.
    */
   @Parameter
   @Optional(defaultValue = "60")

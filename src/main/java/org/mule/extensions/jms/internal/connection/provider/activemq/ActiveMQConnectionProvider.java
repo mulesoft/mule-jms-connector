@@ -50,9 +50,9 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.function.Supplier;
 
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.JMSException;
 import javax.net.ssl.SSLContext;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
@@ -167,7 +167,7 @@ public class ActiveMQConnectionProvider extends BaseConnectionProvider implement
       }
       if (JMS_2_0.equals(getSpecification())) {
 
-        //TODO we could support a JMS 2.0 default using ActiveMQ Artemis (HornetQ) instead of ActiveMQ 5.x
+        // TODO we could support a JMS 2.0 default using ActiveMQ Artemis (HornetQ) instead of ActiveMQ 5.x
         throw new ActiveMQException(
                                     "No ConnectionFactory was provided, but JMS 2.0 specification was selected."
                                         + " Default ActiveMQConnectionFactory implementation provides support only for JMS 1.1 and 1.0.2b versions");

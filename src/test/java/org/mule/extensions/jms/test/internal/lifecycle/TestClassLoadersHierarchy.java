@@ -20,14 +20,14 @@ import java.util.function.Predicate;
 /**
  * Helper class for modeling a {@link ClassLoader} hierarchy that is similar to the one typically used by the Mule Runtime.
  * <ul>
- *   <li>domain</li>
- *   <ul>
- *     <li>domain-extension</li>
- *     <li>application</li>
- *     <ul>
- *       <li>application-extension</li>
- *     </ul>
- *   </ul>
+ * <li>domain</li>
+ * <ul>
+ * <li>domain-extension</li>
+ * <li>application</li>
+ * <ul>
+ * <li>application-extension</li>
+ * </ul>
+ * </ul>
  * </ul>
  * The root {@link ClassLoader} (the parent of the domain) is always the system {@link ClassLoader}.
  */
@@ -50,6 +50,7 @@ public class TestClassLoadersHierarchy implements AutoCloseable {
      * <p>
      * This is specially useful when the root classloader already contains a class that we want to be loaded from one of the child
      * classloaders in the hierarchy. Otherwise, it will be loaded from the root following a parent-first strategy.
+     * 
      * @param rootClassNameExclusionFilter Classes matching this filter will not be loaded by the root {@link ClassLoader}, even
      *                                     if it has them in its class path.
      * @return This instance, for chaining purposes.
@@ -61,6 +62,7 @@ public class TestClassLoadersHierarchy implements AutoCloseable {
 
     /**
      * Adds the given {@link URL}s to the domain {@link ClassLoader}.
+     * 
      * @param urls The {@link URL}s.
      * @return This instance, for chaining purposes.
      */
@@ -71,6 +73,7 @@ public class TestClassLoadersHierarchy implements AutoCloseable {
 
     /**
      * Adds the given {@link URL}s to the {@link ClassLoader} of an extension in the domain.
+     * 
      * @param urls The {@link URL}s.
      * @return This instance, for chaining purposes.
      */
@@ -81,6 +84,7 @@ public class TestClassLoadersHierarchy implements AutoCloseable {
 
     /**
      * Adds the given {@link URL}s to the application {@link ClassLoader}.
+     * 
      * @param urls The {@link URL}s.
      * @return This instance, for chaining purposes.
      */
@@ -91,6 +95,7 @@ public class TestClassLoadersHierarchy implements AutoCloseable {
 
     /**
      * Adds the given {@link URL}s to the {@link ClassLoader} of an extension in the application.
+     * 
      * @param urls The {@link URL}s.
      * @return This instance, for chaining purposes.
      */
@@ -102,6 +107,7 @@ public class TestClassLoadersHierarchy implements AutoCloseable {
     /**
      * Sets up an {@link ArtifactLifecycleListener} to be triggered when disposing the {@link ClassLoader}s conforming this
      * hierarchy.
+     * 
      * @param artifactLifecycleListener The {@link ArtifactLifecycleListener} to call whenever the disposal of an artifact is
      *                                  simulated.
      * @return This instance, for chaining purposes.
@@ -196,6 +202,7 @@ public class TestClassLoadersHierarchy implements AutoCloseable {
    * Simulates the disposal of the application (and its extensions).
    * <p>
    * If an {@link ArtifactLifecycleListener} is configured, it will be notified with a proper {@link ArtifactDisposalContext}.
+   * 
    * @throws IOException If an I/O error occurs when closing the underlying {@link ClassLoader}s.
    */
   public void disposeApp() throws IOException {
@@ -214,6 +221,7 @@ public class TestClassLoadersHierarchy implements AutoCloseable {
    * Simulates the disposal of the domain (and its extensions).
    * <p>
    * If an {@link ArtifactLifecycleListener} is configured, it will be notified with a proper {@link ArtifactDisposalContext}.
+   * 
    * @throws IOException If an I/O error occurs when closing the underlying {@link ClassLoader}s.
    */
   public void disposeDomain() throws IOException {

@@ -38,13 +38,12 @@ import org.mule.sdk.api.annotation.JavaVersionSupport;
 import org.mule.sdk.api.annotation.OnArtifactLifecycle;
 import org.mule.sdk.api.meta.JavaVersion;
 
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 
 
 /**
- * JmsConnector is a JMS 1.0.2b, 1.1 and 2.0 compliant MuleSoft Extension, used to consume and produce JMS Messages.
- * The Extension supports all JMS functionality including topics and queues, durable subscribers, acknowledgement modes
- * and local transactions.
+ * JmsConnector is a JMS 1.0.2b, 1.1 and 2.0 compliant MuleSoft Extension, used to consume and produce JMS Messages. The Extension
+ * supports all JMS functionality including topics and queues, durable subscribers, acknowledgement modes and local transactions.
  *
  * @since 1.0
  */

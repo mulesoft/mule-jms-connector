@@ -35,8 +35,8 @@ import org.mule.runtime.extension.api.runtime.process.CompletionCallback;
 import org.mule.runtime.extension.api.tx.OperationTransactionalAction;
 
 import javax.inject.Inject;
-import javax.jms.Destination;
-import javax.jms.Message;
+import jakarta.jms.Destination;
+import jakarta.jms.Message;
 
 import org.slf4j.Logger;
 
@@ -66,8 +66,8 @@ public final class JmsPublish implements Initialisable, Disposable {
    * @param destinationType     the {@link DestinationType} of the {@code destination}
    * @param messageBuilder      the {@link JmsMessageBuilder } used to create the {@link Message} to be sent
    * @param overrides           Parameter Group with overriding parameters from the configuration
-   * @param transactionalAction Transactional Action for the operation. Indicates if the publish must be executed
-   *                            or not in a transaction.
+   * @param transactionalAction Transactional Action for the operation. Indicates if the publish must be executed or not in a
+   *                            transaction.
    * @param sendCorrelationId   options on whether to include an outbound correlation id or not
    * @param correlationInfo     the current message's correlation info
    * @throws JmsExtensionException if an error occurs trying to publish a message
@@ -79,13 +79,13 @@ public final class JmsPublish implements Initialisable, Disposable {
                       @Summary("A builder for the message that will be published") @ParameterGroup(name = "Message",
                           showInDsl = true) JmsMessageBuilder messageBuilder,
                       @ParameterGroup(name = "Publish Configuration") JmsPublishParameters overrides,
-                      OperationTransactionalAction transactionalAction,
+                      OperationTransactionalAction operationTransactionalAction,
                       @ConfigOverride OutboundCorrelationStrategy sendCorrelationId,
                       CorrelationInfo correlationInfo,
                       CompletionCallback<Void, Void> completionCallback)
 
       throws JmsExtensionException {
-    jmsPublish.publish(config, connection, destination, destinationType, messageBuilder, overrides, transactionalAction,
+    jmsPublish.publish(config, connection, destination, destinationType, messageBuilder, overrides, operationTransactionalAction,
                        sendCorrelationId, correlationInfo, completionCallback);
   }
 

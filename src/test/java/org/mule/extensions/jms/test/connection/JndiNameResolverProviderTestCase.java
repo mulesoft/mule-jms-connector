@@ -51,7 +51,7 @@ public class JndiNameResolverProviderTestCase {
 
     assertThat(jndiNameResolverProvider, equalTo(anotherJndiNameResolverProvider));
 
-    //object is equal to itself
+    // object is equal to itself
     assertThat(jndiNameResolverProvider, equalTo(jndiNameResolverProvider));
   }
 

@@ -67,7 +67,7 @@ public class CachedJndiNameResolverTestCase {
 
     assertThat(simpleJndiNameResolver, equalTo(anotherSimpleJndiNameResolver));
 
-    //object is equal to itself
+    // object is equal to itself
     assertThat(simpleJndiNameResolver, equalTo(simpleJndiNameResolver));
   }
 

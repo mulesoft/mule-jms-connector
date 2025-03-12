@@ -14,10 +14,10 @@ import org.mule.extensions.jms.api.exception.JmsTimeoutException;
 import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageListener;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageConsumer;
+import jakarta.jms.MessageListener;
 
 /**
  * Wrapper implementation of a JMS {@link MessageConsumer}

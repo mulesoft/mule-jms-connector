@@ -14,6 +14,7 @@ import org.mule.extensions.jms.internal.JmsConnector;
  * @since 1.0
  */
 public enum JmsSpecification {
+
   JMS_1_0_2b(org.mule.jms.commons.api.connection.JmsSpecification.JMS_1_0_2b),
 
   JMS_1_1(org.mule.jms.commons.api.connection.JmsSpecification.JMS_1_1),

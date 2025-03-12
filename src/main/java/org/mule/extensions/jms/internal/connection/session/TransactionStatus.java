@@ -9,8 +9,8 @@ package org.mule.extensions.jms.internal.connection.session;
 /**
  * Enum to indicate the current status of a transaction over a session.
  * <ul>
- *     <li>{@link TransactionStatus#NONE} means that there is no started transaction for the current {@link Thread}</li>
- *     <li>{@link TransactionStatus#STARTED} means that there is a transaction being executed in the current {@link Thread}</li>
+ * <li>{@link TransactionStatus#NONE} means that there is no started transaction for the current {@link Thread}</li>
+ * <li>{@link TransactionStatus#STARTED} means that there is a transaction being executed in the current {@link Thread}</li>
  * </ul>
  *
  * @since 1.0

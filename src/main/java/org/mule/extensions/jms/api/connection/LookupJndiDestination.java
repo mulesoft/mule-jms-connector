@@ -9,16 +9,16 @@ package org.mule.extensions.jms.api.connection;
 import org.mule.extensions.jms.api.exception.JmsExtensionException;
 
 /**
- * Defines the behaviours that are supported when looking for a destination based
- * on its name while using a JNDI name resolver.
+ * Defines the behaviours that are supported when looking for a destination based on its name while using a JNDI name resolver.
  *
- * NEVER: Will never lookup for jndi destinations.
- * ALWAYS: Will always lookup the destinations through JNDI. It will fail if the destination does not exists.
- * TRY_ALWAYS: Will always try to lookup the destinations through JNDI but if it does not exists it will create a new one.
+ * NEVER: Will never lookup for jndi destinations. ALWAYS: Will always lookup the destinations through JNDI. It will fail if the
+ * destination does not exists. TRY_ALWAYS: Will always try to lookup the destinations through JNDI but if it does not exists it
+ * will create a new one.
  *
  * @since 1.0
  */
 public enum LookupJndiDestination {
+
   /**
    * Will never lookup for jndi destinations
    */

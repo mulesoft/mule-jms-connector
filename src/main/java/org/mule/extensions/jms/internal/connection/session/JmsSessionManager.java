@@ -8,12 +8,11 @@ package org.mule.extensions.jms.internal.connection.session;
 
 import org.mule.extensions.jms.internal.config.InternalAckMode;
 
-import javax.jms.Session;
+import jakarta.jms.Session;
 
 /**
- * Manager that takes the responsibility of register the session information to be able to execute a manual
- * acknowledgement or a recover over a {@link Session}.
- * This is used when the {@link InternalAckMode} is configured in {@link InternalAckMode#MANUAL}
+ * Manager that takes the responsibility of register the session information to be able to execute a manual acknowledgement or a
+ * recover over a {@link Session}. This is used when the {@link InternalAckMode} is configured in {@link InternalAckMode#MANUAL}
  *
  * @since 1.0
  */

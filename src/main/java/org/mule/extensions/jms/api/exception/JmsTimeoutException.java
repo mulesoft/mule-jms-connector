@@ -10,8 +10,7 @@ import static org.mule.extensions.jms.api.exception.JmsError.TIMEOUT;
 import org.mule.runtime.extension.api.exception.ModuleException;
 
 /**
- * {@link ModuleException} that represents an error when consuming a Message
- * but a timeout is reached before the Message arrives
+ * {@link ModuleException} that represents an error when consuming a Message but a timeout is reached before the Message arrives
  *
  * @since 1.0
  */

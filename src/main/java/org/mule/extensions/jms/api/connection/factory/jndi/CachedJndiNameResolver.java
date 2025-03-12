@@ -19,12 +19,10 @@ import javax.naming.Context;
 import javax.naming.NamingException;
 
 /**
- * Defines a {@link JndiNameResolver} that uses a cache in order to store
- * the already resolved names.
+ * Defines a {@link JndiNameResolver} that uses a cache in order to store the already resolved names.
  * <p/>
- * The cache does not have an automated mechanism for cleaning up the data.
- * In case of getting corrupt data, a way to cleaning up the cache is to stop
- * and then restart the instance.
+ * The cache does not have an automated mechanism for cleaning up the data. In case of getting corrupt data, a way to cleaning up
+ * the cache is to stop and then restart the instance.
  *
  * @since 1.0
  */

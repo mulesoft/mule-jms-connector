@@ -28,7 +28,7 @@ public final class JmsSessionRecoverException extends JmsConsumeException {
   /**
    * Creates a new instance with the specified detail {@code message}
    *
-   * @param message the detail message
+   * @param message   the detail message
    * @param exception cause of this exception
    */
   public JmsSessionRecoverException(String message, Exception exception) {

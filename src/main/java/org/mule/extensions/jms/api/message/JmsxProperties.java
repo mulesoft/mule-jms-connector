@@ -7,12 +7,11 @@
 package org.mule.extensions.jms.api.message;
 
 /**
- * JMS reserves the 'JMSX' property name prefix for JMS defined properties. Here we
- * define the set of 'well known' properties of JMS.
+ * JMS reserves the 'JMSX' property name prefix for JMS defined properties. Here we define the set of 'well known' properties of
+ * JMS.
  *
- * JMSX properties 'set by provider on send' are available to both the producer and
- * the consumers of the message. If they are not present in a message, they are treated
- * like any other absent property.
+ * JMSX properties 'set by provider on send' are available to both the producer and the consumers of the message. If they are not
+ * present in a message, they are treated like any other absent property.
  *
  *
  * @since 1.0

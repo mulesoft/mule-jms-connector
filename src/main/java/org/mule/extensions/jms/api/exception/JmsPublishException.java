@@ -27,7 +27,7 @@ public class JmsPublishException extends JmsExtensionException {
   /**
    * Creates a new instance with the specified detail {@code message}
    *
-   * @param message the detail message
+   * @param message   the detail message
    * @param exception cause of this exception
    */
   public JmsPublishException(String message, Exception exception) {
@@ -38,7 +38,7 @@ public class JmsPublishException extends JmsExtensionException {
   /**
    * Creates a new instance with the specified detail {@code message}
    *
-   * @param message the detail message
+   * @param message   the detail message
    * @param errorType JMS error
    */
   protected JmsPublishException(String message, JmsError errorType) {
@@ -48,7 +48,7 @@ public class JmsPublishException extends JmsExtensionException {
   /**
    * Creates a new instance with the specified detail {@code message}
    *
-   * @param message the detail message
+   * @param message   the detail message
    * @param errorType JMS error
    * @param exception cause of this exception
    */

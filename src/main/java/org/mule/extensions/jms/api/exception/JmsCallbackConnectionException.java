@@ -8,9 +8,9 @@ package org.mule.extensions.jms.api.exception;
 
 import org.mule.runtime.api.exception.MuleRuntimeException;
 
-import javax.jms.Connection;
-import javax.jms.ExceptionListener;
-import javax.jms.JMSException;
+import jakarta.jms.Connection;
+import jakarta.jms.ExceptionListener;
+import jakarta.jms.JMSException;
 
 /**
  * Custom {@link MuleRuntimeException} to be used in a JMS {@link Connection} {@link ExceptionListener}

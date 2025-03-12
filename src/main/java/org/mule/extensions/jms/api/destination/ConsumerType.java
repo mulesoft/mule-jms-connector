@@ -7,8 +7,8 @@
 package org.mule.extensions.jms.api.destination;
 
 /**
- * Implementations of this interface provide a way to configure custom properties for a consumer
- * based on the destination kind from which consumption will occurr
+ * Implementations of this interface provide a way to configure custom properties for a consumer based on the destination kind
+ * from which consumption will occurr
  *
  * @since 1.0
  */

@@ -31,16 +31,15 @@ import org.mule.runtime.extension.api.runtime.parameter.OutboundCorrelationStrat
 
 import java.util.Map;
 
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.Session;
+import jakarta.jms.Destination;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.Session;
 
 import org.slf4j.Logger;
 
 /**
- * Enables the creation of an outgoing {@link Message}.
- * Users must use this builder to create a message instance.
+ * Enables the creation of an outgoing {@link Message}. Users must use this builder to create a message instance.
  *
  * @since 1.0
  */
@@ -116,8 +115,7 @@ public class JmsMessageBuilder implements org.mule.jms.commons.api.message.JmsMe
   private String outboundEncoding;
 
   /**
-   * The JMSReplyTo header information of the {@link Destination} where
-   * {@code this} {@link Message} should be replied to
+   * The JMSReplyTo header information of the {@link Destination} where {@code this} {@link Message} should be replied to
    */
   @Parameter
   @Optional

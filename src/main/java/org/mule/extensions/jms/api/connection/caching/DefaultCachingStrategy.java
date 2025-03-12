@@ -10,8 +10,8 @@ import org.mule.extensions.jms.internal.ExcludeFromGeneratedCoverage;
 import org.mule.runtime.extension.api.annotation.Alias;
 
 /**
- * Default implementation of {@link CachingConfiguration} that not only enables caching
- * but also provides default values for all the configurable parameters
+ * Default implementation of {@link CachingConfiguration} that not only enables caching but also provides default values for all
+ * the configurable parameters
  *
  * @since 1.0
  */

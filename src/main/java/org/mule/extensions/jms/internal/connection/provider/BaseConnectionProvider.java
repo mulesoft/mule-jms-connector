@@ -45,9 +45,9 @@ import org.mule.runtime.extension.api.annotation.param.RefName;
 import java.util.function.Supplier;
 
 import javax.inject.Inject;
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.Session;
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.Session;
 
 import org.slf4j.Logger;
 
@@ -62,9 +62,8 @@ public abstract class BaseConnectionProvider
   private static final Logger LOGGER = getLogger(BaseConnectionProvider.class);
 
   /**
-   * Versions of the {@link JmsSpecification} to be used by the extension.
-   * This version should be compatible with the implementation of the {@link ConnectionFactory}
-   * configured. Functionality available only for certain versions of the spec
+   * Versions of the {@link JmsSpecification} to be used by the extension. This version should be compatible with the
+   * implementation of the {@link ConnectionFactory} configured. Functionality available only for certain versions of the spec
    * will throw an error if the version requirement is not met.
    */
   @Parameter
@@ -107,6 +106,7 @@ public abstract class BaseConnectionProvider
 
   /**
    * Template method for obtaining the {@link ConnectionFactory} to be used for creating the {@link JmsConnection}s
+   * 
    * @return an instance of {@link ConnectionFactory} to be used for creating the {@link JmsConnection}s
    * @throws Exception if an error occurs while creting the {@link ConnectionFactory}
    */

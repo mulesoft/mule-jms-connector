@@ -9,12 +9,12 @@ package org.mule.extensions.jms.api.destination;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.extension.api.annotation.Alias;
 
-import javax.jms.Destination;
-import javax.jms.Topic;
+import jakarta.jms.Destination;
+import jakarta.jms.Topic;
 
 /**
- * Implementation of {@link ConsumerType} that marks the consumed {@link Destination}
- * as a {@link Topic} and provides a way to configure topic-specific consumer parameters
+ * Implementation of {@link ConsumerType} that marks the consumed {@link Destination} as a {@link Topic} and provides a way to
+ * configure topic-specific consumer parameters
  *
  * @since 1.0
  */

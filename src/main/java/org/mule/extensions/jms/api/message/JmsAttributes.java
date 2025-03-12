@@ -9,11 +9,11 @@ package org.mule.extensions.jms.api.message;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 
-import javax.jms.Message;
+import jakarta.jms.Message;
 
 /**
- * Contains all the metadata of a JMS {@link Message}, it carries information such as the Headers,
- * the Properties and the required ID for performing an ACK on the Message.
+ * Contains all the metadata of a JMS {@link Message}, it carries information such as the Headers, the Properties and the required
+ * ID for performing an ACK on the Message.
  * <p>
  *
  * @since 1.0

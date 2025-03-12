@@ -28,7 +28,7 @@ public final class JmsAckException extends JmsConsumeException {
   /**
    * Creates a new instance with the specified detail {@code message}
    *
-   * @param message the detail message
+   * @param message   the detail message
    * @param exception cause of this exception
    */
   public JmsAckException(String message, Exception exception) {

@@ -37,8 +37,7 @@ import jakarta.jms.JMSContext;
 import javax.naming.NamingException;
 
 /**
- * A {@link ConnectionFactory} that wraps a {@link ConnectionFactory delegate}
- * that is discovered using a {@link JndiNameResolver}
+ * A {@link ConnectionFactory} that wraps a {@link ConnectionFactory delegate} that is discovered using a {@link JndiNameResolver}
  *
  * @since 1.0
  */
@@ -47,8 +46,7 @@ public class JndiConnectionFactory extends DelegatingConnectionFactory implement
   private static final Logger LOGGER = LoggerFactory.getLogger(JndiConnectionFactory.class);
 
   /**
-   * Name of the ConnectionFactory to be discovered using Jndi
-   * and used as a delegate of {@code this} {@link ConnectionFactory}
+   * Name of the ConnectionFactory to be discovered using Jndi and used as a delegate of {@code this} {@link ConnectionFactory}
    */
   @Parameter
   private String connectionFactoryJndiName;
@@ -61,7 +59,7 @@ public class JndiConnectionFactory extends DelegatingConnectionFactory implement
   private LookupJndiDestination lookupDestination;
 
   /**
-   *  Provider for the {@link JndiNameResolver}
+   * Provider for the {@link JndiNameResolver}
    */
   @ParameterGroup(name = "Jndi Name Resolver")
   private JndiNameResolverProvider nameResolverProvider;
@@ -143,7 +141,7 @@ public class JndiConnectionFactory extends DelegatingConnectionFactory implement
     try {
       return getJndiNameResolver().lookup(jndiName);
     } catch (NamingException e) {
-      //TODO MULE-10959: mark transaction for rollback
+      // TODO MULE-10959: mark transaction for rollback
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug(format("Failed to resolve lookup for name [%s]", jndiName), e);
       }

@@ -47,8 +47,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.NoSuchElementException;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.XAConnectionFactory;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.XAConnectionFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.TrustManager;
@@ -56,8 +56,8 @@ import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
 /**
- * Generic implementation of a JMS {@link ConnectionProvider}.
- * This provider uses any {@link ConnectionFactory} that the user configures in order to create a {@link JmsConnection}.
+ * Generic implementation of a JMS {@link ConnectionProvider}. This provider uses any {@link ConnectionFactory} that the user
+ * configures in order to create a {@link JmsConnection}.
  *
  * @since 1.0
  */
@@ -97,9 +97,10 @@ public class GenericConnectionProvider extends BaseConnectionProvider {
 
   @Override
   /**
-   * This method is empty since it is appropriate to use it when the connection provider offers the SSL/TLS tab in the UI.
-   * In the case of the Generic Connection Provider, we will use an internal{@link #addCertificatesToSSLContextIfNeeded()} method that,
-   * based on some system properties, will modify the SSL/TLS context. **/
+   * This method is empty since it is appropriate to use it when the connection provider offers the SSL/TLS tab in the UI. In the
+   * case of the Generic Connection Provider, we will use an internal{@link #addCertificatesToSSLContextIfNeeded()} method that,
+   * based on some system properties, will modify the SSL/TLS context.
+   **/
   protected void configureSSLContext() {}
 
   @Override

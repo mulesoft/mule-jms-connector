@@ -32,9 +32,9 @@ import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.runtime.parameter.OutboundCorrelationStrategy;
 
 import javax.inject.Inject;
-import javax.jms.Message;
-import javax.jms.Queue;
-import javax.jms.Topic;
+import jakarta.jms.Message;
+import jakarta.jms.Queue;
+import jakarta.jms.Topic;
 
 /**
  * Base configuration for {@link JmsConnector}

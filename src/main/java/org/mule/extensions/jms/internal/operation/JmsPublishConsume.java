@@ -25,11 +25,7 @@ import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.scheduler.SchedulerService;
 import org.mule.runtime.extension.api.annotation.error.Throws;
 import org.mule.runtime.extension.api.annotation.metadata.OutputResolver;
-import org.mule.runtime.extension.api.annotation.param.Config;
-import org.mule.runtime.extension.api.annotation.param.ConfigOverride;
-import org.mule.runtime.extension.api.annotation.param.Connection;
-import org.mule.runtime.extension.api.annotation.param.Optional;
-import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
+import org.mule.runtime.extension.api.annotation.param.*;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
@@ -39,14 +35,14 @@ import org.mule.runtime.extension.api.runtime.parameter.OutboundCorrelationStrat
 import org.mule.runtime.extension.api.runtime.process.CompletionCallback;
 
 import javax.inject.Inject;
-import javax.jms.Destination;
-import javax.jms.Message;
+import jakarta.jms.Destination;
+import jakarta.jms.Message;
 
 import org.slf4j.Logger;
 
 /**
- * Operation that allows the user to send a message to a JMS {@link Destination} and waits for a response
- * either to the provided {@code ReplyTo} destination or to a temporary {@link Destination} created dynamically
+ * Operation that allows the user to send a message to a JMS {@link Destination} and waits for a response either to the provided
+ * {@code ReplyTo} destination or to a temporary {@link Destination} created dynamically
  *
  * @since 1.0
  */
@@ -62,8 +58,8 @@ public class JmsPublishConsume implements Initialisable, Disposable {
   private org.mule.jms.commons.internal.operation.JmsPublishConsume jmsPublishConsume;
 
   /**
-   * Operation that allows the user to send a message to a JMS {@link Destination} and waits for a response
-   * either to the provided {@code ReplyTo} destination or to a temporary {@link Destination} created dynamically
+   * Operation that allows the user to send a message to a JMS {@link Destination} and waits for a response either to the provided
+   * {@code ReplyTo} destination or to a temporary {@link Destination} created dynamically
    *
    * @param config            the current {@link JmsProducerConfig}
    * @param connection        the current {@link JmsConnection}
@@ -73,12 +69,13 @@ public class JmsPublishConsume implements Initialisable, Disposable {
    * @param consumeParameters Parameter group that lets override the consume configuration
    * @param sendCorrelationId options on whether to include an outbound correlation id or not
    * @param correlationInfo   the current message's correlation info
-   * @return a {@link Result} with the reply {@link Message} content as {@link Result#getOutput} and its properties
-   * and headers as {@link Result#getAttributes}
+   * @return a {@link Result} with the reply {@link Message} content as {@link Result#getOutput} and its properties and headers as
+   *         {@link Result#getAttributes}
    * @throws JmsExtensionException if an error occurs
    */
   @OutputResolver(output = JmsOutputResolver.class, attributes = AttributesOutputResolver.class)
   @Throws(JmsPublishConsumeErrorTypeProvider.class)
+  @MediaType(MediaType.ANY)
   public void publishConsume(@Config JmsConfig config,
                              @Connection JmsConnection connection,
                              @Placement(

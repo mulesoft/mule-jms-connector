@@ -20,7 +20,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 import org.mule.runtime.extension.api.runtime.process.CompletionCallback;
 
 import javax.inject.Inject;
-import javax.jms.Message;
+import jakarta.jms.Message;
 
 import org.slf4j.Logger;
 
@@ -39,13 +39,13 @@ public final class JmsAcknowledge implements Initialisable {
   private org.mule.jms.commons.internal.operation.JmsAcknowledge jmsAck;
 
   /**
-   * Allows the user to perform an ACK when the {@link AckMode#MANUAL} mode is elected while consuming the {@link Message}.
-   * As per JMS Spec, performing an ACK over a single {@link Message} automatically works as an ACK for all the {@link Message}s
-   * produced in the same {@link JmsSession}.
+   * Allows the user to perform an ACK when the {@link AckMode#MANUAL} mode is elected while consuming the {@link Message}. As per
+   * JMS Spec, performing an ACK over a single {@link Message} automatically works as an ACK for all the {@link Message}s produced
+   * in the same {@link JmsSession}.
    *
    * @param ackId The AckId of the Message to ACK
-   * @throws JmsAckException if the {@link JmsSession} or {@link JmsConnection} were closed, or if the ID doesn't belong
-   * to a session of the current connection
+   * @throws JmsAckException if the {@link JmsSession} or {@link JmsConnection} were closed, or if the ID doesn't belong to a
+   *                         session of the current connection
    */
   @Throws(JmsAckErrorTypeProvider.class)
   public void ack(@Summary("The AckId of the Message to ACK") String ackId, CompletionCallback<Void, Void> completionCallback) {
@@ -54,9 +54,8 @@ public final class JmsAcknowledge implements Initialisable {
 
   /**
    * Allows the user to perform a session recover when the {@link AckMode#MANUAL} mode is elected while consuming the
-   * {@link Message}.
-   * As per JMS Spec, performing a session recover automatically will redeliver all the consumed messages that had not being
-   * acknowledged before this recover.
+   * {@link Message}. As per JMS Spec, performing a session recover automatically will redeliver all the consumed messages that
+   * had not being acknowledged before this recover.
    *
    * @param ackId The AckId of the Message Session to recover
    */

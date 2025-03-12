@@ -8,12 +8,11 @@ package org.mule.extensions.jms.api.destination;
 
 import org.mule.runtime.extension.api.annotation.Alias;
 
-import javax.jms.Destination;
-import javax.jms.Queue;
+import jakarta.jms.Destination;
+import jakarta.jms.Queue;
 
 /**
- * Implementation of {@link ConsumerType} that marks the consumed {@link Destination}
- * as a {@link Queue}.
+ * Implementation of {@link ConsumerType} that marks the consumed {@link Destination} as a {@link Queue}.
  *
  * @since 1.0
  */

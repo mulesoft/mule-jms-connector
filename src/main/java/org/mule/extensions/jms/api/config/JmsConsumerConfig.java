@@ -21,7 +21,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 import java.util.Objects;
 
-import javax.jms.Message;
+import jakarta.jms.Message;
 
 /**
  * Configuration parameters for consuming messages from a JMS Queue or Topics
@@ -31,9 +31,8 @@ import javax.jms.Message;
 public final class JmsConsumerConfig implements org.mule.jms.commons.api.config.JmsConsumerConfig {
 
   /**
-   * The {@link ConsumerAckMode} to use when consuming a {@link Message}
-   * Can be overridden at the message source level.
-   * This attribute has to be IMMEDIATE if transactionType is LOCAL or MULTI
+   * The {@link ConsumerAckMode} to use when consuming a {@link Message} Can be overridden at the message source level. This
+   * attribute has to be IMMEDIATE if transactionType is LOCAL or MULTI
    */
   @Parameter
   @Optional(defaultValue = "AUTO")
@@ -42,8 +41,8 @@ public final class JmsConsumerConfig implements org.mule.jms.commons.api.config.
   private AckMode ackMode;
 
   /**
-   * The {@link ConsumerType} to be used by default when consuming a {@link Message}
-   * Can be overridden at the message source level.
+   * The {@link ConsumerType} to be used by default when consuming a {@link Message} Can be overridden at the message source
+   * level.
    */
   @Parameter
   @Optional
@@ -53,8 +52,7 @@ public final class JmsConsumerConfig implements org.mule.jms.commons.api.config.
   private ConsumerType consumerType;
 
   /**
-   * Default selector to be used for filtering when consuming a {@link Message}
-   * Can be overridden at the message source level.
+   * Default selector to be used for filtering when consuming a {@link Message} Can be overridden at the message source level.
    */
   @Parameter
   @Optional
@@ -63,8 +61,8 @@ public final class JmsConsumerConfig implements org.mule.jms.commons.api.config.
   private String selector;
 
   /**
-   * Used to configure the number of redelivers before discarding the message.
-   * No redelivery is represented with 0, while -1 means infinite re deliveries accepted.
+   * Used to configure the number of redelivers before discarding the message. No redelivery is represented with 0, while -1 means
+   * infinite re deliveries accepted.
    */
   @Parameter
   @Optional(defaultValue = "0")

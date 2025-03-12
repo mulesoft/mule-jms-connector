@@ -17,11 +17,10 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 import java.util.concurrent.TimeUnit;
 
-import javax.jms.Message;
+import jakarta.jms.Message;
 
 /**
- * Contains the parameters that can override the default values for
- * publishing a {@link Message}
+ * Contains the parameters that can override the default values for publishing a {@link Message}
  *
  * @since 1.0
  */

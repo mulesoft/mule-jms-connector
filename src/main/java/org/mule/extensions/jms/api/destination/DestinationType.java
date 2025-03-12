@@ -8,9 +8,9 @@ package org.mule.extensions.jms.api.destination;
 
 import org.mule.jms.commons.api.destination.DestinationTypeDescriptor;
 
-import javax.jms.Destination;
-import javax.jms.Queue;
-import javax.jms.Topic;
+import jakarta.jms.Destination;
+import jakarta.jms.Queue;
+import jakarta.jms.Topic;
 
 /**
  * Type identifier for a {@link Destination}.

@@ -6,8 +6,8 @@
  */
 package org.mule.extensions.jms.api.connection.caching;
 
-import javax.jms.Connection;
-import javax.jms.Session;
+import jakarta.jms.Connection;
+import jakarta.jms.Session;
 
 /**
  * Defines the strategy to be used for caching of {@link Session}s and {@link Connection}s

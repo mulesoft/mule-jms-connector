@@ -32,16 +32,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An {@link ActiveMQConnectionFactory} provider.
- * If no custom {@link ConnectionFactory} is given, then this provider knows how to build
- * a default {@link ActiveMQConnectionFactory} and how to configure it using the given
+ * An {@link ActiveMQConnectionFactory} provider. If no custom {@link ConnectionFactory} is given, then this provider knows how to
+ * build a default {@link ActiveMQConnectionFactory} and how to configure it using the given
  * {@link ActiveMQConnectionFactoryConfiguration}
  *
  * @since 1.0
@@ -92,6 +91,8 @@ public class ActiveMQConnectionFactoryProvider {
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug(format("Creating new [%s]", factoryClass));
       }
+
+      // TODO (nicomz) wrap with jakarta.jms
       this.connectionFactory =
           (ConnectionFactory) instantiateClass(factoryClass, setPropertiesInURL(factoryConfiguration.getBrokerUrl(), factoryClass,
                                                                                 factoryConfiguration));

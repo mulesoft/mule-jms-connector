@@ -21,7 +21,7 @@ import org.mule.sdk.api.annotation.semantics.connectivity.Url;
 import java.util.List;
 import java.util.Objects;
 
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.RedeliveryPolicy;
@@ -75,8 +75,8 @@ public class ActiveMQConnectionFactoryConfiguration {
   private long redeliveryDelay;
 
   /**
-   * Used to configure the {@link RedeliveryPolicy#getMaximumRedeliveries()}
-   * No redelivery is represented with 0, while -1 means infinite re deliveries accepted.
+   * Used to configure the {@link RedeliveryPolicy#getMaximumRedeliveries()} No redelivery is represented with 0, while -1 means
+   * infinite re deliveries accepted.
    */
   @Parameter
   @Optional(defaultValue = "0")
@@ -86,8 +86,8 @@ public class ActiveMQConnectionFactoryConfiguration {
   private int maxRedelivery;
 
   /**
-   * Allowed packages of classes to send and receive.
-   * Starting with versions 5.12.2 and 5.13.0, ActiveMQ requires you to explicitly allow packages that can be exchanged using ObjectMessages.
+   * Allowed packages of classes to send and receive. Starting with versions 5.12.2 and 5.13.0, ActiveMQ requires you to
+   * explicitly allow packages that can be exchanged using ObjectMessages.
    */
   @Parameter
   @Optional
@@ -97,8 +97,9 @@ public class ActiveMQConnectionFactoryConfiguration {
   private List<String> trustedPackages;
 
   /**
-   * Indicates if any class from any package can be sent and received. Enabling this parameter is unsafe, as a malicious payload can exploit the host system.
-   * Starting with versions 5.12.2 and 5.13.0, ActiveMQ requires you to explicitly allow packages that can be exchanged using ObjectMessages.
+   * Indicates if any class from any package can be sent and received. Enabling this parameter is unsafe, as a malicious payload
+   * can exploit the host system. Starting with versions 5.12.2 and 5.13.0, ActiveMQ requires you to explicitly allow packages
+   * that can be exchanged using ObjectMessages.
    */
   @Parameter
   @Optional(defaultValue = "false")
@@ -189,7 +190,7 @@ public class ActiveMQConnectionFactoryConfiguration {
   }
 
   public boolean getVerifyHostName() {
-    //TODO: change the default value to a parameter. This default is required to support a security fix and avoid
+    // TODO: change the default value to a parameter. This default is required to support a security fix and avoid
     // breaking backwards compatibility (GUS ticket: W-14487260)
     return false;
   }

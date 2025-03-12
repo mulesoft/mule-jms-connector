@@ -22,8 +22,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Provides a {@link JndiNameResolver} or the set of properties required to
- * create one, represented by {@link JndiNameResolverProperties}
+ * Provides a {@link JndiNameResolver} or the set of properties required to create one, represented by
+ * {@link JndiNameResolverProperties}
  *
  * @since 1.0
  */

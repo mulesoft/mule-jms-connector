@@ -19,11 +19,11 @@ import org.mule.runtime.extension.api.runtime.parameter.OutboundCorrelationStrat
 
 import java.util.concurrent.TimeUnit;
 
-import javax.jms.Message;
+import jakarta.jms.Message;
 
 /**
- * Enables the creation of an outgoing {@link Message} along with the response configuration.
- * Users must use this builder to create a message response instance.
+ * Enables the creation of an outgoing {@link Message} along with the response configuration. Users must use this builder to
+ * create a message response instance.
  *
  * @since 1.0
  */
@@ -110,10 +110,9 @@ public class JmsResponseMessageBuilder extends JmsMessageBuilder
   private OutboundCorrelationStrategy sendCorrelationId;
 
   /**
-   * Indicates which Request Reply Pattern to use.
-   * By default uses the Correlation ID of the incoming message to do the Reply-To.
-   * In case of configuring the Message ID pattern, the ReplyTo will be performed using the message ID of the incoming message.
-   * If NONE is selected, not correlation ID will be configured automatically.
+   * Indicates which Request Reply Pattern to use. By default uses the Correlation ID of the incoming message to do the Reply-To.
+   * In case of configuring the Message ID pattern, the ReplyTo will be performed using the message ID of the incoming message. If
+   * NONE is selected, not correlation ID will be configured automatically.
    *
    * @since 1.6.0
    */

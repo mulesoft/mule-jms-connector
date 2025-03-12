@@ -24,8 +24,8 @@ import java.util.Set;
 
 /**
  * Errors that can be thrown in the
- * {@link JmsPublish#publish(JmsConfig, JmsTransactionalConnection, String, DestinationType, JmsMessageBuilder, JmsPublishParameters)} operation
- * operation.
+ * {@link JmsPublish#publish(JmsConfig, JmsTransactionalConnection, String, DestinationType, JmsMessageBuilder, JmsPublishParameters)}
+ * operation operation.
  *
  * @since 1.0
  */
