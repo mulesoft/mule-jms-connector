@@ -20,8 +20,11 @@ public class ActiveMQConnectionFactoryUtilTestCase {
     assertFalse(ActiveMQConnectionFactoryUtil.isVerifyHostnameValidVersion("5.14.5"));
     assertFalse(ActiveMQConnectionFactoryUtil.isVerifyHostnameValidVersion("4.10.5"));
     assertTrue(ActiveMQConnectionFactoryUtil.isVerifyHostnameValidVersion("5.15.6"));
+    assertTrue(ActiveMQConnectionFactoryUtil.isVerifyHostnameValidVersion("5.15.8"));
     assertTrue(ActiveMQConnectionFactoryUtil.isVerifyHostnameValidVersion("5.18.3"));
     assertTrue(ActiveMQConnectionFactoryUtil.isVerifyHostnameValidVersion("6.0.0"));
+    assertFalse(ActiveMQConnectionFactoryUtil.isVerifyHostnameValidVersion(null));
+    assertFalse(ActiveMQConnectionFactoryUtil.isVerifyHostnameValidVersion("5.14"));
   }
 
   @Test
