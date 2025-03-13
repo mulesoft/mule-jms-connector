@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:mtf="http://www.mulesoft.org/schema/mule/mtf"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+      http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+      http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+      http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+      http://www.mulesoft.org/schema/mule/mtf http://www.mulesoft.org/schema/mule/mtf/current/mule-mtf.xsd">
+
+    <munit:config name="activemq-upgrade-xa-test-case.xml" minMuleVersion="4.1.6"/>
+
+    <munit:test name="xa-unhappy-path-without-flag" description="Checks unhappy path using two different brokers without flag"
+                expectedErrorType="JMS:CONSUMING">
+        <munit:execution>
+            <try transactionalAction="ALWAYS_BEGIN" transactionType="XA">
+                <set-payload value="someValue"/>
+                <flow-ref name="publish-in-other-broker"/>
+                <flow-ref name="publish-in-memory"/>
+            </try>
+        </munit:execution>
+        <munit:validation>
+            <jms:consume config-ref="JMS_Config_XA_OTHER_BROKER" destination="destination_1" maximumWait="1000"/>
+            <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo('someValue')]"/>
+            <jms:consume config-ref="JMS_Config_XA_WITHOUT_FLAG" destination="destination_2" maximumWait="1000"/>
+            <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo('someValue')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <flow name="publish-in-memory">
+        <jms:publish config-ref="JMS_Config_XA_WITHOUT_FLAG" destination="destination_2">
+            <jms:message>
+                <jms:body>#[payload]</jms:body>
+            </jms:message>
+        </jms:publish>
+    </flow>
+
+    <flow name="publish-in-other-broker">
+        <jms:publish config-ref="JMS_Config_XA_OTHER_BROKER" destination="destination_1">
+            <jms:message>
+                <jms:body>#[payload]</jms:body>
+            </jms:message>
+        </jms:publish>
+    </flow>
+</mule>
