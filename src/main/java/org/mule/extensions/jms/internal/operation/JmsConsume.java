@@ -56,6 +56,8 @@ import org.slf4j.Logger;
 public final class JmsConsume implements Initialisable, Disposable {
 
   private static final Logger LOGGER = getLogger(JmsConsume.class);
+  private final int artemisDisposeDelay = Integer.parseInt(System.getProperty("mule.jms.operation.artemis.dispose.delay", "0"));
+
 
   @Inject
   private JmsSessionManager sessionManager;
@@ -112,6 +114,15 @@ public final class JmsConsume implements Initialisable, Disposable {
 
   @Override
   public void dispose() {
+    // TODO: W-17327464 This operation is not thread-safe,
+    //  so we need to implement a sleep to wait for Artemis to complete closing the channels.
+    //  We need to find a better way to synchronize the dispose processes
+    //  check if Artemis has any fixes in future versions.
+    try {
+      Thread.sleep(TimeUnit.SECONDS.toMillis(artemisDisposeDelay));
+    } catch (InterruptedException e) {
+      LOGGER.error("Error while synchronize dispose event", e);
+    }
     jmsConsume.dispose();
   }
 }

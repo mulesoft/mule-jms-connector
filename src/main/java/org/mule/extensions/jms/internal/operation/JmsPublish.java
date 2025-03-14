@@ -40,6 +40,8 @@ import javax.jms.Message;
 
 import org.slf4j.Logger;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Operation that allows the user to send a message to a JMS {@link Destination}
  *
@@ -48,6 +50,7 @@ import org.slf4j.Logger;
 public final class JmsPublish implements Initialisable, Disposable {
 
   private static final Logger LOGGER = getLogger(JmsPublish.class);
+  private final int artemisDisposeDelay = Integer.parseInt(System.getProperty("mule.jms.operation.artemis.dispose.delay", "0"));
 
   @Inject
   private JmsSessionManager jmsSessionManager;
@@ -92,6 +95,15 @@ public final class JmsPublish implements Initialisable, Disposable {
 
   @Override
   public void dispose() {
+    // TODO: W-17327464 This operation is not thread-safe,
+    //  so we need to implement a sleep to wait for Artemis to complete closing the channels.
+    //  We need to find a better way to synchronize the dispose processes
+    //  check if Artemis has any fixes in future versions.
+    try {
+      Thread.sleep(TimeUnit.SECONDS.toMillis(artemisDisposeDelay));
+    } catch (InterruptedException e) {
+      LOGGER.error("Error while synchronize dispose event", e);
+    }
     if (jmsPublish != null) {
       jmsPublish.dispose();
     }
