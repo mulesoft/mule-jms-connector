@@ -10,6 +10,7 @@ import static java.lang.String.format;
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import static org.mule.runtime.core.api.util.ClassUtils.instantiateClass;
 
+import com.github.marschall.jakartajmsadapter.JakartaConnectionFactory;
 import org.apache.activemq.util.URISupport;
 import org.mule.extensions.jms.api.connection.factory.activemq.ActiveMQConnectionFactoryConfiguration;
 import org.mule.extensions.jms.api.exception.JmsMissingLibraryException;
@@ -93,9 +94,11 @@ public class ActiveMQConnectionFactoryProvider {
       }
 
       // TODO (nicomz) wrap with jakarta.jms
-      this.connectionFactory =
-          (ConnectionFactory) instantiateClass(factoryClass, setPropertiesInURL(factoryConfiguration.getBrokerUrl(), factoryClass,
-                                                                                factoryConfiguration));
+      javax.jms.ConnectionFactory _connectionFactory =
+          (javax.jms.ConnectionFactory) instantiateClass(factoryClass,
+                                                         setPropertiesInURL(factoryConfiguration.getBrokerUrl(), factoryClass,
+                                                                            factoryConfiguration));
+      connectionFactory = new JakartaConnectionFactory(_connectionFactory);
       applyVendorSpecificConnectionFactoryProperties(connectionFactory);
 
       return connectionFactory;
