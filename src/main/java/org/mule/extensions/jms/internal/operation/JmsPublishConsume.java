@@ -117,6 +117,7 @@ public class JmsPublishConsume implements Initialisable, Disposable {
       Thread.sleep(TimeUnit.SECONDS.toMillis(artemisDisposeDelay));
     } catch (InterruptedException e) {
       LOGGER.error("Error while synchronize dispose event", e);
+      Thread.currentThread().interrupt();
     }
 
     if (jmsPublishConsume != null) {
