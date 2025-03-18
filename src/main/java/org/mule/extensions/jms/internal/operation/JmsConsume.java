@@ -19,6 +19,7 @@ import org.mule.extensions.jms.api.exception.JmsExtensionException;
 import org.mule.extensions.jms.internal.config.JmsConfig;
 import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
 import org.mule.extensions.jms.internal.metadata.JmsOutputResolver;
+import org.mule.extensions.jms.internal.util.OperationSleepHelper;
 import org.mule.jms.commons.api.AttributesOutputResolver;
 import org.mule.jms.commons.internal.connection.JmsTransactionalConnection;
 import org.mule.runtime.api.connection.ConnectionException;
@@ -54,6 +55,7 @@ public final class JmsConsume implements Initialisable, Disposable {
 
   private static final Logger LOGGER = getLogger(JmsConsume.class);
   private final int artemisDisposeDelay = Integer.parseInt(System.getProperty("mule.jms.operation.artemis.dispose.delay", "0"));
+  private final OperationSleepHelper operationSleepHelper = new OperationSleepHelper();
 
 
   @Inject
@@ -115,12 +117,7 @@ public final class JmsConsume implements Initialisable, Disposable {
     //  so we need to implement a sleep to wait for Artemis to complete closing the channels.
     //  We need to find a better way to synchronize the dispose processes
     //  check if Artemis has any fixes in future versions.
-    try {
-      Thread.sleep(TimeUnit.SECONDS.toMillis(artemisDisposeDelay));
-    } catch (InterruptedException e) {
-      LOGGER.error("Error while synchronize dispose event", e);
-      Thread.currentThread().interrupt();
-    }
+    operationSleepHelper.sleep(TimeUnit.SECONDS.toMillis(artemisDisposeDelay));
     jmsConsume.dispose();
   }
 }
