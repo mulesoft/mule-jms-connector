@@ -6,6 +6,7 @@
  */
 package org.mule.extensions.jms.test.util;
 
+import org.junit.After;
 import org.junit.Test;
 import org.mule.extensions.jms.internal.util.OperationSleepHelper;
 
@@ -18,7 +19,7 @@ public class OperationSleepHelperTestCase {
   public void testSleepWithoutException() {
     OperationSleepHelper helper = new OperationSleepHelper();
     try {
-      helper.sleep(1000);
+      helper.sleep(100);
     } catch (Exception e) {
       fail("There is any exception");
     }
@@ -30,5 +31,10 @@ public class OperationSleepHelperTestCase {
     Thread.currentThread().interrupt();
     helper.sleep(100);
     assertTrue(Thread.currentThread().isInterrupted());
+  }
+
+  @After
+  public void resetThreadState() {
+    Thread.currentThread().interrupted();
   }
 }
