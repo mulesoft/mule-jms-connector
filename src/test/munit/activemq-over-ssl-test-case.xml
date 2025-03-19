@@ -42,7 +42,7 @@
         <jms:active-mq-connection>
             <tls:context >
                 <tls:trust-store insecure="true" />
-                <tls:key-store type="jks" path="tls/client.ks" keyPassword="password" password="password" algorithm="PKIX"/>
+                <tls:key-store type="${keystore.ks.type}" path="tls/client.${keystore.ks.format}" keyPassword="password" password="password" algorithm="PKIX"/>
             </tls:context>
             <jms:factory-configuration brokerUrl="${brokerUrl}" />
         </jms:active-mq-connection>
