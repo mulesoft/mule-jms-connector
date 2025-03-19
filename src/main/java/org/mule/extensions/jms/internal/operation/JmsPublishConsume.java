@@ -17,6 +17,7 @@ import org.mule.extensions.jms.internal.config.JmsConfig;
 import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
 import org.mule.extensions.jms.internal.consume.JmsConsumeParameters;
 import org.mule.extensions.jms.internal.metadata.JmsOutputResolver;
+import org.mule.extensions.jms.internal.util.OperationSleepHelper;
 import org.mule.jms.commons.api.AttributesOutputResolver;
 import org.mule.jms.commons.internal.connection.JmsConnection;
 import org.mule.jms.commons.internal.publish.JmsPublishParameters;
@@ -44,6 +45,8 @@ import javax.jms.Message;
 
 import org.slf4j.Logger;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Operation that allows the user to send a message to a JMS {@link Destination} and waits for a response
  * either to the provided {@code ReplyTo} destination or to a temporary {@link Destination} created dynamically
@@ -53,6 +56,8 @@ import org.slf4j.Logger;
 public class JmsPublishConsume implements Initialisable, Disposable {
 
   private static final Logger LOGGER = getLogger(JmsPublishConsume.class);
+  private final int artemisDisposeDelay = Integer.parseInt(System.getProperty("mule.jms.operation.artemis.dispose.delay", "0"));
+  private final OperationSleepHelper operationSleepHelper = new OperationSleepHelper();
 
   @Inject
   private JmsSessionManager sessionManager;
@@ -106,6 +111,11 @@ public class JmsPublishConsume implements Initialisable, Disposable {
 
   @Override
   public void dispose() {
+    // TODO: W-1805381 This operation is not thread-safe,
+    //  so we need to implement a sleep to wait for Artemis to complete closing the channels.
+    //  We need to find a better way to synchronize the dispose processes
+    //  check if Artemis has any fixes in future versions.
+    operationSleepHelper.sleep(TimeUnit.SECONDS.toMillis(artemisDisposeDelay));
     if (jmsPublishConsume != null) {
       jmsPublishConsume.dispose();
     }

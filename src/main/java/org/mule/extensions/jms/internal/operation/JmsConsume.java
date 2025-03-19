@@ -19,8 +19,8 @@ import org.mule.extensions.jms.api.exception.JmsExtensionException;
 import org.mule.extensions.jms.internal.config.JmsConfig;
 import org.mule.extensions.jms.internal.connection.session.JmsSessionManager;
 import org.mule.extensions.jms.internal.metadata.JmsOutputResolver;
+import org.mule.extensions.jms.internal.util.OperationSleepHelper;
 import org.mule.jms.commons.api.AttributesOutputResolver;
-import org.mule.jms.commons.api.message.JmsAttributes;
 import org.mule.jms.commons.internal.connection.JmsTransactionalConnection;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.lifecycle.Disposable;
@@ -35,14 +35,12 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 import org.mule.runtime.extension.api.runtime.operation.Result;
-import org.mule.runtime.extension.api.runtime.process.CompletionCallback;
 import org.mule.runtime.extension.api.tx.OperationTransactionalAction;
 
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.jms.Destination;
-import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 
@@ -56,6 +54,9 @@ import org.slf4j.Logger;
 public final class JmsConsume implements Initialisable, Disposable {
 
   private static final Logger LOGGER = getLogger(JmsConsume.class);
+  private final int artemisDisposeDelay = Integer.parseInt(System.getProperty("mule.jms.operation.artemis.dispose.delay", "0"));
+  private final OperationSleepHelper operationSleepHelper = new OperationSleepHelper();
+
 
   @Inject
   private JmsSessionManager sessionManager;
@@ -112,6 +113,11 @@ public final class JmsConsume implements Initialisable, Disposable {
 
   @Override
   public void dispose() {
+    // TODO: W-18053810 This operation is not thread-safe,
+    //  so we need to implement a sleep to wait for Artemis to complete closing the channels.
+    //  We need to find a better way to synchronize the dispose processes
+    //  check if Artemis has any fixes in future versions.
+    operationSleepHelper.sleep(TimeUnit.SECONDS.toMillis(artemisDisposeDelay));
     jmsConsume.dispose();
   }
 }
