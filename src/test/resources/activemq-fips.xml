@@ -51,7 +51,7 @@
 
     <sslContext>
       <sslContext
-              keyStore="tls/broker.ks" keyStorePassword="password" trustStore="tls/client.ks" trustStorePassword="password"/>
+            keyStore="tls/broker.bcfks" keyStorePassword="password" trustStore="tls/client.bcfks" trustStorePassword="password" keyStoreType="BCFKS" trustStoreType="BCFKS" secureRandomAlgorithm="DEFAULT"/>
     </sslContext>
 
 
