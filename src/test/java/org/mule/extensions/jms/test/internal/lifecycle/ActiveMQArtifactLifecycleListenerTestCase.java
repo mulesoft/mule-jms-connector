@@ -50,7 +50,7 @@ public class ActiveMQArtifactLifecycleListenerTestCase {
 
   private static final URL ACTIVEMQ_DRIVER_URL = getDependencyFromMaven("org.apache.activemq",
                                                                         "activemq-client",
-                                                                        "5.16.4");
+                                                                        "5.16.7");
   private static final String ACTIVEMQ_PACKAGE_PREFIX = "org.apache.activemq";
   private static final String ACTIVEMQ_BAD_URL_CONFIG = "tcp://localhost:61616";
   private static final String ACTIVEMQ_READ_CHECK_TIMER_THREAD_NAME = "ActiveMQ InactivityMonitor ReadCheckTimer";

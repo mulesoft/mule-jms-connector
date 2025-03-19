@@ -20,10 +20,10 @@
     <description>Mule connector lets you easily send and receive messages to queues and topics for any message service which implements the JMS specification</description>
 
     <properties>
-        <activemq.version>5.15.16</activemq.version>
+        <activemq.version>5.16.7</activemq.version>
         <artemisVersion>2.25.0</artemisVersion>
         <javaxJmsApiVersion>2.0.1</javaxJmsApiVersion>
-        <commonsIoVersion>2.11.0</commonsIoVersion>
+        <commonsIoVersion>2.15.0</commonsIoVersion>
         <commonsLangVersion>3.12.0</commonsLangVersion>
         <guavaVersion>32.1.2-jre</guavaVersion>
         <jacksonVersion>2.14.2</jacksonVersion>
@@ -421,7 +421,9 @@
         <profile>
             <id>docker</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <property>
+                    <name>java.version</name>
+                </property>
             </activation>
             <build>
                 <plugins>
@@ -523,6 +525,35 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+            <id>default-config</id>
+            <activation>
+                <property>
+                    <name>!mule.security.model</name> <!-- if mule.security.model does not exist -->
+                </property>
+            </activation>
+            <properties>
+                <keystore.ks.format>ks</keystore.ks.format>
+                <keystore.ks.type>jks</keystore.ks.type>
+                <keystore.p12.format>p12</keystore.p12.format>
+                <keystore.p12.type>pkcs12</keystore.p12.type>
+            </properties>
+        </profile>
+        <profile>
+            <id>fips-config</id>
+            <activation>
+                <property>
+                    <name>mule.security.model</name>
+                    <value>fips140-2</value> <!-- if mule.security.model == fips140-2 -->
+                </property>
+            </activation>
+            <properties>
+                <keystore.ks.format>bcfks</keystore.ks.format>
+                <keystore.ks.type>bcfks</keystore.ks.type>
+                <keystore.p12.format>bcfks</keystore.p12.format>
+                <keystore.p12.type>bcfks</keystore.p12.type>
+            </properties>
         </profile>
     </profiles>
 
