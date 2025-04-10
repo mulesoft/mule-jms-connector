@@ -43,7 +43,7 @@ public class JmsAutoAckTestCase extends JmsAbstractAckTestCase {
     publish(buildMessage(message, NOTHING));
 
 
-    validate(() -> JmsMessageStorage.receivedMessages() == 8, 5000, 50);
+    validate(() -> JmsMessageStorage.receivedMessages() == 8, TIMEOUT_MILLIS, POLL_DELAY_MILLIS);
     cleanUpQueues();
     assertQueueIsEmpty();
   }
@@ -53,7 +53,7 @@ public class JmsAutoAckTestCase extends JmsAbstractAckTestCase {
   public void sessionIsAutomaticallyRecoverOnErrorFlow() throws Exception {
     String message = buildMessage("Message to be redelivered", EXPLODE);
     publish(message);
-    validate(() -> JmsMessageStorage.receivedMessages() == 2, 5000, 50);
+    validate(() -> JmsMessageStorage.receivedMessages() == 2, TIMEOUT_MILLIS, POLL_DELAY_MILLIS);
     assertJmsMessage(pollMessage(), message, false);
     assertJmsMessage(pollMessage(), message, true);
   }
