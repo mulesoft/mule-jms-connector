@@ -80,7 +80,7 @@ public class JmsPublishConsume implements Initialisable, Disposable {
    */
   @OutputResolver(output = JmsOutputResolver.class, attributes = AttributesOutputResolver.class)
   @Throws(JmsPublishConsumeErrorTypeProvider.class)
-  @MediaType (MediaType.ANY)
+  @MediaType(MediaType.ANY)
   public void publishConsume(@Config JmsConfig config,
                              @Connection JmsConnection connection,
                              @Placement(
