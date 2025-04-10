@@ -37,7 +37,6 @@
         <muleJmsClientVersion>1.13.23</muleJmsClientVersion>
         <mule.http.connector.version>1.10.0</mule.http.connector.version>
 
-        <spring.core.version>4.3.30.RELEASE</spring.core.version>
 
         <!-- Remove when a new parent version with MTF is available -->
         <munit.input.directory>src/test/munit</munit.input.directory>
@@ -142,12 +141,6 @@
             <groupId>org.apache.activemq</groupId>
             <artifactId>artemis-jms-client</artifactId>
             <version>${artemisVersion}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>${spring.core.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

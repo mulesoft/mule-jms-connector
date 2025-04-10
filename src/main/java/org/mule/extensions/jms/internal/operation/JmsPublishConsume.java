@@ -26,11 +26,7 @@ import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.scheduler.SchedulerService;
 import org.mule.runtime.extension.api.annotation.error.Throws;
 import org.mule.runtime.extension.api.annotation.metadata.OutputResolver;
-import org.mule.runtime.extension.api.annotation.param.Config;
-import org.mule.runtime.extension.api.annotation.param.ConfigOverride;
-import org.mule.runtime.extension.api.annotation.param.Connection;
-import org.mule.runtime.extension.api.annotation.param.Optional;
-import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
+import org.mule.runtime.extension.api.annotation.param.*;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
@@ -84,6 +80,7 @@ public class JmsPublishConsume implements Initialisable, Disposable {
    */
   @OutputResolver(output = JmsOutputResolver.class, attributes = AttributesOutputResolver.class)
   @Throws(JmsPublishConsumeErrorTypeProvider.class)
+  @MediaType (MediaType.ANY)
   public void publishConsume(@Config JmsConfig config,
                              @Connection JmsConnection connection,
                              @Placement(
