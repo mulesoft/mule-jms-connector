@@ -46,7 +46,7 @@ public class JmsManualAckTestCase extends JmsAbstractAckTestCase {
     publish(buildMessage("This is a message", ACK));
     String messageToReDeliver = buildMessage("Message to be re delivered", NOTHING);
     publish(messageToReDeliver);
-    validate(() -> JmsMessageStorage.receivedMessages() == 3, 5000, 50);
+    validate(() -> JmsMessageStorage.receivedMessages() == 3, TIMEOUT_MILLIS, POLL_DELAY_MILLIS);
 
     Result<TypedValue<Object>, Object> message = pollMessage();
 
@@ -55,7 +55,7 @@ public class JmsManualAckTestCase extends JmsAbstractAckTestCase {
         .getValue();
     JmsMessageStorage.cleanUpQueue();
     recoverSession(ackId);
-    validate(() -> JmsMessageStorage.receivedMessages() == 1, 5000, 50);
+    validate(() -> JmsMessageStorage.receivedMessages() == 1, TIMEOUT_MILLIS, POLL_DELAY_MILLIS);
     assertJmsMessage(pollMessage(), messageToReDeliver, true);
   }
 
