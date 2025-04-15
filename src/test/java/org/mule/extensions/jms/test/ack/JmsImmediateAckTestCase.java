@@ -35,7 +35,7 @@ public class JmsImmediateAckTestCase extends JmsAbstractAckTestCase {
     publish(buildMessage(message, EXPLODE));
     publish(buildMessage(message, NOTHING));
 
-    validate(() -> JmsMessageStorage.receivedMessages() == 2, 5000, 50);
+    validate(() -> JmsMessageStorage.receivedMessages() == 2, TIMEOUT_MILLIS, POLL_DELAY_MILLIS);
     cleanUpQueues();
     assertQueueIsEmpty();
   }
